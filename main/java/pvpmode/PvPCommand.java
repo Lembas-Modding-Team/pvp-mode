@@ -16,12 +16,6 @@ public class PvPCommand extends CommandBase
 		+ "/pvp <on:off> [player]");
 	
 	@Override
-	public int getRequiredPermissionLevel ()
-	{
-		return 0;
-	}
-	
-	@Override
 	public String getCommandName()
 	{
 		return "pvp";
@@ -76,4 +70,16 @@ public class PvPCommand extends CommandBase
 		else
 			sender.addChatMessage (help);
 	}
+	
+	@Override 
+    public boolean canCommandSenderUseCommand (ICommandSender sender) 
+    { 
+        return true;
+    }
+	
+	@Override
+	public boolean isUsernameIndex(String[] args, int index)
+    {
+        return index == 1;
+    }
 }

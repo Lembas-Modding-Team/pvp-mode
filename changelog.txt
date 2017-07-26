@@ -1,0 +1,12 @@
+CHANGELOG:
+
+1.1.0
+
+Added a config option that disables PvE along with PvP if the command is entered.
+Fixed a bug with permission levels.
+
+1.0.0
+
+Added "/pvp <on:off> [playername]" command.
+Players cannot hit or shoot each other if either has PvP disabled.
+Admins can enable/disable PvP for other players, but regular players can only do it on themselves.
