@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod (modid = "pvp-mode", version = "1.1.0", acceptableRemoteVersions = "*")
+@Mod (modid = "pvp-mode", version = "1.3.0", acceptableRemoteVersions = "*")
 public class PvPMode
 {
 	public static Configuration config;
@@ -34,11 +34,12 @@ public class PvPMode
     public void serverLoad (FMLServerStartingEvent event)
     {
     	event.registerServerCommand (new PvPCommand ());
+    	event.registerServerCommand (new PvPListCommand ());
     }
     
     public static void syncConfig ()
     {
-    	try
+    	/*try
     	{
             config.load();
 
@@ -52,6 +53,6 @@ public class PvPMode
             
         }
     	
-    	if (config.hasChanged ()) config.save ();
+    	if (config.hasChanged ()) config.save ();*/
     }
 }
