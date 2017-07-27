@@ -1,5 +1,9 @@
 CHANGELOG:
 
+1.2.0-BETA
+
+Added a patch that disables LOTR units from attacking other players in PvP-off situations.
+
 1.1.0
 
 Added a config option that disables PvE along with PvP if the command is entered.

@@ -1,6 +1,8 @@
 # pvp-mode
 A Minecraft mod that allows players to enable/disable PvP for only themselves.
 
+ATTENTION: 1.2.0 is in BETA, so don't expect it to work properly yet.
+
 REQUIREMENTS:
 Minecraft 1.7.10
 Forge 1.7.10-10.13.4.1614 (possibly an earlier version will work)

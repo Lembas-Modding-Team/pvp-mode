@@ -14,7 +14,8 @@ public class PvPMode
 	public static Configuration config;
 	
 	//Config options
-	public static boolean blockCreatureDamage = false;
+	public static boolean blockPvE = false;
+	public static boolean blockLOTRUnits = true;
 	
 	@EventHandler
 	public void preinit (FMLPreInitializationEvent event)
@@ -41,10 +42,10 @@ public class PvPMode
     	{
             config.load();
 
-            Property blockNPCDamageProperty = config.get
-            		(Configuration.CATEGORY_GENERAL, "Block Creature Damage", false);
+            Property blockLOTRUnitsProperty = config.get
+            		(Configuration.CATEGORY_GENERAL, "Block LOTR units", false);
 
-            blockCreatureDamage = blockNPCDamageProperty.getBoolean ();
+            blockLOTRUnits = blockLOTRUnitsProperty.getBoolean ();
         }
     	catch (Exception e)
     	{
