@@ -28,6 +28,9 @@ public class PvPEventHandler
 		Entity attacker = event.source.getEntity ();
 		Entity victim = event.entity;
 		
+		if (attacker == null)
+			return;
+		
 		if (isEntityDirectlyProhibited (attacker))
 			if (isEntityEligiblyProhibited (victim))
 				event.setCanceled (true);
