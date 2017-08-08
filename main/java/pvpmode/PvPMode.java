@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod (modid = "pvp-mode", version = "1.3.0", acceptableRemoteVersions = "*")
+@Mod (modid = "pvp-mode", version = "1.4.0", acceptableRemoteVersions = "*")
 public class PvPMode
 {
 	public static Configuration config;

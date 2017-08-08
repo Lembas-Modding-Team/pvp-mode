@@ -13,7 +13,7 @@ public class PvPCommand extends CommandBase
 	ChatComponentText badperm = new ChatComponentText (EnumChatFormatting.RED
 		+ "You do not have permission to toggle another player's PvP mode!");
 	ChatComponentText help = new ChatComponentText (EnumChatFormatting.RED
-		+ "/pvp <on:off> [player]");
+		+ "/pvp [player]");
 	
 	@Override
 	public String getCommandName()
@@ -33,11 +33,10 @@ public class PvPCommand extends CommandBase
 		EntityPlayerMP target;
 		ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
 		
-		//As in "/pvp on"
-		if (args.length == 1)
+		if (args.length == 0)
 			target = getCommandSenderAsPlayer (sender);
-		//As in "/pvp on VulcanForge"
-		else if (args.length == 2)
+		//As in "/pvp VulcanForge"
+		if (args.length == 1)
 		{
 			//152596 determines if the player has op privileges (SP or opped)
 			if (cfg.func_152596_g (getCommandSenderAsPlayer (sender).getGameProfile ()))
@@ -57,18 +56,12 @@ public class PvPCommand extends CommandBase
 			return;
 		}
 		
-		if (args[0].equals ("on"))
-		{
-			target.getEntityData ().setBoolean ("PvPDenied", false);
-			cfg.sendChatMsg (new ChatComponentText ("PvP is now enabled for " + target.getDisplayName ()));
-		}
-		else if (args[0].equals ("off"))
-		{
-			target.getEntityData ().setBoolean ("PvPDenied", true);
-			cfg.sendChatMsg (new ChatComponentText ("PvP is now disabled for " + target.getDisplayName ()));
-		}
+		target.getEntityData ().setLong ("PvPTime", MinecraftServer.getSystemTimeMillis () + 5000);
+		
+		if (target.getEntityData ().getBoolean ("PvPDenied"))
+			cfg.sendChatMsg (new ChatComponentText ("Enabling PvP for " + target.getDisplayName ()));
 		else
-			sender.addChatMessage (help);
+			sender.addChatMessage (new ChatComponentText ("Disabling PvP for " + target.getDisplayName ()));
 	}
 	
 	@Override 
