@@ -131,20 +131,20 @@ public class PvPEventHandler
         catch (NoSuchFieldException ex)
         {
             // This entity is not a LOTR unit.
-            FMLLog.info ("hiredNPCInfo is not a field", null);
+            FMLLog.info ("hiredNPCInfo is not a field for " + entityClass, null);
             return null;
         }
         catch (NoSuchMethodException ex)
         {
             // Something changed with the LOTR mod.
-            FMLLog.info ("getHiringPlayer is not a method", null);
+            FMLLog.info ("getHiringPlayer is not a method for " + entityClass, null);
             return null;
         }
         catch (IllegalAccessException ex)
         {
             // Hopefully impossible since I am only accessing public
             // fields/methods.
-            FMLLog.info ("Security exception in PvPEventHandler", null);
+            FMLLog.info ("Security exception in PvPEventHandler at " + entityClass, null);
             return null;
         }
         catch (InvocationTargetException ex)

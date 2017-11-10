@@ -41,7 +41,7 @@ public class PvPCommand extends CommandBase
 			//152596 determines if the player has op privileges (SP or opped)
 			if (cfg.func_152596_g (getCommandSenderAsPlayer (sender).getGameProfile ()))
 				//152612 returns an EPMP from his/her name.
-				target = cfg.func_152612_a (args[1]);
+				target = cfg.func_152612_a (args[0]);
 			else
 			{
 				sender.addChatMessage (badperm);
