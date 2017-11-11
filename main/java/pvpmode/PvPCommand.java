@@ -32,11 +32,15 @@ public class PvPCommand extends CommandBase
 	{
 		EntityPlayerMP target;
 		ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
+		long cooldown = 0;
 		
 		if (args.length == 0)
+		{
 			target = getCommandSenderAsPlayer (sender);
+			cooldown = 5000;
+		}
 		//As in "/pvp VulcanForge"
-		if (args.length == 1)
+		else if (args.length == 1)
 		{
 			//152596 determines if the player has op privileges (SP or opped)
 			if (cfg.func_152596_g (getCommandSenderAsPlayer (sender).getGameProfile ()))
@@ -56,7 +60,7 @@ public class PvPCommand extends CommandBase
 			return;
 		}
 		
-		target.getEntityData ().setLong ("PvPTime", MinecraftServer.getSystemTimeMillis () + 5000);
+		target.getEntityData ().setLong ("PvPTime", MinecraftServer.getSystemTimeMillis () + cooldown);
 		
 		if (target.getEntityData ().getBoolean ("PvPDenied"))
 			cfg.sendChatMsg (new ChatComponentText ("Enabling PvP for " + target.getDisplayName ()));
