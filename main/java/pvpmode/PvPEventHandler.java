@@ -113,13 +113,17 @@ public class PvPEventHandler
         // LOTR patch begins.
 
         Class entityClass = entity.getClass ();
+        Field hiredUnitInfo = null;
+        Class hiredClass;
+        Method getHiringPlayer;
 
         try
         {
             // Only Dumbledore and I are capable of this kind of magic.
-            Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-            Class hiredClass = hiredUnitInfo.getClass ();
-            Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer", new Class[] {});
+        	// And even then it requires a silken hand and a subtle touch.
+            hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
+            hiredClass = hiredUnitInfo.getType ();
+            getHiringPlayer = hiredClass.getMethod ("getHiringPlayer", new Class[] {});
 
             Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity), new Object[] {});
 
@@ -131,13 +135,11 @@ public class PvPEventHandler
         catch (NoSuchFieldException ex)
         {
             // This entity is not a LOTR unit.
-            FMLLog.info ("hiredNPCInfo is not a field for " + entityClass, null);
             return null;
         }
         catch (NoSuchMethodException ex)
         {
             // Something changed with the LOTR mod.
-            FMLLog.info ("getHiringPlayer is not a method for " + entityClass, null);
             return null;
         }
         catch (IllegalAccessException ex)
