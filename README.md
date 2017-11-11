@@ -1,7 +1,7 @@
 # pvp-mode
-A Minecraft mod that allows players to enable/disable PvP for only themselves.
+A Minecraft mod that allows players to enable/disable PvP individually.
 
-ATTENTION: 1.3.0 is in BETA, so don't expect it to work properly yet.
+ATTENTION: The mod is in BETA, and there are bugs that are being worked on.
 
 REQUIREMENTS:
 Minecraft 1.7.10
@@ -12,7 +12,11 @@ Click the JAR file in the file list above, then click Download.
 Place the JAR file in the server mods folder.
 
 USAGE:
-This mod adds one simple command: "/pvp <on:off> [playername]"
-All players can enable/disable PvP for themselves, but only an admin can change another player's PvP settings.
+/pvp toggles the command sender's PvP restriction status.
+/pvp \<playername> toggles the player's PvP restriction status. Only an admin can perform this command.
+
+Note: there is a cooldown on the /pvp command.
+
+/pvplist displays a list of all players who are online and whether PvP is enabled or disabled for them.
 
 If you notice a bug in-game, fire me an email at vulcanforgeyt@gmail.com
