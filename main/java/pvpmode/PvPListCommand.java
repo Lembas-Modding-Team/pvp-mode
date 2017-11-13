@@ -1,7 +1,5 @@
 package pvpmode;
 
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,12 +33,12 @@ public class PvPListCommand extends CommandBase
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
-            if (player.getEntityData ().getBoolean ("PvPDenied"))
-                display.append (EnumChatFormatting.GREEN);
-            else
-                display.append (EnumChatFormatting.RED);
+            display.append (player.getDisplayName () + ": ");
 
-            display.append (player.getDisplayName () + " ");
+            if (player.getEntityData ().getBoolean ("PvPDenied"))
+                display.append (EnumChatFormatting.GREEN + "OFF\n");
+            else
+                display.append (EnumChatFormatting.RED + "ON\n");
         }
 
         ChatComponentText message = new ChatComponentText (display.toString ());
