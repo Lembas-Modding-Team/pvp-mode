@@ -42,6 +42,19 @@ public class PvPEventHandler
         if (attacker == null)
             return;
 
+        if (attacker instanceof EntityPlayerMP)
+        {
+            EntityPlayerMP player = (EntityPlayerMP) attacker;
+
+            if (player.capabilities.allowFlying || player.capabilities.isCreativeMode
+                && !player.getEntityData ().getBoolean ("PvPDenied"))
+            {
+                attacker.getEntityData ().setBoolean ("PvPDenied", true);
+                FMLLog.info (
+                    player.getDisplayName () + " has had PvP disabled automatically for creative/fly abilities.", null);
+            }
+        }
+
         if (isPreventable (attacker))
             if (isPrevented (victim))
                 event.setCanceled (true);

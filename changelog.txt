@@ -1,5 +1,9 @@
 CHANGELOG:
 
+1.4.1-BETA
+
+Players in creative mode or who have fly ability have PvP disabled automatically.
+
 1.4.0-BETA
 
 Added a 5-second cooldown on the /pvp command.

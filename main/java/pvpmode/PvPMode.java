@@ -5,7 +5,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = "pvp-mode", version = "1.4.0", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", version = "1.4.1", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     @EventHandler
