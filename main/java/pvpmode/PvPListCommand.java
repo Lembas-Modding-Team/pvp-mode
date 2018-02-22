@@ -38,7 +38,20 @@ public class PvPListCommand extends CommandBase
             if (player.getEntityData ().getBoolean ("PvPDenied"))
                 display.append (EnumChatFormatting.GREEN + "OFF\n");
             else
-                display.append (EnumChatFormatting.RED + "ON\n");
+            {
+                EntityPlayerMP playerSender = getCommandSenderAsPlayer (sender);
+
+                // This is a very fuzzy distance metric.
+                // It only shows player distances to the nearest 16 chunks or
+                // so, and even that not very reliably.
+                int deltaX = playerSender.chunkCoordX - player.chunkCoordX;
+                int deltaZ = playerSender.chunkCoordZ - player.chunkCoordZ;
+
+                int distance = (int) (Math.sqrt (deltaX * deltaX + deltaZ * deltaZ) + 1);
+                distance = (distance / 16 + 1) * 16;
+
+                display.append (EnumChatFormatting.RED + "ON - ~" + distance + " chunks distant\n");
+            }
         }
 
         ChatComponentText message = new ChatComponentText (display.toString ());

@@ -1,5 +1,10 @@
 CHANGELOG:
 
+1.5.0-BETA
+
+The /pvplist command will now display player distances to the nearest 16 chunks
+for players who have PvP enabled.
+
 1.4.1-BETA
 
 Players in creative mode or who have fly ability have PvP disabled automatically.
