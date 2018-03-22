@@ -10,12 +10,14 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class PvPCommand extends CommandBase
 {
-    // Holds the default warmup time for using the command on oneself.
-    final long defaultWarmup = 5000;
+    final long defaultWarmup = 15000;
+
     ChatComponentText badperm = new ChatComponentText (EnumChatFormatting.RED
         + "You do not have permission to toggle another player's PvP mode!");
+
     ChatComponentText help = new ChatComponentText (EnumChatFormatting.RED
         + "/pvp [player]");
+
     ChatComponentText wait = new ChatComponentText (EnumChatFormatting.YELLOW
         + "Wait " + defaultWarmup / 1000 + " seconds...");
 
@@ -37,14 +39,22 @@ public class PvPCommand extends CommandBase
         EntityPlayerMP target;
         ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
 
-        // Admins can switch other players instantly,
-        // but there is usually a five second warmup to prevent "PvP toggling"
         long warmup = 0;
 
         if (args.length == 0)
         {
             target = getCommandSenderAsPlayer (sender);
-            warmup = defaultWarmup; // 5000 millisecond warmup.
+
+            long cooldown = target.getEntityData ().getLong ("PvPCooldown");
+
+            if (cooldown > MinecraftServer.getSystemTimeMillis ())
+            {
+                sender.addChatMessage (new ChatComponentText ("Please wait " + cooldown / 1000 + " seconds..."));
+                return;
+            }
+
+            target.getEntityData ().setLong ("PvPCooldown", 0);
+            warmup = defaultWarmup;
         }
         else if (args.length == 1) // Admin-only command.
         {
@@ -68,7 +78,7 @@ public class PvPCommand extends CommandBase
             return;
         }
 
-        // PvPTime stores the system time at which the PvPDenied tag should be
+        // PvPTime stores the system time at which the PvPEnabled tag should be
         // toggled.
         target.getEntityData ().setLong ("PvPTime", MinecraftServer.getSystemTimeMillis () + warmup);
 

@@ -15,12 +15,17 @@ Place the JAR file in the server mods folder.
 
 USAGE:
 
-/pvp toggles the command sender's PvP restriction status.
+When a new player logs into the server, PvP will automatically be disabled for them. To enable PvP, a player simply enters the "pvp"
+command and their status will be toggled after a warmup time. The "pvp" command also disables PvP for a player who has it enabled.
+Players who have any mode other than survival, or who are flying, are automatically prevented from combat no matter their tag.
+There is a cooldown for the command after the actual toggle takes place (not when the player enters the command).
 
-/pvp \<playername> toggles the player's PvP restriction status. Only an admin can perform this command.
+The mod adds another command, "pvplist". "pvplist" displays a list of all players online, their status, and their distance to the
+command sender. The status can be one of the following: "ON", "OFF", "GM1", or "FLY". Only players with "ON" are capable of combat.
+Distances are approximated to the nearest 16 chunks.
 
-Note: there is a cooldown on the /pvp command.
+Admins are able to toggle a player's status instantaneously with no warmup time by doing "pvp \<playername>"
 
-/pvplist displays a list of all players who are online and whether PvP is enabled or disabled for them.
+This mod was developed especially for use on servers running the Lord of the Rings mod by Mevans. Users will note that hired units cannot fight each other unless both their commanding players have PvP enabled. Also, tamed wolves will not attack players or each other unless both masters have PvP enabled.
 
 If you notice a bug in-game, fire me an email at vulcanforgeyt@gmail.com

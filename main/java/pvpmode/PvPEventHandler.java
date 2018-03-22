@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,60 +22,75 @@ public class PvPEventHandler
 {
     public static PvPEventHandler INSTANCE;
 
+    ChatComponentText fly = new ChatComponentText (
+        EnumChatFormatting.RED + "You are in fly mode!");
+    ChatComponentText gm1 = new ChatComponentText (
+        EnumChatFormatting.RED + "You are in creative mode!");
     ChatComponentText disabled = new ChatComponentText (
         EnumChatFormatting.RED + "This player/unit has PvP disabled!");
 
+    long cooldown = 300000;
+
     /**
-     * The workhorse method of the whole mod.
+     * Adds a PvPEnabled tag to a new player.
+     */
+    @SubscribeEvent
+    public void onNewPlayer (PlayerLoggedInEvent event)
+    {
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+
+        if (!player.getEntityData ().hasKey ("PvPEnabled"))
+        {
+            player.getEntityData ().setBoolean ("PvPEnabled", false);
+            player.getEntityData ().setLong ("PvPTime", 0);
+            player.getEntityData ().setLong ("PvPCooldown", 0);
+        }
+    }
+
+    /**
+     * Cancels combat events associated with PvP-disabled players.
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        /*
-         * If the PvPDenied NBT tag is not set, it can be treated as false. It
-         * will be created as soon as a player uses the /pvp command for the
-         * first time.
-         */
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
 
-        Entity attacker = event.source.getEntity ();
-        Entity victim = event.entity;
-
-        if (attacker == null)
+        if (attacker == null || victim == null)
             return;
 
-        if (attacker instanceof EntityPlayerMP)
+        if (attacker.capabilities.allowFlying)
         {
-            EntityPlayerMP player = (EntityPlayerMP) attacker;
-
-            if (player.capabilities.allowFlying || player.capabilities.isCreativeMode
-                && !player.getEntityData ().getBoolean ("PvPDenied"))
-            {
-                attacker.getEntityData ().setBoolean ("PvPDenied", true);
-                FMLLog.info (
-                    player.getDisplayName () + " has had PvP disabled automatically for creative/fly abilities.", null);
-            }
+            attacker.addChatMessage (fly);
+            event.setCanceled (true);
+            return;
         }
 
-        if (isPreventable (attacker))
-            if (isPrevented (victim))
-                event.setCanceled (true);
-
-        if (isPreventable (victim))
-            if (isPrevented (attacker))
-                event.setCanceled (true);
-
-        if (!event.isCanceled ())
+        if (victim.capabilities.allowFlying)
         {
-            // PvP toggle warmups are cancelled.
-
-            if (victim instanceof EntityPlayerMP)
-                victim.getEntityData ().setLong ("PvPTime", 0);
-
-            if (attacker instanceof EntityPlayerMP)
-                attacker.getEntityData ().setLong ("PvPTime", 0);
+            event.setCanceled (true);
+            return;
         }
-        else if (attacker instanceof EntityPlayerMP)
-            ((EntityPlayerMP) attacker).addChatComponentMessage (disabled);
+
+        if (attacker.capabilities.isCreativeMode)
+        {
+            attacker.addChatMessage (gm1);
+            event.setCanceled (true);
+            return;
+        }
+
+        if (!victim.getEntityData ().getBoolean ("PvPEnabled"))
+        {
+            attacker.addChatMessage (disabled);
+            event.setCanceled (true);
+            return;
+        }
+
+        if (!attacker.getEntityData ().getBoolean ("PvPEnabled"))
+        {
+            event.setCanceled (true);
+            return;
+        }
     }
 
     /**
@@ -100,9 +116,9 @@ public class PvPEventHandler
 
             ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
 
-            if (player.getEntityData ().getBoolean ("PvPDenied"))
+            if (!player.getEntityData ().getBoolean ("PvPEnabled"))
             {
-                player.getEntityData ().setBoolean ("PvPDenied", false);
+                player.getEntityData ().setBoolean ("PvPEnabled", true);
 
                 // Warn the whole server.
                 cfg.sendChatMsg (new ChatComponentText (EnumChatFormatting.RED
@@ -110,38 +126,13 @@ public class PvPEventHandler
             }
             else
             {
-                player.getEntityData ().setBoolean ("PvPDenied", true);
+                player.getEntityData ().setBoolean ("PvPEnabled", false);
                 player.addChatComponentMessage (new ChatComponentText (
                     EnumChatFormatting.GREEN + "PvP is now disabled for you."));
             }
+
+            player.getEntityData ().setLong ("PvPCooldown", MinecraftServer.getSystemTimeMillis () + cooldown);
         }
-    }
-
-    /**
-     * Determines if PvP blocking could ever be applied to this entity.
-     */
-    public boolean isPreventable (Entity entity)
-    {
-        // Null pointers result in "instanceof" evaluating false.
-
-        return entity instanceof EntityPlayerMP || getMaster (entity) instanceof EntityPlayerMP;
-    }
-
-    /**
-     * Determines if PvP blocking should be applied to this entity.
-     */
-    public boolean isPrevented (Entity entity)
-    {
-        if (entity.getEntityData ().getBoolean ("PvPDenied"))
-            return true;
-
-        EntityPlayerMP master = getMaster (entity);
-
-        if (master != null)
-            if (master.getEntityData ().getBoolean ("PvPDenied"))
-                return true;
-
-        return false;
     }
 
     /**
@@ -149,6 +140,12 @@ public class PvPEventHandler
      */
     public EntityPlayerMP getMaster (Entity entity)
     {
+        if (entity == null)
+            return null;
+
+        if (entity instanceof EntityPlayerMP)
+            return (EntityPlayerMP) entity;
+
         if (entity instanceof EntityWolf)
             return (EntityPlayerMP) ((EntityWolf) entity).getOwner ();
 

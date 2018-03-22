@@ -25,42 +25,43 @@ public class PvPListCommand extends CommandBase
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        // Safe players are listed in green, PvP-enabled players in red.
         ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
-        StringBuilder display = new StringBuilder ();
+        EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
+        StringBuilder safePlayers = new StringBuilder ();
+        StringBuilder unsafePlayers = new StringBuilder ();
 
         for (Object o : cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
-            display.append (player.getDisplayName () + ": ");
-
-            if (player.getEntityData ().getBoolean ("PvPDenied"))
-                display.append (EnumChatFormatting.GREEN + "OFF\n");
+            if (player.capabilities.allowFlying)
+                safePlayers.append (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName () + "\n");
+            else if (player.capabilities.isCreativeMode)
+                safePlayers.append (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName () + "\n");
+            else if (!player.getEntityData ().getBoolean ("PvPEnabled"))
+                safePlayers.append (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName () + "\n");
             else
-            {
-                EntityPlayerMP playerSender = getCommandSenderAsPlayer (sender);
-
-                // This is a very fuzzy distance metric.
-                // It only shows player distances to the nearest 16 chunks or
-                // so, and even that not very reliably.
-                int deltaX = playerSender.chunkCoordX - player.chunkCoordX;
-                int deltaZ = playerSender.chunkCoordZ - player.chunkCoordZ;
-
-                int distance = (int) (Math.sqrt (deltaX * deltaX + deltaZ * deltaZ) + 1);
-                distance = (distance / 16 + 1) * 16;
-
-                display.append (EnumChatFormatting.RED + "ON - ~" + distance + " chunks distant\n");
-            }
+                unsafePlayers.append (EnumChatFormatting.RED + "[ON] " + player.getDisplayName ()
+                    + " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks" + "\n");
         }
 
-        ChatComponentText message = new ChatComponentText (display.toString ());
-        sender.addChatMessage (message);
+        sender.addChatMessage (new ChatComponentText (unsafePlayers.toString () + "\n"));
+        sender.addChatMessage (new ChatComponentText (safePlayers.toString () + "\n"));
     }
 
     @Override
     public boolean canCommandSenderUseCommand (ICommandSender sender)
     {
         return true;
+    }
+
+    public int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
+    {
+        double x = sender.posX - player.posX;
+        double z = sender.posZ - player.posZ;
+
+        double distance = Math.sqrt (x * x + z * z);
+
+        return (int) (distance) / 64 * 64;
     }
 }

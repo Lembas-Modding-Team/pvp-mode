@@ -2,8 +2,9 @@ CHANGELOG:
 
 1.5.0-BETA
 
-The /pvplist command will now display player distances to the nearest 16 chunks
-for players who have PvP enabled.
+The /pvplist command will now display player distances to the nearest four chunks
+for players who have PvP enabled. There is now a cooldown as well as a warmup on the /pvp
+command; the warmup is now 15 seconds rather than five.
 
 1.4.1-BETA
 
