@@ -1,5 +1,7 @@
 package pvpmode;
 
+import java.util.ArrayList;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,26 +29,34 @@ public class PvPListCommand extends CommandBase
     {
         ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
-        StringBuilder safePlayers = new StringBuilder ();
-        StringBuilder unsafePlayers = new StringBuilder ();
+        ArrayList<String> safePlayers = new ArrayList<String> ();
+        ArrayList<String> unsafePlayers = new ArrayList<String> ();
 
         for (Object o : cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
             if (player.capabilities.allowFlying)
-                safePlayers.append (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName () + "\n");
+                safePlayers.add (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName ());
             else if (player.capabilities.isCreativeMode)
-                safePlayers.append (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName () + "\n");
+                safePlayers.add (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName ());
             else if (!player.getEntityData ().getBoolean ("PvPEnabled"))
-                safePlayers.append (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName () + "\n");
+                safePlayers.add (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName ());
             else
-                unsafePlayers.append (EnumChatFormatting.RED + "[ON] " + player.getDisplayName ()
-                    + " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks" + "\n");
+            {
+                String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
+
+                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled"))
+                    message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
+
+                unsafePlayers.add (message);
+            }
         }
 
-        sender.addChatMessage (new ChatComponentText (unsafePlayers.toString () + "\n"));
-        sender.addChatMessage (new ChatComponentText (safePlayers.toString () + "\n"));
+        for (String line : unsafePlayers)
+            sender.addChatMessage (new ChatComponentText (line));
+        for (String line : safePlayers)
+            sender.addChatMessage (new ChatComponentText (line));
     }
 
     @Override

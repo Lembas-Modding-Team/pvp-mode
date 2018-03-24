@@ -49,7 +49,8 @@ public class PvPCommand extends CommandBase
 
             if (cooldown > MinecraftServer.getSystemTimeMillis ())
             {
-                sender.addChatMessage (new ChatComponentText ("Please wait " + cooldown / 1000 + " seconds..."));
+                sender.addChatMessage (new ChatComponentText (
+                    "Please wait " + (cooldown - MinecraftServer.getSystemTimeMillis ()) / 1000 + " seconds..."));
                 return;
             }
 
@@ -78,9 +79,9 @@ public class PvPCommand extends CommandBase
             return;
         }
 
-        // PvPTime stores the system time at which the PvPEnabled tag should be
-        // toggled.
-        target.getEntityData ().setLong ("PvPTime", MinecraftServer.getSystemTimeMillis () + warmup);
+        // PvPWarmup stores the system time at which the PvPEnabled tag should
+        // be toggled.
+        target.getEntityData ().setLong ("PvPWarmup", MinecraftServer.getSystemTimeMillis () + warmup);
 
         if (warmup > 0)
             sender.addChatMessage (wait);

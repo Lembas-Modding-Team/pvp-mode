@@ -42,7 +42,7 @@ public class PvPEventHandler
         if (!player.getEntityData ().hasKey ("PvPEnabled"))
         {
             player.getEntityData ().setBoolean ("PvPEnabled", false);
-            player.getEntityData ().setLong ("PvPTime", 0);
+            player.getEntityData ().setLong ("PvPWarmup", 0);
             player.getEntityData ().setLong ("PvPCooldown", 0);
         }
     }
@@ -107,12 +107,12 @@ public class PvPEventHandler
 
         // The time at which the player's PvP status will be toggled.
         // 0 if the player is not currently in warmup.
-        long pvptime = player.getEntityData ().getLong ("PvPTime");
+        long PvPWarmup = player.getEntityData ().getLong ("PvPWarmup");
 
-        if (pvptime != 0 && pvptime < MinecraftServer.getSystemTimeMillis ())
+        if (PvPWarmup != 0 && PvPWarmup < MinecraftServer.getSystemTimeMillis ())
         {
             // Reset the toggle time to "no warmup" state.
-            player.getEntityData ().setLong ("PvPTime", 0);
+            player.getEntityData ().setLong ("PvPWarmup", 0);
 
             ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
 
