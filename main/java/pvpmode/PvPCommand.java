@@ -10,8 +10,6 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class PvPCommand extends CommandBase
 {
-    final long defaultWarmup = 15000;
-
     ChatComponentText badperm = new ChatComponentText (EnumChatFormatting.RED
         + "You do not have permission to toggle another player's PvP mode!");
 
@@ -19,7 +17,7 @@ public class PvPCommand extends CommandBase
         + "/pvp [player]");
 
     ChatComponentText wait = new ChatComponentText (EnumChatFormatting.YELLOW
-        + "Wait " + defaultWarmup / 1000 + " seconds...");
+        + "Wait " + PvPMode.warmup + " seconds...");
 
     @Override
     public String getCommandName ()
@@ -55,7 +53,7 @@ public class PvPCommand extends CommandBase
             }
 
             target.getEntityData ().setLong ("PvPCooldown", 0);
-            warmup = defaultWarmup;
+            warmup = PvPMode.warmup;
         }
         else if (args.length == 1) // Admin-only command.
         {

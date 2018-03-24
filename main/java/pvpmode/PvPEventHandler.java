@@ -29,8 +29,6 @@ public class PvPEventHandler
     ChatComponentText disabled = new ChatComponentText (
         EnumChatFormatting.RED + "This player/unit has PvP disabled!");
 
-    long cooldown = 300000;
-
     /**
      * Adds a PvPEnabled tag to a new player.
      */
@@ -131,7 +129,8 @@ public class PvPEventHandler
                     EnumChatFormatting.GREEN + "PvP is now disabled for you."));
             }
 
-            player.getEntityData ().setLong ("PvPCooldown", MinecraftServer.getSystemTimeMillis () + cooldown);
+            player.getEntityData ().setLong ("PvPCooldown",
+                MinecraftServer.getSystemTimeMillis () + PvPMode.cooldown);
         }
     }
 

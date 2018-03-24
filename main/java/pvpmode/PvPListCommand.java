@@ -46,7 +46,7 @@ public class PvPListCommand extends CommandBase
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
-                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled"))
+                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled") && PvPMode.radar)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 
                 unsafePlayers.add (message);
@@ -72,6 +72,6 @@ public class PvPListCommand extends CommandBase
 
         double distance = Math.sqrt (x * x + z * z);
 
-        return (int) (distance) / 64 * 64;
+        return (int) (distance) / PvPMode.roundFactor * PvPMode.roundFactor;
     }
 }

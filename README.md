@@ -26,6 +26,8 @@ Distances are approximated to the nearest 16 chunks.
 
 Admins are able to toggle a player's status instantaneously with no warmup time by doing "pvp \<playername>"
 
+The configuration file has a few useful options for timers and miscellaneous items.
+
 This mod was developed especially for use on servers running the Lord of the Rings mod by Mevans. Users will note that hired units cannot fight each other unless both their commanding players have PvP enabled. Also, tamed wolves will not attack players or each other unless both masters have PvP enabled.
 
 If you notice a bug in-game, fire me an email at vulcanforgeyt@gmail.com

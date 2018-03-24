@@ -1,5 +1,10 @@
 CHANGELOG:
 
+1.6.0-BETA
+
+The cooldown and warmup are now configurable in a configuration file.
+Player radar behaviour is now configurable as well.
+
 1.5.0-BETA
 
 The /pvplist command will now display player distances to the nearest four chunks
