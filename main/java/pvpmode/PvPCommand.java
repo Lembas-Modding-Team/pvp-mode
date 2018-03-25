@@ -41,8 +41,6 @@ public class PvPCommand extends CommandBase
                 waitCooldown (sender, wait);
                 return;
             }
-
-            target.getEntityData ().setLong ("PvPCooldown", 0);
             toggleTime = time + PvPMode.warmup;
         }
         else if (args.length == 1)
@@ -65,6 +63,7 @@ public class PvPCommand extends CommandBase
         }
 
         target.getEntityData ().setLong ("PvPWarmup", toggleTime);
+        target.getEntityData ().setLong ("PvPCooldown", 0);
 
         if (toggleTime > 0)
             wait (sender);
