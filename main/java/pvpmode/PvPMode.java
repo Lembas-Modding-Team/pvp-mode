@@ -24,12 +24,12 @@ public class PvPMode
     public void init (FMLInitializationEvent event)
     {
         PvPEventHandler.init ();
-        cfg = MinecraftServer.getServer ().getConfigurationManager ();
     }
 
     @EventHandler
     public void serverLoad (FMLServerStartingEvent event)
     {
+        cfg = MinecraftServer.getServer ().getConfigurationManager ();
         event.registerServerCommand (new PvPCommand ());
         event.registerServerCommand (new PvPListCommand ());
     }
