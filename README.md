@@ -17,7 +17,7 @@ USAGE:
 
 When a new player logs into the server, PvP will automatically be disabled for them. To enable PvP, a player simply enters the "pvp"
 command and their status will be toggled after a warmup time. The "pvp" command also disables PvP for a player who has it enabled.
-Players who have any mode other than survival, or who are flying, are automatically prevented from combat no matter their tag.
+Players who are in creative mode or who are flying are automatically prevented from combat no matter their PvP status.
 There is a cooldown for the command after the actual toggle takes place (not when the player enters the command).
 
 The mod adds another command, "pvplist". "pvplist" displays a list of all players online, their status, and their distance to the
