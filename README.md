@@ -22,7 +22,7 @@ There is a cooldown for the command after the actual toggle takes place (not whe
 
 The mod adds another command, "pvplist". "pvplist" displays a list of all players online, their status, and their distance to the
 command sender. The status can be one of the following: "ON", "OFF", "GM1", or "FLY". Only players with "ON" are capable of combat.
-Distances are approximated to the nearest 16 chunks.
+Distances are approximated to the nearest x blocks where x is a number determined in the configuration file (default is 64).
 
 Admins are able to toggle a player's status instantaneously with no warmup time by doing "pvp \<playername>"
 
