@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -27,19 +25,18 @@ public class PvPListCommand extends CommandBase
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
         ArrayList<String> safePlayers = new ArrayList<String> ();
         ArrayList<String> unsafePlayers = new ArrayList<String> ();
 
-        for (Object o : cfg.playerEntityList)
+        for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
-            if (player.capabilities.allowFlying)
-                safePlayers.add (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName ());
-            else if (player.capabilities.isCreativeMode)
+            if (player.capabilities.isCreativeMode)
                 safePlayers.add (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName ());
+            else if (player.capabilities.allowFlying)
+                safePlayers.add (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName ());
             else if (!player.getEntityData ().getBoolean ("PvPEnabled"))
                 safePlayers.add (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName ());
             else
@@ -65,7 +62,7 @@ public class PvPListCommand extends CommandBase
         return true;
     }
 
-    public int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
+    int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
     {
         double x = sender.posX - player.posX;
         double z = sender.posZ - player.posZ;

@@ -5,12 +5,15 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
 
 @Mod(modid = "pvp-mode", version = "1.6.0", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
+    public static ServerConfigurationManager cfg;
 
     public static int roundFactor;
     public static int warmup;
@@ -21,6 +24,7 @@ public class PvPMode
     public void init (FMLInitializationEvent event)
     {
         PvPEventHandler.init ();
+        cfg = MinecraftServer.getServer ().getConfigurationManager ();
     }
 
     @EventHandler

@@ -11,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,13 +20,6 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 public class PvPEventHandler
 {
     public static PvPEventHandler INSTANCE;
-
-    ChatComponentText fly = new ChatComponentText (
-        EnumChatFormatting.RED + "You are in fly mode!");
-    ChatComponentText gm1 = new ChatComponentText (
-        EnumChatFormatting.RED + "You are in creative mode!");
-    ChatComponentText disabled = new ChatComponentText (
-        EnumChatFormatting.RED + "This player/unit has PvP disabled!");
 
     /**
      * Adds a PvPEnabled tag to a new player.
@@ -59,7 +51,9 @@ public class PvPEventHandler
 
         if (attacker.capabilities.allowFlying)
         {
-            attacker.addChatMessage (fly);
+            if (attacker == event.source.getEntity ())
+                fly (attacker);
+
             event.setCanceled (true);
             return;
         }
@@ -72,14 +66,18 @@ public class PvPEventHandler
 
         if (attacker.capabilities.isCreativeMode)
         {
-            attacker.addChatMessage (gm1);
+            if (attacker == event.source.getEntity ())
+                gm1 (attacker);
+
             event.setCanceled (true);
             return;
         }
 
         if (!victim.getEntityData ().getBoolean ("PvPEnabled"))
         {
-            attacker.addChatMessage (disabled);
+            if (attacker == event.source.getEntity ())
+                disabled (attacker);
+
             event.setCanceled (true);
             return;
         }
@@ -98,39 +96,30 @@ public class PvPEventHandler
     public void onLivingUpdate (LivingUpdateEvent event)
     {
         EntityPlayerMP player;
+        long time = getTime ();
 
         if (event.entityLiving instanceof EntityPlayerMP)
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        // The time at which the player's PvP status will be toggled.
-        // 0 if the player is not currently in warmup.
-        long PvPWarmup = player.getEntityData ().getLong ("PvPWarmup");
+        long toggleTime = player.getEntityData ().getLong ("PvPWarmup");
 
-        if (PvPWarmup != 0 && PvPWarmup < MinecraftServer.getSystemTimeMillis ())
+        if (toggleTime != 0 && toggleTime < time)
         {
-            // Reset the toggle time to "no warmup" state.
             player.getEntityData ().setLong ("PvPWarmup", 0);
-
-            ServerConfigurationManager cfg = MinecraftServer.getServer ().getConfigurationManager ();
 
             if (!player.getEntityData ().getBoolean ("PvPEnabled"))
             {
                 player.getEntityData ().setBoolean ("PvPEnabled", true);
-
-                // Warn the whole server.
-                cfg.sendChatMsg (new ChatComponentText (EnumChatFormatting.RED
-                    + "PvP is now enabled for " + player.getDisplayName ()));
+                warnServer (player);
             }
             else
             {
                 player.getEntityData ().setBoolean ("PvPEnabled", false);
-                player.addChatComponentMessage (new ChatComponentText (
-                    EnumChatFormatting.GREEN + "PvP is now disabled for you."));
+                pvpOff (player);
             }
 
-            player.getEntityData ().setLong ("PvPCooldown",
-                MinecraftServer.getSystemTimeMillis () + PvPMode.cooldown);
+            player.getEntityData ().setLong ("PvPCooldown", time + PvPMode.cooldown);
         }
     }
 
@@ -190,6 +179,44 @@ public class PvPEventHandler
             FMLLog.info ("InvocationTargetException thrown: " + ex.getCause ().getMessage (), null);
             return null;
         }
+    }
+
+    void fly (EntityPlayerMP player)
+    {
+        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in fly mode!"));
+    }
+
+    void gm1 (EntityPlayerMP player)
+    {
+        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in creative mode!"));
+    }
+
+    void disabled (EntityPlayerMP player)
+    {
+        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "This player/unit has PvP disabled!"));
+    }
+
+    void warnServer (EntityPlayerMP player)
+    {
+        PvPMode.cfg.sendChatMsg (new ChatComponentText (
+            EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
+    }
+
+    void pvpOff (EntityPlayerMP player)
+    {
+        player.addChatComponentMessage (new ChatComponentText (
+            EnumChatFormatting.GREEN + "PvP is now disabled for you."));
+    }
+
+    void sendCooldown (EntityPlayerMP player)
+    {
+        player.addChatMessage (new ChatComponentText (
+            EnumChatFormatting.YELLOW + "You can switch PvP modes again in " + PvPMode.cooldown + " seconds."));
+    }
+
+    long getTime ()
+    {
+        return MinecraftServer.getSystemTimeMillis () / 1000;
     }
 
     public static void init ()
