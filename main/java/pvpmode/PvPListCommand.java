@@ -33,12 +33,23 @@ public class PvPListCommand extends CommandBase
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
+            if (player.getDisplayName ().equals (senderPlayer.getDisplayName ()))
+                continue;
+
             if (player.capabilities.isCreativeMode)
                 safePlayers.add (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName ());
             else if (player.capabilities.allowFlying)
                 safePlayers.add (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName ());
             else if (!player.getEntityData ().getBoolean ("PvPEnabled"))
-                safePlayers.add (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName ());
+            {
+                long warmup = PvPUtils.getTime () - player.getEntityData ().getLong ("PvPWarmup");
+
+                if (warmup == 0)
+                    safePlayers.add (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName ());
+                else
+                    unsafePlayers.add (EnumChatFormatting.YELLOW + "[WARMUP] " + player.getDisplayName ()
+                        + " - " + warmup + " seconds till PvP");
+            }
             else
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();

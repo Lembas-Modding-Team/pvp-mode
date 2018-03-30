@@ -1,5 +1,11 @@
 CHANGELOG:
 
+1.7.0-BETA
+
+Minor tweaks as suggested by MilkMC and AlteOgre.
+The admin PvP command is now a separate command, "/pvpadmin <playername>"
+Added a new command "pvpcancel" which cancels a player's warmup time.
+
 1.6.0-BETA
 
 The cooldown and warmup are now configurable in a configuration file.

@@ -3,7 +3,6 @@ package pvpmode;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -19,54 +18,33 @@ public class PvPCommand extends CommandBase
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvp [player]";
+        return "/pvp";
     }
 
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        EntityPlayerMP target;
-        long time = getTime ();
-        long toggleTime;
-
-        if (args.length == 0)
-        {
-            target = getCommandSenderAsPlayer (sender);
-
-            long cooldownTime = target.getEntityData ().getLong ("PvPCooldown");
-
-            if (cooldownTime > time)
-            {
-                long wait = cooldownTime - time;
-                waitCooldown (sender, wait);
-                return;
-            }
-            toggleTime = time + PvPMode.warmup;
-        }
-        else if (args.length == 1)
-        {
-            if (isOpped (sender))
-            {
-                target = getPlayer (args[0]);
-                toggleTime = time;
-            }
-            else
-            {
-                badPermission (sender);
-                return;
-            }
-        }
-        else
+        if (args.length > 0)
         {
             help (sender);
             return;
         }
 
-        target.getEntityData ().setLong ("PvPWarmup", toggleTime);
-        target.getEntityData ().setLong ("PvPCooldown", 0);
+        EntityPlayerMP player = getCommandSenderAsPlayer (sender);
+        long time = PvPUtils.getTime ();
+        long toggleTime = time + PvPMode.warmup;
+        long cooldownTime = player.getEntityData ().getLong ("PvPCooldown");
 
-        if (toggleTime > 0)
-            wait (sender);
+        if (cooldownTime > time)
+        {
+            long wait = cooldownTime - time;
+            waitCooldown (sender, wait);
+            return;
+        }
+
+        player.getEntityData ().setLong ("PvPWarmup", toggleTime);
+        player.getEntityData ().setLong ("PvPCooldown", 0);
+        waitWarmup (sender);
     }
 
     @Override
@@ -75,48 +53,20 @@ public class PvPCommand extends CommandBase
         return true;
     }
 
-    @Override
-    public boolean isUsernameIndex (String[] args, int index)
-    {
-        return index == 0;
-    }
-
-    long getTime ()
-    {
-        return MinecraftServer.getSystemTimeMillis () / 1000;
-    }
-
-    boolean isOpped (ICommandSender sender)
-    {
-        return PvPMode.cfg.func_152596_g (getCommandSenderAsPlayer (sender).getGameProfile ());
-    }
-
-    EntityPlayerMP getPlayer (String name)
-    {
-        return PvPMode.cfg.func_152612_a (name);
-    }
-
-    void badPermission (ICommandSender sender)
-    {
-        sender.addChatMessage (new ChatComponentText (EnumChatFormatting.RED
-            + "You do not have permission to toggle another player's PvP mode!"));
-    }
-
     void help (ICommandSender sender)
     {
-        sender.addChatMessage (new ChatComponentText (EnumChatFormatting.RED
-            + "/pvp [player]"));
+        sender.addChatMessage (new ChatComponentText ("/pvp"));
     }
 
-    void wait (ICommandSender sender)
+    void waitWarmup (ICommandSender sender)
     {
         sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW
-            + "Wait " + PvPMode.warmup + " seconds..."));
+            + "Please wait " + PvPMode.warmup + " seconds for your status to change..."));
     }
 
     void waitCooldown (ICommandSender sender, long wait)
     {
         sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW +
-            "Please wait " + wait + " seconds..."));
+            "Please wait " + wait + " seconds before issuing this command."));
     }
 }
