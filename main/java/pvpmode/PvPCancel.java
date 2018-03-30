@@ -37,7 +37,7 @@ public class PvPCancel extends CommandBase
         else
         {
             player.getEntityData ().setLong ("PvPWarmup", 0);
-
+            canceled (player);
         }
     }
 
