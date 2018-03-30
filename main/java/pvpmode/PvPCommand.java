@@ -44,7 +44,7 @@ public class PvPCommand extends CommandBase
 
         player.getEntityData ().setLong ("PvPWarmup", toggleTime);
         player.getEntityData ().setLong ("PvPCooldown", 0);
-        waitWarmup (sender);
+        waitWarmup (player);
     }
 
     @Override
@@ -58,10 +58,12 @@ public class PvPCommand extends CommandBase
         sender.addChatMessage (new ChatComponentText ("/pvp"));
     }
 
-    void waitWarmup (ICommandSender sender)
+    void waitWarmup (EntityPlayerMP sender)
     {
+        String status = sender.getEntityData ().getBoolean ("PvPEnabled") ? "disabled" : "enabled";
+
         sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW
-            + "Please wait " + PvPMode.warmup + " seconds for your status to change..."));
+            + "PvP will be " + status + " in " + PvPMode.warmup + " seconds..."));
     }
 
     void waitCooldown (ICommandSender sender, long wait)

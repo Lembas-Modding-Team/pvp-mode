@@ -33,9 +33,6 @@ public class PvPListCommand extends CommandBase
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
 
-            if (player.getDisplayName ().equals (senderPlayer.getDisplayName ()))
-                continue;
-
             if (player.capabilities.isCreativeMode)
                 safePlayers.add (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName ());
             else if (player.capabilities.allowFlying)
@@ -54,7 +51,8 @@ public class PvPListCommand extends CommandBase
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
-                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled") && PvPMode.radar)
+                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled") && PvPMode.radar
+                    && senderPlayer != player)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 
                 unsafePlayers.add (message);
