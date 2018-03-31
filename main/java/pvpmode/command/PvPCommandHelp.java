@@ -1,10 +1,11 @@
-package pvpmode;
+package pvpmode.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import pvpmode.PvPMode;
 
-public class PvPHelp extends CommandBase
+public class PvPCommandHelp extends CommandBase
 {
     @Override
     public String getCommandName ()

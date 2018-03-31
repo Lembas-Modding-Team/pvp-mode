@@ -1,4 +1,4 @@
-package pvpmode;
+package pvpmode.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
-public class PvPCancel extends CommandBase
+public class PvPCommandCancel extends CommandBase
 {
     @Override
     public String getCommandName ()

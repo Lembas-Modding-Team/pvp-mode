@@ -34,6 +34,7 @@ public class PvPEventHandler
             player.getEntityData ().setBoolean ("PvPEnabled", false);
             player.getEntityData ().setLong ("PvPWarmup", 0);
             player.getEntityData ().setLong ("PvPCooldown", 0);
+            player.getEntityData ().setLong ("PvPTag", 0);
         }
     }
 
@@ -86,6 +87,17 @@ public class PvPEventHandler
         {
             event.setCanceled (true);
             return;
+        }
+
+        long time = PvPUtils.getTime ();
+
+        if (attacker.getEntityData ().getLong ("PvPTag") + 60 < time
+            || victim.getEntityData ().getLong ("PvPTag") + 60 < time)
+        {
+            PvPMode.log.info ("PvP event initiated by " + attacker.getDisplayName ()
+                + " against " + victim.getDisplayName ());
+            attacker.getEntityData ().setLong ("PvPTag", time);
+            victim.getEntityData ().setLong ("PvPTag", time);
         }
     }
 

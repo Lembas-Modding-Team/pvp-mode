@@ -1,4 +1,4 @@
-package pvpmode;
+package pvpmode.command;
 
 import java.util.ArrayList;
 
@@ -7,8 +7,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import pvpmode.PvPMode;
+import pvpmode.PvPUtils;
 
-public class PvPListCommand extends CommandBase
+public class PvPCommandList extends CommandBase
 {
     @Override
     public String getCommandName ()
