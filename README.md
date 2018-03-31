@@ -26,6 +26,9 @@ The mod adds another command, "pvplist". "pvplist" displays a list of all player
 command sender. The status can be one of the following: "ON", "OFF", "GM1", or "FLY". Only players with "ON" are capable of combat.
 Distances are approximated to the nearest x blocks where x is a number determined in the configuration file (default is 64).
 
+For in-game information, use "pvphelp". This command provides information on all the commands added by the mod, and the values
+of the cooldown and warmup time, as well as whether distance radar is enabled.
+
 The configuration file has a few useful options for timers and miscellaneous items.
 
 This mod was developed especially for use on servers running the Lord of the Rings mod by Mevans. Users will note that hired units cannot fight each other unless both their commanding players have PvP enabled. Also, tamed wolves will not attack players or each other unless both masters have PvP enabled.

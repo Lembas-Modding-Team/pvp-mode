@@ -1,5 +1,10 @@
 CHANGELOG:
 
+1.8.0-BETA
+
+Added a new command "pvphelp" which displays usage of all commands and also values of configuration options.
+Player radar now rounds up rather than down.
+
 1.7.0-BETA
 
 Minor tweaks as suggested by MilkMC and AlteOgre.

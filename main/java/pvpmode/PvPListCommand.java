@@ -78,6 +78,6 @@ public class PvPListCommand extends CommandBase
 
         double distance = Math.sqrt (x * x + z * z);
 
-        return (int) (distance) / PvPMode.roundFactor * PvPMode.roundFactor;
+        return (int) ( (distance) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
     }
 }

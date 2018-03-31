@@ -9,7 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
 
-@Mod(modid = "pvp-mode", version = "1.7.0", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", version = "1.8.0", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
@@ -34,6 +34,7 @@ public class PvPMode
         event.registerServerCommand (new PvPListCommand ());
         event.registerServerCommand (new PvPCommandAdmin ());
         event.registerServerCommand (new PvPCancel ());
+        event.registerServerCommand (new PvPHelp ());
     }
 
     @EventHandler
