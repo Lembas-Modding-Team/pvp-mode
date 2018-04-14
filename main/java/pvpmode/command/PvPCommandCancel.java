@@ -3,8 +3,10 @@ package pvpmode.command;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import pvpmode.PvPUtils;
 
 public class PvPCommandCancel extends CommandBase
 {
@@ -30,13 +32,14 @@ public class PvPCommandCancel extends CommandBase
         }
 
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        long warmup = player.getEntityData ().getLong ("PvPWarmup");
+        NBTTagCompound data = PvPUtils.getPvPData (player);
+        long warmup = data.getLong ("PvPWarmup");
 
         if (warmup == 0)
             noWarmup (sender);
         else
         {
-            player.getEntityData ().setLong ("PvPWarmup", 0);
+            data.setLong ("PvPWarmup", 0);
             canceled (player);
         }
     }

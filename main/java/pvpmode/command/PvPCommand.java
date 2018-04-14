@@ -3,6 +3,7 @@ package pvpmode.command;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPMode;
@@ -33,9 +34,10 @@ public class PvPCommand extends CommandBase
         }
 
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
+        NBTTagCompound data = PvPUtils.getPvPData (player);
         long time = PvPUtils.getTime ();
         long toggleTime = time + PvPMode.warmup;
-        long cooldownTime = player.getEntityData ().getLong ("PvPCooldown");
+        long cooldownTime = data.getLong ("PvPCooldown");
 
         if (cooldownTime > time)
         {
@@ -44,8 +46,8 @@ public class PvPCommand extends CommandBase
             return;
         }
 
-        player.getEntityData ().setLong ("PvPWarmup", toggleTime);
-        player.getEntityData ().setLong ("PvPCooldown", 0);
+        data.setLong ("PvPWarmup", toggleTime);
+        data.setLong ("PvPCooldown", 0);
         waitWarmup (player);
     }
 
@@ -62,7 +64,7 @@ public class PvPCommand extends CommandBase
 
     void waitWarmup (EntityPlayerMP sender)
     {
-        String status = sender.getEntityData ().getBoolean ("PvPEnabled") ? "disabled" : "enabled";
+        String status = PvPUtils.getPvPData (sender).getBoolean ("PvPEnabled") ? "disabled" : "enabled";
 
         sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW
             + "PvP will be " + status + " in " + PvPMode.warmup + " seconds..."));

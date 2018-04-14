@@ -6,10 +6,10 @@ import java.lang.reflect.Method;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -22,23 +22,6 @@ public class PvPEventHandler
     public static PvPEventHandler INSTANCE;
 
     /**
-     * Adds a PvPEnabled tag to a new player.
-     */
-    @SubscribeEvent
-    public void onNewPlayer (PlayerLoggedInEvent event)
-    {
-        EntityPlayerMP player = (EntityPlayerMP) event.player;
-
-        if (!player.getEntityData ().hasKey ("PvPEnabled"))
-        {
-            player.getEntityData ().setBoolean ("PvPEnabled", false);
-            player.getEntityData ().setLong ("PvPWarmup", 0);
-            player.getEntityData ().setLong ("PvPCooldown", 0);
-            player.getEntityData ().setLong ("PvPTag", 0);
-        }
-    }
-
-    /**
      * Cancels combat events associated with PvP-disabled players.
      */
     @SubscribeEvent
@@ -49,6 +32,9 @@ public class PvPEventHandler
 
         if (attacker == null || victim == null)
             return;
+
+        NBTTagCompound attackerData = PvPUtils.getPvPData (attacker);
+        NBTTagCompound victimData = PvPUtils.getPvPData (victim);
 
         if (attacker.capabilities.allowFlying)
         {
@@ -74,7 +60,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!victim.getEntityData ().getBoolean ("PvPEnabled"))
+        if (!victimData.getBoolean ("PvPEnabled"))
         {
             if (attacker == event.source.getEntity ())
                 disabled (attacker);
@@ -83,7 +69,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!attacker.getEntityData ().getBoolean ("PvPEnabled"))
+        if (!attackerData.getBoolean ("PvPEnabled"))
         {
             event.setCanceled (true);
             return;
@@ -91,14 +77,13 @@ public class PvPEventHandler
 
         long time = PvPUtils.getTime ();
 
-        if (attacker.getEntityData ().getLong ("PvPTag") + 60 < time
-            || victim.getEntityData ().getLong ("PvPTag") + 60 < time)
-        {
-            PvPMode.log.info ("PvP event initiated by " + attacker.getDisplayName ()
-                + " against " + victim.getDisplayName ());
-            attacker.getEntityData ().setLong ("PvPTag", time);
-            victim.getEntityData ().setLong ("PvPTag", time);
-        }
+        /*
+         * if (attackerData.getLong ("PvPTag") + 60 < time || victimData.getLong
+         * ("PvPTag") + 60 < time) { PvPMode.log.info ("PvP event initiated by "
+         * + attacker.getDisplayName () + " against " + victim.getDisplayName
+         * ()); attackerData.setLong ("PvPTag", time); victimData.setLong
+         * ("PvPTag", time); }
+         */
     }
 
     /**
@@ -114,24 +99,26 @@ public class PvPEventHandler
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        long toggleTime = player.getEntityData ().getLong ("PvPWarmup");
+        NBTTagCompound data = PvPUtils.getPvPData (player);
+
+        long toggleTime = data.getLong ("PvPWarmup");
 
         if (toggleTime != 0 && toggleTime < time)
         {
-            player.getEntityData ().setLong ("PvPWarmup", 0);
+            data.setLong ("PvPWarmup", 0);
 
-            if (!player.getEntityData ().getBoolean ("PvPEnabled"))
+            if (!data.getBoolean ("PvPEnabled"))
             {
-                player.getEntityData ().setBoolean ("PvPEnabled", true);
+                data.setBoolean ("PvPEnabled", true);
                 warnServer (player);
             }
             else
             {
-                player.getEntityData ().setBoolean ("PvPEnabled", false);
+                data.setBoolean ("PvPEnabled", false);
                 pvpOff (player);
             }
 
-            player.getEntityData ().setLong ("PvPCooldown", time + PvPMode.cooldown);
+            data.setLong ("PvPCooldown", time + PvPMode.cooldown);
         }
     }
 

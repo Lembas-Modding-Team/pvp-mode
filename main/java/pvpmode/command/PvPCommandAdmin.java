@@ -39,7 +39,7 @@ public class PvPCommandAdmin extends CommandBase
          * secrecy.
          */
         warnPlayer (player);
-        player.getEntityData ().setLong ("PvPWarmup", PvPUtils.getTime ());
+        PvPUtils.getPvPData (player).setLong ("PvPWarmup", PvPUtils.getTime ());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PvPCommandAdmin extends CommandBase
     @Override
     public boolean isUsernameIndex (String[] args, int index)
     {
-        return index == 0;
+        return index == 1;
     }
 
     void help (ICommandSender sender)
