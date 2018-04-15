@@ -29,7 +29,10 @@ public class PvPUtils
      */
     public static boolean isOpped (ICommandSender sender)
     {
-        return PvPMode.cfg.func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
+        if (sender instanceof EntityPlayerMP)
+            return PvPMode.cfg.func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
+
+        return true;
     }
 
     /**
