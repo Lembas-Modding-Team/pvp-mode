@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 
 public class PvPUtils
 {
@@ -74,5 +76,44 @@ public class PvPUtils
             pvpData.setLong ("PvPTag", 0);
 
         return pvpData;
+    }
+
+    /**
+     * Displays the specified message to the recipient in yellow.
+     */
+    public static void yellow (ICommandSender recipient, String message)
+    {
+        message = EnumChatFormatting.YELLOW + message;
+        ChatComponentText text = new ChatComponentText (message);
+        recipient.addChatMessage (text);
+    }
+
+    /**
+     * Displays the specified message to the recipient in red.
+     */
+    public static void red (ICommandSender recipient, String message)
+    {
+        message = EnumChatFormatting.RED + message;
+        ChatComponentText text = new ChatComponentText (message);
+        recipient.addChatMessage (text);
+    }
+
+    /**
+     * Displays the specified message to the recipient in green.
+     */
+    public static void green (ICommandSender recipient, String message)
+    {
+        message = EnumChatFormatting.GREEN + message;
+        ChatComponentText text = new ChatComponentText (message);
+        recipient.addChatMessage (text);
+    }
+
+    /**
+     * Displays the specified message to the recipient in white.
+     */
+    public static void white (ICommandSender recipient, String message)
+    {
+        ChatComponentText text = new ChatComponentText (message);
+        recipient.addChatMessage (text);
     }
 }

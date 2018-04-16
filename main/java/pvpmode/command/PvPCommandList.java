@@ -26,6 +26,12 @@ public class PvPCommandList extends CommandBase
     }
 
     @Override
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
+    {
+        return true;
+    }
+
+    @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
@@ -67,12 +73,6 @@ public class PvPCommandList extends CommandBase
             sender.addChatMessage (new ChatComponentText (line));
         for (String line : safePlayers)
             sender.addChatMessage (new ChatComponentText (line));
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
     }
 
     int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)

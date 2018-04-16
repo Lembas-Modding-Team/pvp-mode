@@ -77,13 +77,9 @@ public class PvPEventHandler
 
         long time = PvPUtils.getTime ();
 
-        /*
-         * if (attackerData.getLong ("PvPTag") + 60 < time || victimData.getLong
-         * ("PvPTag") + 60 < time) { PvPMode.log.info ("PvP event initiated by "
-         * + attacker.getDisplayName () + " against " + victim.getDisplayName
-         * ()); attackerData.setLong ("PvPTag", time); victimData.setLong
-         * ("PvPTag", time); }
-         */
+        PvPCombatLog.log (attacker.getDisplayName ()
+            + " or a unit initiated an attack against "
+            + victim.getDisplayName ());
     }
 
     /**

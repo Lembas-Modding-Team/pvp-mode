@@ -1,8 +1,11 @@
 package pvpmode.command;
 
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPUtils;
@@ -19,6 +22,12 @@ public class PvPCommandAdmin extends CommandBase
     public String getCommandUsage (ICommandSender sender)
     {
         return "/pvpadmin <player>";
+    }
+
+    @Override
+    public int getRequiredPermissionLevel ()
+    {
+        return 2;
     }
 
     @Override
@@ -46,15 +55,17 @@ public class PvPCommandAdmin extends CommandBase
     }
 
     @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return PvPUtils.isOpped (sender);
-    }
-
-    @Override
     public boolean isUsernameIndex (String[] args, int index)
     {
-        return index == 1;
+        return index == 0;
+    }
+
+    public List addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
+
+        return null;
     }
 
     void help (ICommandSender sender)

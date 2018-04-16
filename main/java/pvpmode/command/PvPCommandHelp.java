@@ -20,6 +20,12 @@ public class PvPCommandHelp extends CommandBase
     }
 
     @Override
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
+    {
+        return true;
+    }
+
+    @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
         sender.addChatMessage (new ChatComponentText (
@@ -34,11 +40,5 @@ public class PvPCommandHelp extends CommandBase
         sender.addChatMessage (new ChatComponentText ("Default cooldown: "
             + PvPMode.cooldown + "s, default warmup: " + PvPMode.warmup
             + "s, pvplist distances enabled: " + PvPMode.radar));
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
     }
 }

@@ -4,14 +4,11 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPMode;
 import pvpmode.PvPUtils;
 
 public class PvPCommand extends CommandBase
 {
-
     @Override
     public String getCommandName ()
     {
@@ -25,54 +22,36 @@ public class PvPCommand extends CommandBase
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
-    {
-        if (args.length > 0)
-        {
-            help (sender);
-            return;
-        }
-
-        EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        NBTTagCompound data = PvPUtils.getPvPData (player);
-        long time = PvPUtils.getTime ();
-        long toggleTime = time + PvPMode.warmup;
-        long cooldownTime = data.getLong ("PvPCooldown");
-
-        if (cooldownTime > time)
-        {
-            long wait = cooldownTime - time;
-            waitCooldown (sender, wait);
-            return;
-        }
-
-        data.setLong ("PvPWarmup", toggleTime);
-        data.setLong ("PvPCooldown", 0);
-        waitWarmup (player);
-    }
-
-    @Override
     public boolean canCommandSenderUseCommand (ICommandSender sender)
     {
         return true;
     }
 
-    void help (ICommandSender sender)
+    @Override
+    public void processCommand (ICommandSender sender, String[] args)
     {
-        sender.addChatMessage (new ChatComponentText ("/pvp"));
-    }
+        EntityPlayerMP player = getCommandSenderAsPlayer (sender);
+        NBTTagCompound data = PvPUtils.getPvPData (player);
 
-    void waitWarmup (EntityPlayerMP sender)
-    {
-        String status = PvPUtils.getPvPData (sender).getBoolean ("PvPEnabled") ? "disabled" : "enabled";
+        long time = PvPUtils.getTime ();
+        long toggleTime = time + PvPMode.warmup;
+        long cooldownTime = data.getLong ("PvPCooldown");
 
-        sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW
-            + "PvP will be " + status + " in " + PvPMode.warmup + " seconds..."));
-    }
+        String message;
 
-    void waitCooldown (ICommandSender sender, long wait)
-    {
-        sender.addChatMessage (new ChatComponentText (EnumChatFormatting.YELLOW +
-            "Please wait " + wait + " seconds before issuing this command."));
+        if (cooldownTime > time)
+        {
+            long wait = cooldownTime - time;
+            message = "Please wait " + wait + " seconds before issuing this command.";
+            PvPUtils.yellow (sender, message);
+            return;
+        }
+
+        data.setLong ("PvPWarmup", toggleTime);
+        data.setLong ("PvPCooldown", 0);
+
+        String status = data.getBoolean ("PvPEnabled") ? "disabled" : "enabled";
+        message = "PvP will be " + status + " in " + PvPMode.warmup + " seconds...";
+        PvPUtils.yellow (sender, message);
     }
 }

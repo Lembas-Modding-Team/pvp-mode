@@ -1,12 +1,13 @@
 package pvpmode;
 
-import org.apache.logging.log4j.Logger;
+import java.io.IOException;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
@@ -20,7 +21,6 @@ import pvpmode.command.PvPCommandList;
 public class PvPMode
 {
     public static Configuration config;
-    public static Logger log;
     public static ServerConfigurationManager cfg;
 
     public static int roundFactor;
@@ -29,7 +29,7 @@ public class PvPMode
     public static boolean radar;
 
     @EventHandler
-    public void preinit (FMLPreInitializationEvent event)
+    public void preinit (FMLPreInitializationEvent event) throws IOException
     {
         config = new Configuration (event.getSuggestedConfigurationFile ());
 
@@ -41,7 +41,7 @@ public class PvPMode
         if (config.hasChanged ())
             config.save ();
 
-        log = event.getModLog ();
+        PvPCombatLog.init (event);
     }
 
     @EventHandler
@@ -59,5 +59,11 @@ public class PvPMode
         event.registerServerCommand (new PvPCommandAdmin ());
         event.registerServerCommand (new PvPCommandCancel ());
         event.registerServerCommand (new PvPCommandHelp ());
+    }
+
+    @EventHandler
+    public void serverClose (FMLServerStoppingEvent event)
+    {
+        PvPCombatLog.close ();
     }
 }
