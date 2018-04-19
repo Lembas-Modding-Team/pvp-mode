@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -78,7 +78,7 @@ public class PvPEventHandler
         long time = PvPUtils.getTime ();
 
         PvPCombatLog.log (attacker.getDisplayName ()
-            + " or a unit initiated an attack against "
+            + " or an unit initiated an attack against "
             + victim.getDisplayName ());
     }
 
@@ -129,8 +129,8 @@ public class PvPEventHandler
         if (entity instanceof EntityPlayerMP)
             return (EntityPlayerMP) entity;
 
-        if (entity instanceof EntityWolf)
-            return (EntityPlayerMP) ((EntityWolf) entity).getOwner ();
+        if (entity instanceof IEntityOwnable)
+            return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
         // LOTR patch begins.
 
@@ -138,33 +138,38 @@ public class PvPEventHandler
 
         try
         {
-            // Only Dumbledore and I are capable of this kind of magic.
-            // And even then it requires a silken hand and a subtle touch.
-            Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-            Class hiredClass = hiredUnitInfo.getType ();
-            Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer", new Class[] {});
+            if (Class.forName("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom(entityClass))
+            {
+                // Only Dumbledore, Mahtaran and I are capable of this kind of magic.
+                // And even then it requires a silken hand and a subtle touch.
+                Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
+                Class hiredClass = hiredUnitInfo.getType ();
+                Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer");
 
-            Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity), new Object[] {});
+                Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity));
 
-            if (o instanceof EntityPlayerMP)
-                return (EntityPlayerMP) o;
-
-            return null;
+                if (o instanceof EntityPlayerMP)
+                    return (EntityPlayerMP) o;
+            }
+            else
+            {
+                // This entity is not a LOTR unit.
+                return null;
+            }
         }
-        catch (NoSuchFieldException ex)
+        catch( ClassNotFoundException e )
         {
-            // This entity is not a LOTR unit.
+            // Not using the LOTR mod ;{
             return null;
         }
-        catch (NoSuchMethodException ex)
+        catch (NoSuchFieldException | NoSuchMethodException ex)
         {
             // Something changed with the LOTR mod.
             return null;
         }
         catch (IllegalAccessException ex)
         {
-            // Hopefully impossible since I am only accessing public
-            // fields/methods.
+            // Hopefully impossible since I am only accessing public fields/methods.
             FMLLog.info ("Security exception in PvPEventHandler at " + entityClass, null);
             return null;
         }
