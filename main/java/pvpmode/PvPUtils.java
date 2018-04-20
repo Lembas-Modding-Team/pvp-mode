@@ -15,7 +15,10 @@ public class PvPUtils
     /**
      * Returns whether or not the LOTRMod is loaded
      */
-    
+    public static boolean isLOTRModLoaded() {
+        if (lotrmodLoaded == null) lotrmodLoaded = Loader.isModLoaded("lotr");
+        return lotrmodLoaded.booleanValue();
+    } 
     /**
      * Returns the system time in seconds.
      */
