@@ -10,6 +10,12 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class PvPUtils
 {
+    private static Boolean lotrmodLoaded;
+    
+    /**
+     * Returns whether or not the LOTRMod is loaded
+     */
+    
     /**
      * Returns the system time in seconds.
      */
