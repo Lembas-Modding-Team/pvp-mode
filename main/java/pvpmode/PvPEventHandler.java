@@ -151,19 +151,21 @@ public class PvPEventHandler
 					// This entity is not a LOTR unit.
 					return null;
 				}
-			} catch (ClassNotFoundException e) {
-				// Not using the LOTR mod ;{
+			} catch (ClassNotFoundException ex) {
+				// This shouldn't be able to happen
+				new Exception("Something really weird happened, it looks like the internal code of the LOTRMod changed", ex).printStackTrace();
 				return null;
 			} catch (NoSuchFieldException | NoSuchMethodException ex) {
 				// Something changed with the LOTR mod.
+				new Exception("Something really weird happened, it looks like the internal code of the LOTRMod changed", ex).printStackTrace();
 				return null;
 			} catch (IllegalAccessException ex) {
 				// Hopefully impossible since I am only accessing public fields/methods.
-				FMLLog.info ("Security exception in PvPEventHandler at " + entityClass, null);
+				new Exception("Security exception in PvPEventHandler at " + entityClass, ex).printStackTrace();
 				return null;
 			} catch (InvocationTargetException ex) {
 				// No idea why this would occur.
-				FMLLog.info ("InvocationTargetException thrown: " + ex.getCause ().getMessage (), null);
+				new Exception("Something really weird happened", ex).printStackTrace();
 				return null;
 			}
 		}
