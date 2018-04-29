@@ -19,6 +19,7 @@ public class PvPUtils
         if (lotrmodLoaded == null) lotrmodLoaded = Loader.isModLoaded("lotr");
         return lotrmodLoaded.booleanValue();
     } 
+    
     /**
      * Returns the system time in seconds.
      */
