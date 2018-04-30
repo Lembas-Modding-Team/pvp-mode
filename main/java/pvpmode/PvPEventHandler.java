@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityOwnable;
@@ -19,6 +20,12 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 public class PvPEventHandler
 {
     public static PvPEventHandler INSTANCE;
+    
+   /**
+    *  True if data from hired units of the LOTR Mod couldn't be accessed.
+    *  This prevents PvpMode trying to access them again and again if it failed before.
+    */
+    private boolean lotrPatchFailed = false;
 
     /**
      * Cancels combat events associated with PvP-disabled players.
@@ -131,7 +138,7 @@ public class PvPEventHandler
         if (entity instanceof IEntityOwnable)
             return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
-        if (PvPUtils.isLOTRModLoaded ())
+        if (PvPUtils.isLOTRModLoaded () && !lotrPatchFailed)
         {
             // LOTR patch begins.
 
@@ -140,7 +147,7 @@ public class PvPEventHandler
             {
                 if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
                 {
-                    // Only Dumbledore, Mahtaran and I are capable of this kind
+                    // Only Gandalf, Dumbledore, Mahtaran and I are capable of this kind
                     // of magic.
                     // And even then it requires a silken hand and a subtle
                     // touch.
@@ -162,38 +169,37 @@ public class PvPEventHandler
             catch (ClassNotFoundException ex)
             {
                 // This shouldn't be able to happen
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
+                FMLLog.getLogger().error("Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed", ex);
+                lotrPatchFailed = true;
                 return null;
             }
             catch (NoSuchFieldException ex)
             {
                 // Something changed with the LOTR mod.
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
-                return null;
+               FMLLog.getLogger().error("Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed", ex);
+               lotrPatchFailed = true;
+               return null;
             }
             catch (NoSuchMethodException ex)
             {
                 // Something changed with the LOTR mod.
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
-                return null;
+               FMLLog.getLogger().error("Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed", ex);
+               lotrPatchFailed = true;
+               return null;
             }
             catch (IllegalAccessException ex)
             {
                 // Hopefully impossible since I am only accessing public
                 // fields/methods.
-                new Exception ("Security exception in PvPEventHandler at " + entityClass, ex).printStackTrace ();
+                FMLLog.getLogger().error("Security exception in PvPEventHandler at " + entityClass, ex);
+                lotrPatchFailed = true;
                 return null;
             }
             catch (InvocationTargetException ex)
             {
-                // No idea why this would occur.
-                new Exception ("Something really weird happened", ex).printStackTrace ();
+                // If the invoked method threw an exception it'll be wrapped in an InvocationTargetException
+                FMLLog.getLogger().error("A function of the LOTR Mod trew an exception", ex);
+                lotrPatchFailed = true;
                 return null;
             }
         }
