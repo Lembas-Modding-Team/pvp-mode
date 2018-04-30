@@ -140,7 +140,7 @@ public class PvPEventHandler
             {
                 if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
                 {
-                    // Only Dumbledore, Mahtaran and I are capable of this kind
+                    // Only Gandalf, Dumbledore, Mahtaran and I are capable of this kind
                     // of magic.
                     // And even then it requires a silken hand and a subtle
                     // touch.
@@ -162,38 +162,32 @@ public class PvPEventHandler
             catch (ClassNotFoundException ex)
             {
                 // This shouldn't be able to happen
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
+                FMLLog.getLogger().error("Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed", ex);
                 return null;
             }
             catch (NoSuchFieldException ex)
             {
                 // Something changed with the LOTR mod.
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
+               FMLLog.getLogger().error("Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed", ex);
                 return null;
             }
             catch (NoSuchMethodException ex)
             {
                 // Something changed with the LOTR mod.
-                new Exception (
-                    "Something really weird happened, it looks like the internal code of the LOTRMod changed", ex)
-                        .printStackTrace ();
+               FMLLog.getLogger().error("Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed", ex);
                 return null;
             }
             catch (IllegalAccessException ex)
             {
                 // Hopefully impossible since I am only accessing public
                 // fields/methods.
-                new Exception ("Security exception in PvPEventHandler at " + entityClass, ex).printStackTrace ();
+                FMLLog.getLogger().error("Security exception in PvPEventHandler at " + entityClass, ex);
                 return null;
             }
             catch (InvocationTargetException ex)
             {
-                // No idea why this would occur.
-                new Exception ("Something really weird happened", ex).printStackTrace ();
+                // If the invoked method threw an exception it'll be wrapped in an InvocationTargetException
+                 FMLLog.getLogger().error("A function of the LOTR Mod trew an exception", ex);
                 return null;
             }
         }
