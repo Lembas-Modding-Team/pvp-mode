@@ -1,5 +1,6 @@
 package pvpmode;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,15 +12,17 @@ import net.minecraft.util.EnumChatFormatting;
 public class PvPUtils
 {
     private static Boolean lotrmodLoaded;
-    
+
     /**
      * Returns whether or not the LOTRMod is loaded
      */
-    public static boolean isLOTRModLoaded() {
-        if (lotrmodLoaded == null) lotrmodLoaded = Loader.isModLoaded("lotr");
-        return lotrmodLoaded.booleanValue();
-    } 
-    
+    public static boolean isLOTRModLoaded ()
+    {
+        if (lotrmodLoaded == null)
+            lotrmodLoaded = Loader.isModLoaded ("lotr");
+        return lotrmodLoaded.booleanValue ();
+    }
+
     /**
      * Returns the system time in seconds.
      */
