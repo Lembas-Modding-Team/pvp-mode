@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -83,7 +84,7 @@ public class PvPEventHandler
     }
 
     /**
-     * Handles PvP warmup timers.
+     * Handles PvP warmup timers and teleportation.
      */
     @SubscribeEvent
     public void onLivingUpdate (LivingUpdateEvent event)
@@ -116,6 +117,16 @@ public class PvPEventHandler
 
             data.setLong ("PvPCooldown", time + PvPMode.cooldown);
         }
+
+        if (!PvPMode.cancelTeleportation) return;
+
+        Vec3 oldPosition = Vec3.createVectorHelper (player.posX, player.posY, player.posZ),
+             newPosition = Vec3.createVectorHelper (player.newPosX, player.newPosY, player.newPosZ);
+        double distanceTravelled = oldPosition.distanceTo (newPosition);
+        int roundedDistance = (int) ( (oldPosition) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
+
+        // They moved too fast/teleported
+        if (roundedDistance > PvPMode.teleportationThreshold) event.setCanceled (true);
     }
 
     /**
