@@ -29,7 +29,7 @@ public class PvPMode
     public static boolean radar;
 
     @EventHandler
-    public void preinit (FMLPreInitializationEvent event) throws IOException
+    public void preinit(FMLPreInitializationEvent event) throws IOException
     {
         config = new Configuration (event.getSuggestedConfigurationFile ());
 
@@ -45,13 +45,13 @@ public class PvPMode
     }
 
     @EventHandler
-    public void init (FMLInitializationEvent event)
+    public void init(FMLInitializationEvent event)
     {
         PvPEventHandler.init ();
     }
 
     @EventHandler
-    public void serverLoad (FMLServerStartingEvent event)
+    public void serverLoad(FMLServerStartingEvent event)
     {
         cfg = MinecraftServer.getServer ().getConfigurationManager ();
         event.registerServerCommand (new PvPCommand ());
@@ -62,7 +62,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void serverClose (FMLServerStoppingEvent event)
+    public void serverClose(FMLServerStoppingEvent event)
     {
         PvPCombatLog.close ();
     }
