@@ -94,39 +94,41 @@ public class PvPUtils
     /**
      * Displays the specified message to the recipient in yellow.
      */
-    public static void yellow(ICommandSender recipient, String message)
+    public static void yellow(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.YELLOW + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.YELLOW, messages);
     }
 
     /**
      * Displays the specified message to the recipient in red.
      */
-    public static void red(ICommandSender recipient, String message)
+    public static void red(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.RED + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.RED, messages);
     }
 
     /**
      * Displays the specified message to the recipient in green.
      */
-    public static void green(ICommandSender recipient, String message)
+    public static void green(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.GREEN + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.GREEN, messages);
     }
 
     /**
      * Displays the specified message to the recipient in white.
      */
-    public static void white(ICommandSender recipient, String message)
+    public static void white(ICommandSender recipient, String... messages)
     {
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.WHITE, messages);
+    }
+
+    public static void postChatLines(ICommandSender recipient, EnumChatFormatting formatting, String... messages)
+    {
+        for (String message : messages)
+        {
+            ChatComponentText text = new ChatComponentText (formatting + message);
+            recipient.addChatMessage (text);
+        }
     }
 }

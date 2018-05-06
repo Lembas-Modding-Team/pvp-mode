@@ -2,12 +2,9 @@ package pvpmode.command;
 
 import java.util.List;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPUtils;
 
 public class PvPCommandAdmin extends CommandBase
@@ -70,12 +67,11 @@ public class PvPCommandAdmin extends CommandBase
 
     void help(ICommandSender sender)
     {
-        sender.addChatMessage (new ChatComponentText ("/pvpadmin <player>"));
+        PvPUtils.white (sender, "/pvpadmin <player>");
     }
 
     void warnPlayer(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED
-                        + "WARNING: Your PvP status is being overridden by an admin."));
+        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
     }
 }
