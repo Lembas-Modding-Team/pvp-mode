@@ -60,7 +60,7 @@ public class PvPCommandAdmin extends CommandBase
         return index == 0;
     }
 
-    public List addTabCompletionOptions(ICommandSender sender, String[] args)
+    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());

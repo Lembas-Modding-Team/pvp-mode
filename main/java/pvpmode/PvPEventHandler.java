@@ -82,8 +82,6 @@ public class PvPEventHandler
             return;
         }
 
-        long time = PvPUtils.getTime ();
-
         PvPCombatLog.log (attacker.getDisplayName ()
                         + " or an unit initiated an attack against "
                         + victim.getDisplayName ());
@@ -143,7 +141,7 @@ public class PvPEventHandler
         {
             // LOTR patch begins.
 
-            Class entityClass = entity.getClass ();
+            Class<?> entityClass = entity.getClass ();
             try
             {
                 if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
@@ -154,7 +152,7 @@ public class PvPEventHandler
                     // And even then it requires a silken hand and a subtle
                     // touch.
                     Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-                    Class hiredClass = hiredUnitInfo.getType ();
+                    Class<?> hiredClass = hiredUnitInfo.getType ();
                     Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer");
 
                     Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity));
