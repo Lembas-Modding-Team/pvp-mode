@@ -41,8 +41,10 @@ public class PvPCommandAdmin extends CommandBase
 
         EntityPlayerMP player = PvPUtils.getPlayer (args[0]);
 
-        if (player == null)
-            throw new NullPointerException ("Player " + args[0] + " does not exist!");
+        if (player == null) {
+            PvPUtils.red (admin, String.format ("The player \"%s\" doesn't exist", args[0]));
+            return;
+        }
 
         /*
          * This warning will never be a config option. I will not tolerate
