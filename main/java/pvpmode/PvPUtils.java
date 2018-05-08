@@ -92,7 +92,7 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified message to the recipient in yellow.
+     * Displays the specified messages to the recipient in yellow.
      */
     public static void yellow(ICommandSender recipient, String... messages)
     {
@@ -100,7 +100,7 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified message to the recipient in red.
+     * Displays the specified messages to the recipient in red.
      */
     public static void red(ICommandSender recipient, String... messages)
     {
@@ -108,7 +108,7 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified message to the recipient in green.
+     * Displays the specified messages to the recipient in green.
      */
     public static void green(ICommandSender recipient, String... messages)
     {
@@ -116,13 +116,18 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified message to the recipient in white.
+     * Displays the specified messages to the recipient in white.
      */
     public static void white(ICommandSender recipient, String... messages)
     {
         postChatLines (recipient, EnumChatFormatting.WHITE, messages);
     }
 
+    /**
+     * Displays the specified messages to the recipient with the specified
+     * formatting. Each entry of the messages array will be displayed as a new
+     * line in the chat.
+     */
     public static void postChatLines(ICommandSender recipient, EnumChatFormatting formatting, String... messages)
     {
         for (String message : messages)
