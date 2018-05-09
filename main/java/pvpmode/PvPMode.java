@@ -27,6 +27,8 @@ public class PvPMode
     public static int warmup;
     public static int cooldown;
     public static boolean radar;
+    public static boolean cancelTeleportation;
+    public static int teleportationThreshold;
 
     @EventHandler
     public void preinit (FMLPreInitializationEvent event) throws IOException
@@ -37,6 +39,8 @@ public class PvPMode
         warmup = config.getInt ("Warmup (seconds)", "MAIN", 300, 0, Integer.MAX_VALUE, "");
         cooldown = config.getInt ("Cooldown (seconds)", "MAIN", 900, 0, Integer.MAX_VALUE, "");
         radar = config.getBoolean ("Radar", "MAIN", true, "");
+        cancelTeleportation = config.getBoolean ("Cancel Teleportation", "MAIN", true, "Whether or not to block teleportation");
+        teleportationThreshold = config.getInt ("Teleportation Threshold", "MAIN", 10, "The maximum amount of blocks a player can move in one update event. Might need to be increased if your server is laggy or people aren't able to move fast.");
 
         if (config.hasChanged ())
             config.save ();
