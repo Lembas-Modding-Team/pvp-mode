@@ -21,6 +21,9 @@ version = "1.0"
 group= "vulcanforge.pvp-mode-mod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "pvp-mode"
 
+srcCompat = JavaVersion.VERSION_1_8
+targetCompat = JavaVersion.VERSION_1_8
+
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "eclipse"
