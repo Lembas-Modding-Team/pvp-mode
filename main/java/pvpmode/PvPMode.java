@@ -24,6 +24,7 @@ public class PvPMode
 {
     public static Configuration config;
     public static ServerConfigurationManager cfg;
+    public static PvPCombatLogManager combatLogManager;
 
     public static int roundFactor;
     public static int warmup;
@@ -35,28 +36,36 @@ public class PvPMode
     public void preinit(FMLPreInitializationEvent event) throws IOException
     {
         config = new Configuration (event.getSuggestedConfigurationFile ());
+        combatLogManager = new PvPCombatLogManager (SimpleCombatLogHandler.CONFIG_NAME);
+
+        combatLogManager.registerCombatLogHandler (SimpleCombatLogHandler.CONFIG_NAME, new SimpleCombatLogHandler ());
+
+        String[] validPvpLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
 
         roundFactor = config.getInt ("Distance Rounding Factor", "MAIN", 64, 1, Integer.MAX_VALUE, "");
         warmup = config.getInt ("Warmup (seconds)", "MAIN", 300, 0, Integer.MAX_VALUE, "");
         cooldown = config.getInt ("Cooldown (seconds)", "MAIN", 900, 0, Integer.MAX_VALUE, "");
         radar = config.getBoolean ("Radar", "MAIN", true, "");
-        pvpLoggingHandler = config.getString ("Pvp Logging Handler", "MAIN", PvPCombatLog.getDefaultHandlerName (),
-                        "Valid values: " + Arrays.toString (PvPCombatLog.getValidHandlerNames ()),
-                        PvPCombatLog.getValidHandlerNames ()).trim ();
+        pvpLoggingHandler = config.getString ("Pvp Logging Handler", "MAIN",
+                        combatLogManager.getDefaultHandlerName (),
+                        "Valid values: " + Arrays.toString (validPvpLogHandlerNames),
+                        validPvpLogHandlerNames).trim ();
 
-        if (!PvPCombatLog.isValidHandlerName (pvpLoggingHandler))
+        if (!combatLogManager.isValidHandlerName (pvpLoggingHandler))
         {
             FMLLog.warning ("The pvp combat logging handler \"%s\" is not valid. The default one will be used.",
                             pvpLoggingHandler);
-            pvpLoggingHandler = PvPCombatLog.getDefaultHandlerName ();
-        }else if(pvpLoggingHandler.equals (PvPCombatLog.NO_HANDLER_NAME)) {
+            pvpLoggingHandler = combatLogManager.getDefaultHandlerName ();
+        }
+        else if (pvpLoggingHandler.equals (PvPCombatLogManager.NO_HANDLER_NAME))
+        {
             FMLLog.info ("Pvp combat logging is disabled");
         }
 
         if (config.hasChanged ())
             config.save ();
 
-        PvPCombatLog.init (event);
+        combatLogManager.init (event);
     }
 
     @EventHandler
@@ -79,6 +88,6 @@ public class PvPMode
     @EventHandler
     public void serverClose(FMLServerStoppingEvent event)
     {
-        PvPCombatLog.close ();
+        combatLogManager.close ();
     }
 }

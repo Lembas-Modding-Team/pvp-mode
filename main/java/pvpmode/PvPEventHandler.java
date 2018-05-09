@@ -1,22 +1,17 @@
 package pvpmode;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.IEntityOwnable;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import pvpmode.log.PvPCombatLog;
 
 public class PvPEventHandler
 {
@@ -85,7 +80,7 @@ public class PvPEventHandler
 
         long time = PvPUtils.getTime ();
 
-        PvPCombatLog.log (attacker, victim, event.ammount, event.source);
+        PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
     /**
