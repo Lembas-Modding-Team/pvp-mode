@@ -1,9 +1,8 @@
 package pvpmode.log;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.PvPMode;
@@ -49,15 +48,15 @@ public class PvPCombatLogManager
         return combatLogHandlers.keySet ().contains (name);
     }
 
-    public void init(FMLPreInitializationEvent event) throws IOException
+    public void init(File loggingDir) throws IOException
     {
-        Objects.requireNonNull (event);
+        Objects.requireNonNull (loggingDir);
 
         for (CombatLogHandler handler : combatLogHandlers.values ())
         {
             if (handler != null)
             {
-                handler.init (event);
+                handler.init (loggingDir);
             }
         }
     }

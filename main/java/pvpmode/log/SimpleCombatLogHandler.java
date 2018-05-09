@@ -4,7 +4,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
@@ -15,13 +14,11 @@ public class SimpleCombatLogHandler implements CombatLogHandler
     private PrintWriter stream;
 
     @Override
-    public void init(FMLPreInitializationEvent event)
+    public void init(File loggingDir)
     {
         try
         {
-            File mcDirectory = event.getModConfigurationDirectory ().getParentFile ();
-            File logDirectory = new File (mcDirectory, "logs");
-            File logFile = new File (logDirectory, "pvpmode.log");
+            File logFile = new File (loggingDir, "pvpmode.log");
 
             if (!logFile.exists ())
                 logFile.createNewFile ();
