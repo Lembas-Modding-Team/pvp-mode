@@ -12,7 +12,7 @@ public class PvPCombatLog
 {
     static PrintWriter stream;
 
-    public static void init (FMLPreInitializationEvent event) throws IOException
+    public static void init(FMLPreInitializationEvent event) throws IOException
     {
         File mcDirectory = event.getModConfigurationDirectory ().getParentFile ();
         File logDirectory = new File (mcDirectory, "logs");
@@ -24,14 +24,14 @@ public class PvPCombatLog
         stream = new PrintWriter (logFile);
     }
 
-    public static void log (String message)
+    public static void log(String message)
     {
         SimpleDateFormat df = new SimpleDateFormat ("HH:mm:ss: ");
         stream.println (df.format (new Date ()) + message);
         stream.flush ();
     }
 
-    public static void close ()
+    public static void close()
     {
         stream.close ();
     }

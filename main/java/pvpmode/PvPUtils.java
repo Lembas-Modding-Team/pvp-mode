@@ -16,7 +16,7 @@ public class PvPUtils
     /**
      * Returns whether or not the LOTRMod is loaded
      */
-    public static boolean isLOTRModLoaded ()
+    public static boolean isLOTRModLoaded()
     {
         if (lotrmodLoaded == null)
             lotrmodLoaded = Loader.isModLoaded ("lotr");
@@ -26,7 +26,7 @@ public class PvPUtils
     /**
      * Returns the system time in seconds.
      */
-    public static long getTime ()
+    public static long getTime()
     {
         return MinecraftServer.getSystemTimeMillis () / 1000;
     }
@@ -34,7 +34,7 @@ public class PvPUtils
     /**
      * Returns the EntityPlayerMP with the specified name.
      */
-    public static EntityPlayerMP getPlayer (String name)
+    public static EntityPlayerMP getPlayer(String name)
     {
         return PvPMode.cfg.func_152612_a (name);
     }
@@ -42,7 +42,7 @@ public class PvPUtils
     /**
      * Determines whether the command sender has admin privileges.
      */
-    public static boolean isOpped (ICommandSender sender)
+    public static boolean isOpped(ICommandSender sender)
     {
         if (sender instanceof EntityPlayerMP)
             return PvPMode.cfg.func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
@@ -54,7 +54,7 @@ public class PvPUtils
      * Returns the data tag from which all player-specific PvP properties can be
      * accessed.
      */
-    public static NBTTagCompound getPvPData (EntityPlayer player)
+    public static NBTTagCompound getPvPData(EntityPlayer player)
     {
         NBTTagCompound data = player.getEntityData ();
         NBTTagCompound persistent;
@@ -92,41 +92,48 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified message to the recipient in yellow.
+     * Displays the specified messages to the recipient in yellow.
      */
-    public static void yellow (ICommandSender recipient, String message)
+    public static void yellow(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.YELLOW + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.YELLOW, messages);
     }
 
     /**
-     * Displays the specified message to the recipient in red.
+     * Displays the specified messages to the recipient in red.
      */
-    public static void red (ICommandSender recipient, String message)
+    public static void red(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.RED + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.RED, messages);
     }
 
     /**
-     * Displays the specified message to the recipient in green.
+     * Displays the specified messages to the recipient in green.
      */
-    public static void green (ICommandSender recipient, String message)
+    public static void green(ICommandSender recipient, String... messages)
     {
-        message = EnumChatFormatting.GREEN + message;
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.GREEN, messages);
     }
 
     /**
-     * Displays the specified message to the recipient in white.
+     * Displays the specified messages to the recipient in white.
      */
-    public static void white (ICommandSender recipient, String message)
+    public static void white(ICommandSender recipient, String... messages)
     {
-        ChatComponentText text = new ChatComponentText (message);
-        recipient.addChatMessage (text);
+        postChatLines (recipient, EnumChatFormatting.WHITE, messages);
+    }
+
+    /**
+     * Displays the specified messages to the recipient with the specified
+     * formatting. Each entry of the messages array will be displayed as a new
+     * line in the chat.
+     */
+    public static void postChatLines(ICommandSender recipient, EnumChatFormatting formatting, String... messages)
+    {
+        for (String message : messages)
+        {
+            ChatComponentText text = new ChatComponentText (formatting + message);
+            recipient.addChatMessage (text);
+        }
     }
 }
