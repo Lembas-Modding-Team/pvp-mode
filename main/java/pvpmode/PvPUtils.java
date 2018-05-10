@@ -132,8 +132,17 @@ public class PvPUtils
     {
         for (String message : messages)
         {
-            ChatComponentText text = new ChatComponentText (formatting + message);
+            ChatComponentText text = new ChatComponentText ( (formatting == null ? "" : formatting) + message);
             recipient.addChatMessage (text);
         }
+    }
+
+    /**
+     * Displays the specified messages to the recipient. Each entry of the
+     * messages array will be displayed as a new line in the chat.
+     */
+    public static void postChatLines(ICommandSender recipient, String... messages)
+    {
+        postChatLines (recipient, null, messages);
     }
 }
