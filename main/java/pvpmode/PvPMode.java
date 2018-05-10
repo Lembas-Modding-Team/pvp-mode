@@ -2,7 +2,7 @@ package pvpmode;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Arrays;
+import java.util.*;
 
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -24,7 +24,7 @@ public class PvPMode
     public static int warmup;
     public static int cooldown;
     public static boolean radar;
-    public static String pvpLoggingHandler;
+    public static Collection<String> activatedPvpLoggingHandlers;
     public static String csvSeparator;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
@@ -45,10 +45,11 @@ public class PvPMode
         combatLogManager.registerCombatLogHandler (SimpleCombatLogHandler.CONFIG_NAME, new SimpleCombatLogHandler ());
         combatLogManager.registerCombatLogHandler (CSVCombatLogHandler.CONFIG_NAME, new CSVCombatLogHandler ());
 
-        roundFactor = config.getInt ("Distance Rounding Factor", "MAIN", 64, 1, Integer.MAX_VALUE, "");
-        warmup = config.getInt ("Warmup (seconds)", "MAIN", 300, 0, Integer.MAX_VALUE, "");
-        cooldown = config.getInt ("Cooldown (seconds)", "MAIN", 900, 0, Integer.MAX_VALUE, "");
-        radar = config.getBoolean ("Radar", "MAIN", true, "");
+        roundFactor = config.getInt ("Distance Rounding Factor", MAIN_CONFIGURATION_CATEGORY, 64, 1, Integer.MAX_VALUE,
+                        "");
+        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE, "");
+        cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE, "");
+        radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true, "");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
                         CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
                         "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
@@ -58,7 +59,7 @@ public class PvPMode
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
                         "Configuration entries related to the CSV combat logging handler");
 
-        if (csvSeparator.isEmpty () || csvSeparator.length () > 1)
+        if (csvSeparator.length () != 1)
         {
             FMLLog.warning ("The csv separator \"%s\" is invalid. The default one will be used.",
                             csvSeparator);
@@ -73,32 +74,54 @@ public class PvPMode
     public void init(FMLInitializationEvent event) throws IOException
 
     {
+        combatLogManager.preInit ();
+
         String[] validPvpLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
 
         /*
          * We've to load this property in init because it depends on previously
          * registered handlers - other mods may register handlers in preinit.
          */
-        pvpLoggingHandler = config.getString ("Pvp Logging Handler", "MAIN",
-                        combatLogManager.getDefaultHandlerName (),
-                        "Valid values: " + Arrays.toString (validPvpLogHandlerNames),
-                        validPvpLogHandlerNames).trim ();
+        activatedPvpLoggingHandlers = new HashSet<> (Arrays.asList (
+                        config.getStringList ("Active Pvp Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
+                        {combatLogManager.getDefaultHandlerName ()},
+                                        "Valid values: " + Arrays.toString (validPvpLogHandlerNames)
+                                                        + ". Leave it empty (without empty lines!) to disable pvp logging.",
+                                        validPvpLogHandlerNames)));
 
-        if (!combatLogManager.isValidHandlerName (pvpLoggingHandler))
+        if (activatedPvpLoggingHandlers.size () > 0)
         {
-            FMLLog.warning ("The pvp combat logging handler \"%s\" is not valid. The default one will be used.",
-                            pvpLoggingHandler);
-            pvpLoggingHandler = combatLogManager.getDefaultHandlerName ();
+            Iterator<String> activatedHandlersIterator = activatedPvpLoggingHandlers.iterator ();
+            while (activatedHandlersIterator.hasNext ())
+            {
+                String handlerName = activatedHandlersIterator.next ();
+                if (!combatLogManager.isValidHandlerName (handlerName))
+                {
+                    FMLLog.warning ("The pvp combat logging handler \"%s\" is not valid.",
+                                    handlerName);
+                    activatedHandlersIterator.remove ();
+                }
+            }
+            if (activatedPvpLoggingHandlers.isEmpty ())
+            {
+                FMLLog.warning ("No valid pvp combat logging handlers were specified. A default one will be used");
+                activatedPvpLoggingHandlers.add (combatLogManager.getDefaultHandlerName ());
+            }
         }
-        else if (pvpLoggingHandler.equals (PvPCombatLogManager.NO_HANDLER_NAME))
+        else
         {
-            FMLLog.info ("Pvp combat logging is disabled");
+            FMLLog.warning ("No pvp combat logging handlers were specified. Pvp combat logging will be disabled.");
         }
 
         if (config.hasChanged ())
             config.save ();
 
-        combatLogManager.init (combatLogDir);
+        if (activatedPvpLoggingHandlers.size () > 0)
+        {
+            activatedPvpLoggingHandlers.forEach (combatLogManager::activateHandler);
+            FMLLog.info ("Activated the following pvp combat logging handlers: %s", activatedPvpLoggingHandlers);
+            combatLogManager.init (combatLogDir);
+        }
 
         PvPEventHandler.init ();
     }
@@ -117,6 +140,7 @@ public class PvPMode
     @EventHandler
     public void serverClose(FMLServerStoppingEvent event)
     {
-        combatLogManager.close ();
+        if (activatedPvpLoggingHandlers.size () > 0)
+            combatLogManager.close ();
     }
 }

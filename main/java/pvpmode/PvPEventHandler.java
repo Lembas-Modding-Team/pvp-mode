@@ -77,7 +77,8 @@ public class PvPEventHandler
             return;
         }
 
-        PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
+        if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
+            PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
     /**

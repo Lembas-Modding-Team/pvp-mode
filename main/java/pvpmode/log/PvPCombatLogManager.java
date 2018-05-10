@@ -6,23 +6,22 @@ import java.util.*;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
-import pvpmode.PvPMode;
 
 public class PvPCombatLogManager
 {
-    public static final String NO_HANDLER_NAME = "none";
-
     private final String defaultHandlerName;
 
-    private Map<String, CombatLogHandler> combatLogHandlers = new HashMap<String, CombatLogHandler> ();
+    private Map<String, CombatLogHandler> registeredCombatLogHandlers = new HashMap<String, CombatLogHandler> ();
+
+    private Collection<String> activatedHandlerNames = new HashSet<> ();
+
+    private boolean canRegisterHandler = true;
 
     public PvPCombatLogManager(String defaultHandlerName)
     {
         Objects.requireNonNull (defaultHandlerName);
 
         this.defaultHandlerName = defaultHandlerName;
-
-        combatLogHandlers.put (NO_HANDLER_NAME, null);
     }
 
     public String getDefaultHandlerName()
@@ -32,57 +31,76 @@ public class PvPCombatLogManager
 
     public void registerCombatLogHandler(String name, CombatLogHandler handler)
     {
+        checkState (canRegisterHandler);
         Objects.requireNonNull (name);
-
-        this.combatLogHandlers.put (name, handler);
-
+        this.registeredCombatLogHandlers.put (name, handler);
     }
 
     public String[] getRegisteredHandlerNames()
     {
-        return combatLogHandlers.keySet ()
-                        .toArray (new String[combatLogHandlers.keySet ().size ()]);
+        return registeredCombatLogHandlers.keySet ()
+                        .toArray (new String[registeredCombatLogHandlers.keySet ().size ()]);
     }
 
     public boolean isValidHandlerName(String name)
     {
-        return combatLogHandlers.keySet ().contains (name);
+        return registeredCombatLogHandlers.keySet ().contains (name);
+    }
+
+    public void activateHandler(String handler)
+    {
+        checkState (!canRegisterHandler);
+        this.activatedHandlerNames.add (handler);
+    }
+
+    public Collection<String> getActivatedHandlerNames()
+    {
+        return Collections.unmodifiableCollection (activatedHandlerNames);
+    }
+
+    public void preInit()
+    {
+        checkState (canRegisterHandler);
+        this.canRegisterHandler = false;
     }
 
     public void init(Path pvpLoggingDir) throws IOException
     {
+        checkState (!canRegisterHandler);
         Objects.requireNonNull (pvpLoggingDir);
 
-        for (CombatLogHandler handler : combatLogHandlers.values ())
+        for (String handlerName : activatedHandlerNames)
         {
-            if (handler != null)
-            {
-                handler.init (pvpLoggingDir);
-            }
+            this.registeredCombatLogHandlers.get (handlerName).init (pvpLoggingDir);
         }
     }
 
     public void log(EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
     {
+        checkState (!canRegisterHandler);
         Objects.requireNonNull (attacker);
         Objects.requireNonNull (victim);
         Objects.requireNonNull (damageSource);
 
-        CombatLogHandler handler = combatLogHandlers.get (PvPMode.pvpLoggingHandler);
-        if (handler != null)
+        for (String handlerName : activatedHandlerNames)
         {
-            handler.log (Calendar.getInstance ().getTime (), attacker, victim, damageAmount, damageSource);
+            this.registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attacker,
+                            victim, damageAmount, damageSource);
         }
     }
 
     public void close()
     {
-        for (CombatLogHandler handler : combatLogHandlers.values ())
+        checkState (!canRegisterHandler);
+        for (String handlerName : activatedHandlerNames)
         {
-            if (handler != null)
-            {
-                handler.cleanup ();
-            }
+            this.registeredCombatLogHandlers.get (handlerName).cleanup ();
         }
+    }
+
+    private void checkState(boolean requiredCondition)
+    {
+        if (!requiredCondition)
+            throw new IllegalStateException ("The PvpCombatLogManager is in a wrong state");
     }
 }
