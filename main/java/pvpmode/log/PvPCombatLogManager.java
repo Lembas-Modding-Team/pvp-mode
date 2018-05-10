@@ -22,6 +22,7 @@ public class PvPCombatLogManager
     private Collection<String> activatedHandlerNames = new HashSet<> ();
 
     private boolean canRegisterHandler = true;
+    private boolean canActivateHandler = false;
 
     /**
      * Creates a new combat log manager.
@@ -91,7 +92,7 @@ public class PvPCombatLogManager
      */
     public void activateHandler(String handler)
     {
-        checkState (!canRegisterHandler);
+        checkState (canActivateHandler);
         this.activatedHandlerNames.add (handler);
     }
 
@@ -106,17 +107,19 @@ public class PvPCombatLogManager
 
     /**
      * Pre-initializes the log manager. After calling this method, handlers can
-     * be activated.
+     * be activated. From now on, no new handler can be registered.
      */
     public void preInit()
     {
         checkState (canRegisterHandler);
         this.canRegisterHandler = false;
+        this.canActivateHandler = true;
     }
 
     /**
      * Initializes the log manager and loads all activated handlers.</br>
-     * You've to call preInit before invoking this function!
+     * You've to call preInit before invoking this function! After calling this
+     * function, no new handler can be activated.
      * 
      * @param pvpLoggingDir
      *            The directory where logging handlers can store data
@@ -124,12 +127,15 @@ public class PvPCombatLogManager
     public void init(Path pvpLoggingDir)
     {
         checkState (!canRegisterHandler);
+        checkState (canActivateHandler);
         Objects.requireNonNull (pvpLoggingDir);
 
         for (String handlerName : activatedHandlerNames)
         {
             this.registeredCombatLogHandlers.get (handlerName).init (pvpLoggingDir);
         }
+
+        canActivateHandler = false;
     }
 
     /**
@@ -148,6 +154,7 @@ public class PvPCombatLogManager
     public void log(EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
     {
         checkState (!canRegisterHandler);
+        checkState (!canActivateHandler);
         Objects.requireNonNull (attacker);
         Objects.requireNonNull (victim);
         Objects.requireNonNull (damageSource);
@@ -166,6 +173,7 @@ public class PvPCombatLogManager
     public void close()
     {
         checkState (!canRegisterHandler);
+        checkState (!canActivateHandler);
         for (String handlerName : activatedHandlerNames)
         {
             this.registeredCombatLogHandlers.get (handlerName).cleanup ();
