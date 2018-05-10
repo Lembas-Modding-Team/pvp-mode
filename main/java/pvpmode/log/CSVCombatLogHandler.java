@@ -16,7 +16,7 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
 
     public CSVCombatLogHandler()
     {
-        super (CONFIG_NAME);
+        super (CONFIG_NAME, "csv");
     }
 
     @Override

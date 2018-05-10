@@ -3,18 +3,23 @@ package pvpmode.log;
 import java.io.*;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
 {
 
     private final String configName;
+    private final String fileEnding;
 
     protected PrintWriter writer;
 
-    protected AbstractFileCombatLogHandler(String configName)
+    protected AbstractFileCombatLogHandler(String configName, String fileEnding)
     {
+        Objects.requireNonNull (configName);
+        Objects.requireNonNull (fileEnding);
+
         this.configName = configName;
+        this.fileEnding = fileEnding;
     }
 
     @Override
@@ -22,7 +27,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
     {
         try
         {
-            Path logFile = pvpLoggingDir.resolve (configName).resolve ("pvpmode_latest.csv");
+            Path logFile = pvpLoggingDir.resolve (configName).resolve ("pvpmode_latest." + fileEnding);
 
             if (!Files.exists (logFile))
             {
@@ -34,7 +39,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
                 Files.move (logFile, this.getUnusedFileNameWithIndex (logFile.resolveSibling (
                                 "pvpmode_old_" + new SimpleDateFormat ("yyyy-MM-dd").format (new Date ())
                                                 .toString ()),
-                                "csv"));
+                                fileEnding));
             }
 
             writer = new PrintWriter (logFile.toFile ());
