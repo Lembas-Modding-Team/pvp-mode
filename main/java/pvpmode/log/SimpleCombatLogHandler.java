@@ -1,6 +1,7 @@
 package pvpmode.log;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,14 +15,17 @@ public class SimpleCombatLogHandler implements CombatLogHandler
     private PrintWriter stream;
 
     @Override
-    public void init(File loggingDir)
+    public void init(Path pvpLoggingDir)
     {
         try
         {
-            File logFile = new File (loggingDir, "pvpmode.log");
+            File logFile = new File (pvpLoggingDir.getParent ().toFile (), "pvpmode.log");
 
             if (!logFile.exists ())
+            {
+                logFile.getParentFile ().mkdirs ();
                 logFile.createNewFile ();
+            }
 
             stream = new PrintWriter (logFile);
         }

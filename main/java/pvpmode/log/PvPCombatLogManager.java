@@ -1,6 +1,7 @@
 package pvpmode.log;
 
-import java.io.*;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,15 +49,15 @@ public class PvPCombatLogManager
         return combatLogHandlers.keySet ().contains (name);
     }
 
-    public void init(File loggingDir) throws IOException
+    public void init(Path pvpLoggingDir) throws IOException
     {
-        Objects.requireNonNull (loggingDir);
+        Objects.requireNonNull (pvpLoggingDir);
 
         for (CombatLogHandler handler : combatLogHandlers.values ())
         {
             if (handler != null)
             {
-                handler.init (loggingDir);
+                handler.init (pvpLoggingDir);
             }
         }
     }
