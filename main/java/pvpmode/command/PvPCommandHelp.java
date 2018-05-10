@@ -1,46 +1,53 @@
 package pvpmode.command;
 
 import net.minecraft.command.*;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.event.ClickEvent.Action;
+import net.minecraft.util.*;
 import pvpmode.*;
 
 public class PvPCommandHelp extends CommandBase
 {
     @Override
-    public String getCommandName()
+    public String getCommandName ()
     {
         return "pvphelp";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getCommandUsage (ICommandSender sender)
     {
         return "/pvphelp";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender)
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
     {
         return true;
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args)
     {
-        postCommandHelp (sender, "pvp", "Starts a warmup timer to enable or disable PvP for the command sender.");
-        postCommandHelp (sender, "pvpcancel", "Cancels the warmup timer for the command sender.");
-        postCommandHelp (sender, "pvpadmin <player>", "For admins only, enables or disables PvP for the player.");
-        postCommandHelp (sender, "pvplist",
-                        " Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
+        PvPUtils.green (sender, "--- Pvp Mode Help ---");
+        postCommandHelp (sender, "pvp", "", "Starts a warmup timer to enable or disable PvP for the command sender.");
+        postCommandHelp (sender, "pvpcancel", "", "Cancels the warmup timer for the command sender.");
+        postCommandHelp (sender, "pvpadmin", "<player>", "For admins only, enables or disables PvP for the player.");
+        postCommandHelp (sender, "pvplist", "",
+            " Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
         PvPUtils.white (sender,
-                        "Default cooldown: "
-                                        + PvPMode.cooldown + "s, default warmup: " + PvPMode.warmup
-                                        + "s, pvplist distances enabled: " + PvPMode.radar);
+            "Default cooldown: "
+                + PvPMode.cooldown + "s, default warmup: " + PvPMode.warmup
+                + "s, pvplist distances enabled: " + PvPMode.radar);
     }
 
-    private void postCommandHelp(ICommandSender sender, String commandName, String help)
+    private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
     {
-        PvPUtils.postChatLines (sender, EnumChatFormatting.GRAY + "/" + commandName + EnumChatFormatting.WHITE
-                        + ": " + help);
+        ChatComponentText commandPart = new ChatComponentText (
+            EnumChatFormatting.GRAY + "/" + commandName + " " + commandUsage);
+        commandPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/" + commandName));
+        ChatComponentText helpPart = new ChatComponentText (EnumChatFormatting.WHITE
+            + ": " + help);
+        sender.addChatMessage (commandPart.appendSibling (helpPart));
     }
 }
