@@ -52,7 +52,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
                                 fileEnding));
             }
 
-            writer = new PrintWriter (logFile.toFile ());
+            writer = new PrintWriter (Files.newBufferedWriter (logFile), true);
 
         }
         catch (IOException e)
@@ -75,6 +75,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
     @Override
     public void cleanup()
     {
+        writer.flush ();
         writer.close ();
 
     }

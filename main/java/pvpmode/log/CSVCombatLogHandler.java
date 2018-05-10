@@ -32,7 +32,6 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
         super.init (pvpLoggingDir);
         writer.println (String.format ("Date/Time:%sAttacker:%<sVictim:%<sDamage Amount:%<sDamage Source:",
                         PvPMode.csvSeparator));// CSV header
-        writer.flush ();
     }
 
     @Override
@@ -42,7 +41,6 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
         writer.println (String.format ("%2$s%1$s%3$s%1$s%4$s%1$s%5$.2f%1$s%6$s", PvPMode.csvSeparator,
                         SimpleDateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
                         victim.getDisplayName (), damageAmount, damageSource.damageType));
-        writer.flush ();
 
     }
 
