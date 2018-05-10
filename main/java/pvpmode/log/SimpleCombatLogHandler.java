@@ -6,13 +6,19 @@ import java.util.Date;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
+/**
+ * A combat log handler which simply logs the pvp events to a file.
+ * 
+ * @author CraftedMods
+ *
+ */
 public class SimpleCombatLogHandler extends AbstractFileCombatLogHandler
 {
     public static final String CONFIG_NAME = "default";
 
     public SimpleCombatLogHandler()
     {
-        super (CONFIG_NAME,"log");
+        super (CONFIG_NAME, "log");
     }
 
     @Override

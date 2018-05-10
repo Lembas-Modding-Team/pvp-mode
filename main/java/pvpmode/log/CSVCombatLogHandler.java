@@ -8,6 +8,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.PvPMode;
 
+/**
+ * A combat log handler which logs the pvp event data to a file in the CSV
+ * format - this represents the data as a table.
+ * 
+ * @author CraftedMods
+ *
+ */
 public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
 {
 

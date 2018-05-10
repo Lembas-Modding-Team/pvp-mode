@@ -5,6 +5,14 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * A basic pvp logging module which supports files which are rotated every time
+ * the server starts. You can use this as superclass for logging modules which
+ * store files on the filesystem.
+ * 
+ * @author CraftedMods
+ *
+ */
 public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
 {
 
@@ -27,6 +35,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
     {
         try
         {
+            // The file where the latest data will be stored
             Path logFile = pvpLoggingDir.resolve (configName).resolve ("pvpmode_latest." + fileEnding);
 
             if (!Files.exists (logFile))
@@ -36,6 +45,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
             }
             else
             {
+                // The last "latest" logging file will be renamed
                 Files.move (logFile, this.getUnusedFileNameWithIndex (logFile.resolveSibling (
                                 "pvpmode_old_" + new SimpleDateFormat ("yyyy-MM-dd").format (new Date ())
                                                 .toString ()),
