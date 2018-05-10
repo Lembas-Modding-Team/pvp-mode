@@ -48,13 +48,15 @@ public class PvPMode
 
     @EventHandler
     public void init(FMLInitializationEvent event) throws IOException
+
     {
 
         String[] validPvpLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
 
-        /* We've to load this property in init because it depends on previously
-        * registered handlers - other mods may register handlers in preinit.
-        * */
+        /*
+         * We've to load this property in init because it depends on previously
+         * registered handlers - other mods may register handlers in preinit.
+         */
         pvpLoggingHandler = config.getString ("Pvp Logging Handler", "MAIN",
                         combatLogManager.getDefaultHandlerName (),
                         "Valid values: " + Arrays.toString (validPvpLogHandlerNames),

@@ -7,7 +7,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -78,8 +77,6 @@ public class PvPEventHandler
             return;
         }
 
-        long time = PvPUtils.getTime ();
-
         PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
@@ -90,7 +87,7 @@ public class PvPEventHandler
     public void onLivingUpdate(LivingUpdateEvent event)
     {
         EntityPlayerMP player;
-        long time = getTime ();
+        long time = PvPUtils.getTime ();
 
         if (event.entityLiving instanceof EntityPlayerMP)
             player = (EntityPlayerMP) event.entityLiving;
@@ -137,7 +134,7 @@ public class PvPEventHandler
         {
             // LOTR patch begins.
 
-            Class entityClass = entity.getClass ();
+            Class<?> entityClass = entity.getClass ();
             try
             {
                 if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
@@ -148,7 +145,7 @@ public class PvPEventHandler
                     // And even then it requires a silken hand and a subtle
                     // touch.
                     Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-                    Class hiredClass = hiredUnitInfo.getType ();
+                    Class<?> hiredClass = hiredUnitInfo.getType ();
                     Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer");
 
                     Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity));
@@ -212,17 +209,17 @@ public class PvPEventHandler
 
     void fly(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in fly mode!"));
+        PvPUtils.red (player, "You are in fly mode!");
     }
 
     void gm1(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in creative mode!"));
+        PvPUtils.red (player, "You are in creative mode!");
     }
 
     void disabled(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "This player/unit has PvP disabled!"));
+        PvPUtils.red (player, "This player/unit has PvP disabled!");
     }
 
     void warnServer(EntityPlayerMP player)
@@ -233,20 +230,13 @@ public class PvPEventHandler
 
     void pvpOff(EntityPlayerMP player)
     {
-        player.addChatComponentMessage (new ChatComponentText (
-                        EnumChatFormatting.GREEN + "PvP is now disabled for you."));
+        PvPUtils.green (player, "PvP is now disabled for you.");
     }
 
     void sendCooldown(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (
-                        EnumChatFormatting.YELLOW + "You can switch PvP modes again in " + PvPMode.cooldown
-                                        + " seconds."));
-    }
-
-    long getTime()
-    {
-        return MinecraftServer.getSystemTimeMillis () / 1000;
+        PvPUtils.yellow (player, "You can switch PvP modes again in \" + PvPMode.cooldown\n" +
+                        "                                        + \" seconds.");
     }
 
     public static void init()

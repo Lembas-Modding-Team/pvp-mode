@@ -5,7 +5,9 @@ REQUIREMENTS:
 
 Minecraft 1.7.10
 
-Forge 1.7.10-10.13.4.1614 (possibly an earlier version will work)
+Forge 1.7.10-10.13.4.1614 (possibly an earlier version will work)`
+
+Java 8
 
 INSTALLATION:
 

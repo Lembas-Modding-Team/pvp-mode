@@ -2,36 +2,33 @@ package pvpmode.command;
 
 import java.util.List;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPUtils;
 
 public class PvPCommandAdmin extends CommandBase
 {
     @Override
-    public String getCommandName ()
+    public String getCommandName()
     {
         return "pvpadmin";
     }
 
     @Override
-    public String getCommandUsage (ICommandSender sender)
+    public String getCommandUsage(ICommandSender sender)
     {
         return "/pvpadmin <player>";
     }
 
     @Override
-    public int getRequiredPermissionLevel ()
+    public int getRequiredPermissionLevel()
     {
         return 2;
     }
 
     @Override
-    public void processCommand (ICommandSender admin, String[] args)
+    public void processCommand(ICommandSender admin, String[] args)
     {
         if (args.length != 1)
         {
@@ -57,12 +54,12 @@ public class PvPCommandAdmin extends CommandBase
     }
 
     @Override
-    public boolean isUsernameIndex (String[] args, int index)
+    public boolean isUsernameIndex(String[] args, int index)
     {
         return index == 0;
     }
 
-    public List addTabCompletionOptions (ICommandSender sender, String[] args)
+    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
@@ -70,14 +67,13 @@ public class PvPCommandAdmin extends CommandBase
         return null;
     }
 
-    void help (ICommandSender sender)
+    void help(ICommandSender sender)
     {
-        sender.addChatMessage (new ChatComponentText ("/pvpadmin <player>"));
+        PvPUtils.white (sender, "/pvpadmin <player>");
     }
 
-    void warnPlayer (EntityPlayerMP player)
+    void warnPlayer(EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED
-            + "WARNING: Your PvP status is being overridden by an admin."));
+        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
     }
 }

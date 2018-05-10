@@ -10,25 +10,25 @@ import pvpmode.PvPUtils;
 public class PvPCommand extends CommandBase
 {
     @Override
-    public String getCommandName ()
+    public String getCommandName()
     {
         return "pvp";
     }
 
     @Override
-    public String getCommandUsage (ICommandSender sender)
+    public String getCommandUsage(ICommandSender sender)
     {
         return "/pvp";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
+    public boolean canCommandSenderUseCommand(ICommandSender sender)
     {
         return true;
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
+    public void processCommand(ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
         NBTTagCompound data = PvPUtils.getPvPData (player);
