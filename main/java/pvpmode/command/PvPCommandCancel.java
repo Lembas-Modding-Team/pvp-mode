@@ -1,10 +1,8 @@
 package pvpmode.command;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import pvpmode.PvPUtils;
+import pvpmode.*;
 
 public class PvPCommandCancel extends CommandBase
 {
@@ -30,14 +28,14 @@ public class PvPCommandCancel extends CommandBase
     public void processCommand(ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        NBTTagCompound data = PvPUtils.getPvPData (player);
-        long warmup = data.getLong ("PvPWarmup");
+        PvpData data = PvPUtils.getPvPData (player);
+        long warmup = data.getPvpWarmup ();
 
         if (warmup == 0)
             PvPUtils.yellow (sender, "No PvP warmup to cancel.");
         else
         {
-            data.setLong ("PvPWarmup", 0);
+            data.setPvpWarmup (0);
             PvPUtils.yellow (sender, "PvP warmup canceled.");
         }
     }

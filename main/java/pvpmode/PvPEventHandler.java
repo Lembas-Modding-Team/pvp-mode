@@ -6,7 +6,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -35,8 +34,8 @@ public class PvPEventHandler
         if (attacker == null || victim == null)
             return;
 
-        NBTTagCompound attackerData = PvPUtils.getPvPData (attacker);
-        NBTTagCompound victimData = PvPUtils.getPvPData (victim);
+        PvpData attackerData = PvPUtils.getPvPData (attacker);
+        PvpData victimData = PvPUtils.getPvPData (victim);
 
         if (attacker.capabilities.allowFlying)
         {
@@ -62,7 +61,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!victimData.getBoolean ("PvPEnabled"))
+        if (!victimData.isPvpEnabled ())
         {
             if (attacker == event.source.getEntity ())
                 disabled (attacker);
@@ -71,7 +70,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!attackerData.getBoolean ("PvPEnabled"))
+        if (!attackerData.isPvpEnabled ())
         {
             event.setCanceled (true);
             return;
@@ -95,26 +94,26 @@ public class PvPEventHandler
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        NBTTagCompound data = PvPUtils.getPvPData (player);
+        PvpData data = PvPUtils.getPvPData (player);
 
-        long toggleTime = data.getLong ("PvPWarmup");
+        long toggleTime = data.getPvpWarmup ();
 
         if (toggleTime != 0 && toggleTime < time)
         {
-            data.setLong ("PvPWarmup", 0);
+            data.setPvpWarmup (0);
 
-            if (!data.getBoolean ("PvPEnabled"))
+            if (!data.isPvpEnabled ())
             {
-                data.setBoolean ("PvPEnabled", true);
+                data.setPvpEnabled (true);
                 warnServer (player);
             }
             else
             {
-                data.setBoolean ("PvPEnabled", false);
+                data.setPvpEnabled (false);
                 pvpOff (player);
             }
 
-            data.setLong ("PvPCooldown", time + PvPMode.cooldown);
+            data.setPvpCooldown (time + PvPMode.cooldown);
         }
     }
 
