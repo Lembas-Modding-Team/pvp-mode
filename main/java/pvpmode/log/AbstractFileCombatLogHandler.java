@@ -69,7 +69,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
         int i = 1;
         do
         {
-            result = Paths.get (basicFileNameWithoutFileEnding.toString () + "_" + i++ + "." + fileEnding);
+            result = Paths.get (String.format("%s_%d.%s",basicFileNameWithoutFileEnding.toString (),i++,fileEnding));
         }
         while (Files.exists (result));
         return result;
