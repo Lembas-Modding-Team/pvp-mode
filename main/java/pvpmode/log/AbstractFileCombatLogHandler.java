@@ -66,9 +66,12 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
     protected Path getUnusedFileNameWithIndex(Path basicFileNameWithoutFileEnding, String fileEnding)
     {
         Path result = basicFileNameWithoutFileEnding;
-        for (int i = 1; Files.exists (result = Paths
-                        .get (basicFileNameWithoutFileEnding.toString () + "_" + i + "." + fileEnding)); i++)
-            ;
+        int i = 1;
+        do
+        {
+            result = Paths.get (basicFileNameWithoutFileEnding.toString () + "_" + i++ + "." + fileEnding);
+        }
+        while (Files.exists (result));
         return result;
     }
 
