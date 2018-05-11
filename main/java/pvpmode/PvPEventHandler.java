@@ -237,8 +237,7 @@ public class PvPEventHandler
 
     void sendCooldown(EntityPlayerMP player)
     {
-        PvPUtils.yellow (player, "You can switch PvP modes again in \" + PvPMode.cooldown\n" +
-                        "                                        + \" seconds.");
+        PvPUtils.yellow (player, "You can switch PvP modes again in " + PvPMode.cooldown + " seconds");
     }
 
     public static void init()
