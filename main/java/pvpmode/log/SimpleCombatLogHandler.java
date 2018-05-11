@@ -26,7 +26,7 @@ public class SimpleCombatLogHandler extends AbstractFileCombatLogHandler
                     DamageSource damageSource)
     {
         writer.println (String.format (
-                        "[%s] %s or an unit of this player initiated an attack against %s dealing %.2f HP damage of the type %s",
+                        "[%s] %s or a (hired) unit of this player initiated an attack against %s dealing %.2f HP damage of the type %s",
                         SimpleDateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
                         victim.getDisplayName (), damageAmount, damageSource.damageType));
 
