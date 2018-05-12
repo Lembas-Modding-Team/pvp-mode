@@ -40,7 +40,7 @@ public class PvPMode
         Files.createDirectories (combatLogDir);
 
         config = new Configuration (event.getSuggestedConfigurationFile ());
-        combatLogManager = new PvPCombatLogManager (SimpleCombatLogHandler.CONFIG_NAME);
+        combatLogManager = new PvPCombatLogManager (CSVCombatLogHandler.CONFIG_NAME);
 
         combatLogManager.registerCombatLogHandler (SimpleCombatLogHandler.CONFIG_NAME, new SimpleCombatLogHandler ());
         combatLogManager.registerCombatLogHandler (CSVCombatLogHandler.CONFIG_NAME, new CSVCombatLogHandler ());

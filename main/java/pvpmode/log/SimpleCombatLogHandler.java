@@ -14,7 +14,7 @@ import net.minecraft.util.DamageSource;
  */
 public class SimpleCombatLogHandler extends AbstractFileCombatLogHandler
 {
-    public static final String CONFIG_NAME = "default";
+    public static final String CONFIG_NAME = "simple";
 
     public SimpleCombatLogHandler()
     {
