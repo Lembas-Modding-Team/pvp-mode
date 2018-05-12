@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 public class PvPEventHandler
@@ -24,7 +24,8 @@ public class PvPEventHandler
     private boolean lotrPatchFailed = false;
 
     /**
-     * Cancels combat events associated with PvP-disabled players.
+     * Cancels combat events associated with PvP-disabled players. 
+     * Note that this function will be invoked twice per attack - this is because of a Forge bug.
      */
     @SubscribeEvent
     public void interceptPvP(LivingAttackEvent event)
@@ -77,6 +78,21 @@ public class PvPEventHandler
             return;
         }
 
+    }
+    
+    /*
+     * We need to log here because onLivingHurt will be invoked twice per attack.
+     * Also the damage values here are more accurate because they are the actual damage
+     * the entity got (because armor etc. reduce the applied damage).
+     */
+    @SubscribeEvent
+    public void onLivingHurt(LivingHurtEvent event) {
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
+
+        if (attacker == null || victim == null)
+            return;
+        
         if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
             PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
