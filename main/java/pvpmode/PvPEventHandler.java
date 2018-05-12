@@ -81,9 +81,7 @@ public class PvPEventHandler
     }
     
     /*
-     * We need to log here because onLivingHurt will be invoked twice per attack.
-     * Also the damage values here are more accurate because they are the actual damage
-     * the entity got (because armor etc. reduce the applied damage).
+     * We need to log here because the LivingAttackEvent will be fired twice per attack.
      */
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
