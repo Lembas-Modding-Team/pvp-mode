@@ -18,7 +18,6 @@ public class PvpData
     private static final String PVP_ENABLED_NBT_KEY = "PvPEnabled";
     private static final String PVP_WARMUP_NBT_KEY = "PvPWarmup";
     private static final String PVP_COOLDOWN_NBT_KEY = "PvPCooldown";
-    private static final String PVP_TAG_NBT_KEY = "PvPTag";
 
     public PvpData (EntityPlayer player)
     {
@@ -70,16 +69,6 @@ public class PvpData
     public void setPvpCooldown (long pvpCooldown)
     {
         pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
-    }
-
-    public long getPvpTag ()
-    {
-        return pvpDataTag.getLong (PVP_TAG_NBT_KEY);
-    }
-
-    public void setPvpTag (long pvpTag)
-    {
-        pvpDataTag.setLong (PVP_TAG_NBT_KEY, pvpTag);
     }
 
 }
