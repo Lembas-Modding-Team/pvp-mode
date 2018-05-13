@@ -22,7 +22,7 @@ command and their status will be toggled after a warmup time (this warmup can be
 The `pvp` command also disables PvP for a player who has it enabled.
 Players who are in creative mode or who are flying are automatically prevented from combat no matter their PvP status.
 There is a cooldown for the command after the actual toggle takes place (not when the player enters the command).
-Admins are able to toggle a player's status instantaneously with no warmup time by doing `pvpadmin \<playername>`
+Admins are able to toggle a player's status instantaneously with no warmup time by doing `pvpadmin <playername>`
 
 The mod adds another command, `pvplist`. `pvplist` displays a list of all players online, their status, and their distance to the
 command sender. The status can be one of the following: `ON`, `OFF`, `GM1`, or `FLY`. Only players with `ON` are capable of combat.
