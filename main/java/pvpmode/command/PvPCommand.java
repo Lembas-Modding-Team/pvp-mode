@@ -1,11 +1,8 @@
 package pvpmode.command;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import pvpmode.PvPMode;
-import pvpmode.PvPUtils;
+import pvpmode.*;
 
 public class PvPCommand extends CommandBase
 {
@@ -31,11 +28,11 @@ public class PvPCommand extends CommandBase
     public void processCommand(ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        NBTTagCompound data = PvPUtils.getPvPData (player);
+        PvpData data = PvPUtils.getPvPData (player);
 
         long time = PvPUtils.getTime ();
         long toggleTime = time + PvPMode.warmup;
-        long cooldownTime = data.getLong ("PvPCooldown");
+        long cooldownTime = data.getPvpCooldown ();
 
         String message;
 
@@ -47,10 +44,10 @@ public class PvPCommand extends CommandBase
             return;
         }
 
-        data.setLong ("PvPWarmup", toggleTime);
-        data.setLong ("PvPCooldown", 0);
+        data.setPvpWarmup (toggleTime);
+        data.setPvpCooldown (0);
 
-        String status = data.getBoolean ("PvPEnabled") ? "disabled" : "enabled";
+        String status = data.isPvpEnabled () ? "disabled" : "enabled";
         message = "PvP will be " + status + " in " + PvPMode.warmup + " seconds...";
         PvPUtils.yellow (sender, message);
     }

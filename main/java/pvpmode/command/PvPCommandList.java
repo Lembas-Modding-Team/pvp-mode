@@ -2,14 +2,10 @@ package pvpmode.command;
 
 import java.util.ArrayList;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import pvpmode.PvPMode;
-import pvpmode.PvPUtils;
+import net.minecraft.util.*;
+import pvpmode.*;
 
 public class PvPCommandList extends CommandBase
 {
@@ -41,15 +37,15 @@ public class PvPCommandList extends CommandBase
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
-            NBTTagCompound playerData = PvPUtils.getPvPData (player);
+            PvpData playerData = PvPUtils.getPvPData (player);
 
             if (player.capabilities.isCreativeMode)
                 safePlayers.add ("[GM1] " + player.getDisplayName ());
             else if (player.capabilities.allowFlying)
                 safePlayers.add ("[FLY] " + player.getDisplayName ());
-            else if (!playerData.getBoolean ("PvPEnabled"))
+            else if (!playerData.isPvpEnabled ())
             {
-                long warmup = playerData.getLong ("PvPWarmup");
+                long warmup = playerData.getPvpWarmup ();
 
                 if (warmup == 0)
                     safePlayers.add ("[OFF] " + player.getDisplayName ());
@@ -61,7 +57,7 @@ public class PvPCommandList extends CommandBase
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
-                if (PvPUtils.getPvPData (senderPlayer).getBoolean ("PvPEnabled") && PvPMode.radar
+                if (PvPUtils.getPvPData (senderPlayer).isPvpEnabled () && PvPMode.radar
                                 && senderPlayer != player)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 
