@@ -8,7 +8,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 public class PvPEventHandler
@@ -23,7 +23,8 @@ public class PvPEventHandler
     private boolean lotrPatchFailed = false;
 
     /**
-     * Cancels combat events associated with PvP-disabled players.
+     * Cancels combat events associated with PvP-disabled players. 
+     * Note that this function will be invoked twice per attack - this is because of a Forge bug.
      */
     @SubscribeEvent
     public void interceptPvP(LivingAttackEvent event)
@@ -76,9 +77,21 @@ public class PvPEventHandler
             return;
         }
 
-        PvPCombatLog.log (attacker.getDisplayName ()
-                        + " or an unit initiated an attack against "
-                        + victim.getDisplayName ());
+    }
+    
+    /*
+     * We need to log here because the LivingAttackEvent will be fired twice per attack.
+     */
+    @SubscribeEvent
+    public void onLivingHurt(LivingHurtEvent event) {
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
+
+        if (attacker == null || victim == null)
+            return;
+        
+        if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
+            PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
     /**
