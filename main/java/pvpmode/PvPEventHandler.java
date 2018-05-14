@@ -247,12 +247,6 @@ public class PvPEventHandler
         PvPUtils.green (player, "PvP is now disabled for you.");
     }
 
-    void sendCooldown(EntityPlayerMP player)
-    {
-        PvPUtils.yellow (player, "You can switch PvP modes again in \" + PvPMode.cooldown\n" +
-                        "                                        + \" seconds.");
-    }
-
     public static void init()
     {
         INSTANCE = new PvPEventHandler ();
