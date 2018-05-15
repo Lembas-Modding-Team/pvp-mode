@@ -133,7 +133,6 @@ public class PvPMode
         event.registerServerCommand (new PvPCommand ());
         event.registerServerCommand (new PvPCommandList ());
         event.registerServerCommand (new PvPCommandAdmin ());
-        event.registerServerCommand (new PvPCommandCancel ());
         event.registerServerCommand (new PvPCommandHelp ());
     }
 

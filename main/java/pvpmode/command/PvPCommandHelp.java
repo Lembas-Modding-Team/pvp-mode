@@ -28,7 +28,7 @@ public class PvPCommandHelp extends CommandBase
     {
         PvPUtils.white (sender,
                         "/pvp: Starts a warmup timer to enable or disable PvP for the command sender.",
-                        "/pvpcancel: Cancels the warmup timer for the command sender.",
+                        "/pvp cancel: Cancels the warmup timer for the command sender.",
                         "/pvpadmin <player>: For admins only, enables or disables PvP for the player.",
                         "/pvplist: Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.",
                         "Default cooldown: "
