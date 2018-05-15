@@ -3,7 +3,7 @@
   "modid": "pvp-mode",
   "name": "PvP Mode",
   "description": "Allows players to individually opt in or out of PvP with a simple command.",
-  "version": "1.0",
+  "version": "${version}",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",

@@ -6,10 +6,9 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 public class PvPEventHandler
@@ -24,7 +23,8 @@ public class PvPEventHandler
     private boolean lotrPatchFailed = false;
 
     /**
-     * Cancels combat events associated with PvP-disabled players.
+     * Cancels combat events associated with PvP-disabled players. 
+     * Note that this function will be invoked twice per attack - this is because of a Forge bug.
      */
     @SubscribeEvent
     public void interceptPvP(LivingAttackEvent event)
@@ -35,8 +35,8 @@ public class PvPEventHandler
         if (attacker == null || victim == null)
             return;
 
-        NBTTagCompound attackerData = PvPUtils.getPvPData (attacker);
-        NBTTagCompound victimData = PvPUtils.getPvPData (victim);
+        PvpData attackerData = PvPUtils.getPvPData (attacker);
+        PvpData victimData = PvPUtils.getPvPData (victim);
 
         if (attacker.capabilities.allowFlying)
         {
@@ -62,7 +62,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!victimData.getBoolean ("PvPEnabled"))
+        if (!victimData.isPvpEnabled ())
         {
             if (attacker == event.source.getEntity ())
                 disabled (attacker);
@@ -71,15 +71,27 @@ public class PvPEventHandler
             return;
         }
 
-        if (!attackerData.getBoolean ("PvPEnabled"))
+        if (!attackerData.isPvpEnabled ())
         {
             event.setCanceled (true);
             return;
         }
 
-        PvPCombatLog.log (attacker.getDisplayName ()
-                        + " or an unit initiated an attack against "
-                        + victim.getDisplayName ());
+    }
+    
+    /*
+     * We need to log here because the LivingAttackEvent will be fired twice per attack.
+     */
+    @SubscribeEvent
+    public void onLivingHurt(LivingHurtEvent event) {
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
+
+        if (attacker == null || victim == null)
+            return;
+        
+        if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
+            PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
     /**
@@ -95,26 +107,26 @@ public class PvPEventHandler
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        NBTTagCompound data = PvPUtils.getPvPData (player);
+        PvpData data = PvPUtils.getPvPData (player);
 
-        long toggleTime = data.getLong ("PvPWarmup");
+        long toggleTime = data.getPvpWarmup ();
 
         if (toggleTime != 0 && toggleTime < time)
         {
-            data.setLong ("PvPWarmup", 0);
+            data.setPvpWarmup (0);
 
-            if (!data.getBoolean ("PvPEnabled"))
+            if (!data.isPvpEnabled ())
             {
-                data.setBoolean ("PvPEnabled", true);
+                data.setPvpEnabled (true);
                 warnServer (player);
             }
             else
             {
-                data.setBoolean ("PvPEnabled", false);
+                data.setPvpEnabled (false);
                 pvpOff (player);
             }
 
-            data.setLong ("PvPCooldown", time + PvPMode.cooldown);
+            data.setPvpCooldown (time + PvPMode.cooldown);
         }
     }
 
@@ -233,12 +245,6 @@ public class PvPEventHandler
     void pvpOff(EntityPlayerMP player)
     {
         PvPUtils.green (player, "PvP is now disabled for you.");
-    }
-
-    void sendCooldown(EntityPlayerMP player)
-    {
-        PvPUtils.yellow (player, "You can switch PvP modes again in \" + PvPMode.cooldown\n" +
-                        "                                        + \" seconds.");
     }
 
     public static void init()
