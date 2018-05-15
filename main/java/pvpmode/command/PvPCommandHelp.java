@@ -35,10 +35,7 @@ public class PvPCommandHelp extends CommandBase
         postCommandHelp (sender, "pvpadmin", "<player>", "For admins only, enables or disables PvP for the player.");
         postCommandHelp (sender, "pvplist", "",
             " Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
-        PvPUtils.white (sender,
-            "Default cooldown: "
-                + PvPMode.cooldown + "s, default warmup: " + PvPMode.warmup
-                + "s, pvplist distances enabled: " + PvPMode.radar);
+        postCommandHelp (sender, "pvpconfig display", "", "For admins only, displays the server configuration.");
     }
 
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
