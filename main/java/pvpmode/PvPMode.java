@@ -13,7 +13,7 @@ import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
 import pvpmode.log.*;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.0.0-BETA", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
