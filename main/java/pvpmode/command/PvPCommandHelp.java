@@ -4,7 +4,7 @@ import net.minecraft.command.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
-import pvpmode.*;
+import pvpmode.PvPUtils;
 
 public class PvPCommandHelp extends CommandBase
 {

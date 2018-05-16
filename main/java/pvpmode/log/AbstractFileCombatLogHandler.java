@@ -21,7 +21,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
 
     protected PrintWriter writer;
 
-    protected AbstractFileCombatLogHandler(String configName, String fileEnding)
+    protected AbstractFileCombatLogHandler (String configName, String fileEnding)
     {
         Objects.requireNonNull (configName);
         Objects.requireNonNull (fileEnding);
@@ -31,7 +31,7 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
     }
 
     @Override
-    public void init(Path pvpLoggingDir)
+    public void init (Path pvpLoggingDir)
     {
         try
         {
@@ -47,9 +47,9 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
             {
                 // The last "latest" logging file will be renamed
                 Files.move (logFile, this.getUnusedFileNameWithIndex (logFile.resolveSibling (
-                                "pvpmode_old_" + new SimpleDateFormat ("yyyy-MM-dd").format (new Date ())
-                                                .toString ()),
-                                fileEnding));
+                    "pvpmode_old_" + new SimpleDateFormat ("yyyy-MM-dd").format (new Date ())
+                        .toString ()),
+                    fileEnding));
             }
 
             writer = new PrintWriter (Files.newBufferedWriter (logFile), true);
@@ -58,25 +58,26 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
         catch (IOException e)
         {
             throw new RuntimeException (String.format (
-                            "The pvp log file of the handler \"%s\" couldn't be created or accessed", configName), e);
+                "The pvp log file of the handler \"%s\" couldn't be created or accessed", configName), e);
         }
 
     }
 
-    protected Path getUnusedFileNameWithIndex(Path basicFileNameWithoutFileEnding, String fileEnding)
+    protected Path getUnusedFileNameWithIndex (Path basicFileNameWithoutFileEnding, String fileEnding)
     {
         Path result = basicFileNameWithoutFileEnding;
         int i = 1;
         do
         {
-            result = Paths.get (String.format("%s_%d.%s",basicFileNameWithoutFileEnding.toString (),i++,fileEnding));
+            result = Paths
+                .get (String.format ("%s_%d.%s", basicFileNameWithoutFileEnding.toString (), i++, fileEnding));
         }
         while (Files.exists (result));
         return result;
     }
 
     @Override
-    public void cleanup()
+    public void cleanup ()
     {
         writer.flush ();
         writer.close ();

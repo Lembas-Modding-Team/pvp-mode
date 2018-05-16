@@ -10,25 +10,25 @@ import pvpmode.*;
 public class PvPCommandList extends CommandBase
 {
     @Override
-    public String getCommandName()
+    public String getCommandName ()
     {
         return "pvplist";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getCommandUsage (ICommandSender sender)
     {
         return "/pvplist";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender)
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
     {
         return true;
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
         ArrayList<String> safePlayers = new ArrayList<String> ();
@@ -51,14 +51,14 @@ public class PvPCommandList extends CommandBase
                     safePlayers.add ("[OFF] " + player.getDisplayName ());
                 else
                     unsafePlayers.add (EnumChatFormatting.YELLOW + "[WARMUP] " + player.getDisplayName ()
-                                    + " - " + (warmup - PvPUtils.getTime ()) + " seconds till PvP");
+                        + " - " + (warmup - PvPUtils.getTime ()) + " seconds till PvP");
             }
             else
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
                 if (PvPUtils.getPvPData (senderPlayer).isPvpEnabled () && PvPMode.radar
-                                && senderPlayer != player)
+                    && senderPlayer != player)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 
                 unsafePlayers.add (message);
@@ -71,7 +71,7 @@ public class PvPCommandList extends CommandBase
             PvPUtils.green (sender, line);
     }
 
-    int roundedDistanceBetween(EntityPlayerMP sender, EntityPlayerMP player)
+    int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
     {
         double x = sender.posX - player.posX;
         double z = sender.posZ - player.posZ;

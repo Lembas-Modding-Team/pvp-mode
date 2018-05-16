@@ -33,7 +33,7 @@ public class PvPMode
     private Path combatLogDir;
 
     @EventHandler
-    public void preinit(FMLPreInitializationEvent event) throws IOException
+    public void preinit (FMLPreInitializationEvent event) throws IOException
     {
         combatLogDir = Paths.get (event.getModConfigurationDirectory ().getParent ().toString (), "logs", "combat");
 
@@ -46,23 +46,23 @@ public class PvPMode
         combatLogManager.registerCombatLogHandler (CSVCombatLogHandler.CONFIG_NAME, new CSVCombatLogHandler ());
 
         roundFactor = config.getInt ("Distance Rounding Factor", MAIN_CONFIGURATION_CATEGORY, 64, 1, Integer.MAX_VALUE,
-                        "");
+            "");
         warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE, "");
         cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE, "");
         radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true, "");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
-                        CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
-                        "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
-                        .trim ();
+            CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
+            "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
+            .trim ();
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
-                        "Configuration entries related to the CSV combat logging handler");
+            "Configuration entries related to the CSV combat logging handler");
 
         if (csvSeparator.length () != 1)
         {
             FMLLog.warning ("The csv separator \"%s\" is invalid. The default one will be used.",
-                            csvSeparator);
+                csvSeparator);
             csvSeparator = CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR;
         }
 
@@ -71,7 +71,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void init(FMLInitializationEvent event) throws IOException
+    public void init (FMLInitializationEvent event) throws IOException
 
     {
         combatLogManager.preInit ();
@@ -83,11 +83,11 @@ public class PvPMode
          * registered handlers - other mods may register handlers in preinit.
          */
         activatedPvpLoggingHandlers = new HashSet<> (Arrays.asList (
-                        config.getStringList ("Active Pvp Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
-                        {combatLogManager.getDefaultHandlerName ()},
-                                        "Valid values: " + Arrays.toString (validPvpLogHandlerNames)
-                                                        + ". Leave it empty (without empty lines!) to disable pvp logging.",
-                                        validPvpLogHandlerNames)));
+            config.getStringList ("Active Pvp Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
+            {combatLogManager.getDefaultHandlerName ()},
+                "Valid values: " + Arrays.toString (validPvpLogHandlerNames)
+                    + ". Leave it empty (without empty lines!) to disable pvp logging.",
+                validPvpLogHandlerNames)));
 
         if (activatedPvpLoggingHandlers.size () > 0)
         {
@@ -98,7 +98,7 @@ public class PvPMode
                 if (!combatLogManager.isValidHandlerName (handlerName))
                 {
                     FMLLog.warning ("The pvp combat logging handler \"%s\" is not valid.",
-                                    handlerName);
+                        handlerName);
                     activatedHandlersIterator.remove ();
                 }
             }
@@ -127,7 +127,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void serverLoad(FMLServerStartingEvent event)
+    public void serverLoad (FMLServerStartingEvent event)
     {
         cfg = MinecraftServer.getServer ().getConfigurationManager ();
         event.registerServerCommand (new PvPCommand ());
@@ -138,7 +138,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void serverClose(FMLServerStoppingEvent event)
+    public void serverClose (FMLServerStoppingEvent event)
     {
         if (activatedPvpLoggingHandlers.size () > 0)
             combatLogManager.close ();

@@ -30,7 +30,7 @@ public class PvPCombatLogManager
      * @param defaultHandlerName
      *            The default combat log handler
      */
-    public PvPCombatLogManager(String defaultHandlerName)
+    public PvPCombatLogManager (String defaultHandlerName)
     {
         Objects.requireNonNull (defaultHandlerName);
 
@@ -40,7 +40,7 @@ public class PvPCombatLogManager
     /**
      * @return The name of the default combat logging handler
      */
-    public String getDefaultHandlerName()
+    public String getDefaultHandlerName ()
     {
         return defaultHandlerName;
     }
@@ -54,7 +54,7 @@ public class PvPCombatLogManager
      * @param handler
      *            A handler instance
      */
-    public void registerCombatLogHandler(String name, CombatLogHandler handler)
+    public void registerCombatLogHandler (String name, CombatLogHandler handler)
     {
         checkState (canRegisterHandler);
         Objects.requireNonNull (name);
@@ -64,10 +64,10 @@ public class PvPCombatLogManager
     /**
      * @return An array containing the names of all registered handlers
      */
-    public String[] getRegisteredHandlerNames()
+    public String[] getRegisteredHandlerNames ()
     {
         return registeredCombatLogHandlers.keySet ()
-                        .toArray (new String[registeredCombatLogHandlers.keySet ().size ()]);
+            .toArray (new String[registeredCombatLogHandlers.keySet ().size ()]);
     }
 
     /**
@@ -78,7 +78,7 @@ public class PvPCombatLogManager
      *            The handler name which should be tested
      * @return Whether the name is valid
      */
-    public boolean isValidHandlerName(String name)
+    public boolean isValidHandlerName (String name)
     {
         return registeredCombatLogHandlers.keySet ().contains (name);
     }
@@ -90,7 +90,7 @@ public class PvPCombatLogManager
      * @param handler
      *            The handler which should be activated
      */
-    public void activateHandler(String handler)
+    public void activateHandler (String handler)
     {
         checkState (canActivateHandler);
         this.activatedHandlerNames.add (handler);
@@ -100,7 +100,7 @@ public class PvPCombatLogManager
      * @return An unmodifiable collection containing the names of all activated
      *         handlers
      */
-    public Collection<String> getActivatedHandlerNames()
+    public Collection<String> getActivatedHandlerNames ()
     {
         return Collections.unmodifiableCollection (activatedHandlerNames);
     }
@@ -109,7 +109,7 @@ public class PvPCombatLogManager
      * Pre-initializes the log manager. After calling this method, handlers can
      * be activated. From now on, no new handler can be registered.
      */
-    public void preInit()
+    public void preInit ()
     {
         checkState (canRegisterHandler);
         this.canRegisterHandler = false;
@@ -124,7 +124,7 @@ public class PvPCombatLogManager
      * @param pvpLoggingDir
      *            The directory where logging handlers can store data
      */
-    public void init(Path pvpLoggingDir)
+    public void init (Path pvpLoggingDir)
     {
         checkState (!canRegisterHandler);
         checkState (canActivateHandler);
@@ -151,7 +151,7 @@ public class PvPCombatLogManager
      * @param damageSource
      *            The damage source
      */
-    public void log(EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
+    public void log (EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
     {
         checkState (!canRegisterHandler);
         checkState (!canActivateHandler);
@@ -162,7 +162,7 @@ public class PvPCombatLogManager
         for (String handlerName : activatedHandlerNames)
         {
             this.registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attacker,
-                            victim, damageAmount, damageSource);
+                victim, damageAmount, damageSource);
         }
     }
 
@@ -170,7 +170,7 @@ public class PvPCombatLogManager
      * This function will be invoked if the manager should shutdown. All
      * registered handlers will now cleanup.
      */
-    public void close()
+    public void close ()
     {
         checkState (!canRegisterHandler);
         checkState (!canActivateHandler);
@@ -180,7 +180,7 @@ public class PvPCombatLogManager
         }
     }
 
-    private void checkState(boolean requiredCondition)
+    private void checkState (boolean requiredCondition)
     {
         if (!requiredCondition)
             throw new IllegalStateException ("The PvpCombatLogManager is in a wrong state");
