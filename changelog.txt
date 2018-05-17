@@ -1,5 +1,16 @@
 CHANGELOG:
 
+1.0.0-BETA
+
+Added combat logging (two handlers: csv (default) and simple)
+Added a command `pvpconfig` for admins which displays the configuration data
+Java 8 is now required
+The default distance rounding factor for the player radar is now 100 instead of 64
+Fixed that typing invalid player names in `pvpadmin` outputs an unmeaningful error message
+Improved `pvphelp`. Also it won't display configuration data anymore.
+Removed `pvpcancel`. Canceling now will be done via `pvp cancel`
+Improved the performance and restructured things internally
+
 1.8.0-ALPHA
 
 Added a new command "pvphelp" which displays usage of all commands and also values of configuration options.
