@@ -23,11 +23,12 @@ public class PvPEventHandler
     private boolean lotrPatchFailed = false;
 
     /**
-     * Cancels combat events associated with PvP-disabled players. 
-     * Note that this function will be invoked twice per attack - this is because of a Forge bug.
+     * Cancels combat events associated with PvP-disabled players. Note that
+     * this function will be invoked twice per attack - this is because of a
+     * Forge bug.
      */
     @SubscribeEvent
-    public void interceptPvP(LivingAttackEvent event)
+    public void interceptPvP (LivingAttackEvent event)
     {
         EntityPlayerMP attacker = getMaster (event.source.getEntity ());
         EntityPlayerMP victim = getMaster (event.entity);
@@ -78,18 +79,20 @@ public class PvPEventHandler
         }
 
     }
-    
+
     /*
-     * We need to log here because the LivingAttackEvent will be fired twice per attack.
+     * We need to log here because the LivingAttackEvent will be fired twice per
+     * attack.
      */
     @SubscribeEvent
-    public void onLivingHurt(LivingHurtEvent event) {
+    public void onLivingHurt (LivingHurtEvent event)
+    {
         EntityPlayerMP attacker = getMaster (event.source.getEntity ());
         EntityPlayerMP victim = getMaster (event.entity);
 
         if (attacker == null || victim == null)
             return;
-        
+
         if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
             PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
@@ -98,7 +101,7 @@ public class PvPEventHandler
      * Handles PvP warmup timers.
      */
     @SubscribeEvent
-    public void onLivingUpdate(LivingUpdateEvent event)
+    public void onLivingUpdate (LivingUpdateEvent event)
     {
         EntityPlayerMP player;
         long time = PvPUtils.getTime ();
@@ -133,7 +136,7 @@ public class PvPEventHandler
     /**
      * Returns the player that this entity is associated with, if possible.
      */
-    public EntityPlayerMP getMaster(Entity entity)
+    public EntityPlayerMP getMaster (Entity entity)
     {
         if (entity == null)
             return null;
@@ -177,8 +180,8 @@ public class PvPEventHandler
             {
                 // This shouldn't be able to happen
                 FMLLog.getLogger ().error (
-                                "Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed",
-                                ex);
+                    "Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed",
+                    ex);
                 lotrPatchFailed = true;
                 return null;
             }
@@ -186,8 +189,8 @@ public class PvPEventHandler
             {
                 // Something changed with the LOTR mod.
                 FMLLog.getLogger ().error (
-                                "Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
-                                ex);
+                    "Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
+                    ex);
                 lotrPatchFailed = true;
                 return null;
             }
@@ -195,8 +198,8 @@ public class PvPEventHandler
             {
                 // Something changed with the LOTR mod.
                 FMLLog.getLogger ().error (
-                                "Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
-                                ex);
+                    "Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
+                    ex);
                 lotrPatchFailed = true;
                 return null;
             }
@@ -221,33 +224,33 @@ public class PvPEventHandler
         return null;
     }
 
-    void fly(EntityPlayerMP player)
+    void fly (EntityPlayerMP player)
     {
         PvPUtils.red (player, "You are in fly mode!");
     }
 
-    void gm1(EntityPlayerMP player)
+    void gm1 (EntityPlayerMP player)
     {
         PvPUtils.red (player, "You are in creative mode!");
     }
 
-    void disabled(EntityPlayerMP player)
+    void disabled (EntityPlayerMP player)
     {
         PvPUtils.red (player, "This player/unit has PvP disabled!");
     }
 
-    void warnServer(EntityPlayerMP player)
+    void warnServer (EntityPlayerMP player)
     {
         PvPMode.cfg.sendChatMsg (new ChatComponentText (
-                        EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
+            EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
     }
 
-    void pvpOff(EntityPlayerMP player)
+    void pvpOff (EntityPlayerMP player)
     {
         PvPUtils.green (player, "PvP is now disabled for you.");
     }
 
-    public static void init()
+    public static void init ()
     {
         INSTANCE = new PvPEventHandler ();
         MinecraftForge.EVENT_BUS.register (INSTANCE);

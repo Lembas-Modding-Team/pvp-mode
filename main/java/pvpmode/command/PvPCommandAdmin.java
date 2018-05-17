@@ -10,25 +10,25 @@ import pvpmode.PvPUtils;
 public class PvPCommandAdmin extends CommandBase
 {
     @Override
-    public String getCommandName()
+    public String getCommandName ()
     {
         return "pvpadmin";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getCommandUsage (ICommandSender sender)
     {
         return "/pvpadmin <player>";
     }
 
     @Override
-    public int getRequiredPermissionLevel()
+    public int getRequiredPermissionLevel ()
     {
         return 2;
     }
 
     @Override
-    public void processCommand(ICommandSender admin, String[] args)
+    public void processCommand (ICommandSender admin, String[] args)
     {
         if (args.length != 1)
         {
@@ -38,7 +38,8 @@ public class PvPCommandAdmin extends CommandBase
 
         EntityPlayerMP player = PvPUtils.getPlayer (args[0]);
 
-        if (player == null) {
+        if (player == null)
+        {
             PvPUtils.red (admin, String.format ("The player \"%s\" doesn't exist", args[0]));
             return;
         }
@@ -54,12 +55,12 @@ public class PvPCommandAdmin extends CommandBase
     }
 
     @Override
-    public boolean isUsernameIndex(String[] args, int index)
+    public boolean isUsernameIndex (String[] args, int index)
     {
         return index == 0;
     }
 
-    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args)
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
@@ -67,12 +68,12 @@ public class PvPCommandAdmin extends CommandBase
         return null;
     }
 
-    void help(ICommandSender sender)
+    void help (ICommandSender sender)
     {
         PvPUtils.white (sender, "/pvpadmin <player>");
     }
 
-    void warnPlayer(EntityPlayerMP player)
+    void warnPlayer (EntityPlayerMP player)
     {
         PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
     }

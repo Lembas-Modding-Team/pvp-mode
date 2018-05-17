@@ -21,26 +21,26 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
     public static final String CONFIG_NAME = "csv";
     public static final String DEFAULT_CSV_SEPARATOR = ";";
 
-    public CSVCombatLogHandler()
+    public CSVCombatLogHandler ()
     {
         super (CONFIG_NAME, "csv");
     }
 
     @Override
-    public void init(Path pvpLoggingDir)
+    public void init (Path pvpLoggingDir)
     {
         super.init (pvpLoggingDir);
         writer.println (String.format ("Date/Time:%sAttacker:%<sVictim:%<sDamage Amount:%<sDamage Source:",
-                        PvPMode.csvSeparator));// CSV header
+            PvPMode.csvSeparator));// CSV header
     }
 
     @Override
-    public void log(Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
-                    DamageSource damageSource)
+    public void log (Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
+        DamageSource damageSource)
     {
         writer.println (String.format ("%2$s%1$s%3$s%1$s%4$s%1$s%5$.2f%1$s%6$s", PvPMode.csvSeparator,
-                        SimpleDateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
-                        victim.getDisplayName (), damageAmount, damageSource.damageType));
+            SimpleDateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
+            victim.getDisplayName (), damageAmount, damageSource.damageType));
 
     }
 

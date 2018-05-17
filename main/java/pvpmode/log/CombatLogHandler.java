@@ -24,7 +24,7 @@ public interface CombatLogHandler
      * @param pvpLoggingDir
      *            The directory where the handler can store logging data
      */
-    public void init(Path pvpLoggingDir);
+    public void init (Path pvpLoggingDir);
 
     /**
      * Invoked when a pvp event should be logged.
@@ -40,12 +40,12 @@ public interface CombatLogHandler
      * @param damageSource
      *            The damage source
      */
-    public void log(Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
-                    DamageSource damageSource);
+    public void log (Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
+        DamageSource damageSource);
 
     /**
      * Called on server shutdown when the module is active for cleanup purposes.
      */
-    public void cleanup();
+    public void cleanup ();
 
 }
