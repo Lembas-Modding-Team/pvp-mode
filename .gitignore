@@ -1,0 +1,8 @@
+/bin/
+/eclipse/
+/libs/
+/build/
+/.settings/
+/.gradle/
+/.classpath
+/.project
