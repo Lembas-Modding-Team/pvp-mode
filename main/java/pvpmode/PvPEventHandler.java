@@ -1,20 +1,14 @@
 package pvpmode;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 public class PvPEventHandler
@@ -22,23 +16,16 @@ public class PvPEventHandler
     public static PvPEventHandler INSTANCE;
 
     /**
-     * Adds a PvPEnabled tag to a new player.
+     * True if data from hired units of the LOTR Mod couldn't be accessed. This
+     * prevents PvpMode trying to access them again and again if it failed
+     * before.
      */
-    @SubscribeEvent
-    public void onNewPlayer (PlayerLoggedInEvent event)
-    {
-        EntityPlayerMP player = (EntityPlayerMP) event.player;
-
-        if (!player.getEntityData ().hasKey ("PvPEnabled"))
-        {
-            player.getEntityData ().setBoolean ("PvPEnabled", false);
-            player.getEntityData ().setLong ("PvPWarmup", 0);
-            player.getEntityData ().setLong ("PvPCooldown", 0);
-        }
-    }
+    private boolean lotrPatchFailed = false;
 
     /**
-     * Cancels combat events associated with PvP-disabled players.
+     * Cancels combat events associated with PvP-disabled players. Note that
+     * this function will be invoked twice per attack - this is because of a
+     * Forge bug.
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
@@ -48,6 +35,9 @@ public class PvPEventHandler
 
         if (attacker == null || victim == null)
             return;
+
+        PvpData attackerData = PvPUtils.getPvPData (attacker);
+        PvpData victimData = PvPUtils.getPvPData (victim);
 
         if (attacker.capabilities.allowFlying)
         {
@@ -73,7 +63,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!victim.getEntityData ().getBoolean ("PvPEnabled"))
+        if (!victimData.isPvpEnabled ())
         {
             if (attacker == event.source.getEntity ())
                 disabled (attacker);
@@ -82,11 +72,29 @@ public class PvPEventHandler
             return;
         }
 
-        if (!attacker.getEntityData ().getBoolean ("PvPEnabled"))
+        if (!attackerData.isPvpEnabled ())
         {
             event.setCanceled (true);
             return;
         }
+
+    }
+
+    /*
+     * We need to log here because the LivingAttackEvent will be fired twice per
+     * attack.
+     */
+    @SubscribeEvent
+    public void onLivingHurt (LivingHurtEvent event)
+    {
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
+
+        if (attacker == null || victim == null)
+            return;
+
+        if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
+            PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
     /**
@@ -96,30 +104,32 @@ public class PvPEventHandler
     public void onLivingUpdate (LivingUpdateEvent event)
     {
         EntityPlayerMP player;
-        long time = getTime ();
+        long time = PvPUtils.getTime ();
 
         if (event.entityLiving instanceof EntityPlayerMP)
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        long toggleTime = player.getEntityData ().getLong ("PvPWarmup");
+        PvpData data = PvPUtils.getPvPData (player);
+
+        long toggleTime = data.getPvpWarmup ();
 
         if (toggleTime != 0 && toggleTime < time)
         {
-            player.getEntityData ().setLong ("PvPWarmup", 0);
+            data.setPvpWarmup (0);
 
-            if (!player.getEntityData ().getBoolean ("PvPEnabled"))
+            if (!data.isPvpEnabled ())
             {
-                player.getEntityData ().setBoolean ("PvPEnabled", true);
+                data.setPvpEnabled (true);
                 warnServer (player);
             }
             else
             {
-                player.getEntityData ().setBoolean ("PvPEnabled", false);
+                data.setPvpEnabled (false);
                 pvpOff (player);
             }
 
-            player.getEntityData ().setLong ("PvPCooldown", time + PvPMode.cooldown);
+            data.setPvpCooldown (time + PvPMode.cooldown);
         }
     }
 
@@ -134,66 +144,99 @@ public class PvPEventHandler
         if (entity instanceof EntityPlayerMP)
             return (EntityPlayerMP) entity;
 
-        if (entity instanceof EntityWolf)
-            return (EntityPlayerMP) ((EntityWolf) entity).getOwner ();
+        if (entity instanceof IEntityOwnable)
+            return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
-        // LOTR patch begins.
-
-        Class entityClass = entity.getClass ();
-
-        try
+        if (PvPUtils.isLOTRModLoaded () && !lotrPatchFailed)
         {
-            // Only Dumbledore and I are capable of this kind of magic.
-            // And even then it requires a silken hand and a subtle touch.
-            Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-            Class hiredClass = hiredUnitInfo.getType ();
-            Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer", new Class[] {});
+            // LOTR patch begins.
 
-            Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity), new Object[] {});
+            Class<?> entityClass = entity.getClass ();
+            try
+            {
+                if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
+                {
+                    // Only Gandalf, Dumbledore, Mahtaran and I are capable of
+                    // this kind
+                    // of magic.
+                    // And even then it requires a silken hand and a subtle
+                    // touch.
+                    Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
+                    Class<?> hiredClass = hiredUnitInfo.getType ();
+                    Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer");
 
-            if (o instanceof EntityPlayerMP)
-                return (EntityPlayerMP) o;
+                    Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity));
 
-            return null;
+                    if (o instanceof EntityPlayerMP)
+                        return (EntityPlayerMP) o;
+                }
+                else
+                {
+                    // This entity is not a LOTR unit.
+                    return null;
+                }
+            }
+            catch (ClassNotFoundException ex)
+            {
+                // This shouldn't be able to happen
+                FMLLog.getLogger ().error (
+                    "Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed",
+                    ex);
+                lotrPatchFailed = true;
+                return null;
+            }
+            catch (NoSuchFieldException ex)
+            {
+                // Something changed with the LOTR mod.
+                FMLLog.getLogger ().error (
+                    "Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
+                    ex);
+                lotrPatchFailed = true;
+                return null;
+            }
+            catch (NoSuchMethodException ex)
+            {
+                // Something changed with the LOTR mod.
+                FMLLog.getLogger ().error (
+                    "Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
+                    ex);
+                lotrPatchFailed = true;
+                return null;
+            }
+            catch (IllegalAccessException ex)
+            {
+                // Hopefully impossible since I am only accessing public
+                // fields/methods.
+                FMLLog.getLogger ().error ("Security exception in PvPEventHandler at " + entityClass, ex);
+                lotrPatchFailed = true;
+                return null;
+            }
+            catch (InvocationTargetException ex)
+            {
+                // If the invoked method threw an exception it'll be wrapped in
+                // an InvocationTargetException
+                FMLLog.getLogger ().error ("A function of the LOTR Mod trew an exception", ex);
+                lotrPatchFailed = true;
+                return null;
+            }
         }
-        catch (NoSuchFieldException ex)
-        {
-            // This entity is not a LOTR unit.
-            return null;
-        }
-        catch (NoSuchMethodException ex)
-        {
-            // Something changed with the LOTR mod.
-            return null;
-        }
-        catch (IllegalAccessException ex)
-        {
-            // Hopefully impossible since I am only accessing public
-            // fields/methods.
-            FMLLog.info ("Security exception in PvPEventHandler at " + entityClass, null);
-            return null;
-        }
-        catch (InvocationTargetException ex)
-        {
-            // No idea why this would occur.
-            FMLLog.info ("InvocationTargetException thrown: " + ex.getCause ().getMessage (), null);
-            return null;
-        }
+
+        return null;
     }
 
     void fly (EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in fly mode!"));
+        PvPUtils.red (player, "You are in fly mode!");
     }
 
     void gm1 (EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "You are in creative mode!"));
+        PvPUtils.red (player, "You are in creative mode!");
     }
 
     void disabled (EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED + "This player/unit has PvP disabled!"));
+        PvPUtils.red (player, "This player/unit has PvP disabled!");
     }
 
     void warnServer (EntityPlayerMP player)
@@ -204,19 +247,7 @@ public class PvPEventHandler
 
     void pvpOff (EntityPlayerMP player)
     {
-        player.addChatComponentMessage (new ChatComponentText (
-            EnumChatFormatting.GREEN + "PvP is now disabled for you."));
-    }
-
-    void sendCooldown (EntityPlayerMP player)
-    {
-        player.addChatMessage (new ChatComponentText (
-            EnumChatFormatting.YELLOW + "You can switch PvP modes again in " + PvPMode.cooldown + " seconds."));
-    }
-
-    long getTime ()
-    {
-        return MinecraftServer.getSystemTimeMillis () / 1000;
+        PvPUtils.green (player, "PvP is now disabled for you.");
     }
 
     public static void init ()

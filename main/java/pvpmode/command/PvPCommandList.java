@@ -1,14 +1,13 @@
-package pvpmode;
+package pvpmode.command;
 
 import java.util.ArrayList;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
+import pvpmode.*;
 
-public class PvPListCommand extends CommandBase
+public class PvPCommandList extends CommandBase
 {
     @Override
     public String getCommandName ()
@@ -23,6 +22,12 @@ public class PvPListCommand extends CommandBase
     }
 
     @Override
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
+    {
+        return true;
+    }
+
+    @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
@@ -32,17 +37,18 @@ public class PvPListCommand extends CommandBase
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
+            PvpData playerData = PvPUtils.getPvPData (player);
 
             if (player.capabilities.isCreativeMode)
-                safePlayers.add (EnumChatFormatting.GREEN + "[GM1] " + player.getDisplayName ());
+                safePlayers.add ("[GM1] " + player.getDisplayName ());
             else if (player.capabilities.allowFlying)
-                safePlayers.add (EnumChatFormatting.GREEN + "[FLY] " + player.getDisplayName ());
-            else if (!player.getEntityData ().getBoolean ("PvPEnabled"))
+                safePlayers.add ("[FLY] " + player.getDisplayName ());
+            else if (!playerData.isPvpEnabled ())
             {
-                long warmup = player.getEntityData ().getLong ("PvPWarmup");
+                long warmup = playerData.getPvpWarmup ();
 
                 if (warmup == 0)
-                    safePlayers.add (EnumChatFormatting.GREEN + "[OFF] " + player.getDisplayName ());
+                    safePlayers.add ("[OFF] " + player.getDisplayName ());
                 else
                     unsafePlayers.add (EnumChatFormatting.YELLOW + "[WARMUP] " + player.getDisplayName ()
                         + " - " + (warmup - PvPUtils.getTime ()) + " seconds till PvP");
@@ -51,7 +57,7 @@ public class PvPListCommand extends CommandBase
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
-                if (senderPlayer.getEntityData ().getBoolean ("PvPEnabled") && PvPMode.radar
+                if (PvPUtils.getPvPData (senderPlayer).isPvpEnabled () && PvPMode.radar
                     && senderPlayer != player)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 
@@ -62,13 +68,7 @@ public class PvPListCommand extends CommandBase
         for (String line : unsafePlayers)
             sender.addChatMessage (new ChatComponentText (line));
         for (String line : safePlayers)
-            sender.addChatMessage (new ChatComponentText (line));
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
+            PvPUtils.green (sender, line);
     }
 
     int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
