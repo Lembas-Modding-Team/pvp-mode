@@ -1,6 +1,6 @@
 CHANGELOG:
 
-1.1.1-BETA
+1.1.0-BETA
 
 Renamed the config property `Active Pvp Logging Handlers` to `Active PvP Logging Handlers`
 
