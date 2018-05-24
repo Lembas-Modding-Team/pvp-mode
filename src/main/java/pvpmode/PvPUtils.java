@@ -51,9 +51,9 @@ public class PvPUtils
      * Returns a wrapper from which all player-specific PvP properties can be
      * accessed. The returned instance can be returned from a cache.
      */
-    public static PvpData getPvPData (EntityPlayer player)
+    public static PvPData getPvPData (EntityPlayer player)
     {
-        return new PvpData (player);
+        return new PvPData (player);
     }
 
     /**

@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
 /**
- * A combat log handler which simply logs the pvp events to a file.
+ * A combat log handler which simply logs the PvP events to a file.
  * 
  * @author CraftedMods
  *

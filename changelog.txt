@@ -1,5 +1,9 @@
 CHANGELOG:
 
+1.1.1-BETA
+
+Renamed the config property `Active Pvp Logging Handlers` to `Active PvP Logging Handlers`
+
 1.0.0-BETA
 
 Added combat logging (two handlers: csv (default) and simple)

@@ -37,15 +37,15 @@ public class PvPCommandList extends CommandBase
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
-            PvpData playerData = PvPUtils.getPvPData (player);
+            PvPData playerData = PvPUtils.getPvPData (player);
 
             if (player.capabilities.isCreativeMode)
                 safePlayers.add ("[GM1] " + player.getDisplayName ());
             else if (player.capabilities.allowFlying)
                 safePlayers.add ("[FLY] " + player.getDisplayName ());
-            else if (!playerData.isPvpEnabled ())
+            else if (!playerData.isPvPEnabled ())
             {
-                long warmup = playerData.getPvpWarmup ();
+                long warmup = playerData.getPvPWarmup ();
 
                 if (warmup == 0)
                     safePlayers.add ("[OFF] " + player.getDisplayName ());
@@ -57,7 +57,7 @@ public class PvPCommandList extends CommandBase
             {
                 String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
 
-                if (PvPUtils.getPvPData (senderPlayer).isPvpEnabled () && PvPMode.radar
+                if (PvPUtils.getPvPData (senderPlayer).isPvPEnabled () && PvPMode.radar
                     && senderPlayer != player)
                     message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
 

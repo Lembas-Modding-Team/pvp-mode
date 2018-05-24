@@ -28,13 +28,13 @@ public class PvPCommand extends CommandBase
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        PvpData data = PvPUtils.getPvPData (player);
+        PvPData data = PvPUtils.getPvPData (player);
 
         if (args.length > 0)
         {
             if (args[0].equals ("cancel"))
             {
-                cancelPvpTimer (sender, data);
+                cancelPvPTimer (sender, data);
             }
             else
             {
@@ -43,27 +43,27 @@ public class PvPCommand extends CommandBase
         }
         else
         {
-            togglePvpMode (sender, data);
+            togglePvPMode (sender, data);
         }
     }
 
-    private void cancelPvpTimer (ICommandSender sender, PvpData data)
+    private void cancelPvPTimer (ICommandSender sender, PvPData data)
     {
-        long warmup = data.getPvpWarmup ();
+        long warmup = data.getPvPWarmup ();
         if (warmup == 0)
             PvPUtils.yellow (sender, "No PvP warmup to cancel.");
         else
         {
-            data.setPvpWarmup (0);
+            data.setPvPWarmup (0);
             PvPUtils.yellow (sender, "PvP warmup canceled.");
         }
     }
 
-    private void togglePvpMode (ICommandSender sender, PvpData data)
+    private void togglePvPMode (ICommandSender sender, PvPData data)
     {
         long time = PvPUtils.getTime ();
         long toggleTime = time + PvPMode.warmup;
-        long cooldownTime = data.getPvpCooldown ();
+        long cooldownTime = data.getPvPCooldown ();
 
         if (cooldownTime > time)
         {
@@ -72,10 +72,10 @@ public class PvPCommand extends CommandBase
             return;
         }
 
-        data.setPvpWarmup (toggleTime);
-        data.setPvpCooldown (0);
+        data.setPvPWarmup (toggleTime);
+        data.setPvPCooldown (0);
 
-        String status = data.isPvpEnabled () ? "disabled" : "enabled";
+        String status = data.isPvPEnabled () ? "disabled" : "enabled";
         PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...", status, PvPMode.warmup));
     }
 }

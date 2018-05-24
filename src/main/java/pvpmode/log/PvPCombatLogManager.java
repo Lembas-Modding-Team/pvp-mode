@@ -183,6 +183,6 @@ public class PvPCombatLogManager
     private void checkState (boolean requiredCondition)
     {
         if (!requiredCondition)
-            throw new IllegalStateException ("The PvpCombatLogManager is in a wrong state");
+            throw new IllegalStateException ("The PvPCombatLogManager is in a wrong state");
     }
 }

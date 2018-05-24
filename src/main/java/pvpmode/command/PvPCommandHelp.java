@@ -29,7 +29,7 @@ public class PvPCommandHelp extends CommandBase
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        PvPUtils.green (sender, "--- Pvp Mode Help ---");
+        PvPUtils.green (sender, "--- PvP Mode Help ---");
         postCommandHelp (sender, "pvp", "", "Starts a warmup timer to enable or disable PvP for the command sender.");
         postCommandHelp (sender, "pvp cancel", "", "Cancels the warmup timer for the command sender.");
         postCommandHelp (sender, "pvpadmin", "<player>", "For admins only, enables or disables PvP for the player.");

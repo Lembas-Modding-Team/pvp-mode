@@ -4,7 +4,7 @@ import net.minecraft.command.*;
 import net.minecraft.util.EnumChatFormatting;
 import pvpmode.*;
 
-public class PvpCommandConfig extends CommandBase
+public class PvPCommandConfig extends CommandBase
 {
 
     @Override
@@ -49,13 +49,13 @@ public class PvpCommandConfig extends CommandBase
 
     private void displayConfiguration (ICommandSender sender)
     {
-        PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "--- Pvp Mode Configuration ---");
+        PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "--- PvP Mode Configuration ---");
         postConfigEntry (sender, "Warmup", Integer.toString (PvPMode.warmup) + "s");
         postConfigEntry (sender, "Cooldown", Integer.toString (PvPMode.cooldown) + "s");
         postConfigEntry (sender, "Radar enabled", Boolean.toString (PvPMode.radar));
         postConfigEntry (sender, "Distance round factor", Integer.toString (PvPMode.roundFactor));
         postConfigEntry (sender, "CSV separator", PvPMode.csvSeparator);
-        postConfigEntry (sender, "Combat logging handlers", PvPMode.activatedPvpLoggingHandlers.toString ());
+        postConfigEntry (sender, "Combat logging handlers", PvPMode.activatedPvPLoggingHandlers.toString ());
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 
