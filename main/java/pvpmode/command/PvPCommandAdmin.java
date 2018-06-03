@@ -1,10 +1,11 @@
-package pvpmode;
+package pvpmode.command;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
+import java.util.List;
+
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.server.MinecraftServer;
+import pvpmode.PvPUtils;
 
 public class PvPCommandAdmin extends CommandBase
 {
@@ -21,6 +22,12 @@ public class PvPCommandAdmin extends CommandBase
     }
 
     @Override
+    public int getRequiredPermissionLevel ()
+    {
+        return 2;
+    }
+
+    @Override
     public void processCommand (ICommandSender admin, String[] args)
     {
         if (args.length != 1)
@@ -31,6 +38,12 @@ public class PvPCommandAdmin extends CommandBase
 
         EntityPlayerMP player = PvPUtils.getPlayer (args[0]);
 
+        if (player == null)
+        {
+            PvPUtils.red (admin, String.format ("The player \"%s\" doesn't exist", args[0]));
+            return;
+        }
+
         /*
          * This warning will never be a config option. I will not tolerate
          * admins who go behind a player's back as "punishment" An admin should
@@ -38,13 +51,7 @@ public class PvPCommandAdmin extends CommandBase
          * secrecy.
          */
         warnPlayer (player);
-        player.getEntityData ().setLong ("PvPWarmup", PvPUtils.getTime ());
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return PvPUtils.isOpped (sender);
+        PvPUtils.getPvPData (player).setPvpWarmup (PvPUtils.getTime ());
     }
 
     @Override
@@ -53,14 +60,21 @@ public class PvPCommandAdmin extends CommandBase
         return index == 0;
     }
 
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
+
+        return null;
+    }
+
     void help (ICommandSender sender)
     {
-        sender.addChatMessage (new ChatComponentText ("/pvpadmin <player>"));
+        PvPUtils.white (sender, "/pvpadmin <player>");
     }
 
     void warnPlayer (EntityPlayerMP player)
     {
-        player.addChatMessage (new ChatComponentText (EnumChatFormatting.RED
-            + "WARNING: Your PvP status is being overridden by an admin."));
+        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
     }
 }
