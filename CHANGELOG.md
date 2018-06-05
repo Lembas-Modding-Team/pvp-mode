@@ -1,7 +1,7 @@
-# Changelog of PvpMode for Minecraft 1.7.10:
+# Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.1.0-BETA
-* The changelog will now be integrated into the JAR of PvpMode
+* The changelog will now be integrated into the JAR of PvPMode
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
