@@ -41,6 +41,11 @@ public class PvPData
         pvpDataTag = persistent.getCompoundTag (PVP_DATA_NBT_KEY);
     }
 
+    /**
+     * Returns whether PvP is enabled for the player. Note that this doesn't
+     * mean that the player can actually do PvP - this depends on other
+     * parameters like the gamemode. Use {@link PvPUtils#getPvPMode} for this.
+     */
     public boolean isPvPEnabled ()
     {
         return pvpDataTag.getBoolean (PVP_ENABLED_NBT_KEY);
