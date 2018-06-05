@@ -51,7 +51,7 @@ public class PvPCommandAdmin extends CommandBase
          * secrecy.
          */
         warnPlayer (player);
-        PvPUtils.getPvPData (player).setPvpWarmup (PvPUtils.getTime ());
+        PvPUtils.getPvPData (player).setPvPWarmup (PvPUtils.getTime ());
     }
 
     @Override

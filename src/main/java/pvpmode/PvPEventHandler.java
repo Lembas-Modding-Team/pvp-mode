@@ -17,7 +17,7 @@ public class PvPEventHandler
 
     /**
      * True if data from hired units of the LOTR Mod couldn't be accessed. This
-     * prevents PvpMode trying to access them again and again if it failed
+     * prevents PvPMode trying to access them again and again if it failed
      * before.
      */
     private boolean lotrPatchFailed = false;
@@ -36,8 +36,8 @@ public class PvPEventHandler
         if (attacker == null || victim == null)
             return;
 
-        PvpData attackerData = PvPUtils.getPvPData (attacker);
-        PvpData victimData = PvPUtils.getPvPData (victim);
+        PvPData attackerData = PvPUtils.getPvPData (attacker);
+        PvPData victimData = PvPUtils.getPvPData (victim);
 
         if (attacker.capabilities.allowFlying)
         {
@@ -63,7 +63,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!victimData.isPvpEnabled ())
+        if (!victimData.isPvPEnabled ())
         {
             if (attacker == event.source.getEntity ())
                 disabled (attacker);
@@ -72,7 +72,7 @@ public class PvPEventHandler
             return;
         }
 
-        if (!attackerData.isPvpEnabled ())
+        if (!attackerData.isPvPEnabled ())
         {
             event.setCanceled (true);
             return;
@@ -93,7 +93,7 @@ public class PvPEventHandler
         if (attacker == null || victim == null)
             return;
 
-        if (PvPMode.activatedPvpLoggingHandlers.size () > 0)
+        if (PvPMode.activatedPvPLoggingHandlers.size () > 0)
             PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
     }
 
@@ -110,26 +110,26 @@ public class PvPEventHandler
             player = (EntityPlayerMP) event.entityLiving;
         else return;
 
-        PvpData data = PvPUtils.getPvPData (player);
+        PvPData data = PvPUtils.getPvPData (player);
 
-        long toggleTime = data.getPvpWarmup ();
+        long toggleTime = data.getPvPWarmup ();
 
         if (toggleTime != 0 && toggleTime < time)
         {
-            data.setPvpWarmup (0);
+            data.setPvPWarmup (0);
 
-            if (!data.isPvpEnabled ())
+            if (!data.isPvPEnabled ())
             {
-                data.setPvpEnabled (true);
+                data.setPvPEnabled (true);
                 warnServer (player);
             }
             else
             {
-                data.setPvpEnabled (false);
+                data.setPvPEnabled (false);
                 pvpOff (player);
             }
 
-            data.setPvpCooldown (time + PvPMode.cooldown);
+            data.setPvPCooldown (time + PvPMode.cooldown);
         }
     }
 

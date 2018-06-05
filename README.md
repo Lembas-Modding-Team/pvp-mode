@@ -30,7 +30,7 @@ Distances are approximated to the nearest x blocks where x is a number determine
 
 For in-game information, use `pvphelp`. This command provides information on all the commands added by the mod. Clicking on the displayed command names automatically inserts them in the chat.
 
-Use `pvpconfig display` to view the values of the server configuration data of PvpMode. This is only for administrators.
+Use `pvpconfig display` to view the values of the server configuration data of PvPMode. This is only for administrators.
 
 The configuration file has a few useful options for timers and miscellaneous items.
 

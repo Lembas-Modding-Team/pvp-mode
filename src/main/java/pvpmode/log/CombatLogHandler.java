@@ -27,7 +27,7 @@ public interface CombatLogHandler
     public void init (Path pvpLoggingDir);
 
     /**
-     * Invoked when a pvp event should be logged.
+     * Invoked when a PvP event should be logged.
      * 
      * @param date
      *            The current date and time

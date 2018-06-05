@@ -24,7 +24,7 @@ public class PvPMode
     public static int warmup;
     public static int cooldown;
     public static boolean radar;
-    public static Collection<String> activatedPvpLoggingHandlers;
+    public static Collection<String> activatedPvPLoggingHandlers;
     public static String csvSeparator;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
@@ -76,22 +76,22 @@ public class PvPMode
     {
         combatLogManager.preInit ();
 
-        String[] validPvpLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
+        String[] validPvPLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
 
         /*
          * We've to load this property in init because it depends on previously
          * registered handlers - other mods may register handlers in preinit.
          */
-        activatedPvpLoggingHandlers = new HashSet<> (Arrays.asList (
+        activatedPvPLoggingHandlers = new HashSet<> (Arrays.asList (
             config.getStringList ("Active Pvp Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
             {combatLogManager.getDefaultHandlerName ()},
-                "Valid values: " + Arrays.toString (validPvpLogHandlerNames)
+                "Valid values: " + Arrays.toString (validPvPLogHandlerNames)
                     + ". Leave it empty (without empty lines!) to disable pvp logging.",
-                validPvpLogHandlerNames)));
+                    validPvPLogHandlerNames)));
 
-        if (activatedPvpLoggingHandlers.size () > 0)
+        if (activatedPvPLoggingHandlers.size () > 0)
         {
-            Iterator<String> activatedHandlersIterator = activatedPvpLoggingHandlers.iterator ();
+            Iterator<String> activatedHandlersIterator = activatedPvPLoggingHandlers.iterator ();
             while (activatedHandlersIterator.hasNext ())
             {
                 String handlerName = activatedHandlersIterator.next ();
@@ -102,24 +102,24 @@ public class PvPMode
                     activatedHandlersIterator.remove ();
                 }
             }
-            if (activatedPvpLoggingHandlers.isEmpty ())
+            if (activatedPvPLoggingHandlers.isEmpty ())
             {
                 FMLLog.warning ("No valid pvp combat logging handlers were specified. A default one will be used");
-                activatedPvpLoggingHandlers.add (combatLogManager.getDefaultHandlerName ());
+                activatedPvPLoggingHandlers.add (combatLogManager.getDefaultHandlerName ());
             }
         }
         else
         {
-            FMLLog.warning ("No pvp combat logging handlers were specified. Pvp combat logging will be disabled.");
+            FMLLog.warning ("No pvp combat logging handlers were specified. PvP combat logging will be disabled.");
         }
 
         if (config.hasChanged ())
             config.save ();
 
-        if (activatedPvpLoggingHandlers.size () > 0)
+        if (activatedPvPLoggingHandlers.size () > 0)
         {
-            activatedPvpLoggingHandlers.forEach (combatLogManager::activateHandler);
-            FMLLog.info ("Activated the following pvp combat logging handlers: %s", activatedPvpLoggingHandlers);
+            activatedPvPLoggingHandlers.forEach (combatLogManager::activateHandler);
+            FMLLog.info ("Activated the following pvp combat logging handlers: %s", activatedPvPLoggingHandlers);
             combatLogManager.init (combatLogDir);
         }
 
@@ -134,13 +134,13 @@ public class PvPMode
         event.registerServerCommand (new PvPCommandList ());
         event.registerServerCommand (new PvPCommandAdmin ());
         event.registerServerCommand (new PvPCommandHelp ());
-        event.registerServerCommand (new PvpCommandConfig ());
+        event.registerServerCommand (new PvPCommandConfig ());
     }
 
     @EventHandler
     public void serverClose (FMLServerStoppingEvent event)
     {
-        if (activatedPvpLoggingHandlers.size () > 0)
+        if (activatedPvPLoggingHandlers.size () > 0)
             combatLogManager.close ();
     }
 }
