@@ -83,7 +83,7 @@ public class PvPMode
          * registered handlers - other mods may register handlers in preinit.
          */
         activatedPvPLoggingHandlers = new HashSet<> (Arrays.asList (
-            config.getStringList ("Active PvP Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
+            config.getStringList ("Active Pvp Logging Handlers", MAIN_CONFIGURATION_CATEGORY, new String[]
             {combatLogManager.getDefaultHandlerName ()},
                 "Valid values: " + Arrays.toString (validPvPLogHandlerNames)
                     + ". Leave it empty (without empty lines!) to disable pvp logging.",
