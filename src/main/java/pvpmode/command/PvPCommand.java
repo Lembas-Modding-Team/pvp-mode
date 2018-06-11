@@ -1,7 +1,7 @@
 package pvpmode.command;
 
 import net.minecraft.command.*;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.*;
 import pvpmode.*;
 
 public class PvPCommand extends CommandBase
@@ -28,13 +28,14 @@ public class PvPCommand extends CommandBase
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
+        EnumPvPMode currentMode = PvPUtils.getPvPMode (player);
         PvPData data = PvPUtils.getPvPData (player);
 
         if (args.length > 0)
         {
             if (args[0].equals ("cancel"))
             {
-                cancelPvPTimer (sender, data);
+                cancelPvPTimer (player, currentMode, data);
             }
             else
             {
@@ -47,15 +48,16 @@ public class PvPCommand extends CommandBase
         }
     }
 
-    private void cancelPvPTimer (ICommandSender sender, PvPData data)
+    private void cancelPvPTimer (EntityPlayer player, EnumPvPMode mode, PvPData data)
     {
-        long warmup = data.getPvPWarmup ();
-        if (warmup == 0)
-            PvPUtils.yellow (sender, "No PvP warmup to cancel.");
-        else
+        if (mode == EnumPvPMode.WARMUP)
         {
             data.setPvPWarmup (0);
-            PvPUtils.yellow (sender, "PvP warmup canceled.");
+            PvPUtils.yellow (player, "PvP warmup canceled.");
+        }
+        else
+        {
+            PvPUtils.yellow (player, "No PvP warmup to cancel.");
         }
     }
 

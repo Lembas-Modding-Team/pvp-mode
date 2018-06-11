@@ -30,54 +30,49 @@ public class PvPEventHandler
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = getMaster (event.entity);
+        EntityPlayerMP attacker = this.getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = this.getMaster (event.entity);
 
         if (attacker == null || victim == null)
             return;
 
-        PvPData attackerData = PvPUtils.getPvPData (attacker);
-        PvPData victimData = PvPUtils.getPvPData (victim);
+        EnumPvPMode attackerMode = PvPUtils.getPvPMode (attacker);
+        EnumPvPMode victimMode = PvPUtils.getPvPMode (victim);
 
-        if (attacker.capabilities.allowFlying)
+        boolean cancel = false;
+
+        if (attackerMode != EnumPvPMode.ON)
         {
             if (attacker == event.source.getEntity ())
-                fly (attacker);
+            {
+                if (PvPUtils.isCreativeMode (attacker))
+                {
+                    PvPUtils.red (attacker, "You are in creative mode!");
+                }
+                else if (PvPUtils.canFly (attacker))
+                {
+                    PvPUtils.red (attacker, "You are in fly mode!");
+                }
+            }
+            cancel = true;
+        }
 
+        if (cancel) {// For performance reasons
             event.setCanceled (true);
             return;
         }
 
-        if (victim.capabilities.allowFlying)
-        {
-            event.setCanceled (true);
-            return;
-        }
-
-        if (attacker.capabilities.isCreativeMode)
-        {
-            if (attacker == event.source.getEntity ())
-                gm1 (attacker);
-
-            event.setCanceled (true);
-            return;
-        }
-
-        if (!victimData.isPvPEnabled ())
+        if (victimMode != EnumPvPMode.ON)
         {
             if (attacker == event.source.getEntity ())
-                disabled (attacker);
-
-            event.setCanceled (true);
-            return;
+            {
+                PvPUtils.red (attacker, "This player/unit has PvP disabled!");
+            }
+            cancel = true;
         }
 
-        if (!attackerData.isPvPEnabled ())
-        {
+        if (cancel)
             event.setCanceled (true);
-            return;
-        }
-
     }
 
     /*
@@ -121,12 +116,13 @@ public class PvPEventHandler
             if (!data.isPvPEnabled ())
             {
                 data.setPvPEnabled (true);
-                warnServer (player);
+                PvPMode.cfg.sendChatMsg (new ChatComponentText (
+                    EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
             }
             else
             {
                 data.setPvPEnabled (false);
-                pvpOff (player);
+                PvPUtils.green (player, "PvP is now disabled for you.");
             }
 
             data.setPvPCooldown (time + PvPMode.cooldown);
@@ -170,8 +166,7 @@ public class PvPEventHandler
                     if (o instanceof EntityPlayerMP)
                         return (EntityPlayerMP) o;
                 }
-                else
-                {
+                else {
                     // This entity is not a LOTR unit.
                     return null;
                 }
@@ -222,32 +217,6 @@ public class PvPEventHandler
         }
 
         return null;
-    }
-
-    void fly (EntityPlayerMP player)
-    {
-        PvPUtils.red (player, "You are in fly mode!");
-    }
-
-    void gm1 (EntityPlayerMP player)
-    {
-        PvPUtils.red (player, "You are in creative mode!");
-    }
-
-    void disabled (EntityPlayerMP player)
-    {
-        PvPUtils.red (player, "This player/unit has PvP disabled!");
-    }
-
-    void warnServer (EntityPlayerMP player)
-    {
-        PvPMode.cfg.sendChatMsg (new ChatComponentText (
-            EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
-    }
-
-    void pvpOff (EntityPlayerMP player)
-    {
-        PvPUtils.green (player, "PvP is now disabled for you.");
     }
 
     public static void init ()
