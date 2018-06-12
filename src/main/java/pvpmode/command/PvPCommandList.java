@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.*;
 import pvpmode.*;
 
 public class PvPCommandList extends CommandBase
@@ -31,53 +30,42 @@ public class PvPCommandList extends CommandBase
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
+
         ArrayList<String> safePlayers = new ArrayList<String> ();
+        ArrayList<String> warmupPlayers = new ArrayList<String> ();
         ArrayList<String> unsafePlayers = new ArrayList<String> ();
 
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
-            PvPData playerData = PvPUtils.getPvPData (player);
+            EnumPvPMode mode = PvPUtils.getPvPMode (player);
 
-            if (player.capabilities.isCreativeMode)
-                safePlayers.add ("[GM1] " + player.getDisplayName ());
-            else if (player.capabilities.allowFlying)
-                safePlayers.add ("[FLY] " + player.getDisplayName ());
-            else if (!playerData.isPvPEnabled ())
+            switch (mode)
             {
-                long warmup = playerData.getPvPWarmup ();
-
-                if (warmup == 0)
-                    safePlayers.add ("[OFF] " + player.getDisplayName ());
-                else
-                    unsafePlayers.add (EnumChatFormatting.YELLOW + "[WARMUP] " + player.getDisplayName ()
-                        + " - " + (warmup - PvPUtils.getTime ()) + " seconds till PvP");
-            }
-            else
-            {
-                String message = EnumChatFormatting.RED + "[ON] " + player.getDisplayName ();
-
-                if (PvPUtils.getPvPData (senderPlayer).isPvPEnabled () && PvPMode.radar
-                    && senderPlayer != player)
-                    message += " - ~" + roundedDistanceBetween (senderPlayer, player) + " blocks";
-
-                unsafePlayers.add (message);
+                case OFF:
+                    safePlayers.add (String.format ("[OFF%s] %s", PvPUtils.isCreativeMode (player) ? ":GM1"
+                        : PvPUtils.canFly (player) ? ":FLY" : "", player.getDisplayName ()));
+                    break;
+                case ON:
+                    unsafePlayers.add (String.format ("[ON] %s %s", player.getDisplayName (), ((PvPMode.radar
+                        && senderPlayer != player)
+                            ? String.format ("- ~%d blocks",
+                                PvPUtils.roundedDistanceBetween (senderPlayer, player))
+                            : "")));
+                    break;
+                case WARMUP:
+                    warmupPlayers.add (String.format ("[WARMUP] %s - %d seconds till PvP", player.getDisplayName (),
+                        (PvPUtils.getPvPData (player).getPvPWarmup () - PvPUtils.getTime ())));
+                    break;
             }
         }
 
         for (String line : unsafePlayers)
-            sender.addChatMessage (new ChatComponentText (line));
+            PvPUtils.red (sender, line);
+        for (String line : warmupPlayers)
+            PvPUtils.yellow (sender, line);
         for (String line : safePlayers)
             PvPUtils.green (sender, line);
     }
 
-    int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
-    {
-        double x = sender.posX - player.posX;
-        double z = sender.posZ - player.posZ;
-
-        double distance = Math.sqrt (x * x + z * z);
-
-        return (int) ( (distance) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
-    }
 }

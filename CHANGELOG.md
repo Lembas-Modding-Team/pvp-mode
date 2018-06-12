@@ -2,6 +2,7 @@
 
 ## 1.1.0-BETA
 * The changelog will now be integrated into the JAR of PvPMode
+* Clicking on the command `pvpadmin` in the help list appends now a space to the inserted command name
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
