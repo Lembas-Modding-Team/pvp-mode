@@ -30,8 +30,8 @@ public class PvPEventHandler
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        EntityPlayerMP attacker = this.getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = this.getMaster (event.entity);
+        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = getMaster (event.entity);
 
         if (attacker == null || victim == null)
             return;
