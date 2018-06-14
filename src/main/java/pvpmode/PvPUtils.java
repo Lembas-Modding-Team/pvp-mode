@@ -110,4 +110,51 @@ public class PvPUtils
     {
         postChatLines (recipient, null, messages);
     }
+
+    /**
+     * Returns the PvPMode of the supplied player. If ON, the player can do PvP,
+     * otherwise not.
+     */
+    public static EnumPvPMode getPvPMode (EntityPlayer player)
+    {
+        if (isCreativeMode (player) || canFly (player))
+            return EnumPvPMode.OFF;// This is not really my (CraftedMods) style,
+                                   // but I'm doing this for performance reasons
+                                   // here, because the PvPData will only be
+                                   // loaded if required.
+
+        PvPData data = PvPUtils.getPvPData (player);
+        return data.getPvPWarmup () == 0 ? data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF
+            : EnumPvPMode.WARMUP;
+    }
+
+    /**
+     * Returns whether the supplied player is in creative mode.
+     */
+    public static boolean isCreativeMode (EntityPlayer player)
+    {
+        return player.capabilities.isCreativeMode;
+    }
+
+    /**
+     * Returns whether the supplied player can fly.
+     */
+    public static boolean canFly (EntityPlayer player)
+    {
+        return player.capabilities.allowFlying;
+    }
+
+    /**
+     * Returns the distance between the two supplied players rounded with the
+     * distance rounding factor specified in the configuration file.
+     */
+    public static int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
+    {
+        double x = sender.posX - player.posX;
+        double z = sender.posZ - player.posZ;
+
+        double distance = Math.sqrt (x * x + z * z);
+
+        return (int) ( (distance) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
+    }
 }
