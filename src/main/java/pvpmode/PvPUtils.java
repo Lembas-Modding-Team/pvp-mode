@@ -1,24 +1,16 @@
 package pvpmode;
 
-import cpw.mods.fml.common.Loader;
+import java.util.function.Supplier;
+
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
+import net.minecraftforge.common.MinecraftForge;
 
 public class PvPUtils
 {
-    private static Boolean lotrmodLoaded;
-
-    /**
-     * Returns whether or not the LOTRMod is loaded
-     */
-    public static boolean isLOTRModLoaded ()
-    {
-        if (lotrmodLoaded == null)
-            lotrmodLoaded = Loader.isModLoaded ("lotr");
-        return lotrmodLoaded.booleanValue ();
-    }
 
     /**
      * Returns the system time in seconds.
@@ -156,5 +148,17 @@ public class PvPUtils
         double distance = Math.sqrt (x * x + z * z);
 
         return (int) ( (distance) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
+    }
+
+    /**
+     * Posts the supplied event in the Forge event bus and returns a result
+     * gotten from the supplied getter function.
+     */
+    public static <T> T postEventAndGetResult (Event event, Supplier<T> resultGetter)
+    {
+        MinecraftForge.EVENT_BUS.post (event);
+        if (!event.isCanceled ())
+            return resultGetter.get ();
+        return null;
     }
 }

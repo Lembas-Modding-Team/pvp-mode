@@ -11,6 +11,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
+import pvpmode.compatibility.CompatibilityManager;
+import pvpmode.compatibility.modules.LOTRModCompatibilityModuleLoader;
 import pvpmode.log.*;
 
 @Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA", acceptableRemoteVersions = "*")
@@ -19,6 +21,7 @@ public class PvPMode
     public static Configuration config;
     public static ServerConfigurationManager cfg;
     public static PvPCombatLogManager combatLogManager;
+    public static CompatibilityManager compatibilityManager = new CompatibilityManager ();
 
     public static int roundFactor;
     public static int warmup;
@@ -68,12 +71,21 @@ public class PvPMode
 
         if (config.hasChanged ())
             config.save ();
+
+        registerDefaultCompatibilityModules ();
+    }
+
+    private void registerDefaultCompatibilityModules ()
+    {
+        compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
     }
 
     @EventHandler
     public void init (FMLInitializationEvent event) throws IOException
 
     {
+
+        compatibilityManager.loadRegisteredModules ();
         combatLogManager.preInit ();
 
         String[] validPvPLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
@@ -87,7 +99,7 @@ public class PvPMode
             {combatLogManager.getDefaultHandlerName ()},
                 "Valid values: " + Arrays.toString (validPvPLogHandlerNames)
                     + ". Leave it empty (without empty lines!) to disable pvp logging.",
-                    validPvPLogHandlerNames)));
+                validPvPLogHandlerNames)));
 
         if (activatedPvPLoggingHandlers.size () > 0)
         {
