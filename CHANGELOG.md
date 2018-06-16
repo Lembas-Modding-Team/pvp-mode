@@ -5,6 +5,9 @@
 * Restructured the internal handling of compatibility-related code (added compatibility modules)
 * Improved the performance if the LOTR Mod is present
 * Added a warning if the attacking player has PvP disabled
+* Clicking on `pvpadmin` in `pvphelp` now appends a space to the suggested chat input
+* The calling player of `pvplist` now will always be displayed on the top of the list
+* Added a footer to the `pvphelp` command list
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
