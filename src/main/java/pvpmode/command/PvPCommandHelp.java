@@ -36,6 +36,7 @@ public class PvPCommandHelp extends CommandBase
         postCommandHelp (sender, "pvplist", "",
             " Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
         postCommandHelp (sender, "pvpconfig display", "", "For admins only, displays the server configuration.");
+        PvPUtils.green (sender, "-------------------");
     }
 
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
