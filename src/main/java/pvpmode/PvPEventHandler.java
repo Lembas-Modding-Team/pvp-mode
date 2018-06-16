@@ -1,8 +1,5 @@
 package pvpmode;
 
-import java.lang.reflect.*;
-
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,17 +7,11 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import pvpmode.compatibility.events.EntityMasterExtractionEvent;
 
 public class PvPEventHandler
 {
     public static PvPEventHandler INSTANCE;
-
-    /**
-     * True if data from hired units of the LOTR Mod couldn't be accessed. This
-     * prevents PvPMode trying to access them again and again if it failed
-     * before.
-     */
-    private boolean lotrPatchFailed = false;
 
     /**
      * Cancels combat events associated with PvP-disabled players. Note that
@@ -143,80 +134,8 @@ public class PvPEventHandler
         if (entity instanceof IEntityOwnable)
             return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
-        if (PvPUtils.isLOTRModLoaded () && !lotrPatchFailed)
-        {
-            // LOTR patch begins.
-
-            Class<?> entityClass = entity.getClass ();
-            try
-            {
-                if (Class.forName ("lotr.common.entity.npc.LOTREntityNPC").isAssignableFrom (entityClass))
-                {
-                    // Only Gandalf, Dumbledore, Mahtaran and I are capable of
-                    // this kind
-                    // of magic.
-                    // And even then it requires a silken hand and a subtle
-                    // touch.
-                    Field hiredUnitInfo = entityClass.getField ("hiredNPCInfo");
-                    Class<?> hiredClass = hiredUnitInfo.getType ();
-                    Method getHiringPlayer = hiredClass.getMethod ("getHiringPlayer");
-
-                    Object o = getHiringPlayer.invoke (hiredUnitInfo.get (entity));
-
-                    if (o instanceof EntityPlayerMP)
-                        return (EntityPlayerMP) o;
-                }
-                else {
-                    // This entity is not a LOTR unit.
-                    return null;
-                }
-            }
-            catch (ClassNotFoundException ex)
-            {
-                // This shouldn't be able to happen
-                FMLLog.getLogger ().error (
-                    "Some required classes of the LOTR Mod couldn't be found, it looks like the internal code of the LOTR Mod changed",
-                    ex);
-                lotrPatchFailed = true;
-                return null;
-            }
-            catch (NoSuchFieldException ex)
-            {
-                // Something changed with the LOTR mod.
-                FMLLog.getLogger ().error (
-                    "Some required fields of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
-                    ex);
-                lotrPatchFailed = true;
-                return null;
-            }
-            catch (NoSuchMethodException ex)
-            {
-                // Something changed with the LOTR mod.
-                FMLLog.getLogger ().error (
-                    "Some required methods of the LOTR Mod couldn't be found, it looks like the internal code of the LOTRMod changed",
-                    ex);
-                lotrPatchFailed = true;
-                return null;
-            }
-            catch (IllegalAccessException ex)
-            {
-                // Hopefully impossible since I am only accessing public
-                // fields/methods.
-                FMLLog.getLogger ().error ("Security exception in PvPEventHandler at " + entityClass, ex);
-                lotrPatchFailed = true;
-                return null;
-            }
-            catch (InvocationTargetException ex)
-            {
-                // If the invoked method threw an exception it'll be wrapped in
-                // an InvocationTargetException
-                FMLLog.getLogger ().error ("A function of the LOTR Mod trew an exception", ex);
-                lotrPatchFailed = true;
-                return null;
-            }
-        }
-
-        return null;
+        EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
+        return PvPUtils.postEventAndGetResult (event, event::getMaster);
     }
 
     public static void init ()
