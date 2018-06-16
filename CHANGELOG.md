@@ -4,6 +4,7 @@
 * The changelog will now be integrated into the JAR of PvPMode
 * Restructured the internal handling of compatibility-related code (added compatibility modules)
 * Improved the performance if the LOTR Mod is present
+* Added a warning if the attacking player has PvP disabled
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
