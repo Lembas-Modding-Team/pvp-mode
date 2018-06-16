@@ -12,6 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 public class PvPUtils
 {
 
+    public static final String SOMETHING_WENT_WRONG_MESSAGE = "IF YOU SEE THIS, SOMETHING WENT WRONG. PLEASE REPORT IT.";
+
     /**
      * Returns the system time in seconds.
      */
@@ -70,6 +72,14 @@ public class PvPUtils
     public static void green (ICommandSender recipient, String... messages)
     {
         postChatLines (recipient, EnumChatFormatting.GREEN, messages);
+    }
+
+    /**
+     * Displays the specified messages to the recipient in blue.
+     */
+    public static void blue (ICommandSender recipient, String... messages)
+    {
+        postChatLines (recipient, EnumChatFormatting.BLUE, messages);
     }
 
     /**
