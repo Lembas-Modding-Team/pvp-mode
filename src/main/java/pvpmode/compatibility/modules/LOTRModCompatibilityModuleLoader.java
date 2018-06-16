@@ -3,6 +3,11 @@ package pvpmode.compatibility.modules;
 import cpw.mods.fml.common.Loader;
 import pvpmode.compatibility.CompatibilityModuleLoader;
 
+/**
+ * The compatibility module loader for the LOTR Mod.
+ * @author CraftedMods
+ *
+ */
 public class LOTRModCompatibilityModuleLoader implements CompatibilityModuleLoader
 {
     private Boolean lotrmodLoaded;

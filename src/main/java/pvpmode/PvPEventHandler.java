@@ -134,6 +134,7 @@ public class PvPEventHandler
         if (entity instanceof IEntityOwnable)
             return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
+        //Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
     }

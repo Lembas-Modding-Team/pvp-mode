@@ -8,6 +8,11 @@ import net.minecraftforge.common.MinecraftForge;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.EntityMasterExtractionEvent;
 
+/**
+ * The compatibility module for the LOTR Mod.
+ * @author CraftedMods
+ *
+ */
 public class LOTRModCompatibilityModule implements CompatibilityModule
 {
     @Override

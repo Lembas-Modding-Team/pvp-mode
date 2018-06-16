@@ -4,24 +4,54 @@ import java.util.*;
 
 import cpw.mods.fml.common.FMLLog;
 
+/**
+ * The compatibility manager manages and loads the compatibility modules.
+ * PvPMode and other mods will register their compatibility modules via this
+ * manager.
+ * 
+ * @author CraftedMods
+ *
+ */
 public class CompatibilityManager
 {
     private Collection<Class<? extends CompatibilityModuleLoader>> registeredModuleLoaders = new HashSet<> ();
 
     private boolean areModulesLoaded = false;
 
+    /**
+     * Registers the supplied compatibility module loader.<br/>
+     * Note that this function can only be called before the registered modules
+     * were loaded.
+     * 
+     * @param moduleLoader
+     *            The loader to register
+     * @return Whether the loader could be registered
+     */
     public boolean registerModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader)
     {
         checkState ();
         return this.registeredModuleLoaders.add (moduleLoader);
     }
 
+    /**
+     * Unregisters a previously registered compatibility module loader. Note
+     * that this function can only be called before the registered modules were
+     * loaded.
+     * 
+     * @param moduleLoader
+     *            The loader to unregister
+     * @return Whether the loaded could be unregistered
+     */
     public boolean unregisterModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader)
     {
         checkState ();
         return this.registeredModuleLoaders.remove (moduleLoader);
     }
 
+    /**
+     * Loads the registered compatibility modules via the supplied loaders. This
+     * function is not intended to be called by other mods.
+     */
     public void loadRegisteredModules ()
     {
         checkState ();
@@ -112,6 +142,9 @@ public class CompatibilityManager
         return null;
     }
 
+    /**
+     * Returns whether the registered compatibility modules were loaded.
+     */
     public boolean areModulesLoaded ()
     {
         return areModulesLoaded;
