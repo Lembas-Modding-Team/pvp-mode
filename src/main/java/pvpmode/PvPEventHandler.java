@@ -44,6 +44,10 @@ public class PvPEventHandler
                 {
                     PvPUtils.red (attacker, "You are in fly mode!");
                 }
+                else
+                {
+                    PvPUtils.red (attacker, "You have PvP disabled!");
+                }
             }
             cancel = true;
         }
