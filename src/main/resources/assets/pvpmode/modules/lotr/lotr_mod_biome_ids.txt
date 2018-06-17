@@ -1,0 +1,172 @@
+#
+# This lists all biomes in DIM-100 of the LOTRMod for use in pvpmode_lotr_enemy_biomes.txt
+# Biomes not used in the default config are marked with an *
+# Biome ids that are not used in the LOTRMod are named 'dummy'
+#
+# IMPORTANT: This file will be recreated on runtime. If you've made changes, they'll be lost.
+#
+
+0 River *
+1 Rohan
+2 Misty Mountains
+3 Shire
+4 Shire Woodlands
+5 Mordor
+6 Mordor Mountains
+7 Gondor
+8 White Mountains
+9 Lothlórien
+10 Field of Celebrant
+11 Iron Hills
+12 Dead Marshes
+13 Trollshaws
+14 Woodland Realm
+15 Mirkwood Corrupted
+16 Uruk Highlands
+17 Emyn Muil
+18 Ithilien
+19 Pelargir
+20 dummy *
+21 Lone-lands
+22 Weather Hills
+23 Dunland
+24 Fangorn
+25 Angle
+26 Ettenmoors
+27 Old Forest *
+28 Harondor
+29 Eriador
+30 Eriador Downs
+31 Eryn Vorn
+32 Grey Mountains
+33 Midgewater
+34 Brown Lands
+35 The Sea *
+36 Anduin Hills
+37 Meneltarma
+38 Gladden Fields
+39 Lothlórien Edge
+40 Forodwaith *
+41 Enedwaith
+42 Angmar
+43 Eregion
+44 Lindon
+45 Lindon Woodlands
+46 East Bight
+47 Blue Mountains
+48 Mirkwood Mountains
+49 Wilderland
+50 Dagorlad
+51 Núrn
+52 Sea of Núrnen
+53 Núrn Marshes
+54 dummy *
+55 Angmar Mountains
+56 Mouths of Anduin
+57 Mouths of Entwash
+58 Dor-en-Ernil
+59 Dor-en-Ernil Hills
+60 Fangorn Wasteland
+61 Rohan Woodlands
+62 Gondor Woodlands
+63 Lake *
+64 Lindon Coast
+65 Barrow-downs
+66 Long Marshes
+67 Fangorn Clearing
+68 Ithilien Hills
+69 Ithilien Wasteland
+70 Nindalf
+71 Coldfells
+72 Nan Curunír
+74 White Downs
+75 Swanfleet *
+76 Pelennor Fields
+77 Minhiriath *
+78 Erebor
+79 Northern Mirkwood
+80 Woodland Realm Hills
+81 Nan Ungol
+82 Pinnath Gelin
+83 Island *
+84 Forodwaith Mountains *
+85 Misty Mountains Foothills
+86 Grey Mountains Foothills
+87 Blue Mountains Foothills
+88 Northlands *
+89 Northern Forests *
+90 Breeland
+91 Chetwood
+92 Forodwaith Glacier *
+93 White Mountains Foothills
+94 Beach *
+95 Gravel Beach *
+96 Near Harad
+97 Far Harad
+98 Harad Mountains *
+99 Umbar
+100 Far Harad Jungle
+101 Umbar Hills
+102 dummy *
+103 Far Harad Jungle Lake
+105 Far Harad Forest
+106 Near Harad Fertile
+107 Pertorogwaith
+108 Umbar Forest
+109 Far Harad Jungle Edge
+110 Tauredain Clearing
+111 dummy *
+112 Emyn Winion
+113 Tolfalas *
+114 Lebennin
+115 Rhûn *
+116 Rhûn Forest *
+117 Red Mountains *
+118 Red Mountains Foothills *
+119 Dol Guldur
+120 Near Harad Semidesert
+121 Far Harad Arid Savannah
+122 Far Harad Arid Savannah Hills
+123 Far Harad Swampland
+124 Far Harad Cloud Forest *
+125 Far Harad Bushland *
+126 Far Harad Bushland Hills *
+127 Far Harad Mangrove *
+128 Near Harad Fertile Forest
+129 Vales of Anduin
+130 The Wold
+131 Shire Moors
+132 Shire Marshes
+133 Near Harad Red Desert *
+134 Far Harad Volcano *
+135 Udûn
+136 Gorgoroth
+137 Morgul Vale
+138 Eastern Desolation
+139 Dale
+140 Dorwinion
+141 Tower Hills
+142 dummy *
+143 Northern Wilderland
+144 Forodwaith Coast *
+145 Far Harad Coast *
+146 Near Harad Riverbank
+147 Lossarnach
+148 Imloth Melui
+149 Near Harad Oasis
+150 White Beach *
+151 South Harondor
+152 Lamedon
+153 Lamedon Hills
+154 Blackroot Vale
+155 Andrast
+156 Drúwaith Iaur *
+157 Rhúdel
+158 Rhúdel Steppe
+159 Rhúdel Hills
+160 Eryn Caran
+161 Tol Rhúnaer *
+162 Eryn Rhúnaer *
+163 Last Desert *
+164 Mountains of the Wind *
+165 Foothills of the Wind *

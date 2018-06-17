@@ -108,27 +108,28 @@ public class PvPEventHandler
 
         PvPData data = PvPUtils.getPvPData (player);
 
-        long toggleTime = data.getPvPWarmup ();
-
-        if (toggleTime != 0 && toggleTime < time)
+        if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
         {
-            data.setPvPWarmup (0);
+            long toggleTime = data.getPvPWarmup ();
 
-            if (!data.isPvPEnabled ())
+            if (toggleTime != 0 && toggleTime < time)
             {
-                data.setPvPEnabled (true);
-                ChatComponentText text = new ChatComponentText (
-                    "WARNING: PvP is now enabled for " + player.getDisplayName () + "!");
-                text.getChatStyle ().setColor (EnumChatFormatting.RED);
-                PvPMode.cfg.sendChatMsg (text);
-            }
-            else
-            {
-                data.setPvPEnabled (false);
-                PvPUtils.green (player, "PvP is now disabled for you.");
-            }
+                data.setPvPWarmup (0);
 
-            data.setPvPCooldown (time + PvPMode.cooldown);
+                if (!data.isPvPEnabled ())
+                {
+                    data.setPvPEnabled (true);
+                    PvPMode.cfg.sendChatMsg (new ChatComponentText (
+                        EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
+                }
+                else
+                {
+                    data.setPvPEnabled (false);
+                    PvPUtils.green (player, "PvP is now disabled for you.");
+                }
+
+                data.setPvPCooldown (time + PvPMode.cooldown);
+            }
         }
     }
 

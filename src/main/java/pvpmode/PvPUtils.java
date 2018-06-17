@@ -1,5 +1,7 @@
 package pvpmode;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -10,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.overrides.EnumForcedPvPMode;
 
 public class PvPUtils
 {
@@ -129,8 +132,11 @@ public class PvPUtils
                                    // loaded if required.
 
         PvPData data = PvPUtils.getPvPData (player);
-        return data.getPvPWarmup () == 0 ? data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF
-            : EnumPvPMode.WARMUP;
+        EnumForcedPvPMode forcedPvPMode = data.getForcedPvPMode ();
+        return forcedPvPMode == EnumForcedPvPMode.UNDEFINED || !arePvPModeOverridesEnabled ()
+            ? data.getPvPWarmup () == 0 ? data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF
+                : EnumPvPMode.WARMUP
+            : forcedPvPMode.toPvPMode ();
     }
 
     /**
@@ -189,4 +195,49 @@ public class PvPUtils
         }
         return filledSlots;
     }
+
+    /**
+     * Returns whether the conditional PvP mode overrides are enabled.
+     */
+    public static boolean arePvPModeOverridesEnabled ()
+    {
+        return PvPMode.overrideCheckInterval != -1;
+    }
+
+    /**
+     * Returns whether the PvP mode for the player whose data are supplied is
+     * overridden.
+     */
+    public static boolean isPvPModeOverriddenForPlayer (PvPData data)
+    {
+        return arePvPModeOverridesEnabled () && data.getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
+    }
+
+    /**
+     * Writes the contents of the supplied stream to the specified file.<br/>
+     * The file must exist on the filesystem.
+     * 
+     * @param stream
+     *            A supplier which creates the input stream
+     * @param file
+     *            The file where the data should be stored
+     * @throws IOException
+     *             If IO errors occur
+     */
+    public static void writeFromStreamToFile (Supplier<InputStream> stream, Path file) throws IOException
+    {
+        try (InputStream in = stream.get ();
+            InputStreamReader bridge = new InputStreamReader (in);
+            BufferedReader reader = new BufferedReader (bridge);
+            BufferedWriter writer = Files.newBufferedWriter (file))
+        {
+            String line = null;
+            while ( (line = reader.readLine ()) != null)
+            {
+                writer.write (line);
+                writer.newLine ();
+            }
+        }
+    }
+
 }

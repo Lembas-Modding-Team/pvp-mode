@@ -1,4 +1,4 @@
-package pvpmode.compatibility.modules;
+package pvpmode.compatibility.modules.lotr;
 
 import cpw.mods.fml.common.Loader;
 import pvpmode.compatibility.CompatibilityModuleLoader;
@@ -21,7 +21,7 @@ public class LOTRModCompatibilityModuleLoader implements CompatibilityModuleLoad
     @Override
     public String getCompatibilityModuleClassName ()
     {
-        return "pvpmode.compatibility.modules.LOTRModCompatibilityModule";
+        return "pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModule";
     }
 
     @Override

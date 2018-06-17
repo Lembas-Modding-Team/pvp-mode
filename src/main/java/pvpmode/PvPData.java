@@ -2,6 +2,7 @@ package pvpmode;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import pvpmode.overrides.EnumForcedPvPMode;
 
 /**
  * A wrapper for accessing the data PvPMode stores about each player.
@@ -18,6 +19,7 @@ public class PvPData
     private static final String PVP_ENABLED_NBT_KEY = "PvPEnabled";
     private static final String PVP_WARMUP_NBT_KEY = "PvPWarmup";
     private static final String PVP_COOLDOWN_NBT_KEY = "PvPCooldown";
+    private static final String FORCED_PVP_MODE_NBT_KEY = "ForcedPvPMode";
 
     public PvPData (EntityPlayer player)
     {
@@ -74,6 +76,15 @@ public class PvPData
     public void setPvPCooldown (long pvpCooldown)
     {
         pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
+    }
+    
+    public EnumForcedPvPMode getForcedPvPMode() {
+        return EnumForcedPvPMode.values ()[pvpDataTag.getInteger (FORCED_PVP_MODE_NBT_KEY)];
+    }
+    
+    public void setForcedPvPMode (EnumForcedPvPMode forcedPvPMode)
+    {
+        pvpDataTag.setInteger (FORCED_PVP_MODE_NBT_KEY, forcedPvPMode.ordinal ());
     }
 
 }
