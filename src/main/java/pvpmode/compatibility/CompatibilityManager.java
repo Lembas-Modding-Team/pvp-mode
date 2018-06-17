@@ -104,7 +104,8 @@ public class CompatibilityManager
                     {
                         FMLLog.getLogger ()
                             .error (
-                                String.format ("The specified compatibility module class \"%s\" couldn't be found"));
+                                String.format ("The specified compatibility module class \"%s\" couldn't be found",
+                                    loader.getCompatibilityModuleClassName ()));
                     }
                 }
                 else
