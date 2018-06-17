@@ -62,6 +62,7 @@ public class PvPCommandList extends CommandBase
             }
         }
 
+        PvPUtils.green (sender, "--- PvP Mode Player List ---");
         PvPUtils.blue (sender, senderPlayerMessage);
         for (String line : unsafePlayers)
             PvPUtils.red (sender, line);
@@ -69,6 +70,7 @@ public class PvPCommandList extends CommandBase
             PvPUtils.yellow (sender, line);
         for (String line : safePlayers)
             PvPUtils.green (sender, line);
+        PvPUtils.green (sender, "-------------------------");
     }
 
     private String getMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode)
