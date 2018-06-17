@@ -1,6 +1,6 @@
 package pvpmode.command;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,7 +34,7 @@ public class PvPCommandList extends CommandBase
         String senderPlayerMessage = PvPUtils.SOMETHING_WENT_WRONG_MESSAGE;
         ArrayList<String> safePlayers = new ArrayList<String> ();
         ArrayList<String> warmupPlayers = new ArrayList<String> ();
-        ArrayList<String> unsafePlayers = new ArrayList<String> ();
+        TreeMap<Integer, Set<String>> unsafePlayers = new TreeMap<> ();
 
         for (Object o : PvPMode.cfg.playerEntityList)
         {
@@ -43,20 +43,24 @@ public class PvPCommandList extends CommandBase
 
             if (player == senderPlayer)// One time this must be true
             {
-                senderPlayerMessage = getMessageForPlayer (player, senderPlayer, mode) + " (You)";
+                senderPlayerMessage = getMessageForPlayer (player, senderPlayer, mode, -1) + " (You)";
             }
             else
             {
                 switch (mode)
                 {
                     case OFF:
-                        safePlayers.add (getMessageForPlayer (player, senderPlayer, mode));
+                        safePlayers.add (getMessageForPlayer (player, senderPlayer, mode, -1));
                         break;
                     case ON:
-                        unsafePlayers.add (getMessageForPlayer (player, senderPlayer, mode));
+                        int proximity = PvPMode.radar ? PvPUtils.roundedDistanceBetween (senderPlayer, player) : -1;
+                        if (!unsafePlayers.containsKey (proximity))
+                            unsafePlayers.put (proximity, new HashSet<> ());
+                        unsafePlayers.get (proximity).add (getMessageForPlayer (player, senderPlayer, mode, proximity));
                         break;
                     case WARMUP:
-                        warmupPlayers.add (getMessageForPlayer (player, senderPlayer, mode));
+                        warmupPlayers.add (getMessageForPlayer (player, senderPlayer, mode,
+                            -1));
                         break;
                 }
             }
@@ -64,8 +68,11 @@ public class PvPCommandList extends CommandBase
 
         PvPUtils.green (sender, "--- PvP Mode Player List ---");
         PvPUtils.blue (sender, senderPlayerMessage);
-        for (String line : unsafePlayers)
-            PvPUtils.red (sender, line);
+        for (Set<String> lines : unsafePlayers.values ())
+        {
+            for (String line : lines)
+                PvPUtils.red (sender, line);
+        }
         for (String line : warmupPlayers)
             PvPUtils.yellow (sender, line);
         for (String line : safePlayers)
@@ -73,7 +80,8 @@ public class PvPCommandList extends CommandBase
         PvPUtils.green (sender, "-------------------------");
     }
 
-    private String getMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode)
+    private String getMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode,
+        int proximity)
     {
         switch (mode)
         {
@@ -83,8 +91,7 @@ public class PvPCommandList extends CommandBase
             case ON:
                 return String.format ("[ON] %s %s", player.getDisplayName (), ( (PvPMode.radar
                     && senderPlayer != player)
-                        ? String.format ("- ~%d blocks",
-                            PvPUtils.roundedDistanceBetween (senderPlayer, player))
+                        ? String.format ("- ~%d blocks", proximity)
                         : ""));
             case WARMUP:
                 return String.format ("[WARMUP] %s - %d seconds till PvP", player.getDisplayName (),
