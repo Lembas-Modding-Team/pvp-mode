@@ -175,8 +175,8 @@ public class PvPEventHandler
         {
             int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledArmorSlots.size ()-1);
             int randomSlot = filledArmorSlots.remove (randomSlotIndex);
-            player.func_146097_a (inventory[randomSlot], true, false);
-            inventory[randomSlot] = null;
+            player.func_146097_a (inventory[randomSlot], true, false); // Drops the item in the world
+            inventory[randomSlot] = null; // Make sure to delete the item from the player's inventory
         }
     }
 
