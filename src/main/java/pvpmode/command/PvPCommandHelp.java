@@ -42,10 +42,11 @@ public class PvPCommandHelp extends CommandBase
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
     {
         ChatComponentText commandPart = new ChatComponentText (
-            EnumChatFormatting.GRAY + "/" + commandName.trim () + " " + commandUsage);
-        commandPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/" + commandName));
-        ChatComponentText helpPart = new ChatComponentText (EnumChatFormatting.WHITE
-            + ": " + help);
+            "/" + commandName.trim () + " " + commandUsage);
+        commandPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/" + commandName))
+            .setColor (EnumChatFormatting.GRAY);
+        ChatComponentText helpPart = new ChatComponentText (": " + help);
+        helpPart.getChatStyle ().setColor (EnumChatFormatting.WHITE);
         sender.addChatMessage (commandPart.appendSibling (helpPart));
     }
 }

@@ -9,6 +9,7 @@
 * The calling player of `pvplist` now will always be displayed on the top of the list
 * Added a footer to the `pvphelp` command list
 * Added a header and a footer to the `pvplist` player list
+* Fixed that the chat text formattings were screwed up with small chat widths
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
