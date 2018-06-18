@@ -1,7 +1,7 @@
 package pvpmode.command;
 
 import net.minecraft.command.*;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
 import pvpmode.*;
 
 public class PvPCommandConfig extends CommandBase
@@ -61,6 +61,10 @@ public class PvPCommandConfig extends CommandBase
 
     private void postConfigEntry (ICommandSender sender, String name, String value)
     {
-        PvPUtils.postChatLines (sender, EnumChatFormatting.WHITE, name + ": " + EnumChatFormatting.GRAY + value);
+        ChatComponentText keyText = new ChatComponentText (name + ": ");
+        keyText.getChatStyle ().setColor (EnumChatFormatting.WHITE);
+        ChatComponentText valueText = new ChatComponentText (value);
+        valueText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
+        sender.addChatMessage (keyText.appendSibling (valueText));
     }
 }

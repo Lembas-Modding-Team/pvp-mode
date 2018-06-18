@@ -99,7 +99,8 @@ public class PvPUtils
     {
         for (String message : messages)
         {
-            ChatComponentText text = new ChatComponentText ( (formatting == null ? "" : formatting) + message);
+            ChatComponentText text = new ChatComponentText (message);
+            text.getChatStyle ().setColor (formatting);
             recipient.addChatMessage (text);
         }
     }

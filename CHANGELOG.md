@@ -9,6 +9,7 @@
 * The calling player of `pvplist` now will always be displayed on the top of the list
 * Added a footer to the `pvphelp` command list
 * Added a header and a footer to the `pvplist` player list
+* Fixed that the chat text formattings were screwed up with small chat widths
 * Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
 
 ## 1.0.0-BETA
