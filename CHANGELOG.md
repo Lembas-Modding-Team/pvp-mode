@@ -11,6 +11,7 @@
 * Added a header and a footer to the `pvplist` player list
 * Fixed that the chat text formattings were screwed up with small chat widths
 * Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
+* Fixed that the `pvphelp` command list contains unnecessary spaces
 * Added a configurable partial armour and hotbar inventory loss (applies only when keepInventory is true)
 
 ## 1.0.0-BETA
