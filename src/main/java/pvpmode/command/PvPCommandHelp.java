@@ -34,7 +34,7 @@ public class PvPCommandHelp extends CommandBase
         postCommandHelp (sender, "pvp cancel", "", "Cancels the warmup timer for the command sender.");
         postCommandHelp (sender, "pvpadmin ", "<player>", "For admins only, enables or disables PvP for the player.");
         postCommandHelp (sender, "pvplist", "",
-            " Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
+            "Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
         postCommandHelp (sender, "pvpconfig display", "", "For admins only, displays the server configuration.");
         PvPUtils.green (sender, "-------------------");
     }
@@ -42,7 +42,7 @@ public class PvPCommandHelp extends CommandBase
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
     {
         ChatComponentText commandPart = new ChatComponentText (
-            "/" + commandName.trim () + " " + commandUsage);
+            ("/" + commandName.trim () + " " + commandUsage).trim ());
         commandPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/" + commandName))
             .setColor (EnumChatFormatting.GRAY);
         ChatComponentText helpPart = new ChatComponentText (": " + help);
