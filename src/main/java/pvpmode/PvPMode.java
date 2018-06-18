@@ -29,6 +29,8 @@ public class PvPMode
     public static boolean radar;
     public static Collection<String> activatedPvPLoggingHandlers;
     public static String csvSeparator;
+    public static int inventoryLossArmour;
+    public static int inventoryLossHotbar;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -57,6 +59,10 @@ public class PvPMode
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
             .trim ();
+        inventoryLossArmour = config.getInt ("Armour Item Loss", MAIN_CONFIGURATION_CATEGORY, 1, 0, 4,
+            "The amount of items from the armour inventory the player looses upon death. This only applies if keeyInventory is true.");
+        inventoryLossHotbar = config.getInt ("Hotbar Item Loss", MAIN_CONFIGURATION_CATEGORY, 2, 0, 9,
+            "The amount of items from the hotbar the player looses upon death. This only applies if keeyInventory is true.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,

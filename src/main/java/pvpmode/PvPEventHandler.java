@@ -1,9 +1,13 @@
 package pvpmode;
 
+import java.util.*;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.*;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -12,6 +16,8 @@ import pvpmode.compatibility.events.EntityMasterExtractionEvent;
 public class PvPEventHandler
 {
     public static PvPEventHandler INSTANCE;
+
+    private Random random = new Random ();
 
     /**
      * Cancels combat events associated with PvP-disabled players. Note that
@@ -143,6 +149,35 @@ public class PvPEventHandler
         //Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
+    }
+
+    @SubscribeEvent
+    public void onPlayerDeath (LivingDeathEvent event)
+    {
+        if (event.entityLiving instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer) event.entityLiving;
+            World world = player.worldObj;
+            if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
+            {
+                dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3, PvPMode.inventoryLossArmour);
+                dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8, PvPMode.inventoryLossHotbar);
+            }
+        }
+    }
+
+    private void dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
+        int inventoryLoss)
+    {
+        List<Integer> filledArmorSlots = new ArrayList<> (PvPUtils
+            .getFilledInventorySlots (inventory, startIndex, endIndex));
+        for (int i = 0; i < Math.min (inventoryLoss, filledArmorSlots.size ()); i++)
+        {
+            int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledArmorSlots.size ()-1);
+            int randomSlot = filledArmorSlots.remove (randomSlotIndex);
+            player.func_146097_a (inventory[randomSlot], true, false);
+            inventory[randomSlot] = null;
+        }
     }
 
     public static void init ()
