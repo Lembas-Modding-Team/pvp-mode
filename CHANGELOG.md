@@ -11,6 +11,7 @@
 * Added a header and a footer to the `pvplist` player list
 * Fixed that the chat text formattings were screwed up with small chat widths
 * Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
+* Fixed that the `pvphelp` command list contains unnecessary spaces
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
