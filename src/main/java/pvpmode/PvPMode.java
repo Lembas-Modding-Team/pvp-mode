@@ -15,7 +15,7 @@ import pvpmode.compatibility.CompatibilityManager;
 import pvpmode.compatibility.modules.LOTRModCompatibilityModuleLoader;
 import pvpmode.log.*;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.1", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
