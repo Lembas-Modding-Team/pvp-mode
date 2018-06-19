@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.*;
 import pvpmode.*;
 
 public class PvPCommandList extends CommandBase
@@ -31,73 +32,102 @@ public class PvPCommandList extends CommandBase
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
 
-        String senderPlayerMessage = PvPUtils.SOMETHING_WENT_WRONG_MESSAGE;
-        ArrayList<String> safePlayers = new ArrayList<String> ();
-        ArrayList<String> warmupPlayers = new ArrayList<String> ();
-        TreeMap<Integer, Set<String>> unsafePlayers = new TreeMap<> ();
+        EnumPvPMode senderPlayerPvPMode = PvPUtils.getPvPMode (senderPlayer);
+
+        ArrayList<EntityPlayerMP> safePlayers = new ArrayList<> ();
+        ArrayList<EntityPlayerMP> warmupPlayers = new ArrayList<> ();
+        TreeMap<Integer, Set<EntityPlayerMP>> unsafePlayers = new TreeMap<> ();
 
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
             EnumPvPMode mode = PvPUtils.getPvPMode (player);
 
-            if (player == senderPlayer)// One time this must be true
-            {
-                senderPlayerMessage = getMessageForPlayer (player, senderPlayer, mode, -1) + " (You)";
-            }
-            else
+            if (player != senderPlayer)
             {
                 switch (mode)
                 {
                     case OFF:
-                        safePlayers.add (getMessageForPlayer (player, senderPlayer, mode, -1));
+                        safePlayers.add (player);
                         break;
                     case ON:
                         int proximity = PvPMode.radar ? PvPUtils.roundedDistanceBetween (senderPlayer, player) : -1;
                         if (!unsafePlayers.containsKey (proximity))
                             unsafePlayers.put (proximity, new HashSet<> ());
-                        unsafePlayers.get (proximity).add (getMessageForPlayer (player, senderPlayer, mode, proximity));
+                        unsafePlayers.get (proximity).add (player);
                         break;
                     case WARMUP:
-                        warmupPlayers.add (getMessageForPlayer (player, senderPlayer, mode,
-                            -1));
+                        warmupPlayers.add (player);
                         break;
                 }
             }
         }
 
         PvPUtils.green (sender, "--- PvP Mode Player List ---");
-        PvPUtils.blue (sender, senderPlayerMessage);
-        for (Set<String> lines : unsafePlayers.values ())
+
+        displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, -1);
+        for (Integer distance : unsafePlayers.descendingMap ().keySet())
         {
-            for (String line : lines)
-                PvPUtils.red (sender, line);
+            for (EntityPlayerMP player : unsafePlayers.get (distance))
+            {
+                displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, distance);
+            }
         }
-        for (String line : warmupPlayers)
-            PvPUtils.yellow (sender, line);
-        for (String line : safePlayers)
-            PvPUtils.green (sender, line);
+        warmupPlayers.forEach (player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.WARMUP, -1));
+        safePlayers.forEach (player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, -1));
         PvPUtils.green (sender, "-------------------------");
+
     }
 
-    private String getMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode,
+    private void displayMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode,
         int proximity)
     {
+        boolean isSenderPlayer = player == senderPlayer;
+        IChatComponent modeComponent = null;
+        IChatComponent nameComponent = new ChatComponentText (String.format (" %s", player.getDisplayName ()));
+        IChatComponent additionalComponent = null;
         switch (mode)
         {
             case OFF:
-                return String.format ("[OFF%s] %s", PvPUtils.isCreativeMode (player) ? ":GM1"
-                    : PvPUtils.canFly (player) ? ":FLY" : "", player.getDisplayName ());
+                modeComponent = new ChatComponentText (
+                    String.format ("[OFF%s]", PvPUtils.isCreativeMode (player) ? ":GM1"
+                        : PvPUtils.canFly (player) ? ":FLY" : ""));
+                setComponentColors (EnumChatFormatting.GREEN, isSenderPlayer, modeComponent, nameComponent);
+                break;
             case ON:
-                return String.format ("[ON] %s %s", player.getDisplayName (), ( (PvPMode.radar
-                    && senderPlayer != player)
-                        ? String.format ("- ~%d blocks", proximity)
-                        : ""));
+                modeComponent = new ChatComponentText ("[ON]");
+                additionalComponent = new ChatComponentText ( (PvPMode.radar
+                    && !isSenderPlayer)
+                        ? String.format (" - ~%d blocks", proximity)
+                        : "");
+                setComponentColors (EnumChatFormatting.RED, isSenderPlayer, modeComponent, nameComponent,
+                    additionalComponent);
+                break;
             case WARMUP:
-                return String.format ("[WARMUP] %s - %d seconds till PvP", player.getDisplayName (),
-                    (PvPUtils.getPvPData (player).getPvPWarmup () - PvPUtils.getTime ()));
+                modeComponent = new ChatComponentText ("[WARMUP]");
+                additionalComponent = new ChatComponentText (String.format (" - %d seconds till PvP",
+                    PvPUtils.getPvPData (player).getPvPWarmup () - PvPUtils.getTime ()));
+                setComponentColors (EnumChatFormatting.YELLOW, isSenderPlayer, modeComponent, nameComponent,
+                    additionalComponent);
+                break;
         }
-        return PvPUtils.SOMETHING_WENT_WRONG_MESSAGE;// Shouldn't happen
+        modeComponent.appendSibling (nameComponent);
+        if (additionalComponent != null)
+        {
+            modeComponent.appendSibling (additionalComponent);
+        }
+        senderPlayer
+            .addChatComponentMessage (modeComponent);
+    }
+
+    private void setComponentColors (EnumChatFormatting baseColor, boolean isSenderPlayer, IChatComponent... components)
+    {
+        boolean first = true;
+        for (IChatComponent component : components)
+        {
+            component.getChatStyle ().setColor (!first && isSenderPlayer ? EnumChatFormatting.BLUE : baseColor);
+            first = false;
+        }
     }
 
 }
