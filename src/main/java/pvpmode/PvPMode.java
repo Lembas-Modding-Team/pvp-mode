@@ -29,11 +29,13 @@ public class PvPMode
     public static boolean radar;
     public static Collection<String> activatedPvPLoggingHandlers;
     public static String csvSeparator;
+    public static boolean partialInventoryLossEnabled;
     public static int inventoryLossArmour;
     public static int inventoryLossHotbar;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
+    public static final String PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY = "PARTIAL_INVENTORY_LOSS";
 
     private Path combatLogDir;
 
@@ -59,14 +61,20 @@ public class PvPMode
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
             .trim ();
-        inventoryLossArmour = config.getInt ("Armour Item Loss", MAIN_CONFIGURATION_CATEGORY, 1, 0, 4,
-            "The amount of items from the armour inventory the player looses upon death. This only applies if keeyInventory is true.");
-        inventoryLossHotbar = config.getInt ("Hotbar Item Loss", MAIN_CONFIGURATION_CATEGORY, 2, 0, 9,
-            "The amount of items from the hotbar the player looses upon death. This only applies if keeyInventory is true.");
+        partialInventoryLossEnabled = config.getBoolean ("Enable Partial Inventory Loss",
+            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            true,
+            "If set to true, the partial inventory loss will be enabled. If keepInventory is enabled, the player will loose a specified amount of items from his hotbar and armor slots upon death. These will be dropped.");
+        inventoryLossArmour = config.getInt ("Armour Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 1, 0, 4,
+            "The amount of items from the armour inventory the player looses upon death.");
+        inventoryLossHotbar = config.getInt ("Hotbar Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 2, 0, 9,
+            "The amount of items from the hotbar the player looses upon death.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             "Configuration entries related to the CSV combat logging handler");
+        config.addCustomCategoryComment (PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            "Configuration entries related to the partial inventory loss");
 
         if (csvSeparator.length () != 1)
         {

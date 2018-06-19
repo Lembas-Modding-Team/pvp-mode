@@ -56,6 +56,8 @@ public class PvPCommandConfig extends CommandBase
         postConfigEntry (sender, "Distance round factor", Integer.toString (PvPMode.roundFactor));
         postConfigEntry (sender, "CSV separator", PvPMode.csvSeparator);
         postConfigEntry (sender, "Combat logging handlers", PvPMode.activatedPvPLoggingHandlers.toString ());
+        postConfigEntry (sender, "Partial inventory loss enabled",
+            Boolean.toString (PvPMode.partialInventoryLossEnabled));
         postConfigEntry (sender, "Armor item loss", Integer.toString (PvPMode.inventoryLossArmour) + " items");
         postConfigEntry (sender, "Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbar) + " items");
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
