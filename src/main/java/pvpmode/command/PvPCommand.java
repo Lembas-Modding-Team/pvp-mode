@@ -31,20 +31,27 @@ public class PvPCommand extends CommandBase
         EnumPvPMode currentMode = PvPUtils.getPvPMode (player);
         PvPData data = PvPUtils.getPvPData (player);
 
-        if (args.length > 0)
+        if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
         {
-            if (args[0].equals ("cancel"))
+            if (args.length > 0)
             {
-                cancelPvPTimer (player, currentMode, data);
+                if (args[0].equals ("cancel"))
+                {
+                    cancelPvPTimer (player, currentMode, data);
+                }
+                else
+                {
+                    PvPUtils.red (sender, getCommandUsage (sender));
+                }
             }
             else
             {
-                PvPUtils.red (sender, getCommandUsage (sender));
+                togglePvPMode (sender, data);
             }
         }
         else
         {
-            togglePvPMode (sender, data);
+            PvPUtils.red (sender, "You cannot use this command while your PvP mode is overridden");
         }
     }
 

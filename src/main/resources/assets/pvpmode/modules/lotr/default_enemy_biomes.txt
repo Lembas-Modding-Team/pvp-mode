@@ -1,0 +1,48 @@
+#
+# This file lists all biome and alignment dependent overrides, forcing PvP Mode ON when conditions are met.
+#
+# Basically this file allows you to specify in which biome a player which is hostile to a faction you assign to this biome is forced to have PvP enabled.
+# Also, you can define what "hostile" means (in terms of alignment): If the alignment of the player is less than the specified one, the player is seen as hostile.
+#
+# A configuration entry consists of one line, which contains three columns separated by a semicolon (;).
+#
+# The first part is the faction name, which is the name which is internally used by the game (see the command /alignment). Also you can use the specifier ALL,
+# which means that every player, regardless of his alignment, is forced to have PvP enabled on the specified biomes.
+#
+# The second part is the minimum required alignment (see above). If the specified faction is ALL, the alignment value will be ignored (but has to be a valid number).
+#
+# The third part is a comma-separated list of biome ids where the specified condition applies.
+# A complete list of all Biome ID numbers is provided in LOTRmod_biomeids.txt in the main directory.
+#
+# If this file is deleted, it'll be recreated with default configuration data.
+# On startup you'll see in the logs if the mod found errors in this file - then you can fix them.
+#
+# Some words to the file format: 
+# Comments cover a whole line, which must start with a #. PvPMode will ignore them.
+# Blank lines and spaces will be ignored too - you can put as much spaces between the configuration entries as you want.
+#
+
+HOBBIT; 0; 3,4,74,90,91,131,132
+RANGER_NORTH; 0; 3,4,21,22,25,29,30,31,33,65,74,90,91,131,132,141
+BLUE_MOUNTAINS; 0;47,87
+HIGH_ELF; 0; 44,45,64,141
+GUNDABAD; 0; 2,32,36,38,43,85,86,129,143,87
+ANGMAR; 0; 13,21,22,26,42,55,65,71
+WOOD_ELF; 0; 14,66,79,80
+DOL_GULDUR; 0; 15,46,48,49,119
+DALE; 0; 66,139
+DWARF; 0; 11,15,32,78,85,86
+GALADHRIM; 0; 9,10,39
+DUNLAND; 0; 23,41,72
+URUK_HAI; 0; 16,60,72
+FANGORN; 0; 24,57,60,67
+ROHAN; 0; 1,57,61,130
+GONDOR; 0; 7,8,18,19,28,56,57,58,59,62,68,69,76,82,93,114,147,148,151,152,153,154,155
+MORDOR; 0; 5,6,12,17,34,49,50,51,52,53,69,70,81,135,136,137,138
+DORWINION; 0; 112,140,160
+RHUN; 0; 157,158,159,160
+NEAR_HARAD; 0; 28,96,99,101,106,108,120,128,146,149,151
+MOREDAIN; 0; 97,105,121,122
+TAUREDAIN; 0; 100,103,109,110,123
+HALF_TROLL; 0; 107
+ALL; 66666; 37

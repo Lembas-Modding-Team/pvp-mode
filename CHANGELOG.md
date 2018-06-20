@@ -13,6 +13,9 @@
 * Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
 * Fixed that the `pvphelp` command list contains unnecessary spaces
 * Added a configurable partial armour and hotbar inventory loss (applies only when keepInventory is true)
+* Added general support for conditional PvP mode overrides (forcing PvP mode to OFF or ON)
+* Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
+* A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)

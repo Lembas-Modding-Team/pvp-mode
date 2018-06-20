@@ -12,8 +12,9 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
 import pvpmode.compatibility.CompatibilityManager;
-import pvpmode.compatibility.modules.LOTRModCompatibilityModuleLoader;
+import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
 import pvpmode.log.*;
+import pvpmode.overrides.PvPOverrideManager;
 
 @Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.1", acceptableRemoteVersions = "*")
 public class PvPMode
@@ -22,6 +23,7 @@ public class PvPMode
     public static ServerConfigurationManager cfg;
     public static PvPCombatLogManager combatLogManager;
     public static CompatibilityManager compatibilityManager = new CompatibilityManager ();
+    public static PvPOverrideManager overrideManager;
 
     public static int roundFactor;
     public static int warmup;
@@ -32,6 +34,7 @@ public class PvPMode
     public static boolean partialInventoryLossEnabled;
     public static int inventoryLossArmour;
     public static int inventoryLossHotbar;
+    public static int overrideCheckInterval;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -69,6 +72,8 @@ public class PvPMode
             "The amount of items from the armour inventory the player looses upon death.");
         inventoryLossHotbar = config.getInt ("Hotbar Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 2, 0, 9,
             "The amount of items from the hotbar the player looses upon death.");
+        overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
+            MAIN_CONFIGURATION_CATEGORY, 10, -1, 60, "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -85,6 +90,8 @@ public class PvPMode
 
         if (config.hasChanged ())
             config.save ();
+
+        overrideManager = new PvPOverrideManager ();
 
         registerDefaultCompatibilityModules ();
     }

@@ -5,7 +5,7 @@ import java.util.List;
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import pvpmode.PvPUtils;
+import pvpmode.*;
 
 public class PvPCommandAdmin extends CommandBase
 {
@@ -44,14 +44,26 @@ public class PvPCommandAdmin extends CommandBase
             return;
         }
 
-        /*
-         * This warning will never be a config option. I will not tolerate
-         * admins who go behind a player's back as "punishment" An admin should
-         * be able to keep order on a server without resorting to deception and
-         * secrecy.
-         */
-        warnPlayer (player);
-        PvPUtils.getPvPData (player).setPvPWarmup (PvPUtils.getTime ());
+        PvPData data = PvPUtils.getPvPData (player);
+
+        if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
+        {
+            /*
+             * This warning will never be a config option. I will not tolerate
+             * admins who go behind a player's back as "punishment" An admin
+             * should be able to keep order on a server without resorting to
+             * deception and secrecy.
+             */
+            warnPlayer (player);
+            data.setPvPWarmup (PvPUtils.getTime ());
+        }
+        else
+        {
+            PvPUtils.red (admin,
+                String.format (
+                    "The PvP mode of \"%s\" is overridden by some external conditions - you cannot toggle it",
+                    args[0]));
+        }
     }
 
     @Override
