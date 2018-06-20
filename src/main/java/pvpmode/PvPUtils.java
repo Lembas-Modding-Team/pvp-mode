@@ -125,18 +125,32 @@ public class PvPUtils
      */
     public static EnumPvPMode getPvPMode (EntityPlayer player)
     {
+        // Creative and flying players cannot do PvP
         if (isCreativeMode (player) || canFly (player))
-            return EnumPvPMode.OFF;// This is not really my (CraftedMods) style,
-                                   // but I'm doing this for performance reasons
-                                   // here, because the PvPData will only be
-                                   // loaded if required.
+            return EnumPvPMode.OFF;
 
         PvPData data = PvPUtils.getPvPData (player);
+
         EnumForcedPvPMode forcedPvPMode = data.getForcedPvPMode ();
-        return forcedPvPMode == EnumForcedPvPMode.UNDEFINED || !arePvPModeOverridesEnabled ()
-            ? data.getPvPWarmup () == 0 ? data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF
-                : EnumPvPMode.WARMUP
-            : forcedPvPMode.toPvPMode ();
+        if (!arePvPModeOverridesEnabled () || forcedPvPMode == EnumForcedPvPMode.UNDEFINED)
+        {
+            // No PvP mode overrides apply
+            if (data.getPvPWarmup () == 0)
+            {
+                // No warmup timer is running
+                return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
+            }
+            else
+            {
+                // Warmup timer is running
+                return EnumPvPMode.WARMUP;
+            }
+        }
+        else
+        {
+            // PvP mode overrides apply
+            return forcedPvPMode.toPvPMode ();
+        }
     }
 
     /**
