@@ -65,28 +65,32 @@ public class PvPCommandList extends CommandBase
 
         PvPUtils.green (sender, "--- PvP Mode Player List ---");
 
-        displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, -1);
-        for (Integer distance : unsafePlayers.descendingMap ().keySet())
+        displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, senderPlayerPvPMode, -1);
+        for (Integer distance : unsafePlayers.descendingMap ().keySet ())
         {
             for (EntityPlayerMP player : unsafePlayers.get (distance))
             {
-                displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, distance);
+                displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, senderPlayerPvPMode, distance);
             }
         }
-        warmupPlayers.forEach (player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.WARMUP, -1));
-        safePlayers.forEach (player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, -1));
+        warmupPlayers.forEach (
+            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.WARMUP, senderPlayerPvPMode, -1));
+        safePlayers.forEach (
+            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1));
         PvPUtils.green (sender, "-------------------------");
 
     }
 
-    private void displayMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode mode,
+    private void displayMessageForPlayer (EntityPlayerMP player, EntityPlayerMP senderPlayer, EnumPvPMode playerMode,
+        EnumPvPMode senderPlayerMode,
         int proximity)
     {
         boolean isSenderPlayer = player == senderPlayer;
+        boolean hasSenderPlayerPvPEnabled = senderPlayerMode == EnumPvPMode.ON;
         IChatComponent modeComponent = null;
         IChatComponent nameComponent = new ChatComponentText (String.format (" %s", player.getDisplayName ()));
         IChatComponent additionalComponent = null;
-        switch (mode)
+        switch (playerMode)
         {
             case OFF:
                 modeComponent = new ChatComponentText (
@@ -97,7 +101,7 @@ public class PvPCommandList extends CommandBase
             case ON:
                 modeComponent = new ChatComponentText ("[ON]");
                 additionalComponent = new ChatComponentText ( (PvPMode.radar
-                    && !isSenderPlayer)
+                    && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                         ? String.format (" - ~%d blocks", proximity)
                         : "");
                 setComponentColors (EnumChatFormatting.RED, isSenderPlayer, modeComponent, nameComponent,
