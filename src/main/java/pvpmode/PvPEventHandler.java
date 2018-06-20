@@ -157,19 +157,24 @@ public class PvPEventHandler
     @SubscribeEvent
     public void onPlayerDeath (LivingDeathEvent event)
     {
-        if(PvPMode.partialInventoryLossEnabled) 
+        if (PvPMode.partialInventoryLossEnabled)
         {
             if (event.entityLiving instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer) event.entityLiving;
-                World world = player.worldObj;
-                if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
+                if (!(PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player)))
                 {
-                    dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3, PvPMode.inventoryLossArmour);
-                    dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8, PvPMode.inventoryLossHotbar);
+                    World world = player.worldObj;
+                    if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
+                    {
+                        dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3,
+                            PvPMode.inventoryLossArmour);
+                        dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8,
+                            PvPMode.inventoryLossHotbar);
+                    }
                 }
             }
-       }
+        }
     }
 
     private void dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
