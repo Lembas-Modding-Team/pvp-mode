@@ -2,7 +2,10 @@ package pvpmode;
 
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
@@ -10,7 +13,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import pvpmode.compatibility.events.EntityMasterExtractionEvent;
 
 public class PvPEventHandler
@@ -97,38 +99,38 @@ public class PvPEventHandler
      * Handles PvP warmup timers.
      */
     @SubscribeEvent
-    public void onLivingUpdate (LivingUpdateEvent event)
+    public void onPlayerTick (PlayerTickEvent event)
     {
-        EntityPlayerMP player;
-        long time = PvPUtils.getTime ();
-
-        if (event.entityLiving instanceof EntityPlayerMP)
-            player = (EntityPlayerMP) event.entityLiving;
-        else return;
-
-        PvPData data = PvPUtils.getPvPData (player);
-
-        if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
+        if (event.phase == TickEvent.Phase.END)
         {
-            long toggleTime = data.getPvPWarmup ();
+            EntityPlayer player = event.player;
+            long time = PvPUtils.getTime ();
 
-            if (toggleTime != 0 && toggleTime < time)
+            PvPData data = PvPUtils.getPvPData (player);
+
+            if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
             {
-                data.setPvPWarmup (0);
+                long toggleTime = data.getPvPWarmup ();
 
-                if (!data.isPvPEnabled ())
+                if (toggleTime != 0 && toggleTime < time)
                 {
-                    data.setPvPEnabled (true);
-                    PvPMode.cfg.sendChatMsg (new ChatComponentText (
-                        EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName () + "!"));
-                }
-                else
-                {
-                    data.setPvPEnabled (false);
-                    PvPUtils.green (player, "PvP is now disabled for you.");
-                }
+                    data.setPvPWarmup (0);
 
-                data.setPvPCooldown (time + PvPMode.cooldown);
+                    if (!data.isPvPEnabled ())
+                    {
+                        data.setPvPEnabled (true);
+                        PvPMode.cfg.sendChatMsg (new ChatComponentText (
+                            EnumChatFormatting.RED + "WARNING: PvP is now enabled for " + player.getDisplayName ()
+                                + "!"));
+                    }
+                    else
+                    {
+                        data.setPvPEnabled (false);
+                        PvPUtils.green (player, "PvP is now disabled for you.");
+                    }
+
+                    data.setPvPCooldown (time + PvPMode.cooldown);
+                }
             }
         }
     }
@@ -188,6 +190,7 @@ public class PvPEventHandler
     {
         INSTANCE = new PvPEventHandler ();
         MinecraftForge.EVENT_BUS.register (INSTANCE);
+        FMLCommonHandler.instance ().bus ().register (INSTANCE);
     }
 
 }
