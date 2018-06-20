@@ -11,7 +11,7 @@ import pvpmode.overrides.PvPOverrideCondition;
 /**
  * The override condition for the LOTR biomes. Players which enter a biome
  * assigned to a faction (via the configuration data) are forced to have PvP
- * enabled of they're hostile to this faction.
+ * enabled if they're hostile to this faction.
  * 
  * @author CraftedMods
  *
