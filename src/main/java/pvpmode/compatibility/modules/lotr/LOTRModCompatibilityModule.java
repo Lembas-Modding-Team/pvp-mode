@@ -75,15 +75,19 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         Set<String> readValidFactionEntries = new HashSet<> ();
         try (BufferedReader reader = Files.newBufferedReader (enemyBiomeConfigurationFile))
         {
+            // Read the file line by line
             String line = null;
             for (int i = 1; (line = reader.readLine ()) != null; i++)
             {
                 line = line.trim ();
+                // Ignore comments and empty lines
                 if (!line.isEmpty () && !line.startsWith ("#"))
                 {
+                    // Split config entries into three columns
                     String[] parts = line.split (";");
                     if (parts.length != 3)
                     {
+                        // There are more or less than three columns
                         ++invalidEntryCounter;
                         FMLLog.warning (
                             "The lotr enemy biome config entry \"%s\" at line %d is invalid. There're too much or too less columns separated by semicolons!",
@@ -92,11 +96,13 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                     }
                     else
                     {
+                        // Extract the faction identifier from the first column
                         String faction = parts[0].trim ();
                         if (faction.equals ("ALL") || LOTRFaction.forName (faction) != null)
                         {
                             if (readValidFactionEntries.contains (faction))
                             {
+                                // The faction was specified already
                                 ++invalidEntryCounter;
                                 FMLLog.warning (
                                     "The lotr enemy biome config entry at line %d references a faction (\"%s\") which was referenced by an entry loaded before. It'll be ignored.",
@@ -107,11 +113,16 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                 String alignmentString = parts[1].trim ();
                                 try
                                 {
+                                    // Extract the minimum alignment from the
+                                    // second column
                                     Integer alignmentInt = Integer.parseInt (alignmentString);
 
+                                    // Extract the biome ids from the first
+                                    // column
                                     String[] biomeIds = parts[2].trim ().split (",");
                                     if (biomeIds.length <= 0)
                                     {
+                                        // No biomes were specified
                                         ++invalidEntryCounter;
                                         FMLLog.warning (
                                             "The lotr enemy biome config entry at line %d contains no assigned biome ids",
@@ -119,6 +130,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                     }
                                     else
                                     {
+                                        // Parse the biome ids
                                         Collection<Integer> biomeIdsInt = new HashSet<> ();
                                         for (String biomeString : biomeIds)
                                         {
@@ -127,6 +139,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                             {
                                                 if (!biomeIdsInt.add (Integer.parseInt (biomeStringTrimmed)))
                                                 {
+                                                    // Duplicated biome ids
+                                                    // specified
                                                     FMLLog.warning (
                                                         "The lotr enemy biome config entry at line %d contains a duplicated biome id (%s).",
                                                         i, biomeStringTrimmed);
@@ -141,6 +155,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                         }
                                         if (biomeIdsInt.isEmpty ())
                                         {
+                                            // Biome ids were specified, but all
+                                            // were invalid
                                             ++invalidEntryCounter;
                                             FMLLog.warning (
                                                 "The lotr enemy biome config entry at line %d contains only invalid biome ids. The entry will be ignored.",
@@ -148,6 +164,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                         }
                                         else
                                         {
+                                            // Add the data to our data
+                                            // structured
                                             readValidFactionEntries.add (faction);
                                             EnemyBiomeFactionEntry entry = new EnemyBiomeFactionEntry (faction,
                                                 alignmentInt);
@@ -172,6 +190,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                         }
                         else
                         {
+                            // The faction name is invalid
                             ++invalidEntryCounter;
                             FMLLog.warning (
                                 "The lotr enemy biome config entry at line %d contains an invalid faction name (\"%s\").",
