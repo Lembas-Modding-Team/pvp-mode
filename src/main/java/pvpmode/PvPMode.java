@@ -16,7 +16,7 @@ import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
 import pvpmode.log.*;
 import pvpmode.overrides.PvPOverrideManager;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.1", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.2", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
