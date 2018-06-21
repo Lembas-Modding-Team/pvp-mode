@@ -16,6 +16,9 @@
 * Added general support for conditional PvP mode overrides (forcing PvP mode to OFF or ON)
 * Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
 * A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
+* The PvP mode of players involved in a PvP event cannot be changed
+* Players which are in PvP cannot use the LOTR Mod fast travel system
+* Added a command blacklist for players which are in PvP: While in PvP, they cannot use the blacklisted commands
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
