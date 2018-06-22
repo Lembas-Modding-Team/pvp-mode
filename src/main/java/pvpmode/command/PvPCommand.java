@@ -1,6 +1,6 @@
 package pvpmode.command;
 
-import net.minecraft.command.*;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
 import pvpmode.*;
 

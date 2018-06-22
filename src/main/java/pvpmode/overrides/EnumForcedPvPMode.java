@@ -4,6 +4,7 @@ import pvpmode.EnumPvPMode;
 
 /**
  * Contains all possible values for the forced PvP mode.
+ * 
  * @author CraftedMods
  *
  */

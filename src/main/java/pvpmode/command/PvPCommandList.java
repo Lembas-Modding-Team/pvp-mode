@@ -2,7 +2,7 @@ package pvpmode.command;
 
 import java.util.*;
 
-import net.minecraft.command.*;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import pvpmode.*;

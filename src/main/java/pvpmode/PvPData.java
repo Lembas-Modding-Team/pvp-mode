@@ -79,7 +79,8 @@ public class PvPData
         pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
     }
 
-    public EnumForcedPvPMode getForcedPvPMode() {
+    public EnumForcedPvPMode getForcedPvPMode ()
+    {
         return EnumForcedPvPMode.values ()[pvpDataTag.getInteger (FORCED_PVP_MODE_NBT_KEY)];
     }
 

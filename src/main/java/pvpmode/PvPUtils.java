@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.*;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
@@ -265,8 +264,8 @@ public class PvPUtils
             }
         }
     }
-  
-    /** 
+
+    /**
      * Returns whether the player assigned to the supplied data is currently in
      * PvP.<br/>
      * If a PvP event occurred with this player involved, a timer starts. While
@@ -291,7 +290,7 @@ public class PvPUtils
             return command.getCommandAliases ().contains (name);
         else return false;
     }
-  
+
     /**
      * Returns the player that this entity is associated with, if possible.
      */

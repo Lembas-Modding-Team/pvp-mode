@@ -5,13 +5,14 @@ import pvpmode.compatibility.CompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for the LOTR Mod.
+ * 
  * @author CraftedMods
  *
  */
 public class LOTRModCompatibilityModuleLoader implements CompatibilityModuleLoader
 {
     private Boolean lotrmodLoaded;
-    
+
     @Override
     public String getModuleName ()
     {

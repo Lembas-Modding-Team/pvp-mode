@@ -257,8 +257,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             }
         }
     }
-    
-     @SubscribeEvent
+
+    @SubscribeEvent
     public void onAttackTargetSet (LivingSetAttackTargetEvent event)
     {
         // Fixes that hired units attack players (they don't cause damage, but

@@ -1,6 +1,6 @@
 package pvpmode.command;
 
-import net.minecraft.command.*;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;

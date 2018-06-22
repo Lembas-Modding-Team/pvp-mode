@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
-import pvpmode.compatibility.events.*;
+import pvpmode.compatibility.events.PlayerPvPTickEvent;
 
 public class PvPEventHandler
 {
@@ -60,7 +60,8 @@ public class PvPEventHandler
             cancel = true;
         }
 
-        if (cancel) {// For performance reasons
+        if (cancel)
+        {// For performance reasons
             event.setCanceled (true);
             return;
         }
@@ -187,7 +188,7 @@ public class PvPEventHandler
             if (event.entityLiving instanceof EntityPlayer)
             {
                 EntityPlayer player = (EntityPlayer) event.entityLiving;
-                if (!(PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player)))
+                if (! (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player)))
                 {
                     World world = player.worldObj;
                     if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
@@ -209,10 +210,15 @@ public class PvPEventHandler
             .getFilledInventorySlots (inventory, startIndex, endIndex));
         for (int i = 0; i < Math.min (inventoryLoss, filledArmorSlots.size ()); i++)
         {
-            int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledArmorSlots.size ()-1);
+            int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledArmorSlots.size () - 1);
             int randomSlot = filledArmorSlots.remove (randomSlotIndex);
-            player.func_146097_a (inventory[randomSlot], true, false); // Drops the item in the world
-            inventory[randomSlot] = null; // Make sure to delete the item from the player's inventory
+            player.func_146097_a (inventory[randomSlot], true, false); // Drops
+                                                                       // the
+                                                                       // item
+                                                                       // in the
+                                                                       // world
+            inventory[randomSlot] = null; // Make sure to delete the item from
+                                          // the player's inventory
         }
     }
 
