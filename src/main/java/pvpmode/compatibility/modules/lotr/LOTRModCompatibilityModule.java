@@ -6,14 +6,15 @@ import java.util.*;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import lotr.common.LOTRFaction;
+import lotr.common.*;
 import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.*;
 import pvpmode.compatibility.CompatibilityModule;
-import pvpmode.compatibility.events.EntityMasterExtractionEvent;
+import pvpmode.compatibility.events.*;
 
 /**
  * The compatibility module for the LOTR Mod.
@@ -29,6 +30,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
 
     private boolean areEnemyBiomeOverridesEnabled;
+    private boolean blockFTInPvP;
 
     @Override
     public void load () throws IOException
@@ -38,6 +40,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         areEnemyBiomeOverridesEnabled = PvPMode.config.getBoolean ("Enable enemy biome override condition",
             LOTR_CONFIGURATION_CATEGORY, true,
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
+        blockFTInPvP = PvPMode.config.getBoolean ("Block fast traveling in PvP", LOTR_CONFIGURATION_CATEGORY,
+            true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
 
         PvPMode.config.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"The Lord of the Rings Minecraft Mod\"");
@@ -238,6 +242,53 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             }
         }
 
+    }
+
+    @SubscribeEvent
+    public void onPlayerPvPTick (PlayerPvPTickEvent event)
+    {
+        if (blockFTInPvP)
+        {
+            LOTRPlayerData data = LOTRLevelData.getData (event.getPlayer ());
+            if (data.getTargetFTWaypoint () != null)
+            {
+                PvPUtils.red (event.getPlayer (), "You cannot fast travel while in PvP");
+                data.setTargetFTWaypoint (null);
+            }
+        }
+    }
+    
+     @SubscribeEvent
+    public void onAttackTargetSet (LivingSetAttackTargetEvent event)
+    {
+        // Fixes that hired units attack players (they don't cause damage, but
+        // move to them)
+        if (event.target != null)
+        {
+            // The entity needs a target
+            if (event.entityLiving instanceof LOTREntityNPC)
+            {
+                // It needs to be an hired unit
+                LOTREntityNPC npc = (LOTREntityNPC) event.entityLiving;
+
+                EntityPlayer attackingMaster = PvPUtils.getMaster (npc);
+                EntityPlayer targetMaster = PvPUtils.getMaster (event.target);
+
+                if (attackingMaster != null && targetMaster != null)
+                {
+                    // The attacking unit and the attacked entity have to be
+                    // assignable to players
+                    if (PvPUtils.getPvPMode (attackingMaster) != EnumPvPMode.ON
+                        || PvPUtils.getPvPMode (targetMaster) != EnumPvPMode.ON)
+                    {
+                        // Cancel the attack target assignment of the PvP mode
+                        // prevents an attack
+                        npc.setAttackTarget (null);
+                        npc.setRevengeTarget (null);
+                    }
+                }
+            }
+        }
     }
 
 }

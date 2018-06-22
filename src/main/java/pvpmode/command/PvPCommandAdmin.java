@@ -48,14 +48,24 @@ public class PvPCommandAdmin extends CommandBase
 
         if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
         {
-            /*
-             * This warning will never be a config option. I will not tolerate
-             * admins who go behind a player's back as "punishment" An admin
-             * should be able to keep order on a server without resorting to
-             * deception and secrecy.
-             */
-            warnPlayer (player);
-            data.setPvPWarmup (PvPUtils.getTime ());
+            if (!PvPUtils.isInPvP (data))
+            {
+                /*
+                 * This warning will never be a config option. I will not
+                 * tolerate admins who go behind a player's back as "punishment"
+                 * An admin should be able to keep order on a server without
+                 * resorting to deception and secrecy.
+                 */
+                warnPlayer (player);
+                data.setPvPWarmup (PvPUtils.getTime ());
+            }
+            else
+            {
+                PvPUtils.red (admin,
+                    String.format (
+                        "\"%s\" is currently in PvP, so you cannot toggle his PvP mode",
+                        args[0]));
+            }
         }
         else
         {

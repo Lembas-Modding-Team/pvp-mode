@@ -20,6 +20,7 @@ public class PvPData
     private static final String PVP_WARMUP_NBT_KEY = "PvPWarmup";
     private static final String PVP_COOLDOWN_NBT_KEY = "PvPCooldown";
     private static final String FORCED_PVP_MODE_NBT_KEY = "ForcedPvPMode";
+    private static final String PVP_TIMER_NBT_KEY = "PvPTimer";
 
     public PvPData (EntityPlayer player)
     {
@@ -77,14 +78,24 @@ public class PvPData
     {
         pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
     }
-    
+
     public EnumForcedPvPMode getForcedPvPMode() {
         return EnumForcedPvPMode.values ()[pvpDataTag.getInteger (FORCED_PVP_MODE_NBT_KEY)];
     }
-    
+
     public void setForcedPvPMode (EnumForcedPvPMode forcedPvPMode)
     {
         pvpDataTag.setInteger (FORCED_PVP_MODE_NBT_KEY, forcedPvPMode.ordinal ());
+    }
+
+    public long getPvPTimer ()
+    {
+        return pvpDataTag.getLong (PVP_TIMER_NBT_KEY);
+    }
+
+    public void setPvPTimer (long pvpTimer)
+    {
+        pvpDataTag.setLong (PVP_TIMER_NBT_KEY, pvpTimer);
     }
 
 }

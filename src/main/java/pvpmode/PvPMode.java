@@ -16,7 +16,7 @@ import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
 import pvpmode.log.*;
 import pvpmode.overrides.PvPOverrideManager;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.1", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.1.0-BETA.2", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
@@ -35,6 +35,8 @@ public class PvPMode
     public static int inventoryLossArmour;
     public static int inventoryLossHotbar;
     public static int overrideCheckInterval;
+    public static int pvpTimer;
+    public static Collection<String> commandBlacklist;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -56,10 +58,13 @@ public class PvPMode
         combatLogManager.registerCombatLogHandler (CSVCombatLogHandler.CONFIG_NAME, new CSVCombatLogHandler ());
 
         roundFactor = config.getInt ("Distance Rounding Factor", MAIN_CONFIGURATION_CATEGORY, 100, 1, Integer.MAX_VALUE,
-            "");
-        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE, "");
-        cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE, "");
-        radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true, "");
+            "The factor by which the proximity information will be rounded. The distance will be displayed in a multiple of this factor.");
+        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
+            "The delay after which the PvP mode of a player will be actually toggled (after intiating it).");
+        cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE,
+            "The duration after a PvP mode toggle while which the PvP mode cannot be toggled again.");
+        radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true,
+            "If true, players with PvP mode enabled will receive proximity informations about other players with PvP enabled.");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
@@ -73,7 +78,13 @@ public class PvPMode
         inventoryLossHotbar = config.getInt ("Hotbar Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 2, 0, 9,
             "The amount of items from the hotbar the player looses upon death.");
         overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
-            MAIN_CONFIGURATION_CATEGORY, 10, -1, 60, "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
+            MAIN_CONFIGURATION_CATEGORY, 10, -1, 60,
+            "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
+        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 30, 10, 60,
+            "Specifies the time interval after a combat event while which all involved players are seen as \"in PvP\".");
+        commandBlacklist = new HashSet<> (Arrays.asList (
+            config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
+                "Commands in this list cannot be executed by players who are in PvP. Note that this only applies for commands which are registered on the server. The commands are specified by the command name, without the slash. Invalid command names will be ignored.")));
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -87,6 +98,17 @@ public class PvPMode
                 csvSeparator);
             csvSeparator = CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR;
         }
+
+        Iterator<String> commandIterator = commandBlacklist.iterator ();
+        while (commandIterator.hasNext ())
+        {
+            String commandName = commandIterator.next ();
+            if (commandName.trim ().isEmpty ())
+            {
+                commandIterator.remove ();
+            }
+        }
+        FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
 
         if (config.hasChanged ())
             config.save ();
