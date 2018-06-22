@@ -17,6 +17,7 @@
 * Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
 * A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
 * Added missing comments to some configuration properties
+* Fixed that hired units from the LOTR Mod start attacking players/units with PvP mode OFF (without causing damage)
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)

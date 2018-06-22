@@ -7,11 +7,13 @@ import java.util.function.Supplier;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.compatibility.events.EntityMasterExtractionEvent;
 import pvpmode.overrides.EnumForcedPvPMode;
 
 public class PvPUtils
@@ -252,6 +254,26 @@ public class PvPUtils
                 writer.newLine ();
             }
         }
+    }
+
+    /**
+     * Returns the player that this entity is associated with, if possible.
+     */
+    public static EntityPlayerMP getMaster (Entity entity)
+    {
+        if (entity == null)
+            return null;
+
+        if (entity instanceof EntityPlayerMP)
+            return (EntityPlayerMP) entity;
+
+        if (entity instanceof IEntityOwnable)
+            return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
+
+        // Via this event the compatibility modules will be asked to extract the
+        // master
+        EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
+        return PvPUtils.postEventAndGetResult (event, event::getMaster);
     }
 
 }
