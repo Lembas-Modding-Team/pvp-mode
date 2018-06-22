@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import pvpmode.*;
 
-public class PvPCommandList extends CommandBase
+public class PvPCommandList extends AbstractPvPCommand
 {
     @Override
     public String getCommandName ()
