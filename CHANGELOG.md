@@ -1,9 +1,9 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.1.0-BETA
+### General changes:
 * The changelog will now be integrated into the JAR of PvPMode
 * Restructured the internal handling of compatibility-related code (added compatibility modules)
-* Improved the performance if the LOTR Mod is present
 * Added a warning if the attacking player has PvP disabled
 * Clicking on `pvpadmin` in `pvphelp` now appends a space to the suggested chat input
 * The calling player of `pvplist` now will always be displayed on the top of the list
@@ -14,15 +14,18 @@
 * Fixed that the `pvphelp` command list contains unnecessary spaces
 * Added a configurable partial armour and hotbar inventory loss (applies only when keepInventory is true)
 * Added general support for conditional PvP mode overrides (forcing PvP mode to OFF or ON)
-* Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
-* A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
 * Added missing comments to some configuration properties
-* Fixed that hired units from the LOTR Mod start attacking players/units with PvP mode OFF (without causing damage)
-* The PvP mode of players involved in a PvP event cannot be changed
-* Players which are in PvP cannot use the LOTR Mod fast travel system
+* The PvP mode of players involved in a PvP event cannot be changed anymore
 * Added a command blacklist for players which are in PvP: While in PvP, they cannot use the blacklisted commands
 * The commands added by PvP mode now behave uniformly regarding invalid usage
 * Fixed that players which aren't able to do PvP could see the proximity informations in `pvplist`
+
+### LOTR compatibility:
+* Improved the performance if the LOTR Mod is present
+* Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
+* A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
+* Fixed that hired units from the LOTR Mod start attacking players/units with PvP mode OFF (without causing damage)
+* Players which are in PvP cannot use the LOTR Mod fast travel system
 
 ## 1.0.0-BETA
 * Added combat logging (two handlers: csv (default) and simple)
