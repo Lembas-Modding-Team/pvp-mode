@@ -35,6 +35,8 @@ public class PvPMode
     public static int inventoryLossArmour;
     public static int inventoryLossHotbar;
     public static int overrideCheckInterval;
+    public static int pvpTimer;
+    public static Collection<String> commandBlacklist;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -78,6 +80,11 @@ public class PvPMode
         overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
             MAIN_CONFIGURATION_CATEGORY, 10, -1, 60,
             "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
+        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 30, 10, 60,
+            "Specifies the time interval after a combat event while which all involved players are seen as \"in PvP\".");
+        commandBlacklist = new HashSet<> (Arrays.asList (
+            config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
+                "Commands in this list cannot be executed by players who are in PvP. Note that this only applies for commands which are registered on the server. The commands are specified by the command name, without the slash. Invalid command names will be ignored.")));
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -91,6 +98,17 @@ public class PvPMode
                 csvSeparator);
             csvSeparator = CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR;
         }
+
+        Iterator<String> commandIterator = commandBlacklist.iterator ();
+        while (commandIterator.hasNext ())
+        {
+            String commandName = commandIterator.next ();
+            if (commandName.trim ().isEmpty ())
+            {
+                commandIterator.remove ();
+            }
+        }
+        FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
 
         if (config.hasChanged ())
             config.save ();

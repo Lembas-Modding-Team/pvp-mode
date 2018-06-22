@@ -61,6 +61,8 @@ public class PvPCommandConfig extends CommandBase
         postConfigEntry (sender, "Armor item loss", Integer.toString (PvPMode.inventoryLossArmour) + " items");
         postConfigEntry (sender, "Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbar) + " items");
         postConfigEntry (sender, "Override check interval", Integer.toString (PvPMode.overrideCheckInterval) + "s");
+        postConfigEntry (sender, "PvP timer", Integer.toString (PvPMode.pvpTimer) + "s");
+        postConfigEntry (sender, "Command blacklist",PvPMode.commandBlacklist.toString ());
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 

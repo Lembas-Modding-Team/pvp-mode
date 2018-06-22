@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.command.*;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
@@ -137,15 +138,24 @@ public class PvPUtils
         if (!arePvPModeOverridesEnabled () || forcedPvPMode == EnumForcedPvPMode.UNDEFINED)
         {
             // No PvP mode overrides apply
-            if (data.getPvPWarmup () == 0)
+            if (data.getPvPTimer () == 0)
             {
-                // No warmup timer is running
-                return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
+                // Player is not in PvP
+                if (data.getPvPWarmup () == 0)
+                {
+                    // No warmup timer is running
+                    return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
+                }
+                else
+                {
+                    // Warmup timer is running
+                    return EnumPvPMode.WARMUP;
+                }
             }
             else
             {
-                // Warmup timer is running
-                return EnumPvPMode.WARMUP;
+                // Player is in PvP
+                return EnumPvPMode.ON;
             }
         }
         else
@@ -255,7 +265,33 @@ public class PvPUtils
             }
         }
     }
+  
+    /** 
+     * Returns whether the player assigned to the supplied data is currently in
+     * PvP.<br/>
+     * If a PvP event occurred with this player involved, a timer starts. While
+     * this timer is running, the player is considered to be involved into PvP.
+     */
+    public static boolean isInPvP (PvPData data)
+    {
+        return data.getPvPTimer () != 0;
+    }
 
+    /**
+     * Returns whether the supplied command can be assigned to the supplied
+     * name.
+     */
+    public static boolean matches (ICommand command, String name)
+    {
+        if (command.getCommandName ().equals (name))
+        {
+            return true;
+        }
+        else if (command.getCommandAliases () != null)
+            return command.getCommandAliases ().contains (name);
+        else return false;
+    }
+  
     /**
      * Returns the player that this entity is associated with, if possible.
      */

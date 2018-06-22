@@ -11,7 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
+import pvpmode.compatibility.events.*;
 
 public class PvPEventHandler
 {
@@ -73,7 +75,29 @@ public class PvPEventHandler
         }
 
         if (cancel)
+        {
             event.setCanceled (true);
+        }
+        else
+        {
+            if (attacker == event.source.getEntity () && victim == event.entity)
+            {
+                // Both involved entities are players which can attack each
+                // other
+
+                long time = PvPUtils.getTime ();
+
+                PvPData attackerData = PvPUtils.getPvPData (attacker);
+                PvPData victimData = PvPUtils.getPvPData (victim);
+
+                attackerData.setPvPTimer (time + PvPMode.pvpTimer);
+                victimData.setPvPTimer (time + PvPMode.pvpTimer);
+
+                attackerData.setPvPWarmup (0);
+                victimData.setPvPWarmup (0);
+            }
+        }
+
     }
 
     /*
@@ -106,7 +130,9 @@ public class PvPEventHandler
 
             PvPData data = PvPUtils.getPvPData (player);
 
-            if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
+            long pvpTimer = data.getPvPTimer ();
+
+            if (!PvPUtils.isPvPModeOverriddenForPlayer (data) && pvpTimer == 0)
             {
                 long toggleTime = data.getPvPWarmup ();
 
@@ -129,6 +155,26 @@ public class PvPEventHandler
 
                     data.setPvPCooldown (time + PvPMode.cooldown);
                 }
+            }
+            else if (pvpTimer != 0)
+            {
+                // The player is or was in PvP
+                if (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player) || pvpTimer < time)
+                {
+                    // The player was in PvP or can no longer do PvP even if the
+                    // timer is running yet
+                    PvPUtils.green (player, "You're no longer in PvP");
+                    data.setPvPTimer (0);
+                }
+                else
+                {
+                    // The player is in PvP
+
+                    // With this event the compatibility modules can add custom
+                    // behavior
+                    MinecraftForge.EVENT_BUS.post (new PlayerPvPTickEvent (player));
+                }
+
             }
         }
     }
@@ -167,6 +213,28 @@ public class PvPEventHandler
             int randomSlot = filledArmorSlots.remove (randomSlotIndex);
             player.func_146097_a (inventory[randomSlot], true, false); // Drops the item in the world
             inventory[randomSlot] = null; // Make sure to delete the item from the player's inventory
+        }
+    }
+
+    @SubscribeEvent
+    public void onCommandExecution (CommandEvent event)
+    {
+        // Cancel blacklisted commands for players in PvP
+        if (event.sender instanceof EntityPlayerMP)
+        {
+            if (PvPUtils.isInPvP (PvPUtils.getPvPData ((EntityPlayer) event.sender)))
+            {
+                for (String command : PvPMode.commandBlacklist)
+                {
+                    if (PvPUtils.matches (event.command, command))
+                    {
+                        // The command is blacklisted and will be canceled
+                        event.setCanceled (true);
+                        PvPUtils.red (event.sender, "You cannot use this command while in PvP.");
+                        return;
+                    }
+                }
+            }
         }
     }
 
