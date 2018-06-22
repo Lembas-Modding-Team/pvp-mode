@@ -6,7 +6,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -30,8 +29,8 @@ public class PvPEventHandler
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = getMaster (event.entity);
+        EntityPlayerMP attacker = PvPUtils.getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = PvPUtils.getMaster (event.entity);
 
         if (attacker == null || victim == null)
             return;
@@ -108,8 +107,8 @@ public class PvPEventHandler
     @SubscribeEvent
     public void onLivingHurt (LivingHurtEvent event)
     {
-        EntityPlayerMP attacker = getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = getMaster (event.entity);
+        EntityPlayerMP attacker = PvPUtils.getMaster (event.source.getEntity ());
+        EntityPlayerMP victim = PvPUtils.getMaster (event.entity);
 
         if (attacker == null || victim == null)
             return;
@@ -178,25 +177,6 @@ public class PvPEventHandler
 
             }
         }
-    }
-
-    /**
-     * Returns the player that this entity is associated with, if possible.
-     */
-    public EntityPlayerMP getMaster (Entity entity)
-    {
-        if (entity == null)
-            return null;
-
-        if (entity instanceof EntityPlayerMP)
-            return (EntityPlayerMP) entity;
-
-        if (entity instanceof IEntityOwnable)
-            return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
-
-        //Via this event the compatibility modules will be asked to extract the master
-        EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
-        return PvPUtils.postEventAndGetResult (event, event::getMaster);
     }
 
     @SubscribeEvent

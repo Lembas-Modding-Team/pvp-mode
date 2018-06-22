@@ -11,6 +11,7 @@ import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.*;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.*;
@@ -253,6 +254,39 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             {
                 PvPUtils.red (event.getPlayer (), "You cannot fast travel while in PvP");
                 data.setTargetFTWaypoint (null);
+            }
+        }
+    }
+    
+     @SubscribeEvent
+    public void onAttackTargetSet (LivingSetAttackTargetEvent event)
+    {
+        // Fixes that hired units attack players (they don't cause damage, but
+        // move to them)
+        if (event.target != null)
+        {
+            // The entity needs a target
+            if (event.entityLiving instanceof LOTREntityNPC)
+            {
+                // It needs to be an hired unit
+                LOTREntityNPC npc = (LOTREntityNPC) event.entityLiving;
+
+                EntityPlayer attackingMaster = PvPUtils.getMaster (npc);
+                EntityPlayer targetMaster = PvPUtils.getMaster (event.target);
+
+                if (attackingMaster != null && targetMaster != null)
+                {
+                    // The attacking unit and the attacked entity have to be
+                    // assignable to players
+                    if (PvPUtils.getPvPMode (attackingMaster) != EnumPvPMode.ON
+                        || PvPUtils.getPvPMode (targetMaster) != EnumPvPMode.ON)
+                    {
+                        // Cancel the attack target assignment of the PvP mode
+                        // prevents an attack
+                        npc.setAttackTarget (null);
+                        npc.setRevengeTarget (null);
+                    }
+                }
             }
         }
     }

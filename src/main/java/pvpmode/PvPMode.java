@@ -58,10 +58,13 @@ public class PvPMode
         combatLogManager.registerCombatLogHandler (CSVCombatLogHandler.CONFIG_NAME, new CSVCombatLogHandler ());
 
         roundFactor = config.getInt ("Distance Rounding Factor", MAIN_CONFIGURATION_CATEGORY, 100, 1, Integer.MAX_VALUE,
-            "");
-        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE, "");
-        cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE, "");
-        radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true, "");
+            "The factor by which the proximity information will be rounded. The distance will be displayed in a multiple of this factor.");
+        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
+            "The delay after which the PvP mode of a player will be actually toggled (after intiating it).");
+        cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE,
+            "The duration after a PvP mode toggle while which the PvP mode cannot be toggled again.");
+        radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true,
+            "If true, players with PvP mode enabled will receive proximity informations about other players with PvP enabled.");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")

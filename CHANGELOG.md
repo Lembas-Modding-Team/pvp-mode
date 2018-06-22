@@ -16,6 +16,8 @@
 * Added general support for conditional PvP mode overrides (forcing PvP mode to OFF or ON)
 * Added a configurable override condition for the LOTR Mod (players in enemy biomes will have PvP mode ON)
 * A file containing the LOTR biome ids now will be generated on startup (if the LOTR mod is present)
+* Added missing comments to some configuration properties
+* Fixed that hired units from the LOTR Mod start attacking players/units with PvP mode OFF (without causing damage)
 * The PvP mode of players involved in a PvP event cannot be changed
 * Players which are in PvP cannot use the LOTR Mod fast travel system
 * Added a command blacklist for players which are in PvP: While in PvP, they cannot use the blacklisted commands
