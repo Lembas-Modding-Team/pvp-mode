@@ -1,5 +1,7 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.1.1-BETA
+
 ## 1.1.0-BETA
 ### General changes:
 * The changelog will now be integrated into the JAR of PvPMode
