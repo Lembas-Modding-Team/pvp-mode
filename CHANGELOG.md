@@ -21,6 +21,7 @@
 * The PvP mode of players involved in a PvP event cannot be changed
 * Players which are in PvP cannot use the LOTR Mod fast travel system
 * Added a command blacklist for players which are in PvP: While in PvP, they cannot use the blacklisted commands
+* The commands added by PvP mode now behave uniformly regarding invalid usage
 * Fixed that players which aren't able to do PvP could see the proximity informations in `pvplist`
 
 ## 1.0.0-BETA

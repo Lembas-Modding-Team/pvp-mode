@@ -4,7 +4,7 @@ import net.minecraft.command.*;
 import net.minecraft.entity.player.*;
 import pvpmode.*;
 
-public class PvPCommand extends CommandBase
+public class PvPCommand extends AbstractPvPCommand
 {
     @Override
     public String getCommandName ()
@@ -37,13 +37,9 @@ public class PvPCommand extends CommandBase
             {
                 if (args.length > 0)
                 {
-                    if (args[0].equals ("cancel"))
+                    if (requireArgument (sender, args, 0, "cancel"))
                     {
                         cancelPvPTimer (player, currentMode, data);
-                    }
-                    else
-                    {
-                        PvPUtils.red (sender, getCommandUsage (sender));
                     }
                 }
                 else

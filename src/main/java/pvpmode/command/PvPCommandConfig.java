@@ -4,7 +4,7 @@ import net.minecraft.command.*;
 import net.minecraft.util.*;
 import pvpmode.*;
 
-public class PvPCommandConfig extends CommandBase
+public class PvPCommandConfig extends AbstractPvPCommand
 {
 
     @Override
@@ -28,21 +28,9 @@ public class PvPCommandConfig extends CommandBase
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        if (args.length > 0)
+        if (requireArgument (sender, args, 0, "display"))
         {
-            if (args[0].equals ("display"))
-            {
-                displayConfiguration (sender);
-            }
-
-            else
-            {
-                PvPUtils.red (sender, getCommandUsage (sender));
-            }
-        }
-        else
-        {
-            PvPUtils.red (sender, getCommandUsage (sender));
+            displayConfiguration (sender);
         }
 
     }

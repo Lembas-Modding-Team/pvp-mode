@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import pvpmode.*;
 
-public class PvPCommandAdmin extends CommandBase
+public class PvPCommandAdmin extends AbstractPvPCommand
 {
     @Override
     public String getCommandName ()
@@ -30,19 +30,11 @@ public class PvPCommandAdmin extends CommandBase
     @Override
     public void processCommand (ICommandSender admin, String[] args)
     {
-        if (args.length != 1)
-        {
-            help (admin);
-            return;
-        }
 
-        EntityPlayerMP player = PvPUtils.getPlayer (args[0]);
-
-        if (player == null)
-        {
-            PvPUtils.red (admin, String.format ("The player \"%s\" doesn't exist", args[0]));
+        if (!this.requireArgumentLength (admin, args, 1))
             return;
-        }
+
+        EntityPlayerMP player = CommandBase.getPlayer (admin, args[0]);
 
         PvPData data = PvPUtils.getPvPData (player);
 
@@ -56,7 +48,7 @@ public class PvPCommandAdmin extends CommandBase
                  * An admin should be able to keep order on a server without
                  * resorting to deception and secrecy.
                  */
-                warnPlayer (player);
+                PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
                 data.setPvPWarmup (PvPUtils.getTime ());
             }
             else
@@ -90,13 +82,4 @@ public class PvPCommandAdmin extends CommandBase
         return null;
     }
 
-    void help (ICommandSender sender)
-    {
-        PvPUtils.white (sender, "/pvpadmin <player>");
-    }
-
-    void warnPlayer (EntityPlayerMP player)
-    {
-        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
-    }
 }

@@ -6,7 +6,7 @@ import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
 import pvpmode.PvPUtils;
 
-public class PvPCommandHelp extends CommandBase
+public class PvPCommandHelp extends AbstractPvPCommand
 {
     @Override
     public String getCommandName ()
