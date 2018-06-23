@@ -2,6 +2,7 @@
 
 ## 1.1.1-BETA
 * Fixed that the conditional overrides were applied delayed to some players
+* Fixed that using `pvp` while the warmup timer is running restarts it
 
 ## 1.1.0-BETA
 ### General changes:
