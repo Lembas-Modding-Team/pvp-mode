@@ -1,6 +1,7 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.1.1-BETA
+* Fixed that using `pvp` while the warmup timer is running restarts it
 
 ## 1.1.0-BETA
 ### General changes:

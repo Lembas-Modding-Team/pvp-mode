@@ -2,6 +2,9 @@ package pvpmode.command;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.event.ClickEvent.Action;
+import net.minecraft.util.*;
 import pvpmode.*;
 
 public class PvPCommand extends AbstractPvPCommand
@@ -44,7 +47,7 @@ public class PvPCommand extends AbstractPvPCommand
                 }
                 else
                 {
-                    togglePvPMode (sender, data);
+                    togglePvPMode (sender, currentMode, data);
                 }
             }
             else
@@ -71,23 +74,38 @@ public class PvPCommand extends AbstractPvPCommand
         }
     }
 
-    private void togglePvPMode (ICommandSender sender, PvPData data)
+    private void togglePvPMode (ICommandSender sender, EnumPvPMode mode, PvPData data)
     {
-        long time = PvPUtils.getTime ();
-        long toggleTime = time + PvPMode.warmup;
-        long cooldownTime = data.getPvPCooldown ();
-
-        if (cooldownTime > time)
+        if (mode != EnumPvPMode.WARMUP)
         {
-            long wait = cooldownTime - time;
-            PvPUtils.yellow (sender, String.format ("Please wait %d seconds before issuing this command.", wait));
-            return;
+            long time = PvPUtils.getTime ();
+            long toggleTime = time + PvPMode.warmup;
+            long cooldownTime = data.getPvPCooldown ();
+
+            if (cooldownTime > time)
+            {
+                long wait = cooldownTime - time;
+                PvPUtils.yellow (sender, String.format ("Please wait %d seconds before issuing this command.", wait));
+                return;
+            }
+
+            data.setPvPWarmup (toggleTime);
+            data.setPvPCooldown (0);
+
+            String status = data.isPvPEnabled () ? "disabled" : "enabled";
+            PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...", status, PvPMode.warmup));
         }
+        else
+        {
+            ChatComponentText firstPart = new ChatComponentText ("The warmup timer is already running. Use ");
+            ChatComponentText secondPart = new ChatComponentText ("/pvp cancel");
+            ChatComponentText thirdPart = new ChatComponentText (" to cancel it");
 
-        data.setPvPWarmup (toggleTime);
-        data.setPvPCooldown (0);
-
-        String status = data.isPvPEnabled () ? "disabled" : "enabled";
-        PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...", status, PvPMode.warmup));
+            firstPart.getChatStyle ().setColor (EnumChatFormatting.RED);
+            secondPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/pvp cancel"))
+                .setColor (EnumChatFormatting.DARK_RED);
+            thirdPart.getChatStyle ().setColor (EnumChatFormatting.RED);
+            sender.addChatMessage (firstPart.appendSibling (secondPart).appendSibling (thirdPart));
+        }
     }
 }
