@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.*;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 import pvpmode.*;
 
@@ -20,7 +21,7 @@ public class PvPOverrideManager
 {
     private TreeMap<Integer, Set<PvPOverrideCondition>> overrideConditions = new TreeMap<> ();
 
-    private long lastCheckTime = 0;
+    private Map<EntityPlayer, Long> lastCheckTimes = new HashMap<> ();
 
     /**
      * Registers a new PvP override condition.<br/>
@@ -60,10 +61,13 @@ public class PvPOverrideManager
     @SubscribeEvent
     public void onPlayerTick (PlayerTickEvent event)
     {
+        if (!lastCheckTimes.containsKey (event.player))
+            lastCheckTimes.put (event.player, 0l);
+
         // A ton of checks whether the PvP mode of the current player can be
         // overridden
         if (PvPUtils.arePvPModeOverridesEnabled () && event.side == Side.SERVER && event.phase == Phase.END
-            && (PvPUtils.getTime () - lastCheckTime) >= PvPMode.overrideCheckInterval
+            && (PvPUtils.getTime () - lastCheckTimes.get (event.player)) >= PvPMode.overrideCheckInterval
             && !PvPUtils.isCreativeMode (event.player)
             && !PvPUtils.canFly (event.player))
         {
@@ -88,7 +92,7 @@ public class PvPOverrideManager
                         }
                         pvpData.setForcedPvPMode (newPvPMode);
                         pvpData.setPvPWarmup (0);// Cancel warmup timer
-                        lastCheckTime = PvPUtils.getTime ();
+                        lastCheckTimes.replace (event.player, PvPUtils.getTime ());
                         return;// The first registered condition with the
                                // highest priority will be applied
                     }
@@ -107,7 +111,7 @@ public class PvPOverrideManager
                 }
             }
 
-            lastCheckTime = PvPUtils.getTime ();
+            lastCheckTimes.replace (event.player, PvPUtils.getTime ());
         }
     }
 }
