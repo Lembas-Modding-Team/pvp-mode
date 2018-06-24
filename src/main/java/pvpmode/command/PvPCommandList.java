@@ -66,7 +66,7 @@ public class PvPCommandList extends AbstractPvPCommand
         PvPUtils.green (sender, "--- PvP Mode Player List ---");
 
         displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, senderPlayerPvPMode, -1);
-        for (Integer distance : unsafePlayers.descendingMap ().keySet ())
+        for (Integer distance : unsafePlayers.keySet ())
         {
             for (EntityPlayerMP player : unsafePlayers.get (distance))
             {
