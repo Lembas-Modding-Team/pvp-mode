@@ -34,30 +34,44 @@ public class PvPCommand extends AbstractPvPCommand
         EnumPvPMode currentMode = PvPUtils.getPvPMode (player);
         PvPData data = PvPUtils.getPvPData (player);
 
-        if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
+        if (!PvPUtils.isCreativeMode (player))
         {
-            if (!PvPUtils.isInPvP (data))
+            if (!PvPUtils.canFly (player))
             {
-                if (args.length > 0)
+                if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
                 {
-                    if (requireArgument (sender, args, 0, "cancel"))
+                    if (!PvPUtils.isInPvP (data))
                     {
-                        cancelPvPTimer (player, currentMode, data);
+                        if (args.length > 0)
+                        {
+                            if (requireArgument (sender, args, 0, "cancel"))
+                            {
+                                cancelPvPTimer (player, currentMode, data);
+                            }
+                        }
+                        else
+                        {
+                            togglePvPMode (sender, currentMode, data);
+                        }
+                    }
+                    else
+                    {
+                        PvPUtils.red (sender, "You cannot use this command while you're in PvP");
                     }
                 }
                 else
                 {
-                    togglePvPMode (sender, currentMode, data);
+                    PvPUtils.red (sender, "You cannot use this command while your PvP mode is overridden");
                 }
             }
             else
             {
-                PvPUtils.red (sender, "You cannot use this command while you're in PvP");
+                PvPUtils.red (sender, "You cannot use this command while you're able to fly");
             }
         }
         else
         {
-            PvPUtils.red (sender, "You cannot use this command while your PvP mode is overridden");
+            PvPUtils.red (sender, "You cannot use this command while you're in creative mode");
         }
     }
 
