@@ -1,5 +1,7 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.1.2-BETA
+
 ## 1.1.1-BETA
 * Fixed that the conditional overrides were applied delayed to some players
 * Fixed that using `pvp` while the warmup timer is running restarts it
