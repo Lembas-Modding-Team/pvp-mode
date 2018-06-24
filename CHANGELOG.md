@@ -3,6 +3,8 @@
 ## 1.1.1-BETA
 * Fixed that the conditional overrides were applied delayed to some players
 * Fixed that using `pvp` while the warmup timer is running restarts it
+* Fixed that creative/flying players could use `pvp` (and `pvpadmin` could used on them)
+* Fixed that the warmup timer of creative/flying players wasn't canceled
 
 ## 1.1.0-BETA
 ### General changes:
