@@ -134,11 +134,11 @@ public class PvPEventHandler
             long pvpTimer = data.getPvPTimer ();
             long toggleTime = data.getPvPWarmup ();
 
-            if (!PvPUtils.isCreativeMode (player))
+            if (!PvPUtils.isPvPModeOverriddenForPlayer (data) && pvpTimer == 0)
             {
-                if (!PvPUtils.canFly (player))
+                if (!PvPUtils.isCreativeMode (player))
                 {
-                    if (!PvPUtils.isPvPModeOverriddenForPlayer (data) && pvpTimer == 0)
+                    if (!PvPUtils.canFly (player))
                     {
                         if (toggleTime != 0 && toggleTime < time)
                         {
@@ -162,40 +162,40 @@ public class PvPEventHandler
                             data.setPvPCooldown (time + PvPMode.cooldown);
                         }
                     }
-                    else if (pvpTimer != 0)
+                    else if (toggleTime != 0)
                     {
-                        // The player is or was in PvP
-                        if (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player) || pvpTimer < time)
-                        {
-                            // The player was in PvP or can no longer do PvP
-                            // even if
-                            // the
-                            // timer is running yet
-                            PvPUtils.green (player, "You're no longer in PvP");
-                            data.setPvPTimer (0);
-                        }
-                        else
-                        {
-                            // The player is in PvP
-
-                            // With this event the compatibility modules can add
-                            // custom
-                            // behavior
-                            MinecraftForge.EVENT_BUS.post (new PlayerPvPTickEvent (player));
-                        }
-
+                        PvPUtils.yellow (player, "Your warmup timer was resetted because you're able to fly now");
+                        data.setPvPWarmup (0);
                     }
                 }
                 else if (toggleTime != 0)
                 {
-                    PvPUtils.yellow (player, "Your warmup timer was resetted because you're able to fly now");
+                    PvPUtils.yellow (player, "Your warmup timer was resetted because you're in creative mode now");
                     data.setPvPWarmup (0);
                 }
             }
-            else if (toggleTime != 0)
+            else if (pvpTimer != 0)
             {
-                PvPUtils.yellow (player, "Your warmup timer was resetted because you're in creative mode now");
-                data.setPvPWarmup (0);
+                // The player is or was in PvP
+                if (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player) || pvpTimer < time)
+                {
+                    // The player was in PvP or can no longer do PvP
+                    // even if
+                    // the
+                    // timer is running yet
+                    PvPUtils.green (player, "You're no longer in PvP");
+                    data.setPvPTimer (0);
+                }
+                else
+                {
+                    // The player is in PvP
+
+                    // With this event the compatibility modules can add
+                    // custom
+                    // behavior
+                    MinecraftForge.EVENT_BUS.post (new PlayerPvPTickEvent (player));
+                }
+
             }
         }
     }
