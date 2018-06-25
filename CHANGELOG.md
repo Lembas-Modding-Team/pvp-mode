@@ -1,6 +1,7 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.1.3-BETA
+* Fixed that a chat message wasn't displayed correctly with small chat widths
 
 ## 1.1.2-BETA
 * Fixed that the entries in `pvplist` with PvP on were sorted by descending proximity
