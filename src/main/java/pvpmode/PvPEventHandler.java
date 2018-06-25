@@ -147,10 +147,11 @@ public class PvPEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                PvPMode.cfg.sendChatMsg (new ChatComponentText (
-                                    EnumChatFormatting.RED + "WARNING: PvP is now enabled for "
-                                        + player.getDisplayName ()
-                                        + "!"));
+                                ChatComponentText message = new ChatComponentText ("WARNING: PvP is now enabled for "
+                                    + player.getDisplayName ()
+                                    + "!");
+                                message.getChatStyle ().setColor (EnumChatFormatting.RED);
+                                PvPMode.cfg.sendChatMsg (message);
                             }
                             else
                             {
