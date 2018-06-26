@@ -48,16 +48,20 @@ public class PvPCommandList extends AbstractPvPCommand
                 switch (mode)
                 {
                     case OFF:
-                        safePlayers.add (player);
+                        if (PvPUtils.isWarmupTimerRunning (player))
+                        {
+                            warmupPlayers.add (player);
+                        }
+                        else
+                        {
+                            safePlayers.add (player);
+                        }
                         break;
                     case ON:
                         int proximity = PvPMode.radar ? PvPUtils.roundedDistanceBetween (senderPlayer, player) : -1;
                         if (!unsafePlayers.containsKey (proximity))
                             unsafePlayers.put (proximity, new HashSet<> ());
                         unsafePlayers.get (proximity).add (player);
-                        break;
-                    case WARMUP:
-                        warmupPlayers.add (player);
                         break;
                 }
             }
@@ -74,7 +78,7 @@ public class PvPCommandList extends AbstractPvPCommand
             }
         }
         warmupPlayers.forEach (
-            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.WARMUP, senderPlayerPvPMode, -1));
+            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1));
         safePlayers.forEach (
             player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1));
         PvPUtils.green (sender, "-------------------------");
@@ -87,6 +91,7 @@ public class PvPCommandList extends AbstractPvPCommand
     {
         boolean isSenderPlayer = player == senderPlayer;
         boolean hasSenderPlayerPvPEnabled = senderPlayerMode == EnumPvPMode.ON;
+        boolean isWarmupTimerRunning = PvPUtils.isWarmupTimerRunning (player);
         IChatComponent modeComponent = null;
         IChatComponent nameComponent = new ChatComponentText (String.format (" %s", player.getDisplayName ()));
         IChatComponent additionalComponent = null;
@@ -96,7 +101,9 @@ public class PvPCommandList extends AbstractPvPCommand
                 modeComponent = new ChatComponentText (
                     String.format ("[OFF%s]", PvPUtils.isCreativeMode (player) ? ":GM1"
                         : PvPUtils.canFly (player) ? ":FLY" : ""));
-                setComponentColors (EnumChatFormatting.GREEN, isSenderPlayer, modeComponent, nameComponent);
+                setComponentColors (isWarmupTimerRunning ? EnumChatFormatting.YELLOW : EnumChatFormatting.GREEN,
+                    isSenderPlayer, modeComponent,
+                    nameComponent);
                 break;
             case ON:
                 modeComponent = new ChatComponentText ("[ON]");
@@ -107,13 +114,14 @@ public class PvPCommandList extends AbstractPvPCommand
                 setComponentColors (EnumChatFormatting.RED, isSenderPlayer, modeComponent, nameComponent,
                     additionalComponent);
                 break;
-            case WARMUP:
-                modeComponent = new ChatComponentText ("[WARMUP]");
-                additionalComponent = new ChatComponentText (String.format (" - %d seconds till PvP",
-                    PvPUtils.getPvPData (player).getPvPWarmup () - PvPUtils.getTime ()));
-                setComponentColors (EnumChatFormatting.YELLOW, isSenderPlayer, modeComponent, nameComponent,
-                    additionalComponent);
-                break;
+        }
+        if (isWarmupTimerRunning)
+        {
+            ChatComponentText warmupComponent = new ChatComponentText (
+                String.format (" [%ds]", PvPUtils.getWarmupTimer (player)));
+            warmupComponent.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+            modeComponent
+                .appendSibling (warmupComponent);
         }
         modeComponent.appendSibling (nameComponent);
         if (additionalComponent != null)
@@ -129,8 +137,11 @@ public class PvPCommandList extends AbstractPvPCommand
         boolean first = true;
         for (IChatComponent component : components)
         {
-            component.getChatStyle ().setColor (!first && isSenderPlayer ? EnumChatFormatting.BLUE : baseColor);
-            first = false;
+            if (component != null)
+            {
+                component.getChatStyle ().setColor (!first && isSenderPlayer ? EnumChatFormatting.BLUE : baseColor);
+                first = false;
+            }
         }
     }
 

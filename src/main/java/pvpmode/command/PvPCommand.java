@@ -31,7 +31,6 @@ public class PvPCommand extends AbstractPvPCommand
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
-        EnumPvPMode currentMode = PvPUtils.getPvPMode (player);
         PvPData data = PvPUtils.getPvPData (player);
 
         if (!PvPUtils.isCreativeMode (player))
@@ -46,12 +45,12 @@ public class PvPCommand extends AbstractPvPCommand
                         {
                             if (requireArgument (sender, args, 0, "cancel"))
                             {
-                                cancelPvPTimer (player, currentMode, data);
+                                cancelPvPTimer (player, data);
                             }
                         }
                         else
                         {
-                            togglePvPMode (sender, currentMode, data);
+                            togglePvPMode (player, data);
                         }
                     }
                     else
@@ -75,9 +74,9 @@ public class PvPCommand extends AbstractPvPCommand
         }
     }
 
-    private void cancelPvPTimer (EntityPlayer player, EnumPvPMode mode, PvPData data)
+    private void cancelPvPTimer (EntityPlayer player, PvPData data)
     {
-        if (mode == EnumPvPMode.WARMUP)
+        if (PvPUtils.isWarmupTimerRunning (player))
         {
             data.setPvPWarmup (0);
             PvPUtils.yellow (player, "PvP warmup canceled.");
@@ -88,9 +87,9 @@ public class PvPCommand extends AbstractPvPCommand
         }
     }
 
-    private void togglePvPMode (ICommandSender sender, EnumPvPMode mode, PvPData data)
+    private void togglePvPMode (EntityPlayer sender, PvPData data)
     {
-        if (mode != EnumPvPMode.WARMUP)
+        if (!PvPUtils.isWarmupTimerRunning (sender))
         {
             long time = PvPUtils.getTime ();
             long toggleTime = time + PvPMode.warmup;
