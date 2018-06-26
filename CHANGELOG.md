@@ -1,6 +1,8 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.1.4-BETA
+* Fixed that players switching from PvP on to off couldn't do PvP during the warmup phase
+* Fixed that the warmup timer was displayed in an incorrect way sometimes in `pvplist`
 
 ## 1.1.3-BETA
 * Fixed that the PvP timer wasn't resetted for creative/flying players

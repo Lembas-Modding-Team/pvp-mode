@@ -140,16 +140,7 @@ public class PvPUtils
             if (data.getPvPTimer () == 0)
             {
                 // Player is not in PvP
-                if (data.getPvPWarmup () == 0)
-                {
-                    // No warmup timer is running
-                    return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
-                }
-                else
-                {
-                    // Warmup timer is running
-                    return EnumPvPMode.WARMUP;
-                }
+                return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
             }
             else
             {
@@ -309,6 +300,22 @@ public class PvPUtils
         // master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
+    }
+
+    /**
+     * Returns whether the warmup timer for the supplied player is running
+     */
+    public static boolean isWarmupTimerRunning (EntityPlayer player)
+    {
+        return getPvPData (player).getPvPWarmup () != 0;
+    }
+
+    /**
+     * Returns the remaining warmup time.
+     */
+    public static long getWarmupTimer (EntityPlayer player)
+    {
+        return Math.max (getPvPData (player).getPvPWarmup () - PvPUtils.getTime (), 0);
     }
 
 }
