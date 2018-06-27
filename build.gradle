@@ -49,6 +49,11 @@ jar {
    from('./') {
       include 'CHANGELOG.md'
    }
+   
+   manifest {
+        attributes 'FMLCorePlugin': 'pvpmode.core.PvPModeCore'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
 }
 
 processResources

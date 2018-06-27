@@ -52,6 +52,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Override check interval", Integer.toString (PvPMode.overrideCheckInterval) + "s");
         postConfigEntry (sender, "PvP timer", Integer.toString (PvPMode.pvpTimer) + "s");
         postConfigEntry (sender, "Command blacklist", PvPMode.commandBlacklist.toString ());
+        postConfigEntry (sender, "Fast item transfer disabled", Boolean.toString (PvPMode.blockShiftClicking));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 

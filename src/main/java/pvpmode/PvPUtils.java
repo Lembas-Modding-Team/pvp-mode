@@ -329,4 +329,12 @@ public class PvPUtils
         return Math.max (getPvPData (player).getPvPWarmup () - PvPUtils.getTime (), 0);
     }
 
+    /**
+     * Returns whether the supplied player cannot transfer items in his inventory via shift-clicking.
+     */
+    public static boolean isShiftClickingBlocked (EntityPlayer player)
+    {
+        return PvPMode.blockShiftClicking && PvPUtils.isInPvP (PvPUtils.getPvPData (player));
+    }
+
 }
