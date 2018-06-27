@@ -1,6 +1,7 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
 ## 1.2.0-BETA
+* Fixed that players drop too less items with partial inventory loss under rare circumstances
 
 ## 1.1.4-BETA
 * Fixed that players switching from PvP on to off couldn't do PvP during the warmup phase

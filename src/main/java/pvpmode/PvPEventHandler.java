@@ -226,12 +226,14 @@ public class PvPEventHandler
     private void dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
         int inventoryLoss)
     {
-        List<Integer> filledArmorSlots = new ArrayList<> (PvPUtils
+        List<Integer> filledInventorySlots = new ArrayList<> (PvPUtils
             .getFilledInventorySlots (inventory, startIndex, endIndex));
-        for (int i = 0; i < Math.min (inventoryLoss, filledArmorSlots.size ()); i++)
+        int size = filledInventorySlots.size ();// The size of the list itself
+                                                // decreases every iteration
+        for (int i = 0; i < Math.min (inventoryLoss, size); i++)
         {
-            int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledArmorSlots.size () - 1);
-            int randomSlot = filledArmorSlots.remove (randomSlotIndex);
+            int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledInventorySlots.size () - 1);
+            int randomSlot = filledInventorySlots.remove (randomSlotIndex);
             player.func_146097_a (inventory[randomSlot], true, false); // Drops
                                                                        // the
                                                                        // item
