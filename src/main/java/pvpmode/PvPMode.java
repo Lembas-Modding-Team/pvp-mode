@@ -37,6 +37,7 @@ public class PvPMode
     public static int overrideCheckInterval;
     public static int pvpTimer;
     public static Collection<String> commandBlacklist;
+    public static int inventoryLossMain;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -85,6 +86,9 @@ public class PvPMode
         commandBlacklist = new HashSet<> (Arrays.asList (
             config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
                 "Commands in this list cannot be executed by players who are in PvP. Note that this only applies for commands which are registered on the server. The commands are specified by the command name, without the slash. Invalid command names will be ignored.")));
+        inventoryLossMain = config.getInt ("Main Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 0, 0, 27,
+            "The amount of items from the main inventory the player looses upon death.");
+
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,

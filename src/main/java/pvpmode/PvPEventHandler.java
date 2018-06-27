@@ -217,6 +217,8 @@ public class PvPEventHandler
                             PvPMode.inventoryLossArmour);
                         dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8,
                             PvPMode.inventoryLossHotbar);
+                        dropItemsFromInventory (player, player.inventory.mainInventory, 9, 35,
+                            PvPMode.inventoryLossMain);
                     }
                 }
             }
