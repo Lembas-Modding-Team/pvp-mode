@@ -208,7 +208,7 @@ public class PvPUtils
 
     /**
      * Returns the indices of all filled slots of the supplied "inventory".<br/>
-     * A filled slot is a slot with an item stack in it. Optionally, the can be
+     * A filled slot is a slot with an item stack in it. Optionally, they can be
      * filtered with the supplied filter (whitelist).
      */
     public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex,
