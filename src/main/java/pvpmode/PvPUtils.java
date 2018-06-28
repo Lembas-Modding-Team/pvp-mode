@@ -3,7 +3,7 @@ package pvpmode;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.*;
@@ -203,10 +203,21 @@ public class PvPUtils
      */
     public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex)
     {
+        return getFilledInventorySlots (inventory, startIndex, endIndex, null);
+    }
+
+    /**
+     * Returns the indices of all filled slots of the supplied "inventory".<br/>
+     * A filled slot is a slot with an item stack in it. Optionally, the can be
+     * filtered with the supplied filter (whitelist).
+     */
+    public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex,
+        Predicate<ItemStack> filter)
+    {
         Set<Integer> filledSlots = new HashSet<> ();
         for (int i = startIndex; i < endIndex + 1; i++)
         {
-            if (inventory[i] != null)
+            if (inventory[i] != null && (filter != null ? filter.test (inventory[i]) : true))
                 filledSlots.add (i);
         }
         return filledSlots;

@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
-import pvpmode.compatibility.events.PlayerPvPTickEvent;
+import pvpmode.compatibility.events.*;
 
 public class PvPEventHandler
 {
@@ -229,7 +229,10 @@ public class PvPEventHandler
         int inventoryLoss)
     {
         List<Integer> filledInventorySlots = new ArrayList<> (PvPUtils
-            .getFilledInventorySlots (inventory, startIndex, endIndex));
+            .getFilledInventorySlots (inventory, startIndex, endIndex, stack ->
+            {
+                return !MinecraftForge.EVENT_BUS.post (new PartialItemLossEvent (stack));
+            }));
         int size = filledInventorySlots.size ();// The size of the list itself
                                                 // decreases every iteration
         for (int i = 0; i < Math.min (inventoryLoss, size); i++)
