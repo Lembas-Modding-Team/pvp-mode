@@ -53,6 +53,11 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "PvP timer", Integer.toString (PvPMode.pvpTimer) + "s");
         postConfigEntry (sender, "Command blacklist", PvPMode.commandBlacklist.toString ());
         postConfigEntry (sender, "Fast item transfer disabled", Boolean.toString (PvPMode.blockShiftClicking));
+        postConfigEntry (sender, "Extend armour inventory search",
+            Boolean.toString (PvPMode.extendArmourInventorySearch));
+        postConfigEntry (sender, "Extend hotbar inventory search",
+            Boolean.toString (PvPMode.extendHotbarInventorySearch));
+        postConfigEntry (sender, "Extend main inventory search", Boolean.toString (PvPMode.extendMainInventorySearch));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 

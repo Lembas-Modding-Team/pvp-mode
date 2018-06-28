@@ -5,6 +5,7 @@
 * Fixed that players drop too less items with partial inventory loss under rare circumstances
 * Added a configurable "main inventory loss" to the partial inventory loss
 * Transferring items via shift-clicking in the player's inventory during PvP is now disableable
+* If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
 
 ### SuffixForge compatibility:
 * Added a configuration option to prevent soulbound items to be dropped with the partial inventory loss

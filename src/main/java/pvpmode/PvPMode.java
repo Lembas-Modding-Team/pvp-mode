@@ -40,6 +40,9 @@ public class PvPMode
     public static Collection<String> commandBlacklist;
     public static int inventoryLossMain;
     public static boolean blockShiftClicking;
+    public static boolean extendArmourInventorySearch;
+    public static boolean extendHotbarInventorySearch;
+    public static boolean extendMainInventorySearch;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -93,6 +96,15 @@ public class PvPMode
         blockShiftClicking = config.getBoolean ("Disable Fast Item Transfer",
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, false,
             "If true, players won't be able to transfer item stacks in their inventory with shift-clicking while in PvP");
+        extendArmourInventorySearch = config.getBoolean ("Extend Armour Inventory Search",
+            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
+            "If the armour inventory contains less item stacks than have to be dropped, the game will additionally look at the main inventory (first) and the hotbar for armour item stacks.");
+        extendHotbarInventorySearch = config.getBoolean ("Extend Hotbar Inventory Search",
+            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
+            "If the hotbar contains less item stacks than have to be dropped, the game will additionally look at the main inventory for item stacks to be dropped.");
+        extendMainInventorySearch = config.getBoolean ("Extend Main Inventory Search",
+            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
+            "If the main inventory contains less item stacks than have to be dropped, the game will additionally look at the hotbar for item stacks to be dropped.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
