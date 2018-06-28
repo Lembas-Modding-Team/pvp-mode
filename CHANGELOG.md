@@ -2,6 +2,7 @@
 
 ## 1.2.0-BETA
 * Fixed that players drop too less items with partial inventory loss under rare circumstances
+* Added a configurable "main inventory loss" to the partial inventory loss
 
 ## 1.1.4-BETA
 * Fixed that players switching from PvP on to off couldn't do PvP during the warmup phase

@@ -48,6 +48,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
             Boolean.toString (PvPMode.partialInventoryLossEnabled));
         postConfigEntry (sender, "Armor item loss", Integer.toString (PvPMode.inventoryLossArmour) + " items");
         postConfigEntry (sender, "Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbar) + " items");
+        postConfigEntry (sender, "Main item loss", Integer.toString (PvPMode.inventoryLossMain) + " items");
         postConfigEntry (sender, "Override check interval", Integer.toString (PvPMode.overrideCheckInterval) + "s");
         postConfigEntry (sender, "PvP timer", Integer.toString (PvPMode.pvpTimer) + "s");
         postConfigEntry (sender, "Command blacklist", PvPMode.commandBlacklist.toString ());
