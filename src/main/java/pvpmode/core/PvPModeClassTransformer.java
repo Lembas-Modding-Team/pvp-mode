@@ -36,8 +36,7 @@ public class PvPModeClassTransformer implements IClassTransformer
 
                 list.add (new VarInsnNode (Opcodes.ALOAD, 1));
                 list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/PvPUtils", "isShiftClickingBlocked",
-                    String.format ("(L%s;)Z",
-                        obfuscated ? "yz" : "net/minecraft/entity/player/EntityPlayer"),
+                    String.format ("(L%s;)Z", "net/minecraft/entity/player/EntityPlayer"),
                     false));
                 LabelNode label1 = new LabelNode ();
                 list.add (new JumpInsnNode (Opcodes.IFEQ, label1));
