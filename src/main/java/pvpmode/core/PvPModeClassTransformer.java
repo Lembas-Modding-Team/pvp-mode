@@ -15,7 +15,7 @@ public class PvPModeClassTransformer implements IClassTransformer
     {
         if (name.equals ("net.minecraft.inventory.ContainerPlayer")
             || name.equals ("aap"))
-            return patchContainerPlayer (basicClass, name.equals ("app"));
+            return patchContainerPlayer (basicClass, name.equals ("aap"));
         return basicClass;
     }
 
