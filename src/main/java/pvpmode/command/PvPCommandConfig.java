@@ -28,11 +28,9 @@ public class PvPCommandConfig extends AbstractPvPCommand
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        if (requireArgument (sender, args, 0, "display"))
-        {
-            displayConfiguration (sender);
-        }
+        requireArgument (sender, args, 0, "display");
 
+        displayConfiguration (sender);
     }
 
     private void displayConfiguration (ICommandSender sender)

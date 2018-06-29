@@ -31,62 +31,24 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public void processCommand (ICommandSender admin, String[] args)
     {
 
-        if (!this.requireArgumentLength (admin, args, 1))
-            return;
+        requireArgumentLength (admin, args, 1);
 
         EntityPlayerMP player = CommandBase.getPlayer (admin, args[0]);
 
         PvPData data = PvPUtils.getPvPData (player);
 
-        if (!PvPUtils.isCreativeMode (player))
-        {
-            if (!PvPUtils.canFly (player))
-            {
-                if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
-                {
-                    if (!PvPUtils.isInPvP (data))
-                    {
-                        /*
-                         * This warning will never be a config option. I will
-                         * not tolerate admins who go behind a player's back as
-                         * "punishment" An admin should be able to keep order on
-                         * a server without resorting to deception and secrecy.
-                         */
-                        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
-                        data.setPvPWarmup (PvPUtils.getTime ());
-                    }
-                    else
-                    {
-                        PvPUtils.red (admin,
-                            String.format (
-                                "\"%s\" is currently in PvP, so you cannot toggle his PvP mode",
-                                args[0]));
-                    }
-                }
-                else
-                {
-                    PvPUtils.red (admin,
-                        String.format (
-                            "The PvP mode of \"%s\" is overridden by some external conditions - you cannot toggle it",
-                            args[0]));
-                }
-            }
-            else
-            {
-                PvPUtils.red (admin,
-                    String.format (
-                        "You cannot toggle the PvP mode of \"%s\": That player is able to fly",
-                        args[0]));
-            }
-        }
-        else
-        {
-            PvPUtils.red (admin,
-                String.format (
-                    "You cannot toggle the PvP mode of \"%s\": That player is in creative mode",
-                    args[0]));
-        }
-
+        this.requireNonCreativePlayer (player);
+        this.requireNonFlyingPlayer (player);
+        this.requireNonOverriddenPlayer (player);
+        this.requireNonPvPPlayer (player);
+        
+        /*
+         * This warning will never be a config option. I will not tolerate admins who go
+         * behind a player's back as "punishment" An admin should be able to keep order
+         * on a server without resorting to deception and secrecy.
+         */
+        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
+        data.setPvPWarmup (PvPUtils.getTime ());
     }
 
     @Override
