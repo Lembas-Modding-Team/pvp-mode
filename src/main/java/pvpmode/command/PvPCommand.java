@@ -33,44 +33,21 @@ public class PvPCommand extends AbstractPvPCommand
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
         PvPData data = PvPUtils.getPvPData (player);
 
-        if (!PvPUtils.isCreativeMode (player))
+        this.requireNonCreativeSender (player);
+        this.requireNonFlyingSender (player);
+
+        this.requireNonOverriddenSender (player);
+        this.requireNonPvPSender (player);
+
+        if (args.length > 0)
         {
-            if (!PvPUtils.canFly (player))
-            {
-                if (!PvPUtils.isPvPModeOverriddenForPlayer (data))
-                {
-                    if (!PvPUtils.isInPvP (data))
-                    {
-                        if (args.length > 0)
-                        {
-                            if (requireArgument (sender, args, 0, "cancel"))
-                            {
-                                cancelPvPTimer (player, data);
-                            }
-                        }
-                        else
-                        {
-                            togglePvPMode (player, data);
-                        }
-                    }
-                    else
-                    {
-                        PvPUtils.red (sender, "You cannot use this command while you're in PvP");
-                    }
-                }
-                else
-                {
-                    PvPUtils.red (sender, "You cannot use this command while your PvP mode is overridden");
-                }
-            }
-            else
-            {
-                PvPUtils.red (sender, "You cannot use this command while you're able to fly");
-            }
+            requireArgument (sender, args, 0, "cancel");
+
+            cancelPvPTimer (player, data);
         }
         else
         {
-            PvPUtils.red (sender, "You cannot use this command while you're in creative mode");
+            togglePvPMode (player, data);
         }
     }
 
