@@ -18,7 +18,7 @@ public class PvPCommand extends AbstractPvPCommand
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvp [cancel]";
+        return "/pvp [cancel] OR /pvp spy [on|off]";
     }
 
     @Override
@@ -35,18 +35,46 @@ public class PvPCommand extends AbstractPvPCommand
 
         this.requireNonCreativeSender (player);
         this.requireNonFlyingSender (player);
-
-        this.requireNonOverriddenSender (player);
         this.requireNonPvPSender (player);
 
         if (args.length > 0)
         {
-            requireArgument (sender, args, 0, "cancel");
-
-            cancelPvPTimer (player, data);
+            switch (this.requireArguments (sender, args, 0, "cancel", "spy"))
+            {
+                case "cancel":
+                    this.requireNonOverriddenSender (player);
+                    cancelPvPTimer (player, data);
+                    break;
+                case "spy":
+                    if (PvPMode.allowPerPlayerSpying)
+                    {
+                        this.requireSenderWithPvPEnabled (player);
+                        if (args.length > 1)
+                        {
+                            if (this.requireArguments (sender, args, 1, "on", "off").equals ("on"))
+                            {
+                                toggleSpyMode (player, data, Boolean.TRUE);
+                            }
+                            else
+                            {
+                                toggleSpyMode (player, data, Boolean.FALSE);
+                            }
+                        }
+                        else
+                        {
+                            toggleSpyMode (player, data, null);
+                        }
+                    }
+                    else
+                    {
+                        PvPUtils.red (player, "This feature was disabled by the server.");
+                    }
+                    break;
+            }
         }
         else
         {
+            this.requireNonOverriddenSender (player);
             togglePvPMode (player, data);
         }
     }
@@ -82,8 +110,8 @@ public class PvPCommand extends AbstractPvPCommand
             data.setPvPWarmup (toggleTime);
             data.setPvPCooldown (0);
 
-            String status = data.isPvPEnabled () ? "disabled" : "enabled";
-            PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...", status, PvPMode.warmup));
+            PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...",
+                PvPUtils.getEnabledString (!data.isPvPEnabled ()), PvPMode.warmup));
         }
         else
         {
@@ -96,6 +124,22 @@ public class PvPCommand extends AbstractPvPCommand
                 .setColor (EnumChatFormatting.DARK_RED);
             thirdPart.getChatStyle ().setColor (EnumChatFormatting.RED);
             sender.addChatMessage (firstPart.appendSibling (secondPart).appendSibling (thirdPart));
+        }
+    }
+
+    private void toggleSpyMode (EntityPlayer sender, PvPData data, Boolean mode)
+    {
+
+        if (mode == null ? true : mode.booleanValue () != data.isSpyingEnabled ())
+        {
+            data.setSpyingEnabled (!data.isSpyingEnabled ());
+            PvPUtils.green (sender,
+                String.format ("Spying is now %s for you", PvPUtils.getEnabledString (data.isSpyingEnabled ())));
+        }
+        else
+        {
+            PvPUtils.yellow (sender,
+                String.format ("Spying is already %s for you", PvPUtils.getEnabledString (mode.booleanValue ())));
         }
     }
 }

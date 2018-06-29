@@ -36,7 +36,20 @@ public class PvPCommandList extends AbstractPvPCommand
 
         ArrayList<EntityPlayerMP> safePlayers = new ArrayList<> ();
         ArrayList<EntityPlayerMP> warmupPlayers = new ArrayList<> ();
-        TreeMap<Integer, Set<EntityPlayerMP>> unsafePlayers = new TreeMap<> ();
+        TreeMap<Integer, Set<EntityPlayerMP>> unsafePlayers = new TreeMap<> ( (c1, c2) ->
+        {
+            // A comparator which weights negative values as very large
+            if (c1 < 0 || c2 < 0)
+            {
+                if (c1 < 0 && c2 >= 0)
+                    return Integer.MAX_VALUE;
+                if (c1 < 0 && c2 < 0)
+                    return 0;
+                if (c1 >= 0 && c2 < 0)
+                    return Integer.MIN_VALUE;
+            }
+            return c1.compareTo (c2);
+        });
 
         for (Object o : PvPMode.cfg.playerEntityList)
         {
@@ -58,7 +71,14 @@ public class PvPCommandList extends AbstractPvPCommand
                         }
                         break;
                     case ON:
-                        int proximity = PvPMode.radar ? PvPUtils.roundedDistanceBetween (senderPlayer, player) : -1;
+                        int proximity = -1;
+                        if (PvPMode.radar && (PvPMode.allowPerPlayerSpying
+                            ? PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ()
+                                && PvPUtils.getPvPData (player).isSpyingEnabled ()
+                            : true))
+                        {
+                            proximity = PvPUtils.roundedDistanceBetween (senderPlayer, player);
+                        }
                         if (!unsafePlayers.containsKey (proximity))
                             unsafePlayers.put (proximity, new HashSet<> ());
                         unsafePlayers.get (proximity).add (player);
@@ -93,6 +113,7 @@ public class PvPCommandList extends AbstractPvPCommand
         boolean hasSenderPlayerPvPEnabled = senderPlayerMode == EnumPvPMode.ON;
         boolean isWarmupTimerRunning = PvPUtils.isWarmupTimerRunning (player);
         IChatComponent modeComponent = null;
+        IChatComponent spyComponent = new ChatComponentText (" [SPY]");
         IChatComponent nameComponent = new ChatComponentText (String.format (" %s", player.getDisplayName ()));
         IChatComponent additionalComponent = null;
         switch (playerMode)
@@ -103,16 +124,16 @@ public class PvPCommandList extends AbstractPvPCommand
                         : PvPUtils.canFly (player) ? ":FLY" : ""));
                 setComponentColors (isWarmupTimerRunning ? EnumChatFormatting.YELLOW : EnumChatFormatting.GREEN,
                     isSenderPlayer, modeComponent,
-                    nameComponent);
+                    nameComponent, spyComponent);
                 break;
             case ON:
                 modeComponent = new ChatComponentText ("[ON]");
-                additionalComponent = new ChatComponentText ( (PvPMode.radar
+                additionalComponent = new ChatComponentText ( (proximity != -1
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                         ? String.format (" - ~%d blocks", proximity)
                         : "");
                 setComponentColors (EnumChatFormatting.RED, isSenderPlayer, modeComponent, nameComponent,
-                    additionalComponent);
+                    additionalComponent, spyComponent);
                 break;
         }
         if (isWarmupTimerRunning)
@@ -122,6 +143,10 @@ public class PvPCommandList extends AbstractPvPCommand
             warmupComponent.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
             modeComponent
                 .appendSibling (warmupComponent);
+        }
+        if (isSenderPlayer && PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ())
+        {
+            modeComponent.appendSibling (spyComponent);
         }
         modeComponent.appendSibling (nameComponent);
         if (additionalComponent != null)

@@ -1,8 +1,10 @@
 package pvpmode.command;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayer;
-import pvpmode.PvPUtils;
+import pvpmode.*;
 
 public abstract class AbstractPvPCommand extends CommandBase
 {
@@ -28,13 +30,14 @@ public abstract class AbstractPvPCommand extends CommandBase
         }
     }
 
-    protected void requireArgument (ICommandSender sender, String[] args, int index, String requiredArgument)
+    protected String requireArguments (ICommandSender sender, String[] args, int index, String... requiredArguments)
     {
         requireMinLength (sender, args, index + 1);
-        if (!args[index].equals (requiredArgument))
+        if (!ArrayUtils.contains (requiredArguments, args[index]))
         {
             usageError (sender);
         }
+        return args[index];
     }
 
     protected void requireNonFlyingSender (EntityPlayer sender)
@@ -60,7 +63,7 @@ public abstract class AbstractPvPCommand extends CommandBase
         if (PvPUtils.isInPvP (PvPUtils.getPvPData (sender)))
             throw new CommandException ("You cannot use this command while you're in PvP");
     }
-    
+
     protected void requireNonFlyingPlayer (EntityPlayer player)
     {
         if (PvPUtils.canFly (player))
@@ -83,6 +86,12 @@ public abstract class AbstractPvPCommand extends CommandBase
     {
         if (PvPUtils.isInPvP (PvPUtils.getPvPData (player)))
             throw new CommandException ("You cannot use this command while that player is in PvP");
+    }
+
+    protected void requireSenderWithPvPEnabled (EntityPlayer sender)
+    {
+        if (PvPUtils.getPvPMode (sender) != EnumPvPMode.ON)
+            throw new CommandException ("You cannot use this command while PvP is disabled for you");
     }
 
 }

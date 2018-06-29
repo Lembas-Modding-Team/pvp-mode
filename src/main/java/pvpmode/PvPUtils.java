@@ -116,8 +116,8 @@ public class PvPUtils
 
     /**
      * Displays the specified messages to the recipient with the specified
-     * formatting. Each entry of the messages array will be displayed as a new
-     * line in the chat.
+     * formatting. Each entry of the messages array will be displayed as a new line
+     * in the chat.
      */
     public static void postChatLines (ICommandSender recipient, EnumChatFormatting formatting, String... messages)
     {
@@ -130,8 +130,8 @@ public class PvPUtils
     }
 
     /**
-     * Displays the specified messages to the recipient. Each entry of the
-     * messages array will be displayed as a new line in the chat.
+     * Displays the specified messages to the recipient. Each entry of the messages
+     * array will be displayed as a new line in the chat.
      */
     public static void postChatLines (ICommandSender recipient, String... messages)
     {
@@ -203,8 +203,8 @@ public class PvPUtils
     }
 
     /**
-     * Posts the supplied event in the Forge event bus and returns a result
-     * gotten from the supplied getter function.
+     * Posts the supplied event in the Forge event bus and returns a result gotten
+     * from the supplied getter function.
      */
     public static <T> T postEventAndGetResult (Event event, Supplier<T> resultGetter)
     {
@@ -287,8 +287,8 @@ public class PvPUtils
     /**
      * Returns whether the player assigned to the supplied data is currently in
      * PvP.<br/>
-     * If a PvP event occurred with this player involved, a timer starts. While
-     * this timer is running, the player is considered to be involved into PvP.
+     * If a PvP event occurred with this player involved, a timer starts. While this
+     * timer is running, the player is considered to be involved into PvP.
      */
     public static boolean isInPvP (PvPData data)
     {
@@ -296,8 +296,7 @@ public class PvPUtils
     }
 
     /**
-     * Returns whether the supplied command can be assigned to the supplied
-     * name.
+     * Returns whether the supplied command can be assigned to the supplied name.
      */
     public static boolean matches (ICommand command, String name)
     {
@@ -347,11 +346,20 @@ public class PvPUtils
     }
 
     /**
-     * Returns whether the supplied player cannot transfer items in his inventory via shift-clicking.
+     * Returns whether the supplied player cannot transfer items in his inventory
+     * via shift-clicking.
      */
     public static boolean isShiftClickingBlocked (EntityPlayer player)
     {
         return PvPMode.blockShiftClicking && PvPUtils.isInPvP (PvPUtils.getPvPData (player));
+    }
+
+    /**
+     * Returns "enabled" if the supplied boolean is true, "disabled" otherwise.
+     */
+    public static String getEnabledString (boolean enabled)
+    {
+        return enabled ? "enabled" : "disabled";
     }
 
 }

@@ -28,7 +28,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        requireArgument (sender, args, 0, "display");
+        requireArguments (sender, args, 0, "display");
 
         displayConfiguration (sender);
     }
@@ -56,6 +56,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Extend hotbar inventory search",
             Boolean.toString (PvPMode.extendHotbarInventorySearch));
         postConfigEntry (sender, "Extend main inventory search", Boolean.toString (PvPMode.extendMainInventorySearch));
+        postConfigEntry (sender, "Per player spying settings", Boolean.toString (PvPMode.allowPerPlayerSpying));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 
