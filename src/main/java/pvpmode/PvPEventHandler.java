@@ -1,6 +1,7 @@
 package pvpmode;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -22,9 +23,8 @@ public class PvPEventHandler
     private Random random = new Random ();
 
     /**
-     * Cancels combat events associated with PvP-disabled players. Note that
-     * this function will be invoked twice per attack - this is because of a
-     * Forge bug.
+     * Cancels combat events associated with PvP-disabled players. Note that this
+     * function will be invoked twice per attack - this is because of a Forge bug.
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
@@ -213,26 +213,58 @@ public class PvPEventHandler
                     World world = player.worldObj;
                     if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
                     {
-                        dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3,
-                            PvPMode.inventoryLossArmour);
-                        dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8,
-                            PvPMode.inventoryLossHotbar);
-                        dropItemsFromInventory (player, player.inventory.mainInventory, 9, 35,
-                            PvPMode.inventoryLossMain);
+                        // Try to drop the specified amount of stacks from the inventories
+                        int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3,
+                            PvPMode.inventoryLossArmour, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8,
+                            PvPMode.inventoryLossHotbar, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9, 35,
+                            PvPMode.inventoryLossMain, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        
+                        /*
+                         * Try to drop the specified amount of stacks from other inventories if the
+                         * specified inventory contains too less items.
+                         */
+                        if (PvPMode.extendArmourInventorySearch)
+                            tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
+                                player.inventory.mainInventory, 0, 8,
+                                PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER));
+                        if (PvPMode.extendHotbarInventorySearch)
+                            tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
+                                null,
+                                -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        if (PvPMode.extendMainInventorySearch)
+                            tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8, null,
+                                -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
                     }
                 }
             }
         }
     }
 
-    private void dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
-        int inventoryLoss)
+    private int tryOtherInventories (EntityPlayer player, int inventoryLoss, ItemStack[] firstInventory,
+        int firstStartIndex, int firstEndIndex, ItemStack[] secondInventory, int secondStartIndex, int secondEndIndex,
+        Predicate<ItemStack> filter)
+    {
+        if (inventoryLoss > 0)
+        {
+            int missingStacks = dropItemsFromInventory (player, firstInventory, firstStartIndex, firstEndIndex,
+                inventoryLoss, filter);
+
+            if (missingStacks > 0 && secondInventory != null)
+                return dropItemsFromInventory (player, secondInventory, secondStartIndex,
+                    secondEndIndex,
+                    missingStacks, filter);
+            return missingStacks;
+        }
+        return inventoryLoss;
+    }
+
+    private int dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
+        int inventoryLoss, Predicate<ItemStack> filter)
     {
         List<Integer> filledInventorySlots = new ArrayList<> (PvPUtils
-            .getFilledInventorySlots (inventory, startIndex, endIndex, stack ->
-            {
-                return !MinecraftForge.EVENT_BUS.post (new PartialItemLossEvent (stack));
-            }));
+            .getFilledInventorySlots (inventory, startIndex, endIndex, filter));
         int size = filledInventorySlots.size ();// The size of the list itself
                                                 // decreases every iteration
         for (int i = 0; i < Math.min (inventoryLoss, size); i++)
@@ -247,6 +279,7 @@ public class PvPEventHandler
             inventory[randomSlot] = null; // Make sure to delete the item from
                                           // the player's inventory
         }
+        return Math.max (0, inventoryLoss - size); // Returns the count of stacks which still have to be dropped
     }
 
     @SubscribeEvent

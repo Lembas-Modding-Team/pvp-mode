@@ -9,17 +9,34 @@ import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
-import pvpmode.compatibility.events.EntityMasterExtractionEvent;
+import pvpmode.compatibility.events.*;
 import pvpmode.overrides.EnumForcedPvPMode;
 
 public class PvPUtils
 {
 
     public static final String SOMETHING_WENT_WRONG_MESSAGE = "IF YOU SEE THIS, SOMETHING WENT WRONG. PLEASE REPORT IT.";
+
+    /**
+     * A filter asking the compatibility modules whether the item stack *could* be
+     * dropped.
+     */
+    public static final Predicate<ItemStack> PARTIAL_INVENTORY_LOSS_COMP_FILTER = stack ->
+    {
+        return !MinecraftForge.EVENT_BUS.post (new PartialItemLossEvent (stack));
+    };
+
+    /**
+     * A filter which only permits armour items.
+     */
+    public static final Predicate<ItemStack> ARMOUR_FILTER = stack ->
+    {
+        return stack.getItem () instanceof ItemArmor;
+    };
 
     /**
      * Returns the system time in seconds.
@@ -327,6 +344,14 @@ public class PvPUtils
     public static long getWarmupTimer (EntityPlayer player)
     {
         return Math.max (getPvPData (player).getPvPWarmup () - PvPUtils.getTime (), 0);
+    }
+
+    /**
+     * Returns whether the supplied player cannot transfer items in his inventory via shift-clicking.
+     */
+    public static boolean isShiftClickingBlocked (EntityPlayer player)
+    {
+        return PvPMode.blockShiftClicking && PvPUtils.isInPvP (PvPUtils.getPvPData (player));
     }
 
 }
