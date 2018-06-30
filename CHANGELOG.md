@@ -6,6 +6,7 @@
 * Added a configurable "main inventory loss" to the partial inventory loss
 * Transferring items via shift-clicking in the player's inventory during PvP is now disableable
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
+* Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
 
 ### SuffixForge compatibility:
 * Added a configuration option to prevent soulbound items to be dropped with the partial inventory loss

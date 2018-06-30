@@ -21,6 +21,7 @@ public class PvPData
     private static final String PVP_COOLDOWN_NBT_KEY = "PvPCooldown";
     private static final String FORCED_PVP_MODE_NBT_KEY = "ForcedPvPMode";
     private static final String PVP_TIMER_NBT_KEY = "PvPTimer";
+    private static final String SPYING_ENABLED_NBT_KEY = "Spying";
 
     public PvPData (EntityPlayer player)
     {
@@ -97,6 +98,16 @@ public class PvPData
     public void setPvPTimer (long pvpTimer)
     {
         pvpDataTag.setLong (PVP_TIMER_NBT_KEY, pvpTimer);
+    }
+
+    public boolean isSpyingEnabled ()
+    {
+        return pvpDataTag.getBoolean (SPYING_ENABLED_NBT_KEY);
+    }
+
+    public void setSpyingEnabled (boolean spyingEnabled)
+    {
+        pvpDataTag.setBoolean (SPYING_ENABLED_NBT_KEY, spyingEnabled);
     }
 
 }
