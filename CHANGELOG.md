@@ -8,6 +8,9 @@
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
 
+### LOTR compatibility:
+* Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
+
 ### SuffixForge compatibility:
 * Added a configuration option to prevent soulbound items to be dropped with the partial inventory loss
 
