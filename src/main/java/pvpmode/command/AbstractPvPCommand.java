@@ -54,13 +54,13 @@ public abstract class AbstractPvPCommand extends CommandBase
 
     protected void requireNonOverriddenSender (EntityPlayer sender)
     {
-        if (PvPUtils.isPvPModeOverriddenForPlayer (PvPUtils.getPvPData (sender)))
+        if (PvPUtils.isPvPModeOverriddenForPlayer (sender))
             throw new CommandException ("You cannot use this command while your PvP mode is overridden");
     }
 
     protected void requireNonPvPSender (EntityPlayer sender)
     {
-        if (PvPUtils.isInPvP (PvPUtils.getPvPData (sender)))
+        if (PvPUtils.isInPvP (sender))
             throw new CommandException ("You cannot use this command while you're in PvP");
     }
 
@@ -78,13 +78,13 @@ public abstract class AbstractPvPCommand extends CommandBase
 
     protected void requireNonOverriddenPlayer (EntityPlayer player)
     {
-        if (PvPUtils.isPvPModeOverriddenForPlayer (PvPUtils.getPvPData (player)))
+        if (PvPUtils.isPvPModeOverriddenForPlayer (player))
             throw new CommandException ("You cannot use this command while the PvP mode of that player is overridden");
     }
 
     protected void requireNonPvPPlayer (EntityPlayer player)
     {
-        if (PvPUtils.isInPvP (PvPUtils.getPvPData (player)))
+        if (PvPUtils.isInPvP (player))
             throw new CommandException ("You cannot use this command while that player is in PvP");
     }
 

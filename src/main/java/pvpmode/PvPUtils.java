@@ -38,6 +38,8 @@ public class PvPUtils
         return stack.getItem () instanceof ItemArmor;
     };
 
+    private static final Map<UUID, PvPData> playerData = new HashMap<> ();
+
     /**
      * Returns the system time in seconds.
      */
@@ -71,7 +73,11 @@ public class PvPUtils
      */
     public static PvPData getPvPData (EntityPlayer player)
     {
-        return new PvPData (player);
+        if (!playerData.containsKey (player.getUniqueID ()))
+        {
+            playerData.put (player.getUniqueID (), new PvPData (player));
+        }
+        return playerData.get (player.getUniqueID ());
     }
 
     /**
@@ -249,12 +255,11 @@ public class PvPUtils
     }
 
     /**
-     * Returns whether the PvP mode for the player whose data are supplied is
-     * overridden.
+     * Returns whether the PvP mode for the supplied player is overridden.
      */
-    public static boolean isPvPModeOverriddenForPlayer (PvPData data)
+    public static boolean isPvPModeOverriddenForPlayer (EntityPlayer player)
     {
-        return arePvPModeOverridesEnabled () && data.getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
+        return arePvPModeOverridesEnabled () && getPvPData (player).getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
     }
 
     /**
@@ -285,14 +290,13 @@ public class PvPUtils
     }
 
     /**
-     * Returns whether the player assigned to the supplied data is currently in
-     * PvP.<br/>
+     * Returns whether the supplied player is currently in PvP.<br/>
      * If a PvP event occurred with this player involved, a timer starts. While this
      * timer is running, the player is considered to be involved into PvP.
      */
-    public static boolean isInPvP (PvPData data)
+    public static boolean isInPvP (EntityPlayer player)
     {
-        return data.getPvPTimer () != 0;
+        return getPvPData (player).getPvPTimer () != 0;
     }
 
     /**
@@ -351,7 +355,7 @@ public class PvPUtils
      */
     public static boolean isShiftClickingBlocked (EntityPlayer player)
     {
-        return PvPMode.blockShiftClicking && PvPUtils.isInPvP (PvPUtils.getPvPData (player));
+        return PvPMode.blockShiftClicking && PvPUtils.isInPvP (player);
     }
 
     /**
