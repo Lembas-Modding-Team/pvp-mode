@@ -72,13 +72,17 @@ public class PvPCommandList extends AbstractPvPCommand
                         break;
                     case ON:
                         int proximity = -1;
-                        if (PvPMode.radar && (PvPMode.allowPerPlayerSpying
-                            ? PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ()
-                                && PvPUtils.getPvPData (player).isSpyingEnabled ()
-                            : true))
+                        if (PvPMode.radar)
                         {
-                            proximity = PvPUtils.roundedDistanceBetween (senderPlayer, player);
+                            if (PvPMode.allowPerPlayerSpying
+                                ? PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ()
+                                    && PvPUtils.getPvPData (player).isSpyingEnabled ()
+                                : true)// If per player spying is enabled, both players need to have spying enabled
+                            {
+                                proximity = PvPUtils.roundedDistanceBetween (senderPlayer, player);
+                            }
                         }
+
                         if (!unsafePlayers.containsKey (proximity))
                             unsafePlayers.put (proximity, new HashSet<> ());
                         unsafePlayers.get (proximity).add (player);
