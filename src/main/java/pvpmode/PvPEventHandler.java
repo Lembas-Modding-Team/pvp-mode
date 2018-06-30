@@ -134,7 +134,7 @@ public class PvPEventHandler
             long pvpTimer = data.getPvPTimer ();
             long toggleTime = data.getPvPWarmup ();
 
-            if (!PvPUtils.isPvPModeOverriddenForPlayer (data) && pvpTimer == 0)
+            if (!PvPUtils.isPvPModeOverriddenForPlayer (player) && pvpTimer == 0)
             {
                 if (!PvPUtils.isCreativeMode (player))
                 {
@@ -220,7 +220,7 @@ public class PvPEventHandler
                             PvPMode.inventoryLossHotbar, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
                         int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9, 35,
                             PvPMode.inventoryLossMain, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        
+
                         /*
                          * Try to drop the specified amount of stacks from other inventories if the
                          * specified inventory contains too less items.
@@ -288,7 +288,7 @@ public class PvPEventHandler
         // Cancel blacklisted commands for players in PvP
         if (event.sender instanceof EntityPlayerMP)
         {
-            if (PvPUtils.isInPvP (PvPUtils.getPvPData ((EntityPlayer) event.sender)))
+            if (PvPUtils.isInPvP ((EntityPlayer) event.sender))
             {
                 for (String command : PvPMode.commandBlacklist)
                 {
