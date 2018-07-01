@@ -44,6 +44,7 @@ public class PvPMode
     public static boolean extendHotbarInventorySearch;
     public static boolean extendMainInventorySearch;
     public static boolean allowPerPlayerSpying;
+    public static boolean showProximityDirection;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -108,6 +109,8 @@ public class PvPMode
             "If the main inventory contains less item stacks than have to be dropped, the game will additionally look at the hotbar for item stacks to be dropped.");
         allowPerPlayerSpying = config.getBoolean ("Allow Per Player Spying Settings", MAIN_CONFIGURATION_CATEGORY, true,
             "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity informations of other players if they have PvP enabled, and also their proximity informations will be accessible.");
+        showProximityDirection = config.getBoolean ("Show Proximity Direction", MAIN_CONFIGURATION_CATEGORY, true,
+            "Shows additionally to the proximity information the direction of the other players.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
