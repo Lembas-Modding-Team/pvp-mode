@@ -12,6 +12,10 @@
 * Added an on-off warmup timer which specifies the toggle time from PvP ON to PvP OFF
 * The default value of the off-on warmup timer is now 30 seconds
 * The displayed proximity informations in `pvplist` now can contain the actual direction of the player
+* Changed `pvplist` to show only players with PvP enabled by default
+* Added `pvplist all` which shows the whole list
+* Added `pvplist <maxEntryCount>` which shows the specified number of entries
+* The displayed player list in `pvplist` now shows the count of displayed entries
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
