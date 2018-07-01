@@ -3,7 +3,7 @@ package pvpmode.command;
 import java.util.*;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.*;
 import net.minecraft.util.*;
 import pvpmode.*;
 
@@ -18,7 +18,7 @@ public class PvPCommandList extends AbstractPvPCommand
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvplist";
+        return "/pvplist [all] OR /pvplist <maxEntryCount>";
     }
 
     @Override
@@ -31,6 +31,21 @@ public class PvPCommandList extends AbstractPvPCommand
     public void processCommand (ICommandSender sender, String[] args)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
+
+        int maxDisplayedEntries = -1; // -1 means that only players with PvP on will be displayed
+
+        if (args.length > 0)
+        {
+            String arg = args[0];
+            if (arg.equals ("all"))
+            {
+                maxDisplayedEntries = Integer.MAX_VALUE;
+            }
+            else
+            {
+                maxDisplayedEntries = parseIntWithMin (sender, arg, 1);
+            }
+        }
 
         EnumPvPMode senderPlayerPvPMode = PvPUtils.getPvPMode (senderPlayer);
 
@@ -51,6 +66,11 @@ public class PvPCommandList extends AbstractPvPCommand
             return c1.compareTo (c2);
         });
 
+        /*
+         * All players will be processed regardless of the display size. Only then the
+         * command can determine which entries are the most relevant for the calling
+         * player and have to be displayed on the top of the list.
+         */
         for (Object o : PvPMode.cfg.playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
@@ -94,17 +114,51 @@ public class PvPCommandList extends AbstractPvPCommand
         PvPUtils.green (sender, "--- PvP Mode Player List ---");
 
         displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, senderPlayerPvPMode, -1);
+
+        int displayedEntries = 0;
         for (Integer distance : unsafePlayers.keySet ())
         {
             for (EntityPlayerMP player : unsafePlayers.get (distance))
             {
-                displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, senderPlayerPvPMode, distance);
+                if (maxDisplayedEntries == -1 || displayedEntries < maxDisplayedEntries)
+                {
+                    displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, senderPlayerPvPMode, distance);
+                    ++displayedEntries;
+                }
             }
         }
-        warmupPlayers.forEach (
-            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1));
-        safePlayers.forEach (
-            player -> displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1));
+        if (maxDisplayedEntries != -1)
+        {
+            for (EntityPlayerMP player : warmupPlayers)
+            {
+                if (displayedEntries < maxDisplayedEntries)
+                {
+                    displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1);
+                    ++displayedEntries;
+                }
+            }
+            for (EntityPlayerMP player : safePlayers)
+            {
+                if (displayedEntries < maxDisplayedEntries)
+                {
+                    displayMessageForPlayer (player, senderPlayer, EnumPvPMode.OFF, senderPlayerPvPMode, -1);
+                    ++displayedEntries;
+                }
+            }
+        }
+
+        int playerCountWithoutSender = PvPMode.cfg.playerEntityList.size () - 1;
+        if (playerCountWithoutSender != 0)
+        {
+            int entryCount = Math.min (maxDisplayedEntries == -1 ? unsafePlayers.size () : maxDisplayedEntries,
+                playerCountWithoutSender);
+            ChatComponentText entrySizeText = new ChatComponentText (String.format ("%d of %d players are displayed",
+                entryCount,
+                playerCountWithoutSender));
+            entrySizeText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
+            entrySizeText.getChatStyle ().setItalic (true);
+            sender.addChatMessage (entrySizeText);
+        }
         PvPUtils.green (sender, "-------------------------");
 
     }

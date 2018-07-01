@@ -36,7 +36,10 @@ public class PvPCommandHelp extends AbstractPvPCommand
             postCommandHelp (sender, "pvp spy ", "[on|off]", "Allows players to toggle their spying settings.");
         postCommandHelp (sender, "pvpadmin ", "<player>", "For admins only, enables or disables PvP for the player.");
         postCommandHelp (sender, "pvplist", "",
-            "Displays a list of all players on the server, their PvP modes, and if hostile, their approximate distance to the command sender.");
+            "Displays a list of only hostile players on the server, their PvP modes, and if spying is enabled, their approximate distance to the command sender.");
+        postCommandHelp (sender, "pvplist ", "<maxEntryCount>",
+            "Displays as much entries of the whole list as specified.");
+        postCommandHelp (sender, "pvplist all", "", "Displays the whole player list.");
         postCommandHelp (sender, "pvpconfig display", "", "For admins only, displays the server configuration.");
         PvPUtils.green (sender, "-------------------");
     }
