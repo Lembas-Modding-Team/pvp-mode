@@ -9,6 +9,8 @@
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
 * Increased the default PvP timer value to 45 seconds
 * Increased the maximum possible value of the PvP timer to 300 seconds
+* Added an on-off warmup timer which specifies the toggle time from PvP ON to PvP OFF
+* The default value of the off-on warmup timer is now 30 seconds
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
