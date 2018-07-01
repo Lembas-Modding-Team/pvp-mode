@@ -44,6 +44,7 @@ public class PvPMode
     public static boolean extendHotbarInventorySearch;
     public static boolean extendMainInventorySearch;
     public static boolean allowPerPlayerSpying;
+    public static int warmupOff;
     public static boolean showProximityDirection;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
@@ -67,8 +68,8 @@ public class PvPMode
 
         roundFactor = config.getInt ("Distance Rounding Factor", MAIN_CONFIGURATION_CATEGORY, 100, 1, Integer.MAX_VALUE,
             "The factor by which the proximity information will be rounded. The distance will be displayed in a multiple of this factor.");
-        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
-            "The delay after which the PvP mode of a player will be actually toggled (after intiating it).");
+        warmup = config.getInt ("Warmup (seconds)", MAIN_CONFIGURATION_CATEGORY, 30, 0, Integer.MAX_VALUE,
+            "The delay after which the PvP mode of a player with PvP OFF will be actually toggled (after initiating it).");
         cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE,
             "The duration after a PvP mode toggle while which the PvP mode cannot be toggled again.");
         radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true,
@@ -88,7 +89,7 @@ public class PvPMode
         overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
             MAIN_CONFIGURATION_CATEGORY, 10, -1, 60,
             "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
-        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 30, 10, 60,
+        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 45, 10, 300,
             "Specifies the time interval after a combat event while which all involved players are seen as \"in PvP\".");
         commandBlacklist = new HashSet<> (Arrays.asList (
             config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
@@ -109,6 +110,8 @@ public class PvPMode
             "If the main inventory contains less item stacks than have to be dropped, the game will additionally look at the hotbar for item stacks to be dropped.");
         allowPerPlayerSpying = config.getBoolean ("Allow Per Player Spying Settings", MAIN_CONFIGURATION_CATEGORY, true,
             "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity informations of other players if they have PvP enabled, and also their proximity informations will be accessible.");
+        warmupOff = config.getInt ("Warmup on-off (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
+            "The delay after which the PvP mode of a player with PvP ON will be actually toggled (after initiating it).");
         showProximityDirection = config.getBoolean ("Show Proximity Direction", MAIN_CONFIGURATION_CATEGORY, true,
             "Shows additionally to the proximity information the direction of the other players.");
 

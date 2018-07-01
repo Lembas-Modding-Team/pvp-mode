@@ -97,7 +97,8 @@ public class PvPCommand extends AbstractPvPCommand
         if (!PvPUtils.isWarmupTimerRunning (sender))
         {
             long time = PvPUtils.getTime ();
-            long toggleTime = time + PvPMode.warmup;
+            long warmup = data.isPvPEnabled () ? PvPMode.warmupOff : PvPMode.warmup;
+            long toggleTime = time + warmup;
             long cooldownTime = data.getPvPCooldown ();
 
             if (cooldownTime > time)
@@ -111,7 +112,7 @@ public class PvPCommand extends AbstractPvPCommand
             data.setPvPCooldown (0);
 
             PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...",
-                PvPUtils.getEnabledString (!data.isPvPEnabled ()), PvPMode.warmup));
+                PvPUtils.getEnabledString (!data.isPvPEnabled ()), warmup));
         }
         else
         {

@@ -7,6 +7,10 @@
 * Transferring items via shift-clicking in the player's inventory during PvP is now disableable
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
+* Increased the default PvP timer value to 45 seconds
+* Increased the maximum possible value of the PvP timer to 300 seconds
+* Added an on-off warmup timer which specifies the toggle time from PvP ON to PvP OFF
+* The default value of the off-on warmup timer is now 30 seconds
 * The displayed proximity informations in `pvplist` now can contain the actual direction of the player
 
 ### LOTR compatibility:
