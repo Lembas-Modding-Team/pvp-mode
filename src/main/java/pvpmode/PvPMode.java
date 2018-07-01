@@ -45,6 +45,7 @@ public class PvPMode
     public static boolean extendMainInventorySearch;
     public static boolean allowPerPlayerSpying;
     public static int warmupOff;
+    public static boolean showProximityDirection;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -111,6 +112,8 @@ public class PvPMode
             "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity informations of other players if they have PvP enabled, and also their proximity informations will be accessible.");
         warmupOff = config.getInt ("Warmup on-off (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
             "The delay after which the PvP mode of a player with PvP ON will be actually toggled (after initiating it).");
+        showProximityDirection = config.getBoolean ("Show Proximity Direction", MAIN_CONFIGURATION_CATEGORY, true,
+            "Shows additionally to the proximity information the direction of the other players.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,

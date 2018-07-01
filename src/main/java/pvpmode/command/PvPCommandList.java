@@ -132,10 +132,15 @@ public class PvPCommandList extends AbstractPvPCommand
                 break;
             case ON:
                 modeComponent = new ChatComponentText ("[ON]");
-                additionalComponent = new ChatComponentText ( (proximity != -1
+                if (proximity != -1
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
-                        ? String.format (" - ~%d blocks", proximity)
-                        : "");
+                {
+                    String proximityDirection = PvPMode.showProximityDirection
+                        ? PvPUtils.getPlayerDirection (senderPlayer, player)
+                        : "";
+                    additionalComponent = new ChatComponentText (
+                        String.format (" - ~%d blocks %s", proximity, proximityDirection));
+                }
                 setComponentColors (EnumChatFormatting.RED, isSenderPlayer, modeComponent, nameComponent,
                     additionalComponent, spyComponent);
                 break;

@@ -58,6 +58,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
             Boolean.toString (PvPMode.extendHotbarInventorySearch));
         postConfigEntry (sender, "Extend main inventory search", Boolean.toString (PvPMode.extendMainInventorySearch));
         postConfigEntry (sender, "Per player spying settings", Boolean.toString (PvPMode.allowPerPlayerSpying));
+        postConfigEntry (sender, "Show proximity direction", Boolean.toString (PvPMode.showProximityDirection));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 
