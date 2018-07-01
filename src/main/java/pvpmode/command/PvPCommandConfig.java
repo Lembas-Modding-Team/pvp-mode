@@ -36,7 +36,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
     private void displayConfiguration (ICommandSender sender)
     {
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "--- PvP Mode Configuration ---");
-        postConfigEntry (sender, "Warmup", Integer.toString (PvPMode.warmup) + "s");
+        postConfigEntry (sender, "Warmup off-on", Integer.toString (PvPMode.warmup) + "s");
+        postConfigEntry (sender, "Warmup on-off", Integer.toString (PvPMode.warmupOff) + "s");
         postConfigEntry (sender, "Cooldown", Integer.toString (PvPMode.cooldown) + "s");
         postConfigEntry (sender, "Radar enabled", Boolean.toString (PvPMode.radar));
         postConfigEntry (sender, "Distance round factor", Integer.toString (PvPMode.roundFactor));
@@ -57,6 +58,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
             Boolean.toString (PvPMode.extendHotbarInventorySearch));
         postConfigEntry (sender, "Extend main inventory search", Boolean.toString (PvPMode.extendMainInventorySearch));
         postConfigEntry (sender, "Per player spying settings", Boolean.toString (PvPMode.allowPerPlayerSpying));
+        postConfigEntry (sender, "Show proximity direction", Boolean.toString (PvPMode.showProximityDirection));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 
