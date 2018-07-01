@@ -7,6 +7,8 @@
 * Transferring items via shift-clicking in the player's inventory during PvP is now disableable
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
+* Increased the default PvP timer value to 45 seconds
+* Increased the maximum possible value of the PvP timer to 300 seconds
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
