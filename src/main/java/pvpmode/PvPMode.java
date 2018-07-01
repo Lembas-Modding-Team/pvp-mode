@@ -87,7 +87,7 @@ public class PvPMode
         overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
             MAIN_CONFIGURATION_CATEGORY, 10, -1, 60,
             "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
-        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 30, 10, 60,
+        pvpTimer = config.getInt ("PvP Timer (Seconds)", MAIN_CONFIGURATION_CATEGORY, 45, 10, 300,
             "Specifies the time interval after a combat event while which all involved players are seen as \"in PvP\".");
         commandBlacklist = new HashSet<> (Arrays.asList (
             config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
