@@ -43,11 +43,16 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Distance round factor", Integer.toString (PvPMode.roundFactor));
         postConfigEntry (sender, "CSV separator", PvPMode.csvSeparator);
         postConfigEntry (sender, "Combat logging handlers", PvPMode.activatedPvPLoggingHandlers.toString ());
-        postConfigEntry (sender, "Partial inventory loss enabled",
+        postConfigEntry (sender, "PvP Partial inventory loss enabled",
             Boolean.toString (PvPMode.partialInventoryLossEnabled));
-        postConfigEntry (sender, "Armor item loss", Integer.toString (PvPMode.inventoryLossArmour) + " items");
-        postConfigEntry (sender, "Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbar) + " items");
-        postConfigEntry (sender, "Main item loss", Integer.toString (PvPMode.inventoryLossMain) + " items");
+        postConfigEntry (sender, "PvE Partial inventory loss enabled",
+            Boolean.toString (PvPMode.enablePartialInventoryLossPvE));
+        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (PvPMode.inventoryLossArmour) + " items");
+        postConfigEntry (sender, "PvP Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbar) + " items");
+        postConfigEntry (sender, "PvP Main item loss", Integer.toString (PvPMode.inventoryLossMain) + " items");
+        postConfigEntry (sender, "PvE Armor item loss", Integer.toString (PvPMode.inventoryLossArmourPvE) + " items");
+        postConfigEntry (sender, "PvE Hotbar item loss", Integer.toString (PvPMode.inventoryLossHotbarPvE) + " items");
+        postConfigEntry (sender, "PvE Main item loss", Integer.toString (PvPMode.inventoryLossMainPvE) + " items");
         postConfigEntry (sender, "Override check interval", Integer.toString (PvPMode.overrideCheckInterval) + "s");
         postConfigEntry (sender, "PvP timer", Integer.toString (PvPMode.pvpTimer) + "s");
         postConfigEntry (sender, "Command blacklist", PvPMode.commandBlacklist.toString ());
@@ -59,6 +64,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Extend main inventory search", Boolean.toString (PvPMode.extendMainInventorySearch));
         postConfigEntry (sender, "Per player spying settings", Boolean.toString (PvPMode.allowPerPlayerSpying));
         postConfigEntry (sender, "Show proximity direction", Boolean.toString (PvPMode.showProximityDirection));
+        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (PvPMode.allowIndirectPvP));
         PvPUtils.postChatLines (sender, EnumChatFormatting.GREEN, "---------------------------");
     }
 

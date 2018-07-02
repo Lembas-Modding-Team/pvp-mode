@@ -7,6 +7,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -14,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
-import pvpmode.compatibility.events.*;
+import pvpmode.compatibility.events.PlayerPvPTickEvent;
 
 public class PvPEventHandler
 {
@@ -203,23 +204,34 @@ public class PvPEventHandler
     @SubscribeEvent
     public void onPlayerDeath (LivingDeathEvent event)
     {
-        if (PvPMode.partialInventoryLossEnabled)
+        if (event.entityLiving instanceof EntityPlayer)
         {
-            if (event.entityLiving instanceof EntityPlayer)
+            EntityPlayer player = (EntityPlayer) event.entityLiving;
+            if (! (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player)))
             {
-                EntityPlayer player = (EntityPlayer) event.entityLiving;
-                if (! (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player)))
+                World world = player.worldObj;
+                if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
                 {
-                    World world = player.worldObj;
-                    if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
+                    boolean wasPvP = wasDeathCausedByPvP (event.source);
+
+                    if (wasPvP && PvPMode.partialInventoryLossEnabled
+                        || !wasPvP && PvPMode.enablePartialInventoryLossPvE)
                     {
+                        // Either use PvP or PvE inventory loss counts
+                        int armorLoss = wasPvP ? PvPMode.inventoryLossArmour : PvPMode.inventoryLossArmourPvE;
+                        int hotbarLoss = wasPvP ? PvPMode.inventoryLossHotbar : PvPMode.inventoryLossHotbarPvE;
+                        int mainLoss = wasPvP ? PvPMode.inventoryLossMain : PvPMode.inventoryLossMainPvE;
+
                         // Try to drop the specified amount of stacks from the inventories
-                        int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory, 0, 3,
-                            PvPMode.inventoryLossArmour, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0, 8,
-                            PvPMode.inventoryLossHotbar, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9, 35,
-                            PvPMode.inventoryLossMain, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
+                            0, 3,
+                            armorLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0,
+                            8,
+                            hotbarLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9,
+                            35,
+                            mainLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
 
                         /*
                          * Try to drop the specified amount of stacks from other inventories if the
@@ -234,12 +246,30 @@ public class PvPEventHandler
                                 null,
                                 -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
                         if (PvPMode.extendMainInventorySearch)
-                            tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8, null,
+                            tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
+                                null,
                                 -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
                     }
                 }
             }
         }
+    }
+
+    private boolean wasDeathCausedByPvP (DamageSource source)
+    {
+        Entity killer = source.getEntity ();
+        if (killer != null)
+        {
+            if (PvPMode.allowIndirectPvP)
+            {
+                return PvPUtils.getMaster (killer) != null;
+            }
+            else
+            {
+                return killer instanceof EntityPlayer;
+            }
+        }
+        return false;
     }
 
     private int tryOtherInventories (EntityPlayer player, int inventoryLoss, ItemStack[] firstInventory,

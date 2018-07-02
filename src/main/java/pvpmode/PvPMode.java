@@ -46,6 +46,11 @@ public class PvPMode
     public static boolean allowPerPlayerSpying;
     public static int warmupOff;
     public static boolean showProximityDirection;
+    public static boolean enablePartialInventoryLossPvE;
+    public static int inventoryLossArmourPvE;
+    public static int inventoryLossHotbarPvE;
+    public static int inventoryLossMainPvE;
+    public static boolean allowIndirectPvP;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -81,11 +86,11 @@ public class PvPMode
         partialInventoryLossEnabled = config.getBoolean ("Enable Partial Inventory Loss",
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
             true,
-            "If set to true, the partial inventory loss will be enabled. If keepInventory is enabled, the player will loose a specified amount of items from his hotbar and armor slots upon death. These will be dropped.");
+            "If set to true, the partial inventory loss for PvP will be enabled. If keepInventory is enabled, the player will loose a specified amount of items from his hotbar and armor and main inventory slots upon death caused by PvP. The items will be dropped.");
         inventoryLossArmour = config.getInt ("Armour Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 1, 0, 4,
-            "The amount of items from the armour inventory the player looses upon death.");
+            "The amount of items from the armour inventory the player looses upon death caused by PvP.");
         inventoryLossHotbar = config.getInt ("Hotbar Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 2, 0, 9,
-            "The amount of items from the hotbar the player looses upon death.");
+            "The amount of items from the hotbar the player looses upon death caused by PvP.");
         overrideCheckInterval = config.getInt ("PvP Mode Override Check Interval (Seconds)",
             MAIN_CONFIGURATION_CATEGORY, 10, -1, 60,
             "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
@@ -95,7 +100,7 @@ public class PvPMode
             config.getStringList ("Command Blacklist", MAIN_CONFIGURATION_CATEGORY, new String[] {},
                 "Commands in this list cannot be executed by players who are in PvP. Note that this only applies for commands which are registered on the server. The commands are specified by the command name, without the slash. Invalid command names will be ignored.")));
         inventoryLossMain = config.getInt ("Main Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 0, 0, 27,
-            "The amount of items from the main inventory the player looses upon death.");
+            "The amount of items from the main inventory the player looses upon death caused by PvP.");
         blockShiftClicking = config.getBoolean ("Disable Fast Item Transfer",
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, false,
             "If true, players won't be able to transfer item stacks in their inventory with shift-clicking while in PvP");
@@ -114,6 +119,20 @@ public class PvPMode
             "The delay after which the PvP mode of a player with PvP ON will be actually toggled (after initiating it).");
         showProximityDirection = config.getBoolean ("Show Proximity Direction", MAIN_CONFIGURATION_CATEGORY, true,
             "Shows additionally to the proximity information the direction of the other players.");
+        enablePartialInventoryLossPvE = config.getBoolean ("Enable Partial Inventory Loss For PvE",
+            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
+            "If set to true, the partial inventory loss for PvE (Player versus Environment) will be enabled. All deaths caused by the environment (water, height, fire, plants, ...), and also NPCs, count as PvE. If keepInventory is enabled, the player will loose a specified amount of items from his hotbar and armor and main inventory slots upon death caused by PvE. The items will be dropped.");
+        inventoryLossArmourPvE = config.getInt ("PvE Armour Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            1, 0, 4,
+            "The amount of items from the armour inventory the player looses upon death caused by PvE.");
+        inventoryLossHotbarPvE = config.getInt ("PvE Hotbar Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            2, 0, 9,
+            "The amount of items from the hotbar the player looses upon death caused by PvE.");
+        inventoryLossMainPvE = config.getInt ("PvE Main Item Loss", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 0, 0,
+            27,
+            "The amount of items from the main inventory the player looses upon death caused by PvE.");
+        allowIndirectPvP = config.getBoolean ("Allow Indirect PvP", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
+            "If true, attacks from NPCs owned by a player (dogs, hired units, ...) will count as PvP and not as PvE.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
