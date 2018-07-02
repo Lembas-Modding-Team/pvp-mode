@@ -16,6 +16,7 @@
 * Added `pvplist all` which shows the whole list
 * Added `pvplist <maxEntryCount>` which shows the specified number of entries
 * The displayed player list in `pvplist` now shows the count of displayed entries
+* Added PvE (Player versus Environment) support for the partial inventory loss
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
