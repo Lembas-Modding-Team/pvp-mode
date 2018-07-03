@@ -1,6 +1,7 @@
 package pvpmode.command;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
@@ -150,8 +151,11 @@ public class PvPCommandList extends AbstractPvPCommand
         int playerCountWithoutSender = PvPMode.cfg.playerEntityList.size () - 1;
         if (playerCountWithoutSender != 0)
         {
-            int entryCount = Math.min (maxDisplayedEntries == -1 ? unsafePlayers.size () : maxDisplayedEntries,
+            int unsafePlayersCount = (int) unsafePlayers.values ().parallelStream ()
+                .collect (Collectors.summarizingInt (set -> set.size ())).getSum ();
+            int entryCount = Math.min (maxDisplayedEntries == -1 ? unsafePlayersCount : maxDisplayedEntries,
                 playerCountWithoutSender);
+            
             ChatComponentText entrySizeText = new ChatComponentText (String.format ("%d of %d players are displayed",
                 entryCount,
                 playerCountWithoutSender));
