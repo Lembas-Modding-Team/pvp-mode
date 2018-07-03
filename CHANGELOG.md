@@ -4,7 +4,7 @@
 ### General changes:
 * Fixed that players drop too less items with partial inventory loss under rare circumstances
 * Added a configurable "main inventory loss" to the partial inventory loss
-* Transferring items via shift-clicking in the player's inventory during PvP is now disableable
+* Transferring items via shift-clicking in the player's inventory during PvP is now disabled
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
 * Increased the default PvP timer value to 45 seconds
@@ -17,6 +17,7 @@
 * Added `pvplist <maxEntryCount>` which shows the specified number of entries
 * The displayed player list in `pvplist` now shows the count of displayed entries
 * Added PvE (Player versus Environment) support for the partial inventory loss
+* The PvP timer is now reset once a player dies
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
