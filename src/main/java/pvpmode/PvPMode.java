@@ -78,7 +78,7 @@ public class PvPMode
         cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE,
             "The duration after a PvP mode toggle while which the PvP mode cannot be toggled again.");
         radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true,
-            "If true, players with spying enabled will receive proximity informations about other players with spying enabled.");
+            "If true, players with spying enabled (spying is enabled for everyone by default unless 'Allow Per Player Spying Settings' is set to true) will receive proximity informations about other players with spying enabled.");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
