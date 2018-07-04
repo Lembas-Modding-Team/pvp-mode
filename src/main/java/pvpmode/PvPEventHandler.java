@@ -252,6 +252,7 @@ public class PvPEventHandler
                     }
                 }
             }
+            PvPUtils.getPvPData (player).setPvPTimer (0);
         }
     }
 
