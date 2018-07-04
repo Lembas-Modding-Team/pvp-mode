@@ -78,7 +78,7 @@ public class PvPMode
         cooldown = config.getInt ("Cooldown (seconds)", MAIN_CONFIGURATION_CATEGORY, 900, 0, Integer.MAX_VALUE,
             "The duration after a PvP mode toggle while which the PvP mode cannot be toggled again.");
         radar = config.getBoolean ("Radar", MAIN_CONFIGURATION_CATEGORY, true,
-            "If true, players with PvP mode enabled will receive proximity informations about other players with PvP enabled.");
+            "If true, players with spying enabled (spying is enabled for everyone by default unless 'Allow Per Player Spying Settings' is set to true) will receive proximity informations about other players with spying enabled.");
         csvSeparator = config.getString ("CSV separator", CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             CSVCombatLogHandler.DEFAULT_CSV_SEPARATOR,
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
@@ -114,7 +114,7 @@ public class PvPMode
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If the main inventory contains less item stacks than have to be dropped, the game will additionally look at the hotbar for item stacks to be dropped.");
         allowPerPlayerSpying = config.getBoolean ("Allow Per Player Spying Settings", MAIN_CONFIGURATION_CATEGORY, true,
-            "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity informations of other players if they have PvP enabled, and also their proximity informations will be accessible.");
+            "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity informations of other players that have spying enabled, and also their proximity informations will be accessible.");
         warmupOff = config.getInt ("Warmup on-off (seconds)", MAIN_CONFIGURATION_CATEGORY, 300, 0, Integer.MAX_VALUE,
             "The delay after which the PvP mode of a player with PvP ON will be actually toggled (after initiating it).");
         showProximityDirection = config.getBoolean ("Show Proximity Direction", MAIN_CONFIGURATION_CATEGORY, true,
