@@ -18,6 +18,7 @@
 * The displayed player list in `pvplist` now shows the count of displayed entries
 * Added PvE (Player versus Environment) support for the partial inventory loss
 * The PvP timer is now reset when a player dies
+* The chat messages are now gender neutral
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on

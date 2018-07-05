@@ -66,7 +66,7 @@ public class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
     public String getForcedOverrideMessage (EntityPlayer player, Boolean mode)
     {
         return String.format (
-            "WARNING: PvP is now enabled for %s because he entered an enemy biome",
+            "WARNING: PvP is enabled for %s upon entering an enemy biome",
             player.getDisplayName ());
     }
 
