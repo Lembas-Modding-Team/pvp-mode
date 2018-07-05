@@ -1,7 +1,6 @@
 package pvpmode.compatibility.modules.suffixForge;
 
-import cpw.mods.fml.common.Loader;
-import pvpmode.compatibility.CompatibilityModuleLoader;
+import pvpmode.compatibility.ModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for SuffixForge.
@@ -9,9 +8,13 @@ import pvpmode.compatibility.CompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class SuffixForgeCompatibilityModuleLoader implements CompatibilityModuleLoader
+public class SuffixForgeCompatibilityModuleLoader extends ModCompatibilityModuleLoader
 {
-    private Boolean suffixForgeLoaded;
+
+    public SuffixForgeCompatibilityModuleLoader ()
+    {
+        super ("suffixforge");
+    }
 
     @Override
     public String getModuleName ()
@@ -23,14 +26,6 @@ public class SuffixForgeCompatibilityModuleLoader implements CompatibilityModule
     public String getCompatibilityModuleClassName ()
     {
         return "pvpmode.compatibility.modules.suffixForge.SuffixForgeCompatibilityModule";
-    }
-
-    @Override
-    public boolean canLoad ()
-    {
-        if (suffixForgeLoaded == null)
-            suffixForgeLoaded = Loader.isModLoaded ("suffixforge");
-        return suffixForgeLoaded.booleanValue ();
     }
 
 }
