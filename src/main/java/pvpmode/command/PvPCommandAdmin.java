@@ -47,7 +47,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
          * behind a player's back as "punishment" An admin should be able to keep order
          * on a server without resorting to deception and secrecy.
          */
-        PvPUtils.red (player, "WARNING: Your PvP status is being overridden by an admin.");
+        PvPUtils.red (player, "Your PvP status is being overridden by an admin");
         data.setPvPWarmup (PvPUtils.getTime ());
     }
 

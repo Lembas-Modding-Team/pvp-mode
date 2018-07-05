@@ -19,6 +19,7 @@
 * Added PvE (Player versus Environment) support for the partial inventory loss
 * The PvP timer is now reset when a player dies
 * The chat messages are now gender neutral
+* Unified the style and content of the chat messages
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on

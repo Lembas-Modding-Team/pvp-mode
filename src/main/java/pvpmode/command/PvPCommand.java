@@ -67,7 +67,7 @@ public class PvPCommand extends AbstractPvPCommand
                     }
                     else
                     {
-                        PvPUtils.red (player, "This feature was disabled by the server.");
+                        PvPUtils.red (player, "This feature was disabled by the server");
                     }
                     break;
             }
@@ -84,11 +84,11 @@ public class PvPCommand extends AbstractPvPCommand
         if (PvPUtils.isWarmupTimerRunning (player))
         {
             data.setPvPWarmup (0);
-            PvPUtils.yellow (player, "PvP warmup canceled.");
+            PvPUtils.green (player, "The warmup timer was canceled");
         }
         else
         {
-            PvPUtils.yellow (player, "No PvP warmup to cancel.");
+            PvPUtils.yellow (player, "The warmup timer isn't running");
         }
     }
 
@@ -104,14 +104,14 @@ public class PvPCommand extends AbstractPvPCommand
             if (cooldownTime > time)
             {
                 long wait = cooldownTime - time;
-                PvPUtils.yellow (sender, String.format ("Please wait %d seconds before issuing this command.", wait));
+                PvPUtils.red (sender, String.format ("Please wait %d seconds before issuing this command", wait));
                 return;
             }
 
             data.setPvPWarmup (toggleTime);
             data.setPvPCooldown (0);
 
-            PvPUtils.yellow (sender, String.format ("PvP will be %s in %d seconds...",
+            PvPUtils.green (sender, String.format ("PvP will be %s in %d seconds...",
                 PvPUtils.getEnabledString (!data.isPvPEnabled ()), warmup));
         }
         else
