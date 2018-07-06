@@ -95,8 +95,17 @@ public class PvPEventHandler
                 attackerData.setPvPTimer (time + PvPMode.pvpTimer);
                 victimData.setPvPTimer (time + PvPMode.pvpTimer);
 
-                attackerData.setPvPWarmup (0);
-                victimData.setPvPWarmup (0);
+                if (attackerData.getPvPWarmup () != 0)
+                {
+                    attackerData.setPvPWarmup (0);
+                    PvPUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
+                }
+
+                if (victimData.getPvPWarmup () != 0)
+                {
+                    victimData.setPvPWarmup (0);
+                    PvPUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
+                }
             }
         }
 

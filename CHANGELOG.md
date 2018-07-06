@@ -21,6 +21,7 @@
 * The chat messages are now gender neutral
 * Unified the style and content of the chat messages
 * Admins can now specify with `pvpadmin <player> [on|off]` the new PvP mode of a player
+* A message will now inform the player if the warmup timer was canceled because of PvP
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
