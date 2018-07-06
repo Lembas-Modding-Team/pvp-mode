@@ -164,13 +164,13 @@ public class PvPEventHandler
                     }
                     else if (toggleTime != 0)
                     {
-                        PvPUtils.yellow (player, "Your warmup timer was resetted because you're able to fly now");
+                        PvPUtils.yellow (player, "Your warmup timer was canceled because you're able to fly now");
                         data.setPvPWarmup (0);
                     }
                 }
                 else if (toggleTime != 0)
                 {
-                    PvPUtils.yellow (player, "Your warmup timer was resetted because you're in creative mode now");
+                    PvPUtils.yellow (player, "Your warmup timer was canceled because you're in creative mode now");
                     data.setPvPWarmup (0);
                 }
             }
