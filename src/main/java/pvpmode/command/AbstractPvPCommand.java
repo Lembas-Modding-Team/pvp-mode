@@ -43,13 +43,13 @@ public abstract class AbstractPvPCommand extends CommandBase
     protected void requireNonFlyingSender (EntityPlayer sender)
     {
         if (PvPUtils.canFly (sender))
-            throw new CommandException ("You cannot use this command while you're able to fly");
+            throw new CommandException ("You cannot use this command while able to fly");
     }
 
     protected void requireNonCreativeSender (EntityPlayer sender)
     {
         if (PvPUtils.isCreativeMode (sender))
-            throw new CommandException ("You cannot use this command while you're in creative mode");
+            throw new CommandException ("You cannot use this command while in creative mode");
     }
 
     protected void requireNonOverriddenSender (EntityPlayer sender)
@@ -61,7 +61,7 @@ public abstract class AbstractPvPCommand extends CommandBase
     protected void requireNonPvPSender (EntityPlayer sender)
     {
         if (PvPUtils.isInPvP (sender))
-            throw new CommandException ("You cannot use this command while you're in PvP");
+            throw new CommandException ("You cannot use this command while in PvP");
     }
 
     protected void requireNonFlyingPlayer (EntityPlayer player)

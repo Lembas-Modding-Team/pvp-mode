@@ -107,7 +107,7 @@ public class PvPOverrideManager
                 pvpData.setForcedPvPMode (EnumForcedPvPMode.UNDEFINED);
                 if (currentForcedPvPMode.toPvPMode () != PvPUtils.getPvPMode (event.player))
                 {
-                    PvPUtils.green (event.player, "Your PvP mode is no longer overridden.");
+                    PvPUtils.green (event.player, "Your PvP mode is no longer overridden");
                 }
             }
 

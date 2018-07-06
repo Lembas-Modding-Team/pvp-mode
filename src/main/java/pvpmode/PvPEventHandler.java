@@ -47,15 +47,15 @@ public class PvPEventHandler
             {
                 if (PvPUtils.isCreativeMode (attacker))
                 {
-                    PvPUtils.red (attacker, "You are in creative mode!");
+                    PvPUtils.red (attacker, "You are in creative mode");
                 }
                 else if (PvPUtils.canFly (attacker))
                 {
-                    PvPUtils.red (attacker, "You are in fly mode!");
+                    PvPUtils.red (attacker, "You are in fly mode");
                 }
                 else
                 {
-                    PvPUtils.red (attacker, "You have PvP disabled!");
+                    PvPUtils.red (attacker, "You have PvP disabled");
                 }
             }
             cancel = true;
@@ -71,7 +71,7 @@ public class PvPEventHandler
         {
             if (attacker == event.source.getEntity ())
             {
-                PvPUtils.red (attacker, "This player/unit has PvP disabled!");
+                PvPUtils.red (attacker, "This player/unit has PvP disabled");
             }
             cancel = true;
         }
@@ -148,16 +148,15 @@ public class PvPEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                ChatComponentText message = new ChatComponentText ("WARNING: PvP is now enabled for "
-                                    + player.getDisplayName ()
-                                    + "!");
+                                ChatComponentText message = new ChatComponentText ("PvP is now enabled for "
+                                    + player.getDisplayName ());
                                 message.getChatStyle ().setColor (EnumChatFormatting.RED);
                                 PvPMode.cfg.sendChatMsg (message);
                             }
                             else
                             {
                                 data.setPvPEnabled (false);
-                                PvPUtils.green (player, "PvP is now disabled for you.");
+                                PvPUtils.green (player, "PvP is now disabled for you");
                             }
 
                             data.setPvPCooldown (time + PvPMode.cooldown);
@@ -327,7 +326,7 @@ public class PvPEventHandler
                     {
                         // The command is blacklisted and will be canceled
                         event.setCanceled (true);
-                        PvPUtils.red (event.sender, "You cannot use this command while in PvP.");
+                        PvPUtils.red (event.sender, "You cannot use this command while in PvP");
                         return;
                     }
                 }
