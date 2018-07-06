@@ -4,9 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.*;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
+import net.minecraftforge.common.MinecraftForge;
 import pvpmode.*;
+import pvpmode.compatibility.events.PvPListEvent;
 
 public class PvPCommandList extends AbstractPvPCommand
 {
@@ -52,6 +54,7 @@ public class PvPCommandList extends AbstractPvPCommand
 
         ArrayList<EntityPlayerMP> safePlayers = new ArrayList<> ();
         ArrayList<EntityPlayerMP> warmupPlayers = new ArrayList<> ();
+        ArrayList<EntityPlayerMP> unsafePlayersLowPriority = new ArrayList<> ();
         TreeMap<Integer, Set<EntityPlayerMP>> unsafePlayers = new TreeMap<> ( (c1, c2) ->
         {
             // A comparator which weights negative values as very large
@@ -92,21 +95,34 @@ public class PvPCommandList extends AbstractPvPCommand
                         }
                         break;
                     case ON:
-                        int proximity = -1;
-                        if (PvPMode.radar)
+                        if (!MinecraftForge.EVENT_BUS
+                            .post (new PvPListEvent.UnsafeClassification (senderPlayer, player)))
                         {
-                            if (PvPMode.allowPerPlayerSpying
-                                ? PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ()
-                                    && PvPUtils.getPvPData (player).isSpyingEnabled ()
-                                : true)// If per player spying is enabled, both players need to have spying enabled
+                            // The player is unsafe with a high priority
+                            int proximity = -1;
+                            if (PvPMode.radar)
                             {
-                                proximity = PvPUtils.roundedDistanceBetween (senderPlayer, player);
+                                if (PvPMode.allowPerPlayerSpying
+                                    ? PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ()
+                                        && PvPUtils.getPvPData (player).isSpyingEnabled ()
+                                    : true)// If per player spying is enabled, both players need to have spying enabled
+                                {
+                                    if (!MinecraftForge.EVENT_BUS
+                                        .post (new PvPListEvent.ProximityVisibility (senderPlayer, player)))
+                                    {
+                                        proximity = PvPUtils.roundedDistanceBetween (senderPlayer, player);
+                                    }
+                                }
                             }
+                            if (!unsafePlayers.containsKey (proximity))
+                                unsafePlayers.put (proximity, new HashSet<> ());
+                            unsafePlayers.get (proximity).add (player);
                         }
-
-                        if (!unsafePlayers.containsKey (proximity))
-                            unsafePlayers.put (proximity, new HashSet<> ());
-                        unsafePlayers.get (proximity).add (player);
+                        else
+                        {
+                            // The player is unsafe with a low priority
+                            unsafePlayersLowPriority.add (player);
+                        }
                         break;
                 }
             }
@@ -130,6 +146,14 @@ public class PvPCommandList extends AbstractPvPCommand
         }
         if (maxDisplayedEntries != -1)
         {
+            for (EntityPlayerMP player : unsafePlayersLowPriority)
+            {
+                if (displayedEntries < maxDisplayedEntries)
+                {
+                    displayMessageForPlayer (player, senderPlayer, EnumPvPMode.ON, senderPlayerPvPMode, -1);
+                    ++displayedEntries;
+                }
+            }
             for (EntityPlayerMP player : warmupPlayers)
             {
                 if (displayedEntries < maxDisplayedEntries)
@@ -155,7 +179,7 @@ public class PvPCommandList extends AbstractPvPCommand
                 .collect (Collectors.summarizingInt (set -> set.size ())).getSum ();
             int entryCount = Math.min (maxDisplayedEntries == -1 ? unsafePlayersCount : maxDisplayedEntries,
                 playerCountWithoutSender);
-            
+
             ChatComponentText entrySizeText = new ChatComponentText (String.format ("%d of %d players are displayed",
                 entryCount,
                 playerCountWithoutSender));

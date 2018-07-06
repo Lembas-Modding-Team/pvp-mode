@@ -29,6 +29,13 @@
 ### SuffixForge compatibility:
 * Added a configuration option to prevent soulbound items to be dropped with the partial inventory loss
 
+### Siege Mode compatibility
+* The PvP mode is forced to on upon entering sieges
+* The partial inventory loss doesn't apply for players in sieges
+* PvP logging can be disabled for players in a siege
+* Players in a siege don't send or receive proximity informations
+* Players in a siege are displayed further down on the PvP list
+
 ## 1.1.4-BETA
 * Fixed that players switching from PvP on to off couldn't do PvP during the warmup phase
 * Fixed that the warmup timer was displayed in an incorrect way sometimes in `pvplist`

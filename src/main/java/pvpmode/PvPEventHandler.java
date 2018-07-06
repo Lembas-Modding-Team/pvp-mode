@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
-import pvpmode.compatibility.events.PlayerPvPTickEvent;
+import pvpmode.compatibility.events.*;
 
 public class PvPEventHandler
 {
@@ -124,8 +124,11 @@ public class PvPEventHandler
         if (attacker == null || victim == null)
             return;
 
-        if (PvPMode.activatedPvPLoggingHandlers.size () > 0)
+        if (PvPMode.activatedPvPLoggingHandlers.size () > 0
+            && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
+        {
             PvPMode.combatLogManager.log (attacker, victim, event.ammount, event.source);
+        }
     }
 
     /**
@@ -220,43 +223,46 @@ public class PvPEventHandler
                 World world = player.worldObj;
                 if (world.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
                 {
-                    boolean wasPvP = wasDeathCausedByPvP (event.source);
-
-                    if (wasPvP && PvPMode.partialInventoryLossEnabled
-                        || !wasPvP && PvPMode.enablePartialInventoryLossPvE)
+                    if (!MinecraftForge.EVENT_BUS.post (new OnPartialInventoryLossEvent (player, event.source)))
                     {
-                        // Either use PvP or PvE inventory loss counts
-                        int armorLoss = wasPvP ? PvPMode.inventoryLossArmour : PvPMode.inventoryLossArmourPvE;
-                        int hotbarLoss = wasPvP ? PvPMode.inventoryLossHotbar : PvPMode.inventoryLossHotbarPvE;
-                        int mainLoss = wasPvP ? PvPMode.inventoryLossMain : PvPMode.inventoryLossMainPvE;
+                        boolean wasPvP = wasDeathCausedByPvP (event.source);
 
-                        // Try to drop the specified amount of stacks from the inventories
-                        int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
-                            0, 3,
-                            armorLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0,
-                            8,
-                            hotbarLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9,
-                            35,
-                            mainLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        if (wasPvP && PvPMode.partialInventoryLossEnabled
+                            || !wasPvP && PvPMode.enablePartialInventoryLossPvE)
+                        {
+                            // Either use PvP or PvE inventory loss counts
+                            int armorLoss = wasPvP ? PvPMode.inventoryLossArmour : PvPMode.inventoryLossArmourPvE;
+                            int hotbarLoss = wasPvP ? PvPMode.inventoryLossHotbar : PvPMode.inventoryLossHotbarPvE;
+                            int mainLoss = wasPvP ? PvPMode.inventoryLossMain : PvPMode.inventoryLossMainPvE;
 
-                        /*
-                         * Try to drop the specified amount of stacks from other inventories if the
-                         * specified inventory contains too less items.
-                         */
-                        if (PvPMode.extendArmourInventorySearch)
-                            tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
-                                player.inventory.mainInventory, 0, 8,
-                                PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER));
-                        if (PvPMode.extendHotbarInventorySearch)
-                            tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
-                                null,
-                                -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
-                        if (PvPMode.extendMainInventorySearch)
-                            tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
-                                null,
-                                -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            // Try to drop the specified amount of stacks from the inventories
+                            int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
+                                0, 3,
+                                armorLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0,
+                                8,
+                                hotbarLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9,
+                                35,
+                                mainLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+
+                            /*
+                             * Try to drop the specified amount of stacks from other inventories if the
+                             * specified inventory contains too less items.
+                             */
+                            if (PvPMode.extendArmourInventorySearch)
+                                tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
+                                    player.inventory.mainInventory, 0, 8,
+                                    PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER));
+                            if (PvPMode.extendHotbarInventorySearch)
+                                tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
+                                    null,
+                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            if (PvPMode.extendMainInventorySearch)
+                                tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
+                                    null,
+                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                        }
                     }
                 }
             }
