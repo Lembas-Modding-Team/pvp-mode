@@ -20,6 +20,7 @@
 * The PvP timer is now reset when a player dies
 * The chat messages are now gender neutral
 * Unified the style and content of the chat messages
+* Admins can now specify with `pvpadmin <player> [on|off]` the new PvP mode of a player
 * A message will now inform the player if the warmup timer was canceled because of PvP
 
 ### LOTR compatibility:

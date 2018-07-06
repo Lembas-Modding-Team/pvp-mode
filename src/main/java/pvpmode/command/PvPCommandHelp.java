@@ -34,7 +34,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
         postCommandHelp (sender, "pvp cancel", "", "Cancels the warmup timer for the command sender.");
         if (PvPMode.allowPerPlayerSpying)
             postCommandHelp (sender, "pvp spy ", "[on|off]", "Allows players to toggle their spying settings.");
-        postCommandHelp (sender, "pvpadmin ", "<player>", "For admins only, enables or disables PvP for the player.");
+        postCommandHelp (sender, "pvpadmin ", "<player> [on|off]", "For admins only, enables or disables PvP for the player.");
         postCommandHelp (sender, "pvplist", "",
             "Displays a list of all players with PvP enabled, and if spying is enabled, their approximate distance to the command sender.");
         postCommandHelp (sender, "pvplist ", "<maxEntryCount>",
