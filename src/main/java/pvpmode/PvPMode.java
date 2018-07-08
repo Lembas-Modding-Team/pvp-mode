@@ -13,6 +13,7 @@ import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
 import pvpmode.compatibility.CompatibilityManager;
 import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
+import pvpmode.compatibility.modules.siegeMode.SiegeModeCompatiblityModuleLoader;
 import pvpmode.compatibility.modules.suffixForge.SuffixForgeCompatibilityModuleLoader;
 import pvpmode.log.*;
 import pvpmode.overrides.PvPOverrideManager;
@@ -170,6 +171,7 @@ public class PvPMode
     {
         compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SuffixForgeCompatibilityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (SiegeModeCompatiblityModuleLoader.class);
     }
 
     @EventHandler

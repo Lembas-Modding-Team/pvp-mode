@@ -86,9 +86,13 @@ public class PvPOverrideManager
                         {
                             // Only display the message if the current PvP mode
                             // really changed
-                            PvPMode.cfg.sendChatMsg (
-                                new ChatComponentText (condition.getForcedOverrideMessage (event.player, isPvPEnabled))
-                                    .setChatStyle (new ChatStyle ().setColor (EnumChatFormatting.RED)));
+                            String message = condition.getForcedOverrideMessage (event.player, isPvPEnabled);
+                            if (message != null)
+                            {
+                                PvPMode.cfg.sendChatMsg (
+                                    new ChatComponentText (message)
+                                        .setChatStyle (new ChatStyle ().setColor (EnumChatFormatting.RED)));
+                            }
                         }
                         pvpData.setForcedPvPMode (newPvPMode);
                         pvpData.setPvPWarmup (0);// Cancel warmup timer

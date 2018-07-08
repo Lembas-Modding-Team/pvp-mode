@@ -1,7 +1,6 @@
 package pvpmode.compatibility.modules.lotr;
 
-import cpw.mods.fml.common.Loader;
-import pvpmode.compatibility.CompatibilityModuleLoader;
+import pvpmode.compatibility.ModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for the LOTR Mod.
@@ -9,9 +8,13 @@ import pvpmode.compatibility.CompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class LOTRModCompatibilityModuleLoader implements CompatibilityModuleLoader
+public class LOTRModCompatibilityModuleLoader extends ModCompatibilityModuleLoader
 {
-    private Boolean lotrmodLoaded;
+
+    public LOTRModCompatibilityModuleLoader ()
+    {
+        super ("lotr");
+    }
 
     @Override
     public String getModuleName ()
@@ -23,14 +26,6 @@ public class LOTRModCompatibilityModuleLoader implements CompatibilityModuleLoad
     public String getCompatibilityModuleClassName ()
     {
         return "pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModule";
-    }
-
-    @Override
-    public boolean canLoad ()
-    {
-        if (lotrmodLoaded == null)
-            lotrmodLoaded = Loader.isModLoaded ("lotr");
-        return lotrmodLoaded.booleanValue ();
     }
 
 }
