@@ -13,7 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.*;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.*;
@@ -284,7 +284,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             LOTRPlayerData data = LOTRLevelData.getData (event.getPlayer ());
             if (data.getTargetFTWaypoint () != null)
             {
-                PvPUtils.red (event.getPlayer (), "You cannot fast travel while in PvP");
+                ChatUtils.red (event.getPlayer (), "You cannot fast travel while in PvP");
                 data.setTargetFTWaypoint (null);
             }
         }

@@ -29,7 +29,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
-        PvPUtils.green (sender, "--- PvP Mode Help ---");
+        ChatUtils.green (sender, "--- PvP Mode Help ---");
         postCommandHelp (sender, "pvp", "", "Starts a warmup timer to enable or disable PvP for the command sender.");
         postCommandHelp (sender, "pvp cancel", "", "Cancels the warmup timer for the command sender.");
         if (PvPMode.allowPerPlayerSpying)
@@ -41,7 +41,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
             "Displays as much entries of the whole list as specified.");
         postCommandHelp (sender, "pvplist all", "", "Displays the whole player list, including players who are warming up and have PvP disabled.");
         postCommandHelp (sender, "pvpconfig display", "", "For admins only, displays the server configuration.");
-        PvPUtils.green (sender, "-------------------");
+        ChatUtils.green (sender, "-------------------");
     }
 
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)

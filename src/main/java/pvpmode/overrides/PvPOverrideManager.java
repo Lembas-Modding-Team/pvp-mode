@@ -89,9 +89,7 @@ public class PvPOverrideManager
                             String message = condition.getForcedOverrideMessage (event.player, isPvPEnabled);
                             if (message != null)
                             {
-                                PvPMode.cfg.sendChatMsg (
-                                    new ChatComponentText (message)
-                                        .setChatStyle (new ChatStyle ().setColor (EnumChatFormatting.RED)));
+                                ChatUtils.postGlobalChatMessages (EnumChatFormatting.RED, message);
                             }
                         }
                         pvpData.setForcedPvPMode (newPvPMode);
@@ -111,7 +109,7 @@ public class PvPOverrideManager
                 pvpData.setForcedPvPMode (EnumForcedPvPMode.UNDEFINED);
                 if (currentForcedPvPMode.toPvPMode () != PvPUtils.getPvPMode (event.player))
                 {
-                    PvPUtils.green (event.player, "Your PvP mode is no longer overridden");
+                    ChatUtils.green (event.player, "Your PvP mode is no longer overridden");
                 }
             }
 
