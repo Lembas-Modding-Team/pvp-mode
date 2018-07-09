@@ -65,6 +65,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Per player spying settings", Boolean.toString (PvPMode.allowPerPlayerSpying));
         postConfigEntry (sender, "Show proximity direction", Boolean.toString (PvPMode.showProximityDirection));
         postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (PvPMode.allowIndirectPvP));
+        postConfigEntry (sender, "Prefix global chat messages", Boolean.toString (PvPMode.prefixGlobalMessages));
+        postConfigEntry (sender, "Global chat message prefix", PvPMode.globalMessagePrefix);
         ChatUtils.green (sender, "---------------------------");
     }
 

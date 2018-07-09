@@ -6,6 +6,8 @@ import net.minecraft.util.*;
 public class ChatUtils
 {
 
+    public static final String DEFAULT_CHAT_MESSAGE_PREFIX = "§4[PvP Mode]: ";
+
     /**
      * Displays the specified messages to the recipient in yellow.
      */
@@ -80,9 +82,11 @@ public class ChatUtils
     {
         for (String message : messages)
         {
+            ChatComponentText prefix = new ChatComponentText (
+                PvPMode.prefixGlobalMessages ? PvPMode.globalMessagePrefix : "");
             ChatComponentText text = new ChatComponentText (message);
             text.getChatStyle ().setColor (color);
-            PvPMode.cfg.sendChatMsg (text);
+            PvPMode.cfg.sendChatMsg (prefix.appendSibling (text));
         }
     }
 
