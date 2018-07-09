@@ -55,9 +55,12 @@ public class ChatUtils
     {
         for (String message : messages)
         {
-            ChatComponentText text = new ChatComponentText (message);
-            text.getChatStyle ().setColor (color);
-            recipient.addChatMessage (text);
+            for (String line : message.split ("\n"))
+            {
+                ChatComponentText text = new ChatComponentText (line);
+                text.getChatStyle ().setColor (color);
+                recipient.addChatMessage (text);
+            }
         }
     }
 
@@ -80,9 +83,12 @@ public class ChatUtils
     {
         for (String message : messages)
         {
-            ChatComponentText text = new ChatComponentText (message);
-            text.getChatStyle ().setColor (color);
-            PvPMode.cfg.sendChatMsg (text);
+            for (String line : message.split ("\n"))
+            {
+                ChatComponentText text = new ChatComponentText (line);
+                text.getChatStyle ().setColor (color);
+                PvPMode.cfg.sendChatMsg (text);
+            }
         }
     }
 
