@@ -22,6 +22,8 @@
 * Unified the style and content of the chat messages
 * Admins can now specify with `pvpadmin <player> [on|off]` the new PvP mode of a player
 * A message will now inform the player if the warmup timer was canceled because of PvP
+* Added `pvphelp <commandName>` to retrieve detailed information about the specified command
+* Restructured the whole `pvphelp` overview menu
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
