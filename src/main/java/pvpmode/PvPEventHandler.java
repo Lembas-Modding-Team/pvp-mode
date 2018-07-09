@@ -47,15 +47,15 @@ public class PvPEventHandler
             {
                 if (PvPUtils.isCreativeMode (attacker))
                 {
-                    PvPUtils.red (attacker, "You are in creative mode");
+                    ChatUtils.red (attacker, "You are in creative mode");
                 }
                 else if (PvPUtils.canFly (attacker))
                 {
-                    PvPUtils.red (attacker, "You are in fly mode");
+                    ChatUtils.red (attacker, "You are in fly mode");
                 }
                 else
                 {
-                    PvPUtils.red (attacker, "You have PvP disabled");
+                    ChatUtils.red (attacker, "You have PvP disabled");
                 }
             }
             cancel = true;
@@ -71,7 +71,7 @@ public class PvPEventHandler
         {
             if (attacker == event.source.getEntity ())
             {
-                PvPUtils.red (attacker, "This player/unit has PvP disabled");
+                ChatUtils.red (attacker, "This player/unit has PvP disabled");
             }
             cancel = true;
         }
@@ -98,13 +98,13 @@ public class PvPEventHandler
                 if (attackerData.getPvPWarmup () != 0)
                 {
                     attackerData.setPvPWarmup (0);
-                    PvPUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
+                    ChatUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
                 }
 
                 if (victimData.getPvPWarmup () != 0)
                 {
                     victimData.setPvPWarmup (0);
-                    PvPUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
+                    ChatUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
                 }
             }
         }
@@ -160,15 +160,13 @@ public class PvPEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                ChatComponentText message = new ChatComponentText ("PvP is now enabled for "
+                                ChatUtils.postGlobalChatMessages (EnumChatFormatting.RED, "PvP is now enabled for "
                                     + player.getDisplayName ());
-                                message.getChatStyle ().setColor (EnumChatFormatting.RED);
-                                PvPMode.cfg.sendChatMsg (message);
                             }
                             else
                             {
                                 data.setPvPEnabled (false);
-                                PvPUtils.green (player, "PvP is now disabled for you");
+                                ChatUtils.green (player, "PvP is now disabled for you");
                             }
 
                             data.setPvPCooldown (time + PvPMode.cooldown);
@@ -176,13 +174,13 @@ public class PvPEventHandler
                     }
                     else if (toggleTime != 0)
                     {
-                        PvPUtils.yellow (player, "Your warmup timer was canceled because you're able to fly now");
+                        ChatUtils.yellow (player, "Your warmup timer was canceled because you're able to fly now");
                         data.setPvPWarmup (0);
                     }
                 }
                 else if (toggleTime != 0)
                 {
-                    PvPUtils.yellow (player, "Your warmup timer was canceled because you're in creative mode now");
+                    ChatUtils.yellow (player, "Your warmup timer was canceled because you're in creative mode now");
                     data.setPvPWarmup (0);
                 }
             }
@@ -195,7 +193,7 @@ public class PvPEventHandler
                     // even if
                     // the
                     // timer is running yet
-                    PvPUtils.green (player, "You're no longer in PvP");
+                    ChatUtils.green (player, "You're no longer in PvP");
                     data.setPvPTimer (0);
                 }
                 else
@@ -341,7 +339,7 @@ public class PvPEventHandler
                     {
                         // The command is blacklisted and will be canceled
                         event.setCanceled (true);
-                        PvPUtils.red (event.sender, "You cannot use this command while in PvP");
+                        ChatUtils.red (event.sender, "You cannot use this command while in PvP");
                         return;
                     }
                 }

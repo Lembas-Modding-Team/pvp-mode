@@ -84,16 +84,16 @@ public class PvPCommandAdmin extends AbstractPvPCommand
              * behind a player's back as "punishment" An admin should be able to keep order
              * on a server without resorting to deception and secrecy.
              */
-            PvPUtils.red (player, "Your PvP mode is being toggled by an admin");
+            ChatUtils.red (player, "Your PvP mode is being toggled by an admin");
             data.setPvPWarmup (PvPUtils.getTime ());
 
-            PvPUtils.green (sender,
+            ChatUtils.green (sender,
                 String.format ("PvP is now %s for %s", PvPUtils.getEnabledString (!data.isPvPEnabled ()),
                     player.getDisplayName ()));
         }
         else
         {
-            PvPUtils.yellow (sender,
+            ChatUtils.yellow (sender,
                 String.format ("PvP is already %s for %s", PvPUtils.getEnabledString (mode.booleanValue ()),
                     player.getDisplayName ()));
         }

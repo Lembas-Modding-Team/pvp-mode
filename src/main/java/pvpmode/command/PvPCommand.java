@@ -67,7 +67,7 @@ public class PvPCommand extends AbstractPvPCommand
                     }
                     else
                     {
-                        PvPUtils.red (player, "This feature was disabled by the server");
+                        ChatUtils.red (player, "This feature was disabled by the server");
                     }
                     break;
             }
@@ -84,11 +84,11 @@ public class PvPCommand extends AbstractPvPCommand
         if (PvPUtils.isWarmupTimerRunning (player))
         {
             data.setPvPWarmup (0);
-            PvPUtils.green (player, "The warmup timer was canceled");
+            ChatUtils.green (player, "The warmup timer was canceled");
         }
         else
         {
-            PvPUtils.yellow (player, "The warmup timer isn't running");
+            ChatUtils.yellow (player, "The warmup timer isn't running");
         }
     }
 
@@ -104,14 +104,14 @@ public class PvPCommand extends AbstractPvPCommand
             if (cooldownTime > time)
             {
                 long wait = cooldownTime - time;
-                PvPUtils.red (sender, String.format ("Please wait %d seconds before issuing this command", wait));
+                ChatUtils.red (sender, String.format ("Please wait %d seconds before issuing this command", wait));
                 return;
             }
 
             data.setPvPWarmup (toggleTime);
             data.setPvPCooldown (0);
 
-            PvPUtils.green (sender, String.format ("PvP will be %s in %d seconds...",
+            ChatUtils.green (sender, String.format ("PvP will be %s in %d seconds...",
                 PvPUtils.getEnabledString (!data.isPvPEnabled ()), warmup));
         }
         else
@@ -134,12 +134,12 @@ public class PvPCommand extends AbstractPvPCommand
         if (mode == null ? true : mode.booleanValue () != data.isSpyingEnabled ())
         {
             data.setSpyingEnabled (!data.isSpyingEnabled ());
-            PvPUtils.green (sender,
+            ChatUtils.green (sender,
                 String.format ("Spying is now %s for you", PvPUtils.getEnabledString (data.isSpyingEnabled ())));
         }
         else
         {
-            PvPUtils.yellow (sender,
+            ChatUtils.yellow (sender,
                 String.format ("Spying is already %s for you", PvPUtils.getEnabledString (mode.booleanValue ())));
         }
     }

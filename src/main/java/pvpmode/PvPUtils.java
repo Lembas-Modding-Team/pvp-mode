@@ -11,7 +11,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.compatibility.events.*;
 import pvpmode.overrides.EnumForcedPvPMode;
@@ -78,70 +77,6 @@ public class PvPUtils
             playerData.put (player.getUniqueID (), new PvPData (player));
         }
         return playerData.get (player.getUniqueID ());
-    }
-
-    /**
-     * Displays the specified messages to the recipient in yellow.
-     */
-    public static void yellow (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, EnumChatFormatting.YELLOW, messages);
-    }
-
-    /**
-     * Displays the specified messages to the recipient in red.
-     */
-    public static void red (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, EnumChatFormatting.RED, messages);
-    }
-
-    /**
-     * Displays the specified messages to the recipient in green.
-     */
-    public static void green (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, EnumChatFormatting.GREEN, messages);
-    }
-
-    /**
-     * Displays the specified messages to the recipient in blue.
-     */
-    public static void blue (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, EnumChatFormatting.BLUE, messages);
-    }
-
-    /**
-     * Displays the specified messages to the recipient in white.
-     */
-    public static void white (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, EnumChatFormatting.WHITE, messages);
-    }
-
-    /**
-     * Displays the specified messages to the recipient with the specified
-     * formatting. Each entry of the messages array will be displayed as a new line
-     * in the chat.
-     */
-    public static void postChatLines (ICommandSender recipient, EnumChatFormatting formatting, String... messages)
-    {
-        for (String message : messages)
-        {
-            ChatComponentText text = new ChatComponentText (message);
-            text.getChatStyle ().setColor (formatting);
-            recipient.addChatMessage (text);
-        }
-    }
-
-    /**
-     * Displays the specified messages to the recipient. Each entry of the messages
-     * array will be displayed as a new line in the chat.
-     */
-    public static void postChatLines (ICommandSender recipient, String... messages)
-    {
-        postChatLines (recipient, null, messages);
     }
 
     /**

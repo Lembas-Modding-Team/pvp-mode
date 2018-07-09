@@ -128,7 +128,7 @@ public class PvPCommandList extends AbstractPvPCommand
             }
         }
 
-        PvPUtils.green (sender, "--- PvP Mode Player List ---");
+        ChatUtils.green (sender, "--- PvP Mode Player List ---");
 
         displayMessageForPlayer (senderPlayer, senderPlayer, senderPlayerPvPMode, senderPlayerPvPMode, -1);
 
@@ -187,7 +187,7 @@ public class PvPCommandList extends AbstractPvPCommand
             entrySizeText.getChatStyle ().setItalic (true);
             sender.addChatMessage (entrySizeText);
         }
-        PvPUtils.green (sender, "-------------------------");
+        ChatUtils.green (sender, "-------------------------");
 
     }
 
