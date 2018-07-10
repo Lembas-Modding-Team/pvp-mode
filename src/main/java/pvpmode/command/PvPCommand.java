@@ -31,7 +31,7 @@ public class PvPCommand extends AbstractPvPCommand
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
         messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
         messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
-        if (PvPMode.allowPerPlayerSpying)
+        if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]", "Toggles the spy settings."));
         }
@@ -47,7 +47,7 @@ public class PvPCommand extends AbstractPvPCommand
                 "Starts your warmup timer. After the timer runs out, your PvP mode will be toggled. Your PvP mode mustn't be overridden."));
         messages.add (Triple.of ("pvp cancel", "",
             "Cancels your warmup timer, if it's running. Your PvP mode mustn't be overridden."));
-        if (PvPMode.allowPerPlayerSpying)
+        if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]",
                 "Allows you to either toggle your spy settings, or to set them to a specific value (on or off). If spying is enabled for you, you can receive proximity and direction information about other players with PvP enabled (via the PvP list). PvP needs to be enabled for you."));
@@ -86,7 +86,7 @@ public class PvPCommand extends AbstractPvPCommand
                     cancelPvPTimer (player, data);
                     break;
                 case "spy":
-                    if (PvPMode.allowPerPlayerSpying)
+                    if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
                     {
                         this.requireSenderWithPvPEnabled (player);
                         if (args.length > 1)
