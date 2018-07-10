@@ -92,6 +92,16 @@ public class PvPEventHandler
                 PvPData attackerData = PvPUtils.getPvPData (attacker);
                 PvPData victimData = PvPUtils.getPvPData (victim);
 
+                if (attackerData.getPvPTimer () == 0)
+                {
+                    ChatUtils.yellow (attacker, "You're now in PvP combat");
+                }
+
+                if (victimData.getPvPTimer () == 0)
+                {
+                    ChatUtils.yellow (victim, "You're now in PvP combat");
+                }
+
                 attackerData.setPvPTimer (time + PvPMode.pvpTimer);
                 victimData.setPvPTimer (time + PvPMode.pvpTimer);
 
