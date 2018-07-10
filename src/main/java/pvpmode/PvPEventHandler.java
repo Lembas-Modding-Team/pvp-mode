@@ -193,7 +193,7 @@ public class PvPEventHandler
                     // even if
                     // the
                     // timer is running yet
-                    ChatUtils.green (player, "You're no longer in PvP");
+                    ChatUtils.green (player, "You're no longer in PvP combat");
                     data.setPvPTimer (0);
                 }
                 else
@@ -339,7 +339,7 @@ public class PvPEventHandler
                     {
                         // The command is blacklisted and will be canceled
                         event.setCanceled (true);
-                        ChatUtils.red (event.sender, "You cannot use this command while in PvP");
+                        ChatUtils.red (event.sender, "You cannot use this command while in PvP combat");
                         return;
                     }
                 }
