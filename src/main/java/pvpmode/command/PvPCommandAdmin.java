@@ -20,7 +20,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvpadmin <player> [on|off]";
+        return "/pvpadmin <player> [on|off] OR /pvpadmin info <player>";
     }
 
     @Override
@@ -32,20 +32,27 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     @Override
     public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
     {
-        return Arrays.asList (Triple.of ("pvpadmin ", "<player> [on|off]", "Toggles PvP for another player."));
+        ArrayList<Triple<String, String, String>> messages = new ArrayList<> ();
+        messages.add (Triple.of ("pvpadmin ", "<player> [on|off]", "Toggles PvP for another player."));
+        messages.add (Triple.of ("pvpadmin info ", "<player>", "Displays another player's PvP stats."));
+        return messages;
     }
 
     @Override
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
-        return Arrays.asList (Triple.of ("pvpadmin ", "<player> [on|off]",
+        ArrayList<Triple<String, String, String>> messages = new ArrayList<Triple<String, String, String>> ();
+        messages.add (Triple.of ("pvpadmin ", "<player> [on|off]",
             "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF). The player will be informed about that."));
+        messages.add (Triple.of ("pvpadmin info ", "<player>",
+            "Displays the PvP mode, the spying settings, the warmup, cooldown and the PvP timer, whether the PvP mode is overridden, and other PvP Mode Mod related stats about the specified player."));
+        return messages;
     }
 
     @Override
     public String getGeneralHelpMessage (ICommandSender sender)
     {
-        return "For operators. Allows them, to manage the PvP mode (ON or OFF) of another player. That player mustn't be able to fly, not in creative mode, not in PvP combat, and the PvP mode of that player mustn't be overridden.";
+        return "For operators. Allows them, to manage and view the PvP mode (ON or OFF) and other stats of another player. That player mustn't be able to fly, not in creative mode, not in PvP combat, and the PvP mode of that player mustn't be overridden if you want to modify the PvP stats of that player.";
     }
 
     @Override
@@ -54,43 +61,54 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
         requireMinLength (admin, args, 1);
 
-        EntityPlayerMP player = CommandBase.getPlayer (admin, args[0]);
-
-        PvPData data = PvPUtils.getPvPData (player);
-
-        this.requireNonCreativePlayer (player);
-        this.requireNonFlyingPlayer (player);
-        this.requireNonOverriddenPlayer (player);
-        this.requireNonPvPPlayer (player);
-
-        if (args.length > 1)
+        if (args[0].equals ("info"))
         {
-            switch (this.requireArguments (admin, args, 1, "on", "off"))
-            {
-                case "off":
-                    togglePvPMode (admin, player, data, Boolean.FALSE);
-                    break;
-                case "on":
-                    togglePvPMode (admin, player, data, Boolean.TRUE);
-                    break;
-            }
+            PvPUtils.displayPvPStats (admin,
+                CommandBase.getPlayer (admin, args[1]));
         }
         else
         {
-            togglePvPMode (admin, player, data, null);
+            EntityPlayerMP player = CommandBase.getPlayer (admin, args[0]);
+
+            PvPData data = PvPUtils.getPvPData (player);
+
+            this.requireNonCreativePlayer (player);
+            this.requireNonFlyingPlayer (player);
+            this.requireNonOverriddenPlayer (player);
+            this.requireNonPvPPlayer (player);
+
+            if (args.length > 1)
+            {
+                switch (this.requireArguments (admin, args, 1, "on", "off"))
+                {
+                    case "off":
+                        togglePvPMode (admin, player, data, Boolean.FALSE);
+                        break;
+                    case "on":
+                        togglePvPMode (admin, player, data, Boolean.TRUE);
+                        break;
+                }
+            }
+            else
+            {
+                togglePvPMode (admin, player, data, null);
+            }
         }
     }
 
     @Override
     public boolean isUsernameIndex (String[] args, int index)
     {
-        return index == 0;
+        return index == 0 ? args.length > 0 && !args[0].equals ("info") : index == 1;
     }
 
     public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
+        if (args.length == 2 && args[0].equals ("info"))
+            return PvPCommandAdmin.getListOfStringsMatchingLastWord (args,
+                MinecraftServer.getServer ().getAllUsernames ());
 
         return null;
     }

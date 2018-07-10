@@ -22,7 +22,7 @@ public class PvPCommand extends AbstractPvPCommand
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvp [cancel] OR /pvp spy [on|off]";
+        return "/pvp [cancel|info] OR /pvp spy [on|off]";
     }
 
     @Override
@@ -31,6 +31,7 @@ public class PvPCommand extends AbstractPvPCommand
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
         messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
         messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
+        messages.add (Triple.of ("pvp info", "", "Displays your PvP stats."));
         if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]", "Toggles the spy settings."));
@@ -47,6 +48,8 @@ public class PvPCommand extends AbstractPvPCommand
                 "Starts your warmup timer. After the timer runs out, your PvP mode will be toggled. Your PvP mode mustn't be overridden."));
         messages.add (Triple.of ("pvp cancel", "",
             "Cancels your warmup timer, if it's running. Your PvP mode mustn't be overridden."));
+        messages.add (Triple.of ("pvp info", "",
+            "Displays your PvP mode, your spying settings, your warmup, cooldown and PvP timer, whether your PvP mode is overridden, and other PvP Mode Mod related stats about you."));
         if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]",
@@ -58,7 +61,7 @@ public class PvPCommand extends AbstractPvPCommand
     @Override
     public String getGeneralHelpMessage (ICommandSender sender)
     {
-        return "Allows you to manage your PvP mode (OFF, ON without spy, ON with spy). You mustn't be able to fly, not in creative mode and not in PvP combat to use this command.";
+        return "Allows you to manage and view your PvP mode (OFF, ON without spy, ON with spy). You mustn't be able to fly, not in creative mode and not in PvP combat if you want to modify your PvP stats with this command.";
     }
 
     @Override
@@ -73,21 +76,19 @@ public class PvPCommand extends AbstractPvPCommand
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
         PvPData data = PvPUtils.getPvPData (player);
 
-        this.requireNonCreativeSender (player);
-        this.requireNonFlyingSender (player);
-        this.requireNonPvPSender (player);
-
         if (args.length > 0)
         {
-            switch (this.requireArguments (sender, args, 0, "cancel", "spy"))
+            switch (this.requireArguments (sender, args, 0, "cancel", "spy", "info"))
             {
                 case "cancel":
+                    this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
                     this.requireNonOverriddenSender (player);
                     cancelPvPTimer (player, data);
                     break;
                 case "spy":
                     if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
                     {
+                        this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
                         this.requireSenderWithPvPEnabled (player);
                         if (args.length > 1)
                         {
@@ -110,13 +111,24 @@ public class PvPCommand extends AbstractPvPCommand
                         ChatUtils.red (player, "This feature was disabled by the server");
                     }
                     break;
+                case "info":
+                    PvPUtils.displayPvPStats ((ICommandSender) player, (EntityPlayer) player);
+                    break;
             }
         }
         else
         {
+            this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
             this.requireNonOverriddenSender (player);
             togglePvPMode (player, data);
         }
+    }
+
+    private void requireNonFlyingNonCreativeNonCombatSender (EntityPlayer player)
+    {
+        this.requireNonCreativeSender (player);
+        this.requireNonFlyingSender (player);
+        this.requireNonPvPSender (player);
     }
 
     private void cancelPvPTimer (EntityPlayer player, PvPData data)

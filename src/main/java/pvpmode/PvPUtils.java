@@ -5,12 +5,15 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.compatibility.events.*;
 import pvpmode.overrides.EnumForcedPvPMode;
@@ -281,7 +284,28 @@ public class PvPUtils
      */
     public static long getWarmupTimer (EntityPlayer player)
     {
-        return Math.max (getPvPData (player).getPvPWarmup () - PvPUtils.getTime (), 0);
+        return PvPUtils.getTimer (PvPUtils.getPvPData (player).getPvPWarmup ());
+    }
+
+    /**
+     * Returns the remaining cooldown time.
+     */
+    public static long getCooldownTimer (EntityPlayer player)
+    {
+        return PvPUtils.getTimer (PvPUtils.getPvPData (player).getPvPCooldown ());
+    }
+
+    /**
+     * Returns the remaining PvP timer time.
+     */
+    public static long getPvPTimer (EntityPlayer player)
+    {
+        return PvPUtils.getTimer (PvPUtils.getPvPData (player).getPvPTimer ());
+    }
+
+    private static long getTimer (long futureTime)
+    {
+        return Math.max (futureTime - PvPUtils.getTime (), 0);
     }
 
     /**
@@ -353,6 +377,41 @@ public class PvPUtils
             direction = "NE";
         }
         return direction;
+    }
+
+    /**
+     * Sends the PvP stats of the supplied player to the recipient.
+     */
+    public static void displayPvPStats (ICommandSender sender, EntityPlayer displayedPlayer)
+    {
+        boolean isSenderDisplayed = sender == displayedPlayer;
+        PvPData data = PvPUtils.getPvPData (displayedPlayer);
+        EnumPvPMode pvpMode = PvPUtils.getPvPMode (displayedPlayer);
+        boolean isOverridden = data.getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
+        boolean spying = data.isSpyingEnabled ();
+        long warmupTimer = PvPUtils.getWarmupTimer (displayedPlayer);
+        long cooldownTimer = PvPUtils.getCooldownTimer (displayedPlayer);
+        long pvpTimer = PvPUtils.getPvPTimer (displayedPlayer);
+
+        ChatUtils.green (sender, String.format ("------ %sPvP Stats ------", isSenderDisplayed ? "Your " : ""));
+        if (!isSenderDisplayed)
+        {
+            ChatUtils.postLocalChatMessage (sender, "For: ", displayedPlayer.getDisplayName (), EnumChatFormatting.GRAY,
+                EnumChatFormatting.DARK_GREEN);
+        }
+        ChatUtils.postLocalChatMessage (sender, "PvP Mode: ", pvpMode.toString (), EnumChatFormatting.GRAY,
+            pvpMode == EnumPvPMode.ON ? EnumChatFormatting.RED : EnumChatFormatting.GREEN);
+        ChatUtils.postLocalChatMessage (sender, "Is Overridden: ", Boolean.toString (isOverridden),
+            EnumChatFormatting.GRAY, EnumChatFormatting.WHITE);
+        ChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying), EnumChatFormatting.GRAY,
+            EnumChatFormatting.WHITE);
+        ChatUtils.postLocalChatMessage (sender, "Warmup Timer: ", Long.toString (warmupTimer) + "s",
+            EnumChatFormatting.GRAY, warmupTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+        ChatUtils.postLocalChatMessage (sender, "Cooldown Timer: ", Long.toString (cooldownTimer) + "s",
+            EnumChatFormatting.GRAY, cooldownTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+        ChatUtils.postLocalChatMessage (sender, "PvP Timer: ", Long.toString (pvpTimer) + "s", EnumChatFormatting.GRAY,
+            pvpTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+        ChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
     }
 
 }
