@@ -26,6 +26,7 @@
 * Added `pvphelp <commandName>` to retrieve detailed information about the specified command
 * Restructured the whole `pvphelp` overview menu
 * Global chat messages are now prefixed with a configurable prefix
+* A player whose PvP timer was started now'll be notified about that
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
