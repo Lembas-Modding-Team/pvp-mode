@@ -83,7 +83,7 @@ public abstract class AbstractPvPCommand extends CommandBase
     protected void requireNonPvPSender (EntityPlayer sender)
     {
         if (PvPUtils.isInPvP (sender))
-            throw new CommandException ("You cannot use this command while in PvP");
+            throw new CommandException ("You cannot use this command while in PvP combat");
     }
 
     protected void requireNonFlyingPlayer (EntityPlayer player)
@@ -107,7 +107,7 @@ public abstract class AbstractPvPCommand extends CommandBase
     protected void requireNonPvPPlayer (EntityPlayer player)
     {
         if (PvPUtils.isInPvP (player))
-            throw new CommandException ("You cannot use this command while that player is in PvP");
+            throw new CommandException ("You cannot use this command while that player is in PvP combat");
     }
 
     protected void requireSenderWithPvPEnabled (EntityPlayer sender)
