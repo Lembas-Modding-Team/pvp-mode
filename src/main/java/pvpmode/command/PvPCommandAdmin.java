@@ -1,6 +1,8 @@
 package pvpmode.command;
 
-import java.util.List;
+import java.util.*;
+
+import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.*;
@@ -25,6 +27,25 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public int getRequiredPermissionLevel ()
     {
         return 2;
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
+    {
+        return Arrays.asList (Triple.of ("pvpadmin ", "<player> [on|off]", "Toggles PvP for another player."));
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
+    {
+        return Arrays.asList (Triple.of ("pvpadmin ", "<player> [on|off]",
+            "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF). The player will be informed about that."));
+    }
+
+    @Override
+    public String getGeneralHelpMessage (ICommandSender sender)
+    {
+        return "For operators. Allows them, to manage the PvP mode (ON or OFF) of another player. That player mustn't be able to fly, not in creative mode, not in PvP combat, and the PvP mode of that player mustn't be overridden.";
     }
 
     @Override

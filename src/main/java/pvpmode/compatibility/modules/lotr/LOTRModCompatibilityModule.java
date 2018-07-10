@@ -284,7 +284,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             LOTRPlayerData data = LOTRLevelData.getData (event.getPlayer ());
             if (data.getTargetFTWaypoint () != null)
             {
-                ChatUtils.red (event.getPlayer (), "You cannot fast travel while in PvP");
+                ChatUtils.red (event.getPlayer (), "You cannot fast travel while in PvP combat");
                 data.setTargetFTWaypoint (null);
             }
         }
