@@ -1,6 +1,9 @@
 package pvpmode.command;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,6 +11,25 @@ import pvpmode.*;
 
 public abstract class AbstractPvPCommand extends CommandBase
 {
+
+    /**
+     * Returns a short description for this command (or every sub-command). The
+     * triple contains firstly the (sub-)command name, then the command usage and
+     * finally the short help message.
+     */
+    public abstract Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender);
+
+    /**
+     * Returns a detailed description for this command (or every sub-command). The
+     * triple contains firstly the (sub-)command name, then the command usage and
+     * finally the detailed help message.
+     */
+    public abstract Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender);
+
+    /**
+     * Returns a help message regarding the command in general.
+     */
+    public abstract String getGeneralHelpMessage (ICommandSender sender);
 
     protected void usageError (ICommandSender sender)
     {

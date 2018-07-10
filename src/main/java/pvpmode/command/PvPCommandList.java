@@ -3,6 +3,8 @@ package pvpmode.command;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Triple;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
@@ -22,6 +24,34 @@ public class PvPCommandList extends AbstractPvPCommand
     public String getCommandUsage (ICommandSender sender)
     {
         return "/pvplist [all] OR /pvplist <maxEntryCount>";
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
+    {
+        Collection<Triple<String, String, String>> messages = new ArrayList<> ();
+        messages.add (Triple.of ("pvplist", "", "Displays information about all players with PvP on."));
+        messages.add (Triple.of ("pvplist ", "<count>", "Displays information about 'count' players."));
+        messages.add (Triple.of ("pvplist all", "", "Displays information about all players."));
+        return messages;
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
+    {
+        Collection<Triple<String, String, String>> messages = new ArrayList<> ();
+        messages.add (Triple.of ("pvplist", "", "Displays the information of all players with PvP enabled."));
+        messages.add (Triple.of ("pvplist ", "<count>",
+            "Displays the information for as much players as specified, starting with players who have PvP enabled."));
+        messages
+            .add (Triple.of ("pvplist all", "", "Displays the information for all players on the server."));
+        return messages;
+    }
+
+    @Override
+    public String getGeneralHelpMessage (ICommandSender sender)
+    {
+        return "Gives you information about the PvP modes, warmup timers, and eventual spy info (proximity and direction) of the players on the server. These are sorted. Spy information can only be accessed if you have PvP enabled, and eventual spying (depending on the server configuration). If the server allows custom spy settings, you'll only retrieve spy information about players who have spying enabled. \nYou'll always be displayed on the top of the list.";
     }
 
     @Override

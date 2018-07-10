@@ -59,6 +59,12 @@ public class PvPMode
 
     private Path combatLogDir;
 
+    public static PvPCommand pvpCommandInstance;
+    public static PvPCommandAdmin pvpadminCommandInstance;
+    public static PvPCommandConfig pvpconfigCommandInstance;
+    public static PvPCommandHelp pvphelpCommandInstance;
+    public static PvPCommandList pvplistCommandInstance;
+
     @EventHandler
     public void preinit (FMLPreInitializationEvent event) throws IOException
     {
@@ -236,11 +242,18 @@ public class PvPMode
     public void serverLoad (FMLServerStartingEvent event)
     {
         cfg = MinecraftServer.getServer ().getConfigurationManager ();
-        event.registerServerCommand (new PvPCommand ());
-        event.registerServerCommand (new PvPCommandList ());
-        event.registerServerCommand (new PvPCommandAdmin ());
-        event.registerServerCommand (new PvPCommandHelp ());
-        event.registerServerCommand (new PvPCommandConfig ());
+
+        pvpCommandInstance = new PvPCommand ();
+        pvplistCommandInstance = new PvPCommandList ();
+        pvpadminCommandInstance = new PvPCommandAdmin ();
+        pvphelpCommandInstance = new PvPCommandHelp ();
+        pvpconfigCommandInstance = new PvPCommandConfig ();
+
+        event.registerServerCommand (pvpCommandInstance);
+        event.registerServerCommand (pvplistCommandInstance);
+        event.registerServerCommand (pvpadminCommandInstance);
+        event.registerServerCommand (pvphelpCommandInstance);
+        event.registerServerCommand (pvpconfigCommandInstance);
     }
 
     @EventHandler

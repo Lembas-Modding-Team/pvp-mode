@@ -1,5 +1,9 @@
 package pvpmode.command;
 
+import java.util.*;
+
+import org.apache.commons.lang3.tuple.Triple;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
 import pvpmode.*;
@@ -23,6 +27,25 @@ public class PvPCommandConfig extends AbstractPvPCommand
     public int getRequiredPermissionLevel ()
     {
         return 2;
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
+    {
+        return Arrays.asList (Triple.of ("pvpconfig display", "", "Displays the server configuration."));
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
+    {
+        return Arrays.asList (Triple.of ("pvpconfig display", "",
+            "Displays most of the server configuration data. Configuration entries of compatibility modules are currently not displayed."));
+    }
+
+    @Override
+    public String getGeneralHelpMessage (ICommandSender sender)
+    {
+        return "For operators. Allows them to manage and view the server configuration data related to the PvP Mode Mod.";
     }
 
     @Override
