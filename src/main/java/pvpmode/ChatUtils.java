@@ -6,7 +6,7 @@ import net.minecraft.util.*;
 public class ChatUtils
 {
 
-    public static final String DEFAULT_CHAT_MESSAGE_PREFIX = "§4[PvP Mode]: ";
+    public static final String DEFAULT_CHAT_MESSAGE_PREFIX = "\u00A74[PvP Mode]: ";
 
     /**
      * Displays the specified messages to the recipient in yellow.
