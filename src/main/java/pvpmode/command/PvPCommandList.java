@@ -265,7 +265,8 @@ public class PvPCommandList extends AbstractPvPCommand
             modeComponent
                 .appendSibling (warmupComponent);
         }
-        if (isSenderPlayer && PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ())
+        if (isSenderPlayer && PvPMode.radar && PvPMode.allowPerPlayerSpying
+            && PvPUtils.getPvPData (senderPlayer).isSpyingEnabled ())
         {
             modeComponent.appendSibling (spyComponent);
         }
