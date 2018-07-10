@@ -52,6 +52,8 @@ public class PvPMode
     public static int inventoryLossHotbarPvE;
     public static int inventoryLossMainPvE;
     public static boolean allowIndirectPvP;
+    public static boolean prefixGlobalMessages;
+    public static String globalMessagePrefix;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -140,6 +142,11 @@ public class PvPMode
             "The amount of item stacks from the main inventory the player looses upon death caused by PvE.");
         allowIndirectPvP = config.getBoolean ("Allow Indirect PvP", PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If true, attacks from NPCs owned by a player (dogs, hired units, ...) will count as PvP and not as PvE.");
+        prefixGlobalMessages = config.getBoolean ("Prefix Global Chat Messages", MAIN_CONFIGURATION_CATEGORY, true,
+            "If true, all global chat messages sent by the PvP Mode Mod will be prefixed with a configurable, global prefix.");
+        globalMessagePrefix = config.getString ("Global Chat Message Prefix", MAIN_CONFIGURATION_CATEGORY,
+            ChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX,
+            "The prefix appended to every global chat message (if prefixing is enabled). It must not be blank. You can also use the MC formatting codes to give the prefix a color.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -163,6 +170,13 @@ public class PvPMode
                 commandIterator.remove ();
             }
         }
+
+        if (globalMessagePrefix.trim ().isEmpty ())
+        {
+            globalMessagePrefix = ChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX;
+            FMLLog.warning ("The global chat message prefix is empty. A default one will be used.");
+        }
+
         FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
 
         if (config.hasChanged ())
