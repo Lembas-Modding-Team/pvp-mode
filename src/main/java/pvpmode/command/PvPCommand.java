@@ -195,4 +195,14 @@ public class PvPCommand extends AbstractPvPCommand
                 String.format ("Spying is already %s for you", PvPUtils.getEnabledString (mode.booleanValue ())));
         }
     }
+
+    @Override
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, "info", "cancel", "spy");
+        if (args.length == 2 && args[0].equals ("spy"))
+            return getListOfStringsMatchingLastWord (args, "on", "off");
+        return null;
+    }
 }
