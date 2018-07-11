@@ -76,6 +76,22 @@ public class ChatUtils
     }
 
     /**
+     * Displays the specified message to the recipient. Each part of the message can
+     * have it's own color.
+     */
+    public static void postLocalChatMessage (ICommandSender recipient, String firstPart, String secondPart,
+        EnumChatFormatting firstColor, EnumChatFormatting secondColor)
+    {
+        ChatComponentText firstText = new ChatComponentText (firstPart);
+        ChatComponentText secondText = new ChatComponentText (secondPart);
+
+        firstText.getChatStyle ().setColor (firstColor);
+        secondText.getChatStyle ().setColor (secondColor);
+
+        recipient.addChatMessage (firstText.appendSibling (secondText));
+    }
+
+    /**
      * Displays the specified messages to every player on the server with the
      * specified color. Each entry of the messages array will be displayed as a new
      * line in the chat.
@@ -88,7 +104,7 @@ public class ChatUtils
             for (String line : message.split ("\n"))
             {
                 ChatComponentText prefix = new ChatComponentText (
-                PvPMode.prefixGlobalMessages ? PvPMode.globalMessagePrefix : "");
+                    PvPMode.prefixGlobalMessages ? PvPMode.globalMessagePrefix : "");
                 ChatComponentText text = new ChatComponentText (line);
                 text.getChatStyle ().setColor (color);
                 PvPMode.cfg.sendChatMsg (prefix.appendSibling (text));
