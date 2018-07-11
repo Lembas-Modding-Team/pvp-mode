@@ -28,6 +28,7 @@
 * Global chat messages are now prefixed with a configurable prefix
 * A player whose PvP timer was started now'll be notified about that
 * Added `pvp info` and `pvpadmin info <player>` to retrieve the PvP stats of a player
+* The players displayed in `pvplist` with a running warmup timer and PvP off are now sorted by the timer
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
