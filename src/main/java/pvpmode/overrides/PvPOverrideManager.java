@@ -6,8 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.*;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumChatFormatting;
 import pvpmode.*;
 
 /**
@@ -21,7 +20,7 @@ public class PvPOverrideManager
 {
     private TreeMap<Integer, Set<PvPOverrideCondition>> overrideConditions = new TreeMap<> ();
 
-    private Map<EntityPlayer, Long> lastCheckTimes = new HashMap<> ();
+    private Map<UUID, Long> lastCheckTimes = new HashMap<> ();
 
     /**
      * Registers a new PvP override condition.<br/>
@@ -61,13 +60,13 @@ public class PvPOverrideManager
     @SubscribeEvent
     public void onPlayerTick (PlayerTickEvent event)
     {
-        if (!lastCheckTimes.containsKey (event.player))
-            lastCheckTimes.put (event.player, 0l);
+        if (!lastCheckTimes.containsKey (event.player.getUniqueID ()))
+            lastCheckTimes.put (event.player.getUniqueID (), 0l);
 
         // A ton of checks whether the PvP mode of the current player can be
         // overridden
         if (PvPUtils.arePvPModeOverridesEnabled () && event.side == Side.SERVER && event.phase == Phase.END
-            && (PvPUtils.getTime () - lastCheckTimes.get (event.player)) >= PvPMode.overrideCheckInterval
+            && (PvPUtils.getTime () - lastCheckTimes.get (event.player.getUniqueID ())) >= PvPMode.overrideCheckInterval
             && !PvPUtils.isCreativeMode (event.player)
             && !PvPUtils.canFly (event.player))
         {
@@ -94,7 +93,7 @@ public class PvPOverrideManager
                         }
                         pvpData.setForcedPvPMode (newPvPMode);
                         pvpData.setPvPWarmup (0);// Cancel warmup timer
-                        lastCheckTimes.replace (event.player, PvPUtils.getTime ());
+                        lastCheckTimes.replace (event.player.getUniqueID (), PvPUtils.getTime ());
                         return;// The first registered condition with the
                                // highest priority will be applied
                     }
@@ -113,7 +112,7 @@ public class PvPOverrideManager
                 }
             }
 
-            lastCheckTimes.replace (event.player, PvPUtils.getTime ());
+            lastCheckTimes.replace (event.player.getUniqueID (), PvPUtils.getTime ());
         }
     }
 }
