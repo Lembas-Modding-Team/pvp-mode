@@ -14,9 +14,9 @@ public interface PvPOverrideCondition
 
     /**
      * Returns the priority of this condition.<br/>
-     * The higher the returned value, the higher the priority. A high priority
-     * means that this condition will be preferred over conditions with
-     * conflicting results that have a lower priority.
+     * The higher the returned value, the higher the priority. A high priority means
+     * that this condition will be preferred over conditions with conflicting
+     * results that have a lower priority.
      */
     public int getPriority ();
 
@@ -30,6 +30,7 @@ public interface PvPOverrideCondition
     /**
      * Returns a message displayed to all users for the supplied player with the
      * supplied forced mode when this player is forced into the supplied mode.
+     * Return null to display no message.
      */
     public String getForcedOverrideMessage (EntityPlayer player, Boolean mode);
 
