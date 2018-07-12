@@ -2,38 +2,54 @@
 
 ## 1.2.0-BETA
 ### General changes:
-* Fixed that players drop too less items with partial inventory loss under rare circumstances
+
+#### Partial inventory loss:
 * Added a configurable "main inventory loss" to the partial inventory loss
 * Transferring items via shift-clicking in the player's inventory during PvP is now disableable
 * If an inventory contains less stacks than have to be dropped, the game can optionally scan other inventories
+* Added PvE (Player versus Environment) support for the partial inventory loss
+
+#### `pvplist` command:
 * Players can now optionally decide with `pvp spy [on|off]` whether they want to provide/receive proximity informations
-* Increased the default PvP timer value to 45 seconds
-* Increased the maximum possible value of the PvP timer to 300 seconds
-* Added an on-off warmup timer which specifies the toggle time from PvP ON to PvP OFF
-* The default value of the off-on warmup timer is now 30 seconds
 * The displayed proximity informations in `pvplist` now can contain the actual direction of the player
 * Changed `pvplist` to show only players with PvP enabled by default
 * Added `pvplist all` which shows the whole list
 * Added `pvplist <maxEntryCount>` which shows the specified number of entries
 * The displayed player list in `pvplist` now shows the count of displayed entries
-* Added PvE (Player versus Environment) support for the partial inventory loss
-* The PvP timer is now reset when a player dies
-* The chat messages are now gender neutral
-* Unified the style and content of the chat messages
-* Admins can now specify with `pvpadmin <player> [on|off]` the new PvP mode of a player
-* A message will now inform the player if the warmup timer was canceled because of PvP
-* Made some chat messages more clear
+* The players displayed in `pvplist` with a running warmup timer and PvP off are now sorted by the timer
+
+#### `pvphelp` command:
 * Added `pvphelp <commandName>` to retrieve detailed information about the specified command
 * Restructured the whole `pvphelp` overview menu
-* Global chat messages are now prefixed with a configurable prefix
+
+#### Warmup timer:
+* Added an on-off warmup timer which specifies the toggle time from PvP ON to PvP OFF
+* The default value of the off-on warmup timer is now 30 seconds
+* A message will now inform the player if the warmup timer was canceled because of PvP
+
+#### PvP timer:
+* Increased the default PvP timer value to 45 seconds
+* Increased the maximum possible value of the PvP timer to 300 seconds
+* The PvP timer is now reset when a player dies
 * A player whose PvP timer was started now'll be notified about that
+
+#### Chat messages:
+* The chat messages are now gender neutral
+* Unified the style and content of the chat messages
+* Made some chat messages more clear
+* Global chat messages are now prefixed with a configurable prefix
+
+#### Misc:
+* Admins can now specify with `pvpadmin <player> [on|off]` the new PvP mode of a player
 * Added `pvp info` and `pvpadmin info <player>` to retrieve the PvP stats of a player
-* The players displayed in `pvplist` with a running warmup timer and PvP off are now sorted by the timer
-* Added full tab-completion support for all command
+* Added full tab-completion support for all commands
+
+#### Bug fixes:
+* Fixed that players drop too less items with partial inventory loss under rare circumstances
 * Fixed a memory leak with the PvP override manager
 
 ### LOTR compatibility:
-* Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
+* Players now optionally drop their skulls when killed with a weapon with "headhunter" even if keepInventory is on
 * Changed the default enemy biome configuration
 * Added an extended enemy biome configuration file template generated on startup and stored in the main MC directory
 * Added a map displaying the default enemy biomes generated on startup and stored in the main MC directory
@@ -49,17 +65,28 @@
 * Players in a siege are displayed further down on the PvP list
 
 ## 1.1.4-BETA
+### General changes:
+#### Bug fixes:
 * Fixed that players switching from PvP on to off couldn't do PvP during the warmup phase
 * Fixed that the warmup timer was displayed in an incorrect way sometimes in `pvplist`
 
 ## 1.1.3-BETA
+### General changes:
+
+#### Bug fixes:
 * Fixed that the PvP timer wasn't resetted for creative/flying players
 * Fixed that a chat message wasn't displayed correctly with small chat widths
 
 ## 1.1.2-BETA
+### General changes:
+
+#### Bug fixes:
 * Fixed that the entries in `pvplist` with PvP on were sorted by descending proximity
 
 ## 1.1.1-BETA
+### General changes:
+
+#### Bug fixes:
 * Fixed that the conditional overrides were applied delayed to some players
 * Fixed that using `pvp` while the warmup timer is running restarts it
 * Fixed that creative/flying players could use `pvp` (and `pvpadmin` could used on them)
@@ -67,23 +94,31 @@
 
 ## 1.1.0-BETA
 ### General changes:
+
+#### `pvplist` command:
+* The calling player of `pvplist` now will always be displayed on the top of the list
+* Added a header and a footer to the `pvplist` player list
+* Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
+
+#### `pvphelp` command:
+* Clicking on `pvpadmin` in `pvphelp` now appends a space to the suggested chat input
+* Added a footer to the `pvphelp` command list
+
+#### Misc:
 * The changelog will now be integrated into the JAR of PvPMode
 * Restructured the internal handling of compatibility-related code (added compatibility modules)
 * Added a warning if the attacking player has PvP disabled
-* Clicking on `pvpadmin` in `pvphelp` now appends a space to the suggested chat input
-* The calling player of `pvplist` now will always be displayed on the top of the list
-* Added a footer to the `pvphelp` command list
-* Added a header and a footer to the `pvplist` player list
-* Fixed that the chat text formattings were screwed up with small chat widths
-* Players in the `pvplist` list with PvP enabled are now sorted by their proximity (if radar is enabled)
-* Fixed that the `pvphelp` command list contains unnecessary spaces
+* The commands added by PvP mode now behave uniformly regarding invalid usage
 * Added a configurable partial armour and hotbar inventory loss (applies only when keepInventory is true)
 * Added general support for conditional PvP mode overrides (forcing PvP mode to OFF or ON)
 * Added missing comments to some configuration properties
 * The PvP mode of players involved in a PvP event cannot be changed anymore
 * Added a command blacklist for players which are in PvP: While in PvP, they cannot use the blacklisted commands
-* The commands added by PvP mode now behave uniformly regarding invalid usage
+
+#### Bug fixes:
+* Fixed that the chat text formattings were screwed up with small chat widths
 * Fixed that players which aren't able to do PvP could see the proximity informations in `pvplist`
+* Fixed that the `pvphelp` command list contains unnecessary spaces
 
 ### LOTR compatibility:
 * Improved the performance if the LOTR Mod is present
@@ -93,52 +128,60 @@
 * Players which are in PvP cannot use the LOTR Mod fast travel system
 
 ## 1.0.0-BETA
+### General changes:
+
+#### Breaking changes:
+* Java 8 is now required
+* Removed `pvpcancel`. Canceling now will be done via `pvp cancel`
+
+#### Misc:
 * Added combat logging (two handlers: csv (default) and simple)
 * Added a command `pvpconfig` for admins which displays the configuration data
-* Java 8 is now required
 * The default distance rounding factor for the player radar is now 100 instead of 64
-* Fixed that typing invalid player names in `pvpadmin` outputs an unmeaningful error message
 * Improved `pvphelp`. Also it won't display configuration data anymore.
-* Removed `pvpcancel`. Canceling now will be done via `pvp cancel`
 * Improved the performance and restructured things internally
 
+#### Bug fixes:
+* Fixed that typing invalid player names in `pvpadmin` outputs an unmeaningful error message
+
 ## 1.8.0-ALPHA
-* Added a new command `pvphelp` which displays usage of all commands and also values of configuration options.
-* Player radar now rounds up rather than down.
+* Added a new command `pvphelp` which displays usage of all commands and also values of configuration options
+* Player radar now rounds up rather than down
 
 ## 1.7.0-ALPHA
-* Minor tweaks as suggested by MilkMC and AlteOgre.
+* Minor tweaks as suggested by MilkMC and AlteOgre
 * The admin PvP command is now a separate command, `pvpadmin <playername>`
-* Added a new command `pvpcancel` which cancels a player's warmup time.
+* Added a new command `pvpcancel` which cancels a player's warmup time
 
 ## 1.6.0-ALPHA
-* The cooldown and warmup are now configurable in a configuration file.
-* Player radar behaviour is now configurable as well.
+* The cooldown and warmup are now configurable in a configuration file
+* Player radar behaviour is now configurable as well
 
 ## 1.5.0-ALPHA
-* The `pvplist` command will now display player distances to the nearest four chunks for players who have PvP enabled. There is now a cooldown as well as a warmup on the `pvp` command; the warmup is now 15 seconds rather than five.
+* The `pvplist` command will now display player distances to the nearest four chunks for players who have PvP enabled
+* There is now a cooldown as well as a warmup on the `pvp` command; the warmup is now 15 seconds rather than five
 
 ## 1.4.1-ALPHA
-* Players in creative mode or who have fly ability have PvP disabled automatically.
+* Players in creative mode or who have fly ability have PvP disabled automatically
 
 ## 1.4.0-ALPHA
-* Added a 5-second cooldown on the `pvp` command.
-* Removed on/off functionality; the command is now simply a toggle.
-* Added some messages that will send debug info to the log. This is so that the LOTR unit problem can be fixed.
+* Added a 5-second cooldown on the `pvp` command
+* Removed on/off functionality; the command is now simply a toggle
+* Added some messages that will send debug info to the log. This is so that the LOTR unit problem can be fixed
 
 ## 1.3.0-ALPHA
-* Added a `pvplist` command that enables players to see who is PvP enabled or disabled.
-* Temporarily removed the config file option preparatory to LOTR mod testing.
+* Added a `pvplist` command that enables players to see who is PvP enabled or disabled
+* Temporarily removed the config file option preparatory to LOTR mod testing
 
 ## 1.2.0-ALPHA
-* Added a patch that disables LOTR units from attacking other players in PvP-off situations.
-* Added a patch that disables tamed wolves from attacking another player.
+* Added a patch that disables LOTR units from attacking other players in PvP-off situations
+* Added a patch that disables tamed wolves from attacking another player
 
 ## 1.1.0-ALPHA
-* Added a config option that disables PvE along with PvP if the command is entered.
-* Fixed a bug with permission levels.
+* Added a config option that disables PvE along with PvP if the command is entered
+* Fixed a bug with permission levels
 
 ## 1.0.0-ALPHA
-* Added `pvp <on:off> [playername]` command.
-* Players cannot hit or shoot each other if either has PvP disabled.
-* Admins can enable/disable PvP for other players, but regular players can only do it on themselves.
+* Added `pvp <on:off> [playername]` command
+* Players cannot hit or shoot each other if either has PvP disabled
+* Admins can enable/disable PvP for other players, but regular players can only do it on themselves
