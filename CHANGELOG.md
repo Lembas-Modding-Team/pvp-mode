@@ -1,5 +1,8 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 2.0.0-BETA
+### General changes:
+
 ## 1.5.0-BETA
 ### General changes:
 * Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
