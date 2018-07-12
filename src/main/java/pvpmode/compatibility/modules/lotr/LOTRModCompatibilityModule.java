@@ -30,6 +30,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     private static final String LOTR_CONFIGURATION_CATEGORY = "LOTR_MOD_COMPATIBILITY";
     private static final String ENEMY_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_enemy_biomes.txt";
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
+    private static final String EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME = "extended_enemy_biomes.txt";
+    private static final String DEFAULT_ENEMY_BIOME_MAP_FILE_NAME = "default_enemy_biomes_map.png";
 
     private boolean areEnemyBiomeOverridesEnabled;
     private boolean blockFTInPvP;
@@ -222,17 +224,28 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         PvPMode.overrideManager.registerOverrideCondition (new MiddleEarthBiomeOverrideCondition (configurationData));
 
         // (Re)Create the LOTR biome id file
-        Path biomeIdFile = configurationFolder.getParent ().resolve (LOTR_BIOME_IDS_FILE_NAME);
+        this.recreateFile (configurationFolder, LOTR_BIOME_IDS_FILE_NAME, "LOTR biome id file");
+        // (Re)Create the extended enemy biome config file
+        this.recreateFile (configurationFolder, EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
+            "LOTR extended enemy biomes configuration file template");
+        // (Re)Create the default config map image
+        this.recreateFile (configurationFolder, DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
+
+    }
+
+    private void recreateFile (Path configurationFolder, String filename, String shortName) throws IOException
+    {
+        Path biomeIdFile = configurationFolder.getParent ().resolve (filename);
         if (!Files.exists (biomeIdFile))
         {
-            FMLLog.getLogger ().info ("The LOTR biome id file doesn't exist - it'll be created");
+            FMLLog.getLogger ().info ("The %s doesn't exist - it'll be created", shortName);
             Files.createFile (biomeIdFile);
         }
 
         PvPUtils.writeFromStreamToFile (
-            () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + LOTR_BIOME_IDS_FILE_NAME),
+            () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
             biomeIdFile);
-        FMLLog.info ("Recreated the LOTR biome id file");
+        FMLLog.info ("Recreated the %s", shortName);
     }
 
     private void retrieveLOTREventHandler ()

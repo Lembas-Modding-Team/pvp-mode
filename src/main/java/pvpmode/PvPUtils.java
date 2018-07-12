@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import cpw.mods.fml.common.eventhandler.Event;
@@ -214,16 +215,9 @@ public class PvPUtils
     public static void writeFromStreamToFile (Supplier<InputStream> stream, Path file) throws IOException
     {
         try (InputStream in = stream.get ();
-            InputStreamReader bridge = new InputStreamReader (in);
-            BufferedReader reader = new BufferedReader (bridge);
-            BufferedWriter writer = Files.newBufferedWriter (file))
+            OutputStream out = Files.newOutputStream (file))
         {
-            String line = null;
-            while ( (line = reader.readLine ()) != null)
-            {
-                writer.write (line);
-                writer.newLine ();
-            }
+            IOUtils.copy (in, out);
         }
     }
 

@@ -1,5 +1,5 @@
 #
-# This file lists all biome and alignment dependent overrides, forcing PvP Mode ON when conditions are met.
+# This file lists all biome and alignment dependent overrides, forcing PvP mode to ON when conditions are met.
 #
 # Basically this file allows you to specify in which biome a player which is hostile to a faction you assign to this biome is forced to have PvP enabled.
 # Also, you can define what "hostile" means (in terms of alignment): If the alignment of the player is less than the specified one, the player is seen as hostile.
@@ -18,31 +18,55 @@
 # On startup you'll see in the logs if the mod found errors in this file - then you can fix them.
 #
 # Some words to the file format: 
-# Comments cover a whole line, which must start with a #. PvPMode will ignore them.
+# Comments cover a whole line, which must start with a #. The PvP Mode Mod will ignore them.
 # Blank lines and spaces will be ignored too - you can put as much spaces between the configuration entries as you want.
 #
 
-HOBBIT; 0; 3,4,74,90,91,131,132
-RANGER_NORTH; 0; 3,4,21,22,25,29,30,31,33,65,74,90,91,131,132,141
+# HOBBIT: 3 Shire, 4 ShireWoodlands, 74 WhiteDowns, 131 ShireMoors, 132 ShireMarshes
+HOBBIT; 0; 3,4,74,131,132
+# RANGER_NORTH: 3 Shire, 4 ShireWoodlands, 25 Angle, 29 Eriador, 30 EriadorDowns, 74 WhiteDowns, 90 Breeland, 91 Chetwood, 131 ShireMoors, 132 ShireMarshes
+RANGER_NORTH; 0; 3,4,25,29,30,74,90,91,131,132
+# BLUE_MOUNTAINS: 47 BlueMountains, 87 BlueMountainsFoothills
 BLUE_MOUNTAINS; 0;47,87
+# HIGH_ELF: 44 Lindon, 45 LindonWoodlands, 64 LindonCoast, 141 TowerHills
 HIGH_ELF; 0; 44,45,64,141
-GUNDABAD; 0; 2,32,36,38,43,85,86,129,143,87
-ANGMAR; 0; 13,21,22,26,42,55,65,71
-WOOD_ELF; 0; 14,66,79,80
-DOL_GULDUR; 0; 15,46,48,49,119
-DALE; 0; 66,139
-DWARF; 0; 11,15,32,78,85,86
-GALADHRIM; 0; 9,10,39
-DUNLAND; 0; 23,41,72
+# GUNDABAD: 2 MistyMountains, 32 GreyMountains, 43 Eregion, 85 MistyMountainsFoothills, 86 GreyMountainsFoothills
+GUNDABAD; 0; 2,32,43,85,86
+# ANGMAR: 13 Trollshaws, 26 Ettenmoors, 42 Angmar, 55 AngmarMountains, 71 Coldfells
+ANGMAR; 0; 13,21,22,26,42,55,71
+# WOOD_ELF: 14 WoodlandRealm, 79 NorthernMirkwood, 80 WoodlandRealmHills
+WOOD_ELF; 0; 14,79,80
+# DOL_GULDUR: 15 MirkwoodCorrupted, 46 EastBight, 48 MirkwoodMountains, 119 DolGuldur
+DOL_GULDUR; 0; 15,46,48,119
+# DALE: 139 Dale
+DALE; 0; 139
+# DWARF: 11 IronHills, 78 Erebor
+DWARF; 0; 2, 11,78
+# GALADHRIM: 9 Lothlorien, 39 LotholorienEdge
+GALADHRIM; 0; 9,39
+# DUNLAND: 23 Dunland
+DUNLAND; 0; 23
+# URUK_HAI: 16 UrukHighlands, 60 FangornWasteland, 72 NanCurunir
 URUK_HAI; 0; 16,60,72
-FANGORN; 0; 24,57,60,67
-ROHAN; 0; 1,57,61,130
-GONDOR; 0; 7,8,18,19,28,56,57,58,59,62,68,69,76,82,93,114,147,148,151,152,153,154,155
-MORDOR; 0; 5,6,12,17,34,49,50,51,52,53,69,70,81,135,136,137,138
-DORWINION; 0; 112,140,160
-RHUN; 0; 157,158,159,160
-NEAR_HARAD; 0; 28,96,99,101,106,108,120,128,146,149,151
-MOREDAIN; 0; 97,105,121,122
-TAUREDAIN; 0; 100,103,109,110,123
+# FANGORN: 24 Fangorn, 67 FangornClearing
+FANGORN; 0; 24,67
+# ROHAN: 1 Rohan, 61 RohanWoodlands, 130 TheWold
+ROHAN; 0; 1,61,130
+# GONDOR: 7 Gondor, 8 WhiteMountains, 19 Pelargir, 58 DorenErnil, 59 DorenErnilHIlls, 62 GondorWoodlands, 76 PelennorFields, 82 PinnathGelin, 93 WhiteMountainsFoothills, 114 Lebennin, 147 Lossarnach, 148 ImlothMelui, 152 Lamedon, 153 LamedonHills, 154 BlackrootVale
+GONDOR; 0; 7,8,19,58,59,62,76,82,93,114,147,148,152,153,154
+# MORDOR: 5 Mordor, 6 MordorMountains, 50 Dagorlad, 51 Nurn, 53 NurnMarshes, 69 IthilienWasteland, 81 NanUngol, 135 Udun, 136 Gorgoroth, 137 MorgulVale, 138 EasternDesolation
+MORDOR; 0; 5,6,50,51,53,69,81,135,136,137,138
+# DORWINION: 112 EmynWinion, 140 Dorwinion
+DORWINION; 0; 112,140
+# RHUN: 157 Rhudel, 158 RhudelSteppe, 159 RhudelHills
+RHUN; 0; 157,158,159
+# NEAR_HARAD: 99 Umbar, 101 UmbarHills, 106 NearHaradFertile, 108 UmbarForest, 128 NearHaradFertileForest, 146 NearHaradRiverbank, 149 NearHaradOasis
+NEAR_HARAD; 0; 99,101,106,108,128,146,149
+# MOREDAIN: 97 FarHarad, 105 FarHaradForest
+MOREDAIN; 0; 97,105
+# TAUREDAIN: 100 FarHaradJungle, 109 FarHaradJungleEdge, 110 TauredainClearing
+TAUREDAIN; 0; 100,109,110
+# HALF_TROLL: 107 Pertorogwaith
 HALF_TROLL; 0; 107
-ALL; 66666; 37
+# ALL:
+# ALL; 66666;
