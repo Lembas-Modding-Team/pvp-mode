@@ -2,6 +2,7 @@ package pvpmode.command;
 
 import java.util.*;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.*;
@@ -105,11 +106,14 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
-            return getListOfStringsMatchingLastWord (args, MinecraftServer.getServer ().getAllUsernames ());
+            return getListOfStringsMatchingLastWord (args,
+                ArrayUtils.add (MinecraftServer.getServer ().getAllUsernames (), "info"));
         if (args.length == 2 && args[0].equals ("info"))
             return PvPCommandAdmin.getListOfStringsMatchingLastWord (args,
                 MinecraftServer.getServer ().getAllUsernames ());
-
+        if (args.length == 2 && !args[0].equals ("info"))
+            return PvPCommandAdmin.getListOfStringsMatchingLastWord (args,
+                "on", "off");
         return null;
     }
 
