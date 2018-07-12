@@ -1,5 +1,8 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 2.0.0-BETA
+### General changes:
+
 ## 1.3.0-BETA
 ### General changes:
 * PvP toggling for players is now disableable
