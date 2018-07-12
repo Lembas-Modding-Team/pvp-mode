@@ -83,7 +83,10 @@ public class PvPCommandList extends AbstractPvPCommand
         EnumPvPMode senderPlayerPvPMode = PvPUtils.getPvPMode (senderPlayer);
 
         ArrayList<EntityPlayerMP> safePlayers = new ArrayList<> ();
-        ArrayList<EntityPlayerMP> warmupPlayers = new ArrayList<> ();
+        TreeSet<EntityPlayerMP> warmupPlayers = new TreeSet<> ( (p1, p2) ->
+        {
+            return Long.compare (PvPUtils.getWarmupTimer (p1), PvPUtils.getWarmupTimer (p2));
+        });
         ArrayList<EntityPlayerMP> unsafePlayersLowPriority = new ArrayList<> ();
         TreeMap<Integer, Set<EntityPlayerMP>> unsafePlayers = new TreeMap<> ( (c1, c2) ->
         {
