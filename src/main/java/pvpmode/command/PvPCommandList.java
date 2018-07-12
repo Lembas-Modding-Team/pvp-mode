@@ -295,4 +295,12 @@ public class PvPCommandList extends AbstractPvPCommand
         }
     }
 
+    @Override
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, "all");
+        return null;
+    }
+
 }

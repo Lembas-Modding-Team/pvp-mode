@@ -162,4 +162,12 @@ public class PvPCommandHelp extends AbstractPvPCommand
         helpPart.getChatStyle ().setColor (textColor);
         sender.addChatMessage (commandPart.appendSibling (helpPart));
     }
+
+    @Override
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1){ return getListOfStringsMatchingLastWord (args, "pvp", "pvpadmin", "pvplist", "pvphelp",
+            "pvpconfig"); }
+        return null;
+    }
 }

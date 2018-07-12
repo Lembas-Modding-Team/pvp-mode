@@ -101,4 +101,12 @@ public class PvPCommandConfig extends AbstractPvPCommand
         valueText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
         sender.addChatMessage (keyText.appendSibling (valueText));
     }
+
+    @Override
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, "display");
+        return null;
+    }
 }
