@@ -31,6 +31,9 @@
 
 ### LOTR compatibility:
 * Players now optionally drop their skulls when killed with a weapon with the headhunter modifier even if keepInventory is on
+* Changed the default enemy biome configuration
+* Added an extended enemy biome configuration file template generated on startup and stored in the main MC directory
+* Added a map displaying the default enemy biomes generated on startup and stored in the main MC directory
 
 ### SuffixForge compatibility:
 * Added a configuration option to prevent soulbound items to be dropped with the partial inventory loss
