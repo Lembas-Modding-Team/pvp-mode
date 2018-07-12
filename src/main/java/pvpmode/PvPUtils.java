@@ -388,8 +388,12 @@ public class PvPUtils
             pvpMode == EnumPvPMode.ON ? EnumChatFormatting.RED : EnumChatFormatting.GREEN);
         ChatUtils.postLocalChatMessage (sender, "Is Overridden: ", Boolean.toString (isOverridden),
             EnumChatFormatting.GRAY, EnumChatFormatting.WHITE);
-        ChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying), EnumChatFormatting.GRAY,
-            EnumChatFormatting.WHITE);
+        if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
+        {
+            ChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying),
+                EnumChatFormatting.GRAY,
+                EnumChatFormatting.WHITE);
+        }
         ChatUtils.postLocalChatMessage (sender, "Warmup Timer: ", Long.toString (warmupTimer) + "s",
             EnumChatFormatting.GRAY, warmupTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
         ChatUtils.postLocalChatMessage (sender, "Cooldown Timer: ", Long.toString (cooldownTimer) + "s",
