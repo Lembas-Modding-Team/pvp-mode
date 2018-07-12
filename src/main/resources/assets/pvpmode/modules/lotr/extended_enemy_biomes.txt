@@ -1,0 +1,55 @@
+#
+# This file contains an extended version for the enemy biome overrides. It assigns more biomes to the "owner" factions than the default one.
+# To use it, just copy the configuration entries here into the enemy biome override configuration file.
+#
+# IMPORTANT: This file will be recreated on runtime. If you've made changes, they'll be lost.
+#
+
+# HOBBIT: 3 Shire, 4 ShireWoodlands, 74 WhiteDowns, 90 Breeland, 91 Chetwood, 131 ShireMoors, 132 ShireMarshes
+HOBBIT; 0; 3,4,74,90,91,131,132
+# RANGER_NORTH: 3 Shire, 4 ShireWoodlands, 21 LoneLands, 22 WeatherHills, 25 Angle, 29 Eriador, 30 EriadorDowns, 31 ErynVorn, 33 Midgewater, 65 BarrowDowns, 74 WhiteDowns, 90 Breeland, 91 Chetwood, 131 ShireMoors, 132 ShireMarshes, 141 TowerHills
+RANGER_NORTH; 0; 3,4,21,22,25,29,30,31,33,65,74,90,91,131,132,141
+# BLUE_MOUNTAINS: 47 BlueMountains, 87 BlueMountainsFoothills
+BLUE_MOUNTAINS; 0;47,87
+# HIGH_ELF: 44 Lindon, 45 LindonWoodlands, 64 LindonCoast, 141 TowerHills
+HIGH_ELF; 0; 44,45,64,141
+# GUNDABAD: 2 MistyMountains, 32 GreyMountains, 36 AnduinHills, 38 GladdenFields, 43 Eregion, 85 MistyMountainsFoothills, 86 GreyMountainsFoothills, 129 ValesofAnduin, 143 NorthernWilderland
+GUNDABAD; 0; 2,32,36,38,43,85,86,129,143
+# ANGMAR: 13 Trollshaws, 21 LoneLands, 22 WeatherHills, 26 Ettenmoors, 42 Angmar, 55 AngmarMountains, 65 BarrowDowns, 71 Coldfells
+ANGMAR; 0; 13,21,22,26,42,55,65,71
+# WOOD_ELF: 14 WoodlandRealm, 66 LongMarshes, 79 NorthernMirkwood, 80 WoodlandRealmHills
+WOOD_ELF; 0; 14,66,79,80
+# DOL_GULDUR: 15 MirkwoodCorrupted, 46 EastBight, 48 MirkwoodMountains, 49 Wilderland, 119 DolGuldur
+DOL_GULDUR; 0; 15,46,48,49,119
+# DALE: 66 LongMarshes, 139 Dale
+DALE; 0; 66,139
+# DWARF: 2 MistyMountains, 11 IronHills, 32 GreyMountains, 78 Erebor, 85 MistyMountainsFoothills, 86 GreyMountainsFoothills
+DWARF; 0; 2, 11,32,78,85,86
+# GALADHRIM: 9 Lothlorien, 10 FieldofCelebrant, 39 LotholorienEdge
+GALADHRIM; 0; 9,10,39
+# DUNLAND: 23 Dunland, 41 Enedwaith, 72 NanCurunir
+DUNLAND; 0; 23,41,72
+# URUK_HAI: 16 UrukHighlands, 60 FangornWasteland, 72 NanCurunir
+URUK_HAI; 0; 16,60,72
+# FANGORN: 24 Fangorn, 57 MouthsofEntwash, 60 FangornWasteland, 67 FangornClearing
+FANGORN; 0; 24,57,60,67
+# ROHAN: 1 Rohan, 57 MouthsofEntwash, 61 RohanWoodlands, 130 TheWold
+ROHAN; 0; 1,57,61,130
+# GONDOR: 7 Gondor, 8 WhiteMountains, 18 Ithilien, 19 Pelargir, 28 Harondor, 56 MouthsofAnduin, 57 MouthsofEntwash, 58 DorenErnil, 59 DorenErnilHIlls, 62 GondorWoodlands, 68 IthilienHills, 69 IthilienWasteland, 76 PelennorFields, 82 PinnathGelin, 93 WhiteMountainsFoothills, 114 Lebennin, 147 Lossarnach, 148 ImlothMelui, 151 SouthHarondor, 152 Lamedon, 153 LamedonHills, 154 BlackrootVale, 155 Andrast
+GONDOR; 0; 7,8,18,19,28,56,57,58,59,62,68,69,76,82,93,114,147,148,151,152,153,154,155
+# MORDOR: 5 Mordor, 6 MordorMountains, 12 DeadMarses, 17 EmynMuil, 34 BrownLands, 49 Wilderland, 50 Dagorlad, 51 Nurn, 52 SeaofNurnen, 53 NurnMarshes, 69 IthilienWasteland, 70 Nindalf, 81 NanUngol, 135 Udun, 136 Gorgoroth, 137 MorgulVale, 138 EasternDesolation
+MORDOR; 0; 5,6,12,17,34,49,50,51,52,53,69,70,81,135,136,137,138
+# DORWINION: 112 EmynWinion, 140 Dorwinion, 160 ErynCaran
+DORWINION; 0; 112,140,160
+# RHUN: 157 Rhudel, 158 RhudelSteppe, 159 RhudelHills, 160 ErynCaran
+RHUN; 0; 157,158,159,160
+# NEAR_HARAD: 28 Harondor, 96 NearHarad, 99 Umbar, 101 UmbarHills, 106 NearHaradFertile, 108 UmbarForest, 120 NearHaradSemidesert, 128 NearHaradFertileForest, 146 NearHaradRiverbank, 149 NearHaradOasis, 151 SouthHarondor
+NEAR_HARAD; 0; 28,96,99,101,106,108,120,128,146,149,151
+# MOREDAIN: 97 FarHarad, 105 FarHaradForest, 121 FarHaradAridSavannah, 122 FarHaradAridSavannahHills
+MOREDAIN; 0; 97,105,121,122
+# TAUREDAIN: 100 FarHaradJungle, 103 FarHaradJungleLake, 109 FarHaradJungleEdge, 110 TauredainClearing, 123 FarHaradSwampland
+TAUREDAIN; 0; 100,103,109,110,123
+# HALF_TROLL: 107 Pertorogwaith
+HALF_TROLL; 0; 107
+# ALL: 37 Meneltarma
+ALL; 66666; 37
