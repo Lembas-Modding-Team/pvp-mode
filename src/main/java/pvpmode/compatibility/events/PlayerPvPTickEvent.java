@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * This event will be fired every tick while a player is in PvP
- * 
+ *
  * @author CraftedMods
  *
  */

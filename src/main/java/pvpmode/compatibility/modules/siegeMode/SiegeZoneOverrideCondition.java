@@ -6,7 +6,7 @@ import siege.common.siege.SiegeDatabase;
 
 /**
  * An override condition forcing players to having PvP enabled while in sieges.
- * 
+ *
  * @author CraftedMods
  *
  */

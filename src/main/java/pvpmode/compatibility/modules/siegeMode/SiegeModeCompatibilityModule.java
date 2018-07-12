@@ -5,12 +5,12 @@ import net.minecraftforge.common.MinecraftForge;
 import pvpmode.PvPMode;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.*;
-import pvpmode.compatibility.events.PvPListEvent.*;
+import pvpmode.compatibility.events.PvPListEvent.UnsafeClassification;
 import siege.common.siege.SiegeDatabase;
 
 /**
  * The compatibility module for the Siege Mode Mod.
- * 
+ *
  * @author CraftedMods
  *
  */

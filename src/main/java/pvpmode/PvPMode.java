@@ -180,7 +180,9 @@ public class PvPMode
         FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
 
         if (config.hasChanged ())
+        {
             config.save ();
+        }
 
         overrideManager = new PvPOverrideManager ();
 
@@ -240,7 +242,9 @@ public class PvPMode
         }
 
         if (config.hasChanged ())
+        {
             config.save ();
+        }
 
         if (activatedPvPLoggingHandlers.size () > 0)
         {
@@ -274,6 +278,8 @@ public class PvPMode
     public void serverClose (FMLServerStoppingEvent event)
     {
         if (activatedPvPLoggingHandlers.size () > 0)
+        {
             combatLogManager.close ();
+        }
     }
 }

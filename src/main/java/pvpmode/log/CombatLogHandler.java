@@ -12,7 +12,7 @@ import net.minecraft.util.DamageSource;
  * targets (files, different file formats, SQL, E-Mail, ...) the combat logging
  * system uses modules which handle this logging - combat log handlers. Users
  * can activate or deactivate all registered modules via the configuration file.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -20,7 +20,7 @@ public interface CombatLogHandler
 {
     /**
      * Called on startup when the module is active and should be initialized.
-     * 
+     *
      * @param pvpLoggingDir
      *            The directory where the handler can store logging data
      */
@@ -28,7 +28,7 @@ public interface CombatLogHandler
 
     /**
      * Invoked when a PvP event should be logged.
-     * 
+     *
      * @param date
      *            The current date and time
      * @param attacker

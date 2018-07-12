@@ -4,7 +4,7 @@ import pvpmode.compatibility.ModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for the Siege Mode Mod.
- * 
+ *
  * @author CraftedMods
  *
  */

@@ -5,7 +5,7 @@ import cpw.mods.fml.common.Loader;
 /**
  * A compatibility module loader which determines whether a compatibility module
  * can be loaded by the presence of a mod.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -29,7 +29,9 @@ public abstract class ModCompatibilityModuleLoader implements CompatibilityModul
     public boolean canLoad ()
     {
         if (modLoaded == null)
+        {
             modLoaded = Loader.isModLoaded (modid);
+        }
         return modLoaded.booleanValue ();
     }
 

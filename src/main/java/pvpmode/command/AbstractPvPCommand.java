@@ -33,7 +33,7 @@ public abstract class AbstractPvPCommand extends CommandBase
 
     protected void usageError (ICommandSender sender)
     {
-        throw new WrongUsageException (this.getCommandUsage (sender));
+        throw new WrongUsageException (getCommandUsage (sender));
     }
 
     protected void requireArgumentLength (ICommandSender sender, String[] args, int requiredLength)

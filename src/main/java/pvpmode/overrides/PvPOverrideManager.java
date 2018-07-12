@@ -12,7 +12,7 @@ import pvpmode.*;
 /**
  * The override manager manages the conditional PvP mode overrides. Custom
  * override conditions can be registered here.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -25,7 +25,7 @@ public class PvPOverrideManager
     /**
      * Registers a new PvP override condition.<br/>
      * Override conditions can be registered everytime.
-     * 
+     *
      * @param condition
      *            The condition to register
      * @return Whether the condition could be registered
@@ -34,14 +34,16 @@ public class PvPOverrideManager
     {
         int priority = condition.getPriority ();
         if (overrideConditions.get (priority) == null)
+        {
             overrideConditions.put (priority, new LinkedHashSet<> ());
+        }
         return overrideConditions.get (priority).add (condition);
     }
 
     /**
      * Unregisters a new PvP override condition.<br/>
      * Override conditions can be unregistered everytime.
-     * 
+     *
      * @param condition
      *            The condition to unregister
      * @return Whether the condition could be unregistered
@@ -61,12 +63,13 @@ public class PvPOverrideManager
     public void onPlayerTick (PlayerTickEvent event)
     {
         if (!lastCheckTimes.containsKey (event.player.getUniqueID ()))
+        {
             lastCheckTimes.put (event.player.getUniqueID (), 0l);
+        }
 
-        // A ton of checks whether the PvP mode of the current player can be
-        // overridden
+        // A ton of checks whether the PvP mode of the current player can be overridden
         if (PvPUtils.arePvPModeOverridesEnabled () && event.side == Side.SERVER && event.phase == Phase.END
-            && (PvPUtils.getTime () - lastCheckTimes.get (event.player.getUniqueID ())) >= PvPMode.overrideCheckInterval
+            && PvPUtils.getTime () - lastCheckTimes.get (event.player.getUniqueID ()) >= PvPMode.overrideCheckInterval
             && !PvPUtils.isCreativeMode (event.player)
             && !PvPUtils.canFly (event.player))
         {
@@ -83,8 +86,7 @@ public class PvPOverrideManager
                         if (newPvPMode != pvpData.getForcedPvPMode ()
                             && newPvPMode.toPvPMode () != PvPUtils.getPvPMode (event.player))
                         {
-                            // Only display the message if the current PvP mode
-                            // really changed
+                            // Only display the message if the current PvP mode really changed
                             String message = condition.getForcedOverrideMessage (event.player, isPvPEnabled);
                             if (message != null)
                             {
@@ -94,8 +96,7 @@ public class PvPOverrideManager
                         pvpData.setForcedPvPMode (newPvPMode);
                         pvpData.setPvPWarmup (0);// Cancel warmup timer
                         lastCheckTimes.replace (event.player.getUniqueID (), PvPUtils.getTime ());
-                        return;// The first registered condition with the
-                               // highest priority will be applied
+                        return;// The first registered condition with the highest priority will be applied
                     }
                 }
 

@@ -9,7 +9,7 @@ import pvpmode.compatibility.events.PartialItemLossEvent;
 
 /**
  * The compatibility module for SuffixForge.
- * 
+ *
  * @author CraftedMods
  *
  */

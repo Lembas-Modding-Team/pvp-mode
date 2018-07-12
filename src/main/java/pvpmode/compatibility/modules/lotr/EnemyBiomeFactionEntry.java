@@ -3,7 +3,7 @@ package pvpmode.compatibility.modules.lotr;
 /**
  * A simple helper class containing a alignment faction specifier and the
  * minimum required alignment to not be hostile to this faction.
- * 
+ *
  * @author CraftedMods
  *
  */

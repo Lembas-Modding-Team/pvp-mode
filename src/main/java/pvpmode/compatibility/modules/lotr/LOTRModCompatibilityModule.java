@@ -20,7 +20,7 @@ import pvpmode.compatibility.events.*;
 
 /**
  * The compatibility module for the LOTR Mod.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -65,7 +65,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             initEnemyBiomeOverrides (configurationFolder);
         }
 
-        this.retrieveLOTREventHandler ();
+        retrieveLOTREventHandler ();
     }
 
     private void initEnemyBiomeOverrides (Path configurationFolder) throws IOException
@@ -129,12 +129,10 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                 String alignmentString = parts[1].trim ();
                                 try
                                 {
-                                    // Extract the minimum alignment from the
-                                    // second column
+                                    // Extract the minimum alignment from the second column
                                     Integer alignmentInt = Integer.parseInt (alignmentString);
 
-                                    // Extract the biome ids from the first
-                                    // column
+                                    // Extract the biome ids from the first column
                                     String[] biomeIds = parts[2].trim ().split (",");
                                     if (biomeIds.length <= 0)
                                     {
@@ -155,8 +153,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                             {
                                                 if (!biomeIdsInt.add (Integer.parseInt (biomeStringTrimmed)))
                                                 {
-                                                    // Duplicated biome ids
-                                                    // specified
+                                                    // Duplicated biome ids specified
                                                     FMLLog.warning (
                                                         "The lotr enemy biome config entry at line %d contains a duplicated biome id (%s).",
                                                         i, biomeStringTrimmed);
@@ -171,8 +168,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                         }
                                         if (biomeIdsInt.isEmpty ())
                                         {
-                                            // Biome ids were specified, but all
-                                            // were invalid
+                                            // Biome ids were specified, but all were invalid
                                             ++invalidEntryCounter;
                                             FMLLog.warning (
                                                 "The lotr enemy biome config entry at line %d contains only invalid biome ids. The entry will be ignored.",
@@ -180,15 +176,16 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                                         }
                                         else
                                         {
-                                            // Add the data to our data
-                                            // structured
+                                            // Add the data to our data structured
                                             readValidFactionEntries.add (faction);
                                             EnemyBiomeFactionEntry entry = new EnemyBiomeFactionEntry (faction,
                                                 alignmentInt);
                                             for (Integer biomeId : biomeIdsInt)
                                             {
                                                 if (!configurationData.containsKey (biomeId))
+                                                {
                                                     configurationData.put (biomeId, new HashSet<> ());
+                                                }
                                                 configurationData.get (biomeId).add (entry);
                                             }
                                             ++validEntryCounter;
@@ -224,12 +221,12 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         PvPMode.overrideManager.registerOverrideCondition (new MiddleEarthBiomeOverrideCondition (configurationData));
 
         // (Re)Create the LOTR biome id file
-        this.recreateFile (configurationFolder, LOTR_BIOME_IDS_FILE_NAME, "LOTR biome id file");
+        recreateFile (configurationFolder, LOTR_BIOME_IDS_FILE_NAME, "LOTR biome id file");
         // (Re)Create the extended enemy biome config file
-        this.recreateFile (configurationFolder, EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
+        recreateFile (configurationFolder, EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
             "LOTR extended enemy biomes configuration file template");
         // (Re)Create the default config map image
-        this.recreateFile (configurationFolder, DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
+        recreateFile (configurationFolder, DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
 
     }
 
@@ -254,8 +251,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         {
             Field eventHandlerField = LOTRMod.class.getDeclaredField ("modEventHandler");
             eventHandlerField.setAccessible (true);
-            this.eventHandler = (LOTREventHandler) eventHandlerField.get (null);
-            if (this.eventHandler != null)
+            eventHandler = (LOTREventHandler) eventHandlerField.get (null);
+            if (eventHandler != null)
             {
                 FMLLog.info ("Successfully retrieved the LOTR event handler");
             }
@@ -306,8 +303,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     @SubscribeEvent
     public void onAttackTargetSet (LivingSetAttackTargetEvent event)
     {
-        // Fixes that hired units attack players (they don't cause damage, but
-        // move to them)
+        // Fixes that hired units attack players (they don't cause damage, but move to
+        // them)
         if (event.target != null)
         {
             // The entity needs a target
@@ -321,13 +318,11 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
 
                 if (attackingMaster != null && targetMaster != null)
                 {
-                    // The attacking unit and the attacked entity have to be
-                    // assignable to players
+                    // The attacking unit and the attacked entity have to be assignable to players
                     if (PvPUtils.getPvPMode (attackingMaster) != EnumPvPMode.ON
                         || PvPUtils.getPvPMode (targetMaster) != EnumPvPMode.ON)
                     {
-                        // Cancel the attack target assignment of the PvP mode
-                        // prevents an attack
+                        // Cancel the attack target assignment of the PvP mode prevents an attack
                         npc.setAttackTarget (null);
                         npc.setRevengeTarget (null);
                     }
@@ -346,7 +341,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             {
                 EntityPlayer player = (EntityPlayer) event.entityLiving;
                 // The last two parameters are not used by the current implementation
-                this.eventHandler.onPlayerDrops (new PlayerDropsEvent (player, event.source, null, false));
+                eventHandler.onPlayerDrops (new PlayerDropsEvent (player, event.source, null, false));
             }
         }
     }

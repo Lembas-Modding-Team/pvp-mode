@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
  * An event fired for every item in the player's inventory upon death if the
  * partial inventory loss is enabled. Canceling the event prevents the stack
  * from being added to a list of items that *could* be dropped.
- * 
+ *
  * @author CraftedMods
  *
  */

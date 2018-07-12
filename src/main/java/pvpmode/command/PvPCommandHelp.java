@@ -166,8 +166,9 @@ public class PvPCommandHelp extends AbstractPvPCommand
     @Override
     public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
-        if (args.length == 1){ return getListOfStringsMatchingLastWord (args, "pvp", "pvpadmin", "pvplist", "pvphelp",
-            "pvpconfig"); }
+        if (args.length == 1)
+            return getListOfStringsMatchingLastWord (args, "pvp", "pvpadmin", "pvplist", "pvphelp",
+                "pvpconfig");
         return null;
     }
 }

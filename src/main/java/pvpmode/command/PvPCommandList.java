@@ -148,7 +148,9 @@ public class PvPCommandList extends AbstractPvPCommand
                                 }
                             }
                             if (!unsafePlayers.containsKey (proximity))
+                            {
                                 unsafePlayers.put (proximity, new HashSet<> ());
+                            }
                             unsafePlayers.get (proximity).add (player);
                         }
                         else

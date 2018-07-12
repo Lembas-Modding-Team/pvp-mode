@@ -84,8 +84,7 @@ public class PvPEventHandler
         {
             if (attacker == event.source.getEntity () && victim == event.entity)
             {
-                // Both involved entities are players which can attack each
-                // other
+                // Both involved entities are players which can attack each other
 
                 long time = PvPUtils.getTime ();
 
@@ -199,10 +198,8 @@ public class PvPEventHandler
                 // The player is or was in PvP
                 if (PvPUtils.isCreativeMode (player) || PvPUtils.canFly (player) || pvpTimer < time)
                 {
-                    // The player was in PvP or can no longer do PvP
-                    // even if
-                    // the
-                    // timer is running yet
+                    // The player was in PvP or can no longer do PvP even if the timer is running
+                    // yet
                     ChatUtils.green (player, "You're no longer in PvP combat");
                     data.setPvPTimer (0);
                 }
@@ -210,9 +207,7 @@ public class PvPEventHandler
                 {
                     // The player is in PvP
 
-                    // With this event the compatibility modules can add
-                    // custom
-                    // behavior
+                    // With this event the compatibility modules can add custom behavior
                     MinecraftForge.EVENT_BUS.post (new PlayerPvPTickEvent (player));
                 }
 
@@ -259,17 +254,23 @@ public class PvPEventHandler
                              * specified inventory contains too less items.
                              */
                             if (PvPMode.extendArmourInventorySearch)
+                            {
                                 tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
                                     player.inventory.mainInventory, 0, 8,
                                     PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER));
+                            }
                             if (PvPMode.extendHotbarInventorySearch)
+                            {
                                 tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
                                     null,
                                     -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            }
                             if (PvPMode.extendMainInventorySearch)
+                            {
                                 tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
                                     null,
                                     -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                            }
                         }
                     }
                 }
@@ -284,13 +285,8 @@ public class PvPEventHandler
         if (killer != null)
         {
             if (PvPMode.allowIndirectPvP)
-            {
                 return PvPUtils.getMaster (killer) != null;
-            }
-            else
-            {
-                return killer instanceof EntityPlayer;
-            }
+            else return killer instanceof EntityPlayer;
         }
         return false;
     }
@@ -324,13 +320,8 @@ public class PvPEventHandler
         {
             int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledInventorySlots.size () - 1);
             int randomSlot = filledInventorySlots.remove (randomSlotIndex);
-            player.func_146097_a (inventory[randomSlot], true, false); // Drops
-                                                                       // the
-                                                                       // item
-                                                                       // in the
-                                                                       // world
-            inventory[randomSlot] = null; // Make sure to delete the item from
-                                          // the player's inventory
+            player.func_146097_a (inventory[randomSlot], true, false); // Drops the item in the world
+            inventory[randomSlot] = null; // Make sure to delete the item from the player's inventory
         }
         return Math.max (0, inventoryLoss - size); // Returns the count of stacks which still have to be dropped
     }

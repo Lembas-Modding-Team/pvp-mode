@@ -9,7 +9,7 @@ package pvpmode.compatibility;
  * it.<br/>
  * There must not be any compile time dependencies to the referenced module or
  * other mods or libaries.
- * 
+ *
  * @author CraftedMods
  *
  */

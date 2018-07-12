@@ -9,7 +9,7 @@ import net.minecraft.util.DamageSource;
 /**
  * The combat log manager manages the combat logging modules and their
  * lifecycle. Logging events will be distributed to all active modules.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -17,7 +17,7 @@ public class PvPCombatLogManager
 {
     private final String defaultHandlerName;
 
-    private Map<String, CombatLogHandler> registeredCombatLogHandlers = new HashMap<String, CombatLogHandler> ();
+    private Map<String, CombatLogHandler> registeredCombatLogHandlers = new HashMap<> ();
 
     private Collection<String> activatedHandlerNames = new HashSet<> ();
 
@@ -26,7 +26,7 @@ public class PvPCombatLogManager
 
     /**
      * Creates a new combat log manager.
-     * 
+     *
      * @param defaultHandlerName
      *            The default combat log handler
      */
@@ -48,7 +48,7 @@ public class PvPCombatLogManager
     /**
      * Registers a combat logging handler instance with an unique name.</br>
      * This can only be done before preInit was called.
-     * 
+     *
      * @param name
      *            The unique handler name
      * @param handler
@@ -58,7 +58,7 @@ public class PvPCombatLogManager
     {
         checkState (canRegisterHandler);
         Objects.requireNonNull (name);
-        this.registeredCombatLogHandlers.put (name, handler);
+        registeredCombatLogHandlers.put (name, handler);
     }
 
     /**
@@ -73,7 +73,7 @@ public class PvPCombatLogManager
     /**
      * Returns whether the specified handler name is the name of a registered
      * handler.
-     * 
+     *
      * @param name
      *            The handler name which should be tested
      * @return Whether the name is valid
@@ -86,14 +86,14 @@ public class PvPCombatLogManager
     /**
      * Adds the specified handler name to the list of activated handlers.</br>
      * This only can be invoked after preInit.
-     * 
+     *
      * @param handler
      *            The handler which should be activated
      */
     public void activateHandler (String handler)
     {
         checkState (canActivateHandler);
-        this.activatedHandlerNames.add (handler);
+        activatedHandlerNames.add (handler);
     }
 
     /**
@@ -106,21 +106,21 @@ public class PvPCombatLogManager
     }
 
     /**
-     * Pre-initializes the log manager. After calling this method, handlers can
-     * be activated. From now on, no new handler can be registered.
+     * Pre-initializes the log manager. After calling this method, handlers can be
+     * activated. From now on, no new handler can be registered.
      */
     public void preInit ()
     {
         checkState (canRegisterHandler);
-        this.canRegisterHandler = false;
-        this.canActivateHandler = true;
+        canRegisterHandler = false;
+        canActivateHandler = true;
     }
 
     /**
      * Initializes the log manager and loads all activated handlers.</br>
      * You've to call preInit before invoking this function! After calling this
      * function, no new handler can be activated.
-     * 
+     *
      * @param pvpLoggingDir
      *            The directory where logging handlers can store data
      */
@@ -132,16 +132,16 @@ public class PvPCombatLogManager
 
         for (String handlerName : activatedHandlerNames)
         {
-            this.registeredCombatLogHandlers.get (handlerName).init (pvpLoggingDir);
+            registeredCombatLogHandlers.get (handlerName).init (pvpLoggingDir);
         }
 
         canActivateHandler = false;
     }
 
     /**
-     * This function will be invoked if pvp events occur which should be logged.
-     * The manager will distribute the supplied data to all active handlers.
-     * 
+     * This function will be invoked if pvp events occur which should be logged. The
+     * manager will distribute the supplied data to all active handlers.
+     *
      * @param attacker
      *            The attacking player
      * @param victim
@@ -161,14 +161,14 @@ public class PvPCombatLogManager
 
         for (String handlerName : activatedHandlerNames)
         {
-            this.registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attacker,
+            registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attacker,
                 victim, damageAmount, damageSource);
         }
     }
 
     /**
-     * This function will be invoked if the manager should shutdown. All
-     * registered handlers will now cleanup.
+     * This function will be invoked if the manager should shutdown. All registered
+     * handlers will now cleanup.
      */
     public void close ()
     {
@@ -176,7 +176,7 @@ public class PvPCombatLogManager
         checkState (!canActivateHandler);
         for (String handlerName : activatedHandlerNames)
         {
-            this.registeredCombatLogHandlers.get (handlerName).cleanup ();
+            registeredCombatLogHandlers.get (handlerName).cleanup ();
         }
     }
 

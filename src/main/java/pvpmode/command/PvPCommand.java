@@ -78,21 +78,21 @@ public class PvPCommand extends AbstractPvPCommand
 
         if (args.length > 0)
         {
-            switch (this.requireArguments (sender, args, 0, "cancel", "spy", "info"))
+            switch (requireArguments (sender, args, 0, "cancel", "spy", "info"))
             {
                 case "cancel":
-                    this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
-                    this.requireNonOverriddenSender (player);
+                    requireNonFlyingNonCreativeNonCombatSender (player);
+                    requireNonOverriddenSender (player);
                     cancelPvPTimer (player, data);
                     break;
                 case "spy":
                     if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
                     {
-                        this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
-                        this.requireSenderWithPvPEnabled (player);
+                        requireNonFlyingNonCreativeNonCombatSender (player);
+                        requireSenderWithPvPEnabled (player);
                         if (args.length > 1)
                         {
-                            if (this.requireArguments (sender, args, 1, "on", "off").equals ("on"))
+                            if (requireArguments (sender, args, 1, "on", "off").equals ("on"))
                             {
                                 toggleSpyMode (player, data, Boolean.TRUE);
                             }
@@ -112,23 +112,23 @@ public class PvPCommand extends AbstractPvPCommand
                     }
                     break;
                 case "info":
-                    PvPUtils.displayPvPStats ((ICommandSender) player, (EntityPlayer) player);
+                    PvPUtils.displayPvPStats (player, player);
                     break;
             }
         }
         else
         {
-            this.requireNonFlyingNonCreativeNonCombatSender ((EntityPlayer) player);
-            this.requireNonOverriddenSender (player);
+            requireNonFlyingNonCreativeNonCombatSender (player);
+            requireNonOverriddenSender (player);
             togglePvPMode (player, data);
         }
     }
 
     private void requireNonFlyingNonCreativeNonCombatSender (EntityPlayer player)
     {
-        this.requireNonCreativeSender (player);
-        this.requireNonFlyingSender (player);
-        this.requireNonPvPSender (player);
+        requireNonCreativeSender (player);
+        requireNonFlyingSender (player);
+        requireNonPvPSender (player);
     }
 
     private void cancelPvPTimer (EntityPlayer player, PvPData data)

@@ -1,6 +1,6 @@
 package pvpmode.log;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +8,7 @@ import net.minecraft.util.DamageSource;
 
 /**
  * A combat log handler which simply logs the PvP events to a file.
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -27,7 +27,7 @@ public class SimpleCombatLogHandler extends AbstractFileCombatLogHandler
     {
         writer.println (String.format (
             "[%s] %s or a (hired) unit of this player initiated an attack against %s dealing %.2f HP damage of the type %s",
-            SimpleDateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
+            DateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
             victim.getDisplayName (), damageAmount, damageSource.damageType));
 
     }

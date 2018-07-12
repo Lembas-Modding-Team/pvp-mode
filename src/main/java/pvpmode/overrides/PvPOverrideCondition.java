@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * The interface for an override condition. Implement it to create custom
  * override conditions.
- * 
+ *
  * @author CraftedMods
  *
  */

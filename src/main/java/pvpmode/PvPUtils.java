@@ -100,21 +100,13 @@ public class PvPUtils
         {
             // No PvP mode overrides apply
             if (data.getPvPTimer () == 0)
-            {
                 // Player is not in PvP
                 return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
-            }
-            else
-            {
-                // Player is in PvP
+            else // Player is in PvP
                 return EnumPvPMode.ON;
-            }
         }
-        else
-        {
-            // PvP mode overrides apply
+        else // PvP mode overrides apply
             return forcedPvPMode.toPvPMode ();
-        }
     }
 
     /**
@@ -144,7 +136,7 @@ public class PvPUtils
 
         double distance = Math.sqrt (x * x + z * z);
 
-        return (int) ( (distance) / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
+        return (int) (distance / PvPMode.roundFactor + 1) * PvPMode.roundFactor;
     }
 
     /**
@@ -180,7 +172,9 @@ public class PvPUtils
         for (int i = startIndex; i < endIndex + 1; i++)
         {
             if (inventory[i] != null && (filter != null ? filter.test (inventory[i]) : true))
+            {
                 filledSlots.add (i);
+            }
         }
         return filledSlots;
     }
@@ -204,7 +198,7 @@ public class PvPUtils
     /**
      * Writes the contents of the supplied stream to the specified file.<br/>
      * The file must exist on the filesystem.
-     * 
+     *
      * @param stream
      *            A supplier which creates the input stream
      * @param file
@@ -237,9 +231,7 @@ public class PvPUtils
     public static boolean matches (ICommand command, String name)
     {
         if (command.getCommandName ().equals (name))
-        {
             return true;
-        }
         else if (command.getCommandAliases () != null)
             return command.getCommandAliases ().contains (name);
         else return false;
@@ -259,8 +251,7 @@ public class PvPUtils
         if (entity instanceof IEntityOwnable)
             return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
 
-        // Via this event the compatibility modules will be asked to extract the
-        // master
+        // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
     }

@@ -7,7 +7,7 @@ import net.minecraft.util.DamageSource;
 /**
  * An event fired every time before the partial inventory loss applies. If
  * canceled, the partial inventory loss won't apply for the player.
- * 
+ *
  * @author CraftedMods
  *
  */

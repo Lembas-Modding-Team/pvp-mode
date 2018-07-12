@@ -42,7 +42,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     @Override
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
-        ArrayList<Triple<String, String, String>> messages = new ArrayList<Triple<String, String, String>> ();
+        ArrayList<Triple<String, String, String>> messages = new ArrayList<> ();
         messages.add (Triple.of ("pvpadmin ", "<player> [on|off]",
             "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF). The player will be informed about that."));
         messages.add (Triple.of ("pvpadmin info ", "<player>",
@@ -73,14 +73,14 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
             PvPData data = PvPUtils.getPvPData (player);
 
-            this.requireNonCreativePlayer (player);
-            this.requireNonFlyingPlayer (player);
-            this.requireNonOverriddenPlayer (player);
-            this.requireNonPvPPlayer (player);
+            requireNonCreativePlayer (player);
+            requireNonFlyingPlayer (player);
+            requireNonOverriddenPlayer (player);
+            requireNonPvPPlayer (player);
 
             if (args.length > 1)
             {
-                switch (this.requireArguments (admin, args, 1, "on", "off"))
+                switch (requireArguments (admin, args, 1, "on", "off"))
                 {
                     case "off":
                         togglePvPMode (admin, player, data, Boolean.FALSE);
@@ -103,16 +103,17 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         return index == 0 ? args.length > 0 && !args[0].equals ("info") : index == 1;
     }
 
+    @Override
     public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args,
                 ArrayUtils.add (MinecraftServer.getServer ().getAllUsernames (), "info"));
         if (args.length == 2 && args[0].equals ("info"))
-            return PvPCommandAdmin.getListOfStringsMatchingLastWord (args,
+            return CommandBase.getListOfStringsMatchingLastWord (args,
                 MinecraftServer.getServer ().getAllUsernames ());
         if (args.length == 2 && !args[0].equals ("info"))
-            return PvPCommandAdmin.getListOfStringsMatchingLastWord (args,
+            return CommandBase.getListOfStringsMatchingLastWord (args,
                 "on", "off");
         return null;
     }

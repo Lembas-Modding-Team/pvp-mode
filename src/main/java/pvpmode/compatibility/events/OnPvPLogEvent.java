@@ -7,7 +7,7 @@ import net.minecraft.util.DamageSource;
 /**
  * An event fired every time before a combat event is logged. If canceled, the
  * event won't be logged.
- * 
+ *
  * @author CraftedMods
  *
  */

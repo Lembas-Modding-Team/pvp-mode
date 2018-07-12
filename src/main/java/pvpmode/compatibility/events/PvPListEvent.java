@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * A basic event class for pvplist-related events
- * 
+ *
  * @author CraftedMods
  *
  */
@@ -41,7 +41,7 @@ public abstract class PvPListEvent extends Event
      * An event which will be fired for every player while the proximity
      * informations will be computed. If canceled, the consumer player won't receive
      * proximity informations from the provider player.
-     * 
+     *
      * @author CraftedMods
      *
      */
@@ -61,7 +61,7 @@ public abstract class PvPListEvent extends Event
      * means that PvP is enabled for that player). If this event is canceled, the
      * player will be seen as unsafe, but with a lower priority, which means, that
      * that player will be displayed further down on the list.
-     * 
+     *
      * @author CraftedMods
      *
      */
