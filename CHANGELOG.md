@@ -2,6 +2,7 @@
 
 ## 1.3.0-BETA
 ### General changes:
+* PvP toggling for players is now disableable
 
 ### Bug fixes:
 * Fixed an exception occurring with `pvpadmin info <player>` when no player was specified

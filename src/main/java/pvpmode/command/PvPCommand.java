@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
@@ -29,8 +29,11 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
-        messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
+        if (PvPMode.pvpTogglingEnabled)
+        {
+            messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
+            messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
+        }
         messages.add (Triple.of ("pvp info", "", "Displays your PvP stats."));
         if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
         {
@@ -43,11 +46,14 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        messages.add (
-            Triple.of ("pvp", "",
-                "Starts your warmup timer. After the timer runs out, your PvP mode will be toggled. Your PvP mode mustn't be overridden."));
-        messages.add (Triple.of ("pvp cancel", "",
-            "Cancels your warmup timer, if it's running. Your PvP mode mustn't be overridden."));
+        if (PvPMode.pvpTogglingEnabled)
+        {
+            messages.add (
+                Triple.of ("pvp", "",
+                    "Starts your warmup timer. After the timer runs out, your PvP mode will be toggled. Your PvP mode mustn't be overridden."));
+            messages.add (Triple.of ("pvp cancel", "",
+                "Cancels your warmup timer, if it's running. Your PvP mode mustn't be overridden."));
+        }
         messages.add (Triple.of ("pvp info", "",
             "Displays your PvP mode, your spying settings, your warmup, cooldown and PvP timer, whether your PvP mode is overridden, and other PvP Mode Mod related stats about you."));
         if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
@@ -81,34 +87,29 @@ public class PvPCommand extends AbstractPvPCommand
             switch (requireArguments (sender, args, 0, "cancel", "spy", "info"))
             {
                 case "cancel":
+                    requireToggelingEnabled ();
                     requireNonFlyingNonCreativeNonCombatSender (player);
                     requireNonOverriddenSender (player);
                     cancelPvPTimer (player, data);
                     break;
                 case "spy":
-                    if (PvPMode.allowPerPlayerSpying && PvPMode.radar)
+                    requireSpying ();
+                    requireNonFlyingNonCreativeNonCombatSender (player);
+                    requireSenderWithPvPEnabled (player);
+                    if (args.length > 1)
                     {
-                        requireNonFlyingNonCreativeNonCombatSender (player);
-                        requireSenderWithPvPEnabled (player);
-                        if (args.length > 1)
+                        if (requireArguments (sender, args, 1, "on", "off").equals ("on"))
                         {
-                            if (requireArguments (sender, args, 1, "on", "off").equals ("on"))
-                            {
-                                toggleSpyMode (player, data, Boolean.TRUE);
-                            }
-                            else
-                            {
-                                toggleSpyMode (player, data, Boolean.FALSE);
-                            }
+                            toggleSpyMode (player, data, Boolean.TRUE);
                         }
                         else
                         {
-                            toggleSpyMode (player, data, null);
+                            toggleSpyMode (player, data, Boolean.FALSE);
                         }
                     }
                     else
                     {
-                        ChatUtils.red (player, "This feature was disabled by the server");
+                        toggleSpyMode (player, data, null);
                     }
                     break;
                 case "info":
@@ -117,11 +118,25 @@ public class PvPCommand extends AbstractPvPCommand
             }
         }
         else
+
         {
+            requireToggelingEnabled ();
             requireNonFlyingNonCreativeNonCombatSender (player);
             requireNonOverriddenSender (player);
             togglePvPMode (player, data);
         }
+    }
+
+    private void requireSpying ()
+    {
+        if (! (PvPMode.allowPerPlayerSpying && PvPMode.radar))
+            this.featureDisabled ();
+    }
+
+    private void requireToggelingEnabled ()
+    {
+        if (!PvPMode.pvpTogglingEnabled)
+            this.featureDisabled ();
     }
 
     private void requireNonFlyingNonCreativeNonCombatSender (EntityPlayer player)

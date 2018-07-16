@@ -54,6 +54,7 @@ public class PvPMode
     public static boolean allowIndirectPvP;
     public static boolean prefixGlobalMessages;
     public static String globalMessagePrefix;
+    public static boolean pvpTogglingEnabled;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -147,6 +148,8 @@ public class PvPMode
         globalMessagePrefix = config.getString ("Global Chat Message Prefix", MAIN_CONFIGURATION_CATEGORY,
             ChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX,
             "The prefix appended to every global chat message (if prefixing is enabled). It must not be blank. You can also use the MC formatting codes to give the prefix a color.");
+        pvpTogglingEnabled = config.getBoolean ("Enable PvP Toggling", MAIN_CONFIGURATION_CATEGORY, true,
+            "If true, players can decide by themselves with /pvp whether they want to have PvP enabled or not (as long as no overrides apply).");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
