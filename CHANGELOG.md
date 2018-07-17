@@ -3,6 +3,9 @@
 ## 1.3.0-BETA
 ### General changes:
 
+### Bug fixes:
+* Fixed an exception occurring with `pvpadmin info <player>` when no player was specified
+
 ## 1.2.0-BETA
 ### General changes:
 

@@ -64,6 +64,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
         if (args[0].equals ("info"))
         {
+            requireMinLength (admin, args, 2);
             PvPUtils.displayPvPStats (admin,
                 CommandBase.getPlayer (admin, args[1]));
         }
