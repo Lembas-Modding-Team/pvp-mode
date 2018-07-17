@@ -55,6 +55,8 @@ public class PvPMode
     public static boolean prefixGlobalMessages;
     public static String globalMessagePrefix;
     public static boolean pvpTogglingEnabled;
+    public static boolean defaultPvPMode;
+    public static boolean forceDefaultPvPMode;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -150,6 +152,10 @@ public class PvPMode
             "The prefix appended to every global chat message (if prefixing is enabled). It must not be blank. You can also use the MC formatting codes to give the prefix a color.");
         pvpTogglingEnabled = config.getBoolean ("Enable PvP Toggling", MAIN_CONFIGURATION_CATEGORY, true,
             "If true, players can decide by themselves with /pvp whether they want to have PvP enabled or not (as long as no overrides apply).");
+        defaultPvPMode = config.getBoolean ("Default PvP Mode", MAIN_CONFIGURATION_CATEGORY, false,
+            "This specifies the default PvP mode players will have (true for PvP enabled, false for disabled).");
+        forceDefaultPvPMode = config.getBoolean ("Force Default PvP Mode", MAIN_CONFIGURATION_CATEGORY, false,
+            "If true, the default PvP mode will be forced for all players. For that 'Enable PvP Toggling' has to be set to false. Admins can still override the PvP mode of a player with /pvpadmin, and the override conditions still overrude this setting.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -181,6 +187,12 @@ public class PvPMode
         }
 
         FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
+
+        if (PvPMode.forceDefaultPvPMode && PvPMode.pvpTogglingEnabled)
+        {
+            FMLLog.warning (
+                "The configuration property 'Force Default PvP Mode' is set to true but 'Pvp Toggeling Enabled' is set to false, but required to be set to true.");
+        }
 
         if (config.hasChanged ())
         {
