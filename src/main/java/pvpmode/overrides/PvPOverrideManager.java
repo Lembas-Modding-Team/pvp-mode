@@ -87,10 +87,30 @@ public class PvPOverrideManager
                             && newPvPMode.toPvPMode () != PvPUtils.getPvPMode (event.player))
                         {
                             // Only display the message if the current PvP mode really changed
-                            String message = condition.getForcedOverrideMessage (event.player, isPvPEnabled);
+
+                            boolean announceGlobal = isPvPEnabled ? PvPMode.announcePvPEnabledGlobally
+                                : PvPMode.announcePvPDisabledGlobally;
+
+                            // Get the global or the local message variant
+                            String message = announceGlobal
+                                ? condition.getForcedOverrideMessage (event.player, isPvPEnabled)
+                                : condition.getLocalForcedOverrideMessage (event.player, isPvPEnabled);
                             if (message != null)
                             {
-                                ChatUtils.postGlobalChatMessages (EnumChatFormatting.RED, message);
+                                // If there's a message, post it
+
+                                // Messages saying that PvP is enabled are red, the other ones are green
+                                EnumChatFormatting messageColor = isPvPEnabled ? EnumChatFormatting.RED
+                                    : EnumChatFormatting.GREEN;
+                                if (announceGlobal)
+                                {
+                                    ChatUtils.postGlobalChatMessages (
+                                        messageColor, message);
+                                }
+                                else
+                                {
+                                    ChatUtils.postLocalChatMessages (event.player, messageColor, message);
+                                }
                             }
                         }
                         pvpData.setForcedPvPMode (newPvPMode);
@@ -116,4 +136,5 @@ public class PvPOverrideManager
             lastCheckTimes.replace (event.player.getUniqueID (), PvPUtils.getTime ());
         }
     }
+
 }

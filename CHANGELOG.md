@@ -7,6 +7,9 @@
 * Added a configuration option to force the default PvP mode for every player if PvP toggling is disabled
 * Added `pvpadmin <player> default` which sets the PvP mode of a player to the default one
 
+### Chat messages:
+* It's now configurable whether chat messages announcing PvP mode changes are displayed globally or locally
+
 ### Bug fixes:
 * Fixed an exception occurring with `pvpadmin info <player>` when no player was specified
 * Fixed that the warmup timer ran out up to one second later than specified under some circumstances

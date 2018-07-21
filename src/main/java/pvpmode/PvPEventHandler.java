@@ -183,13 +183,28 @@ public class PvPEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                ChatUtils.postGlobalChatMessages (EnumChatFormatting.RED, "PvP is now enabled for "
-                                    + player.getDisplayName ());
+                                if (PvPMode.announcePvPEnabledGlobally)
+                                {
+                                    ChatUtils.postGlobalChatMessages (EnumChatFormatting.RED, "PvP is now enabled for "
+                                        + player.getDisplayName ());
+                                }
+                                else
+                                {
+                                    ChatUtils.red (player, "PvP is now enabled for you");
+                                }
                             }
                             else
                             {
                                 data.setPvPEnabled (false);
-                                ChatUtils.green (player, "PvP is now disabled for you");
+                                if (PvPMode.announcePvPDisabledGlobally)
+                                {
+                                    ChatUtils.postGlobalChatMessages (EnumChatFormatting.GREEN, "PvP is now disabled for "
+                                        + player.getDisplayName ());
+                                }
+                                else
+                                {
+                                    ChatUtils.green (player, "PvP is now disabled for you");
+                                }
                             }
 
                             data.setPvPCooldown (time + PvPMode.cooldown);

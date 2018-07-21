@@ -57,6 +57,8 @@ public class PvPMode
     public static boolean pvpTogglingEnabled;
     public static boolean defaultPvPMode;
     public static boolean forceDefaultPvPMode;
+    public static boolean announcePvPEnabledGlobally;
+    public static boolean announcePvPDisabledGlobally;
 
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
@@ -156,6 +158,10 @@ public class PvPMode
             "This specifies the default PvP mode players will have (true for PvP enabled, false for disabled).");
         forceDefaultPvPMode = config.getBoolean ("Force Default PvP Mode", MAIN_CONFIGURATION_CATEGORY, false,
             "If true, the default PvP mode will be forced for all players. For that 'Enable PvP Toggling' has to be set to false. Admins can still override the PvP mode of a player with /pvpadmin, and the override conditions still overrude this setting.");
+        announcePvPEnabledGlobally = config.getBoolean ("Announce PvP Enabled Globally", MAIN_CONFIGURATION_CATEGORY,
+            true, "Sends a message to all players if PvP is enabled for a player.");
+        announcePvPDisabledGlobally = config.getBoolean ("Announce PvP Disabled Globally", MAIN_CONFIGURATION_CATEGORY,
+            false, "Sends a message to all players if PvP is disabled for a player.");
 
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
