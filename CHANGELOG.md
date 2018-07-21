@@ -3,7 +3,7 @@
 ## 1.3.0-BETA
 ### General changes:
 
-### Bugfixes:
+### Bug fixes:
 * Fixed that the warmup timer ran out up to one second later than specified under some circumstances
 
 ## 1.2.0-BETA
