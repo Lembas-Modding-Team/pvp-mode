@@ -1,0 +1,26 @@
+#
+# This file lists all biome and alignment dependent overrides, forcing PvP mode to OFF when conditions are met.
+#
+# Basically this file allows you to specify in which biome a player which is aligned to a faction you assign to this biome is forced to have PvP disabled.
+# Also, you can define what "aligned" means (in terms of alignment): If the alignment of the player is greater than the specified one, the player is seen as aligned.
+#
+# A configuration entry consists of one line, which contains three columns separated by a semicolon (;).
+#
+# The first part is the faction name, which is the name which is internally used by the game (see the command /alignment). Also you can use the specifier ALL,
+# which means that every player, regardless of his alignment, is forced to have PvP disabled on the specified biomes.
+#
+# The second part is the minimum required alignment (see above). If the specified faction is ALL, the alignment value will be ignored (but has to be a valid number).
+#
+# The third part is a comma-separated list of biome ids where the specified condition applies.
+# A complete list of all Biome ID numbers is provided in LOTRmod_biomeids.txt in the main directory.
+#
+# If this file is deleted, it'll be recreated with default configuration data.
+# On startup you'll see in the logs if the mod found errors in this file - then you can fix them.
+#
+# Some words to the file format: 
+# Comments cover a whole line, which must start with a #. The PvP Mode Mod will ignore them.
+# Blank lines and spaces will be ignored too - you can put as much spaces between the configuration entries as you want.
+#
+
+# ALL: 3 Shire, 4 ShireWoodlands, 74 WhiteDowns, 131 ShireMoors, 132 ShireMarshes
+# ALL; 0; 3,4,74,131,132

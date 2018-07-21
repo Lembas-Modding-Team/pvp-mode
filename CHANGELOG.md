@@ -10,6 +10,9 @@
 ### Chat messages:
 * It's now configurable whether chat messages announcing PvP mode changes are displayed globally or locally
 
+#### LOTR compatibility:
+* Added an optional  "safe biome" override condition which forces PvP to OFF
+
 ### Bug fixes:
 * Fixed an exception occurring with `pvpadmin info <player>` when no player was specified
 * Fixed that the warmup timer ran out up to one second later than specified under some circumstances
