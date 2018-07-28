@@ -162,7 +162,7 @@ public class PvPEventHandler
                 {
                     if (!PvPUtils.canFly (player))
                     {
-                        if (toggleTime != 0 && toggleTime < time)
+                        if (toggleTime != 0 && toggleTime <= time)
                         {
                             data.setPvPWarmup (0);
 

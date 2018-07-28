@@ -5,6 +5,7 @@
 
 ### Bug fixes:
 * Fixed an exception occurring with `pvpadmin info <player>` when no player was specified
+* Fixed that the warmup timer ran out up to one second later than specified under some circumstances
 
 ## 1.2.0-BETA
 ### General changes:
