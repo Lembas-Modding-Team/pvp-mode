@@ -101,7 +101,7 @@ public class PvPUtils
             // No PvP mode overrides apply
             if (data.getPvPTimer () == 0)
                 // Player is not in PvP
-                return data.isPvPEnabled () ? EnumPvPMode.ON : EnumPvPMode.OFF;
+                return EnumPvPMode.fromBoolean (data.isPvPEnabled ());
             else // Player is in PvP
                 return EnumPvPMode.ON;
         }
@@ -377,6 +377,7 @@ public class PvPUtils
         long warmupTimer = PvPUtils.getWarmupTimer (displayedPlayer);
         long cooldownTimer = PvPUtils.getCooldownTimer (displayedPlayer);
         long pvpTimer = PvPUtils.getPvPTimer (displayedPlayer);
+        boolean defaultPvPModeForced = data.isDefaultModeForced ();
 
         ChatUtils.green (sender, String.format ("------ %sPvP Stats ------", isSenderDisplayed ? "Your " : ""));
         if (!isSenderDisplayed)
@@ -400,6 +401,13 @@ public class PvPUtils
             EnumChatFormatting.GRAY, cooldownTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
         ChatUtils.postLocalChatMessage (sender, "PvP Timer: ", Long.toString (pvpTimer) + "s", EnumChatFormatting.GRAY,
             pvpTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+        if (PvPMode.forceDefaultPvPMode && !PvPMode.pvpTogglingEnabled && !isOverridden)
+        {
+            ChatUtils.postLocalChatMessage (sender, "Default PvP Mode Forced: ",
+                Boolean.toString (defaultPvPModeForced),
+                EnumChatFormatting.GRAY,
+                EnumChatFormatting.WHITE);
+        }
         ChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
     }
 

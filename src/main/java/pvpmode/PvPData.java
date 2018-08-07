@@ -22,6 +22,7 @@ public class PvPData
     private static final String FORCED_PVP_MODE_NBT_KEY = "ForcedPvPMode";
     private static final String PVP_TIMER_NBT_KEY = "PvPTimer";
     private static final String SPYING_ENABLED_NBT_KEY = "Spying";
+    private static final String DEFAULT_MODE_FORCED_NBT_KEY = "DefaultModeForced";
 
     public PvPData (EntityPlayer player)
     {
@@ -52,7 +53,8 @@ public class PvPData
      */
     public boolean isPvPEnabled ()
     {
-        return pvpDataTag.getBoolean (PVP_ENABLED_NBT_KEY);
+        return pvpDataTag.hasKey (PVP_ENABLED_NBT_KEY) ? pvpDataTag.getBoolean (PVP_ENABLED_NBT_KEY)
+            : PvPMode.defaultPvPMode;
     }
 
     public void setPvPEnabled (boolean pvpEnabled)
@@ -108,6 +110,17 @@ public class PvPData
     public void setSpyingEnabled (boolean spyingEnabled)
     {
         pvpDataTag.setBoolean (SPYING_ENABLED_NBT_KEY, spyingEnabled);
+    }
+
+    public boolean isDefaultModeForced ()
+    {
+        return pvpDataTag.hasKey (DEFAULT_MODE_FORCED_NBT_KEY) ? pvpDataTag.getBoolean (DEFAULT_MODE_FORCED_NBT_KEY)
+            : true;
+    }
+
+    public void setDefaultModeForced (boolean defaultModeForced)
+    {
+        pvpDataTag.setBoolean (DEFAULT_MODE_FORCED_NBT_KEY, defaultModeForced);
     }
 
 }

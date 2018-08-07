@@ -154,7 +154,6 @@ public class PvPEventHandler
             PvPData data = PvPUtils.getPvPData (player);
 
             long pvpTimer = data.getPvPTimer ();
-            long toggleTime = data.getPvPWarmup ();
 
             if (!PvPUtils.isPvPModeOverriddenForPlayer (player) && pvpTimer == 0)
             {
@@ -162,6 +161,21 @@ public class PvPEventHandler
                 {
                     if (!PvPUtils.canFly (player))
                     {
+                        if (PvPMode.forceDefaultPvPMode && !PvPMode.pvpTogglingEnabled)
+                        {
+                            if (data.isDefaultModeForced () && data.isPvPEnabled () != PvPMode.defaultPvPMode)
+                            {
+                                data.setPvPWarmup (time);
+                            }
+                            if (!data.isDefaultModeForced () && data.isPvPEnabled () == PvPMode.defaultPvPMode
+                                && data.getPvPWarmup () == 0)
+                            {
+                                data.setDefaultModeForced (true);
+                            }
+                        }
+
+                        long toggleTime = data.getPvPWarmup ();
+
                         if (toggleTime != 0 && toggleTime <= time)
                         {
                             data.setPvPWarmup (0);
@@ -181,13 +195,13 @@ public class PvPEventHandler
                             data.setPvPCooldown (time + PvPMode.cooldown);
                         }
                     }
-                    else if (toggleTime != 0)
+                    else if (data.getPvPWarmup () != 0)
                     {
                         ChatUtils.yellow (player, "Your warmup timer was canceled because you're able to fly now");
                         data.setPvPWarmup (0);
                     }
                 }
-                else if (toggleTime != 0)
+                else if (data.getPvPWarmup () != 0)
                 {
                     ChatUtils.yellow (player, "Your warmup timer was canceled because you're in creative mode now");
                     data.setPvPWarmup (0);

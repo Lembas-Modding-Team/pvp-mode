@@ -21,7 +21,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     @Override
     public String getCommandUsage (ICommandSender sender)
     {
-        return "/pvpadmin <player> [on|off] OR /pvpadmin info <player>";
+        return "/pvpadmin <player> [on|off|default] OR /pvpadmin info <player>";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
     {
         ArrayList<Triple<String, String, String>> messages = new ArrayList<> ();
-        messages.add (Triple.of ("pvpadmin ", "<player> [on|off]", "Toggles PvP for another player."));
+        messages.add (Triple.of ("pvpadmin ", "<player> [on|off|default]", "Toggles PvP for another player."));
         messages.add (Triple.of ("pvpadmin info ", "<player>", "Displays another player's PvP stats."));
         return messages;
     }
@@ -43,8 +43,8 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
         ArrayList<Triple<String, String, String>> messages = new ArrayList<> ();
-        messages.add (Triple.of ("pvpadmin ", "<player> [on|off]",
-            "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF). The player will be informed about that."));
+        messages.add (Triple.of ("pvpadmin ", "<player> [on|off|default]",
+            "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF or the default one set in the configs). The player will be informed about that."));
         messages.add (Triple.of ("pvpadmin info ", "<player>",
             "Displays the PvP mode, the spying settings, the warmup, cooldown and the PvP timer, whether the PvP mode is overridden, and other PvP Mode Mod related stats about the specified player."));
         return messages;
@@ -81,13 +81,16 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
             if (args.length > 1)
             {
-                switch (requireArguments (admin, args, 1, "on", "off"))
+                switch (requireArguments (admin, args, 1, "on", "off", "default"))
                 {
                     case "off":
                         togglePvPMode (admin, player, data, Boolean.FALSE);
                         break;
                     case "on":
                         togglePvPMode (admin, player, data, Boolean.TRUE);
+                        break;
+                    case "default":
+                        togglePvPMode (admin, player, data, PvPMode.defaultPvPMode);
                         break;
                 }
             }
@@ -115,13 +118,12 @@ public class PvPCommandAdmin extends AbstractPvPCommand
                 MinecraftServer.getServer ().getAllUsernames ());
         if (args.length == 2 && !args[0].equals ("info"))
             return CommandBase.getListOfStringsMatchingLastWord (args,
-                "on", "off");
+                "on", "off", "default");
         return null;
     }
 
     private void togglePvPMode (ICommandSender sender, EntityPlayer player, PvPData data, Boolean mode)
     {
-
         if (mode == null ? true : mode.booleanValue () != data.isPvPEnabled ())
         {
             /*
@@ -131,9 +133,11 @@ public class PvPCommandAdmin extends AbstractPvPCommand
              */
             ChatUtils.red (player, "Your PvP mode is being toggled by an admin");
             data.setPvPWarmup (PvPUtils.getTime ());
+            data.setDefaultModeForced (data.isPvPEnabled () != PvPMode.defaultPvPMode);
 
             ChatUtils.green (sender,
-                String.format ("PvP is now %s for %s", PvPUtils.getEnabledString (!data.isPvPEnabled ()),
+                String.format ("PvP is now %s for %s",
+                    PvPUtils.getEnabledString (!data.isPvPEnabled ()),
                     player.getDisplayName ()));
         }
         else
