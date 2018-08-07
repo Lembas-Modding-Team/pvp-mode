@@ -116,4 +116,9 @@ public abstract class AbstractPvPCommand extends CommandBase
             throw new CommandException ("You cannot use this command while PvP is disabled for you");
     }
 
+    protected void featureDisabled ()
+    {
+        throw new CommandException ("This feature is disabled on this server");
+    }
+
 }

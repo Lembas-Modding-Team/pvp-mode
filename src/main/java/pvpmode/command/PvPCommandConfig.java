@@ -90,6 +90,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (PvPMode.allowIndirectPvP));
         postConfigEntry (sender, "Prefix global chat messages", Boolean.toString (PvPMode.prefixGlobalMessages));
         postConfigEntry (sender, "Global chat message prefix", PvPMode.globalMessagePrefix);
+        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (PvPMode.pvpTogglingEnabled));
         ChatUtils.green (sender, "---------------------------");
     }
 
