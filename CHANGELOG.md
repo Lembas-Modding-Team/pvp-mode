@@ -3,19 +3,21 @@
 ## 1.3.0-BETA
 ### General changes:
 * PvP toggling for players is now disableable
+
+#### Default PvP mode:
 * The default PvP mode of a player is now configurable
 * Added a configuration option to force the default PvP mode for every player if PvP toggling is disabled
 * Added `pvpadmin <player> default` which sets the PvP mode of a player to the default one
 
-### Chat messages:
+#### Chat messages:
 * It's now configurable whether chat messages announcing PvP mode changes are displayed globally or locally
 
-#### LOTR compatibility:
-* Added an optional  "safe biome" override condition which forces PvP to OFF
-
-### Bug fixes:
+#### Bug fixes:
 * Fixed an exception occurring with `pvpadmin info <player>` when no player was specified
 * Fixed that the warmup timer ran out up to one second later than specified under some circumstances
+
+### LOTR compatibility:
+* Added an optional  "safe biome" override condition which forces PvP to OFF
 
 ## 1.2.0-BETA
 ### General changes:
