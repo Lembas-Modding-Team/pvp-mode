@@ -32,9 +32,7 @@ public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondi
     {
         String factionName = entry.getFactionName ();
         if (factionName.equals ("ALL"))
-        {
             return Boolean.TRUE;
-        }
         else
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);

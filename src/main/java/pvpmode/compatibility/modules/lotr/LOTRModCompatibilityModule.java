@@ -66,7 +66,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         Path configurationFolder = PvPMode.config.getConfigFile ().getParentFile ().toPath ();
 
         FMLLog.info (String.format ("PvP mode overrides for LOTR biomes are %s",
-            (areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled) ? "enabled" : "disabled"));
+            areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled"));
 
         if (areEnemyBiomeOverridesEnabled)
         {

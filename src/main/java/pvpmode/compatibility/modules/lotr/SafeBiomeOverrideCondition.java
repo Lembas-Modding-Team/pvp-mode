@@ -24,9 +24,7 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
     {
         String factionName = entry.getFactionName ();
         if (factionName.equals ("ALL"))
-        {
             return Boolean.FALSE;
-        }
         else
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);

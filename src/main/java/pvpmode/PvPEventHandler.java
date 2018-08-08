@@ -198,8 +198,9 @@ public class PvPEventHandler
                                 data.setPvPEnabled (false);
                                 if (PvPMode.announcePvPDisabledGlobally)
                                 {
-                                    ChatUtils.postGlobalChatMessages (EnumChatFormatting.GREEN, "PvP is now disabled for "
-                                        + player.getDisplayName ());
+                                    ChatUtils.postGlobalChatMessages (EnumChatFormatting.GREEN,
+                                        "PvP is now disabled for "
+                                            + player.getDisplayName ());
                                 }
                                 else
                                 {

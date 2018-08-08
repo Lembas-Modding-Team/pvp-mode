@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.command.*;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
@@ -130,13 +130,17 @@ public class PvPCommand extends AbstractPvPCommand
     private void requireSpying ()
     {
         if (! (PvPMode.allowPerPlayerSpying && PvPMode.radar))
-            this.featureDisabled ();
+        {
+            featureDisabled ();
+        }
     }
 
     private void requireToggelingEnabled ()
     {
         if (!PvPMode.pvpTogglingEnabled)
-            this.featureDisabled ();
+        {
+            featureDisabled ();
+        }
     }
 
     private void requireNonFlyingNonCreativeNonCombatSender (EntityPlayer player)
