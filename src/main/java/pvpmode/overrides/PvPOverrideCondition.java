@@ -34,4 +34,14 @@ public interface PvPOverrideCondition
      */
     public String getForcedOverrideMessage (EntityPlayer player, Boolean mode);
 
+    /**
+     * Returns a message displayed to the supplied player with the supplied forced
+     * mode when this player is forced into the supplied mode. Return null to
+     * display no message.
+     */
+    public default String getLocalForcedOverrideMessage (EntityPlayer player, Boolean mode)
+    {
+        return getForcedOverrideMessage (player, mode);
+    }
+
 }

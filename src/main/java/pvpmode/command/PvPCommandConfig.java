@@ -93,6 +93,10 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (PvPMode.pvpTogglingEnabled));
         postConfigEntry (sender, "Default PvP mode", EnumPvPMode.fromBoolean (PvPMode.defaultPvPMode).name ());
         postConfigEntry (sender, "Force default PvP mode", Boolean.toString (PvPMode.forceDefaultPvPMode));
+        postConfigEntry (sender, "Announce PvP enabled globally",
+            Boolean.toString (PvPMode.announcePvPEnabledGlobally));
+        postConfigEntry (sender, "Announce PvP disabled globally",
+            Boolean.toString (PvPMode.announcePvPDisabledGlobally));
         ChatUtils.green (sender, "---------------------------");
     }
 

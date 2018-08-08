@@ -70,4 +70,10 @@ public class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
             player.getDisplayName ());
     }
 
+    @Override
+    public String getLocalForcedOverrideMessage (EntityPlayer player, Boolean mode)
+    {
+        return "PvP is now enabled for you upon entering an enemy biome";
+    }
+
 }
