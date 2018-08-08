@@ -2,34 +2,25 @@ package pvpmode.compatibility.modules.lotr;
 
 import java.util.*;
 
-import lotr.common.*;
 import lotr.common.world.biome.LOTRBiome;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
 import pvpmode.overrides.PvPOverrideCondition;
 
 /**
- * The override condition for the LOTR biomes. Players which enter a biome
- * assigned to a faction (via the configuration data) are forced to have PvP
- * enabled if they're hostile to this faction.
+ * The basic override condition for the LOTR biomes.
  *
  * @author CraftedMods
  *
  */
-public class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
+public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
 {
 
-    private Map<Integer, Collection<EnemyBiomeFactionEntry>> configurationData = new HashMap<> ();
+    private Map<Integer, Collection<BiomeFactionEntry>> configurationData = new HashMap<> ();
 
-    public MiddleEarthBiomeOverrideCondition (Map<Integer, Collection<EnemyBiomeFactionEntry>> configurationData)
+    public MiddleEarthBiomeOverrideCondition (Map<Integer, Collection<BiomeFactionEntry>> configurationData)
     {
         this.configurationData = configurationData;
-    }
-
-    @Override
-    public int getPriority ()
-    {
-        return 100;
     }
 
     @Override
@@ -41,20 +32,12 @@ public class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
         // Check if we are in a relevant LOTR biome
         if (currentBiome instanceof LOTRBiome && configurationData.containsKey (currentBiome.biomeID))
         {
-            for (EnemyBiomeFactionEntry entry : configurationData.get (currentBiome.biomeID))
+            for (BiomeFactionEntry entry : configurationData.get (currentBiome.biomeID))
             {
-                String factionName = entry.getFactionName ();
-                if (factionName.equals ("ALL"))
+                Boolean enabled = handleCondition (entry, player);
+                if (enabled != null)
                 {
-                    pvpEnabled = Boolean.TRUE;
-                }
-                else
-                {
-                    LOTRPlayerData data = LOTRLevelData.getData (player);
-                    if (data.getAlignment (LOTRFaction.forName (factionName)) < entry.getMinAlignment ())
-                    {
-                        pvpEnabled = Boolean.TRUE;
-                    }
+                    pvpEnabled = enabled;
                 }
 
             }
@@ -62,18 +45,6 @@ public class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
         return pvpEnabled;
     }
 
-    @Override
-    public String getForcedOverrideMessage (EntityPlayer player, Boolean mode)
-    {
-        return String.format (
-            "PvP is now enabled for %s upon entering an enemy biome",
-            player.getDisplayName ());
-    }
-
-    @Override
-    public String getLocalForcedOverrideMessage (EntityPlayer player, Boolean mode)
-    {
-        return "PvP is now enabled for you upon entering an enemy biome";
-    }
+    protected abstract Boolean handleCondition (BiomeFactionEntry entry, EntityPlayer player);
 
 }
