@@ -1,5 +1,5 @@
 # pvp-mode
-A server-side Minecraft mod that allows players to enable/disable PvP individually.
+A server-side Minecraft mod that allows management of PvP interaction between players and their hired units in many ways.
 
 ### Requirements:
 
@@ -21,20 +21,28 @@ The mod is highly compatible with, and in many cases offers dedicated feature fo
 
 ### Usage:
 
-When a new player logs into the server, PvP will automatically be disabled for them. To enable PvP, a player simply enters the `pvp`
-command and their status will be toggled after a warmup time (this warmup can be canceled by entering the `pvp cancel` command).
-The `pvp` command also disables PvP for a player who has it enabled.
+The mod offers a fully configurable set of management tools for PvP interaction between players and their (LOTRmod) hired units.
 
-Players who are in creative mode or who are flying are automatically prevented from combat no matter their PvP status.
+First choice to make for server management is to determine whether players will be able to opt out of 'PvP mode', or not. So, whether the server enables 'consented PvP' for players.
+If "Enable PvP Toggling" (i.e. consented PvP) is disabled, players will not be able to use the basic command `pvp` to toggle their PvP Mode `ON` or `OFF`. The "Default PvP Mode" should then be set to true.
+If enabled, players will be able to use the basic command `pvp` to toggle their PvP Mode `ON` or `OFF`.
+To switch into PvP Mode `ON`, a player enters the `pvp` command and their mode will be toggled after a warmup time.
+The switch can be canceled by entering the `pvp cancel` command during the warmup period.
+When a player switched to PvP Mode `ON`, a cooldown timer starts which ensures a player cannot abuse this mode and immediately switch his PvP Mode to `OFF`.
+To switch into PvP Mode `ON`, a player enters the `pvp` command and their mode will be toggled after a warmup time.
+The mod has two independently configurable warmup timers for switching PvP Mode. The cooldown timer is also configurable.
+
+Players who are in creative mode or who are flying are automatically prevented from combat no matter their PvP Mode.
 There is a cooldown for the command after the actual toggle takes place (not when the player enters the command).
 Admins are able to toggle a player's status instantaneously with no warmup time by doing `pvpadmin <playername>`
 
-The mod adds another command, `pvplist`. `pvplist` displays a list of all players online, their status, and their distance to the
+The mod provides the command `pvplist` to display a list of all players online, their status, and their distance to the
 command sender. The status can be one of the following: `ON`, `OFF`, or `WARMUP`. Only players with `ON` are capable of combat.
 
-Servers can enable players with PvP Mode `ON` to get proximity and direction info of other players available for PvP. If this is anebled, this can either be forced for all, or left up to the players to activate. If left to the players, players can use `pvp spy` to toggle this ability. They will only get info from and send info to others who also have their 'little birds' activated.
-
+Servers can enable players with PvP Mode `ON` to get proximity and direction info of other players available for PvP.
 Proximity is approximated to the nearest x blocks where x is a number determined in the configuration file (default is 100). Direction info is provided as one of either 8 main wind directions.
+If "Allow Per Player Spying Settings" is enabled, this can either be forced for all, or left up to the players to activate using the global setting "Radar".
+If left to the players, players can use `pvp spy` to toggle this ability. In that case, they will only get info from and send info to other players who also have their 'little birds' activated.
 
 All players can get actual info on their status with `pvp info`.
 
@@ -42,7 +50,7 @@ For in-game information, use `pvphelp`. This command provides information on all
 
 Use `pvpconfig display` to view the values of the server configuration data of PvPMode. This is only for administrators.
 
-The configuration file has a few useful options for timers and miscellaneous items.
+The configuration file has many useful options for all the mods features and miscellaneous items.
 
 This mod was developed especially for use on servers running the Lord of the Rings mod by Mevans. Users will note that hired units cannot fight each other unless both their commanding players have PvP enabled. Also, tamed wolves will not attack players or each other unless both masters have PvP enabled.
 
