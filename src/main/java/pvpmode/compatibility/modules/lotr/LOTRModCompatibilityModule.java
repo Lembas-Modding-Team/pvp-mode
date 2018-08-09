@@ -112,7 +112,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         // Recreate the config file if it doesn't exist
         if (!Files.exists (biomeConfigurationFile))
         {
-            FMLLog.getLogger ().info ("The %s configuration file doesn't exist - it'll be created", configName);
+            FMLLog.info ("The %s configuration file doesn't exist - it'll be created", configName);
             Files.createFile (biomeConfigurationFile);
 
             PvPUtils.writeFromStreamToFile (
@@ -137,7 +137,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         Path biomeIdFile = configurationFolder.getParent ().resolve (filename);
         if (!Files.exists (biomeIdFile))
         {
-            FMLLog.getLogger ().info ("The %s doesn't exist - it'll be created", shortName);
+            FMLLog.info ("The %s doesn't exist - it'll be created", shortName);
             Files.createFile (biomeIdFile);
         }
 
