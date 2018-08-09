@@ -24,3 +24,6 @@
 
 # ALL: 3 Shire, 4 ShireWoodlands, 74 WhiteDowns, 131 ShireMoors, 132 ShireMarshes
 # ALL; 0; 3,4,74,131,132
+
+# Islands
+ALL; 0; 83
