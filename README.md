@@ -24,7 +24,7 @@ The mod is highly compatible with, and in many cases offers dedicated feature fo
 The mod offers a fully configurable set of management tools for PvP interaction between players and their (LOTRmod) hired units.
 
 First choice to make for server management is to determine whether players will be able to opt out of 'PvP mode', or not. So, whether the server enables 'consented PvP' for players.
-If "Enable PvP Toggling" (i.e. consented PvP) is disabled, players will not be able to use the basic command `pvp` to toggle their PvP Mode `ON` or `OFF`. The "Default PvP Mode" should then be set to true.
+If "Enable PvP Toggling" (i.e. consented PvP) is disabled, players will not be able to use the basic command `pvp` to toggle their PvP Mode `ON` or `OFF`.
 If enabled, players will be able to use the basic command `pvp` to toggle their PvP Mode `ON` or `OFF`.
 To switch into PvP Mode `ON`, a player enters the `pvp` command and their mode will be toggled after a warmup time.
 The switch can be canceled by entering the `pvp cancel` command during the warmup period.
