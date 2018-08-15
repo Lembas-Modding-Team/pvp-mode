@@ -1,5 +1,8 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.4.0-BETA
+### General changes:
+
 ## 1.3.1-BETA
 ### General changes:
 
