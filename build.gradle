@@ -51,7 +51,7 @@ jar {
    }
    
    manifest {
-        attributes 'FMLCorePlugin': 'pvpmode.core.PvPModeCore'
+        attributes 'FMLCorePlugin': 'pvpmode.internal.common.core.PvPModeCore'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 }
