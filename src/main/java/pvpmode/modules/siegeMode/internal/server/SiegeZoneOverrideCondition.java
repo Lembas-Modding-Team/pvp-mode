@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.siegeMode;
+package pvpmode.modules.siegeMode.internal.server;
 
 import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.api.server.overrides.PvPOverrideCondition;

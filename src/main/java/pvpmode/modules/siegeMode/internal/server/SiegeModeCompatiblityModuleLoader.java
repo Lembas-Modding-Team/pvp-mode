@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.siegeMode;
+package pvpmode.modules.siegeMode.internal.server;
 
 import pvpmode.api.common.compatibility.ModCompatibilityModuleLoader;
 
@@ -25,7 +25,7 @@ public class SiegeModeCompatiblityModuleLoader extends ModCompatibilityModuleLoa
     @Override
     public String getCompatibilityModuleClassName ()
     {
-        return "pvpmode.internal.server.compatibility.modules.siegeMode.SiegeModeCompatibilityModule";
+        return "pvpmode.modules.siegeMode.internal.server.SiegeModeCompatibilityModule";
     }
 
 }

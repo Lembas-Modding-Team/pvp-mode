@@ -14,12 +14,12 @@ import pvpmode.api.server.log.LogHandlerConstants;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.command.*;
-import pvpmode.internal.server.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
-import pvpmode.internal.server.compatibility.modules.siegeMode.SiegeModeCompatiblityModuleLoader;
-import pvpmode.internal.server.compatibility.modules.suffixForge.SuffixForgeCompatibilityModuleLoader;
 import pvpmode.internal.server.log.*;
 import pvpmode.internal.server.overrides.OverrideManagerImpl;
 import pvpmode.internal.server.utils.*;
+import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
+import pvpmode.modules.siegeMode.internal.server.SiegeModeCompatiblityModuleLoader;
+import pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModuleLoader;
 
 public class ServerProxy extends CommonProxy
 {

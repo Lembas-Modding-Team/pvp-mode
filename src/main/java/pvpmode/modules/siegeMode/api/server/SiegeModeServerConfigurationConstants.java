@@ -1,4 +1,4 @@
-package pvpmode.api.server.compatibility.modules.siegeMode;
+package pvpmode.modules.siegeMode.api.server;
 
 public interface SiegeModeServerConfigurationConstants
 {

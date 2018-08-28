@@ -1,14 +1,22 @@
-package pvpmode.internal.server.compatibility.modules.lotr;
+package pvpmode.modules.lotr.internal.server;
 
 import java.util.*;
 
 import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondition
+/**
+ * The override condition for the LOTR biomes. Players which enter a biome
+ * assigned to a faction (via the configuration data) are forced to have PvP
+ * enabled if they're hostile to this faction.
+ *
+ * @author CraftedMods
+ *
+ */
+public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondition
 {
 
-    public SafeBiomeOverrideCondition (Map<Integer, Collection<BiomeFactionEntry>> configurationData)
+    public HostileBiomeOverrideCondition (Map<Integer, Collection<BiomeFactionEntry>> configurationData)
     {
         super (configurationData);
     }
@@ -16,7 +24,7 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
     @Override
     public int getPriority ()
     {
-        return 200;
+        return 100;
     }
 
     @Override
@@ -24,12 +32,12 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
     {
         String factionName = entry.getFactionName ();
         if (factionName.equals ("ALL"))
-            return Boolean.FALSE;
+            return Boolean.TRUE;
         else
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);
-            if (data.getAlignment (LOTRFaction.forName (factionName)) > entry.getAlignment ())
-                return Boolean.FALSE;
+            if (data.getAlignment (LOTRFaction.forName (factionName)) < entry.getAlignment ())
+                return Boolean.TRUE;
         }
         return null;
     }
@@ -38,14 +46,14 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
     public String getForcedOverrideMessage (EntityPlayer player, Boolean mode)
     {
         return String.format (
-            "PvP is now disabled for %s upon entering a safe biome",
+            "PvP is now enabled for %s upon entering an enemy biome",
             player.getDisplayName ());
     }
 
     @Override
     public String getLocalForcedOverrideMessage (EntityPlayer player, Boolean mode)
     {
-        return "PvP is now disabled for you upon entering a safe biome";
+        return "PvP is now enabled for you upon entering an enemy biome";
     }
 
 }

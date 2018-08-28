@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.lotr;
+package pvpmode.modules.lotr.internal.server;
 
 import pvpmode.api.common.compatibility.ModCompatibilityModuleLoader;
 
@@ -25,7 +25,7 @@ public class LOTRModCompatibilityModuleLoader extends ModCompatibilityModuleLoad
     @Override
     public String getCompatibilityModuleClassName ()
     {
-        return "pvpmode.internal.server.compatibility.modules.lotr.LOTRModCompatibilityModule";
+        return "pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModule";
     }
 
 }

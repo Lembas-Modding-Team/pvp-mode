@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.suffixForge;
+package pvpmode.modules.suffixForge.internal.server;
 
 import pvpmode.api.common.compatibility.ModCompatibilityModuleLoader;
 
@@ -25,7 +25,7 @@ public class SuffixForgeCompatibilityModuleLoader extends ModCompatibilityModule
     @Override
     public String getCompatibilityModuleClassName ()
     {
-        return "pvpmode.internal.server.compatibility.modules.suffixForge.SuffixForgeCompatibilityModule";
+        return "pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModule";
     }
 
 }

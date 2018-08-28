@@ -1,6 +1,6 @@
-package pvpmode.internal.server.compatibility.modules.siegeMode;
+package pvpmode.modules.siegeMode.internal.server;
 
-import static pvpmode.api.server.compatibility.modules.siegeMode.SiegeModeServerConfigurationConstants.*;
+import static pvpmode.modules.siegeMode.api.server.SiegeModeServerConfigurationConstants.*;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;

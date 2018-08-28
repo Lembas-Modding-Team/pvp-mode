@@ -1,6 +1,6 @@
-package pvpmode.internal.server.compatibility.modules.suffixForge;
+package pvpmode.modules.suffixForge.internal.server;
 
-import static pvpmode.api.server.compatibility.modules.suffixForge.SuffixForgeServerConfigurationConstants.*;
+import static pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants.*;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.lotr;
+package pvpmode.modules.lotr.internal.server;
 
 /**
  * A simple helper class containing an alignment faction specifier and an

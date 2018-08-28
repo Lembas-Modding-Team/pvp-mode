@@ -1,4 +1,4 @@
-package pvpmode.internal.server.compatibility.modules.lotr;
+package pvpmode.modules.lotr.internal.server;
 
 import java.io.*;
 import java.nio.file.*;

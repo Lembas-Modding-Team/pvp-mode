@@ -1,6 +1,6 @@
-package pvpmode.internal.server.compatibility.modules.lotr;
+package pvpmode.modules.lotr.internal.server;
 
-import static pvpmode.api.server.compatibility.modules.lotr.LOTRServerConfigurationConstants.*;
+import static pvpmode.modules.lotr.api.server.LOTRServerConfigurationConstants.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
