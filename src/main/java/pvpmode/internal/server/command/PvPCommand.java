@@ -9,6 +9,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.utils.*;
@@ -187,7 +188,7 @@ public class PvPCommand extends AbstractPvPCommand
             data.setPvPCooldown (0);
 
             ServerChatUtils.green (sender, String.format ("PvP will be %s in %d seconds...",
-                PvPServerUtils.getEnabledString (!data.isPvPEnabled ()), warmup));
+                PvPCommonUtils.getEnabledString (!data.isPvPEnabled ()), warmup));
         }
         else
         {
@@ -210,12 +211,12 @@ public class PvPCommand extends AbstractPvPCommand
         {
             data.setSpyingEnabled (!data.isSpyingEnabled ());
             ServerChatUtils.green (sender,
-                String.format ("Spying is now %s for you", PvPServerUtils.getEnabledString (data.isSpyingEnabled ())));
+                String.format ("Spying is now %s for you", PvPCommonUtils.getEnabledString (data.isSpyingEnabled ())));
         }
         else
         {
             ServerChatUtils.yellow (sender,
-                String.format ("Spying is already %s for you", PvPServerUtils.getEnabledString (mode.booleanValue ())));
+                String.format ("Spying is already %s for you", PvPCommonUtils.getEnabledString (mode.booleanValue ())));
         }
     }
 

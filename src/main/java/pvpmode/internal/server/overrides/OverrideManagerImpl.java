@@ -30,7 +30,7 @@ public class OverrideManagerImpl implements OverrideManager
         {
             lastCheckTimes.put (event.player.getUniqueID (), 0l);
         }
-    
+
         // A ton of checks whether the PvP mode of the current player can be overridden
         if (PvPServerUtils.arePvPModeOverridesEnabled () && event.phase == Phase.END
             && PvPServerUtils.getTime ()
@@ -39,7 +39,7 @@ public class OverrideManagerImpl implements OverrideManager
             && !PvPServerUtils.canFly (event.player))
         {
             PvPData pvpData = PvPServerUtils.getPvPData (event.player);
-    
+
             for (Set<PvPOverrideCondition> conditions : overrideConditions.descendingMap ().values ())
             {
                 for (PvPOverrideCondition condition : conditions)
@@ -52,10 +52,10 @@ public class OverrideManagerImpl implements OverrideManager
                             && newPvPMode.toPvPMode () != PvPServerUtils.getPvPMode (event.player))
                         {
                             // Only display the message if the current PvP mode really changed
-    
+
                             boolean announceGlobal = isPvPEnabled ? ServerProxy.announcePvPEnabledGlobally
                                 : ServerProxy.announcePvPDisabledGlobally;
-    
+
                             // Get the global or the local message variant
                             String message = announceGlobal
                                 ? condition.getForcedOverrideMessage (event.player, isPvPEnabled)
@@ -63,7 +63,7 @@ public class OverrideManagerImpl implements OverrideManager
                             if (message != null)
                             {
                                 // If there's a message, post it
-    
+
                                 // Messages saying that PvP is enabled are red, the other ones are green
                                 EnumChatFormatting messageColor = isPvPEnabled ? EnumChatFormatting.RED
                                     : EnumChatFormatting.GREEN;
@@ -84,9 +84,9 @@ public class OverrideManagerImpl implements OverrideManager
                         return;// The first registered condition with the highest priority will be applied
                     }
                 }
-    
+
             }
-    
+
             // No condition applies
             EnumForcedPvPMode currentForcedPvPMode = pvpData.getForcedPvPMode ();
             if (currentForcedPvPMode != EnumForcedPvPMode.UNDEFINED)
@@ -97,7 +97,7 @@ public class OverrideManagerImpl implements OverrideManager
                     ServerChatUtils.green (event.player, "Your PvP mode is no longer overridden");
                 }
             }
-    
+
             lastCheckTimes.replace (event.player.getUniqueID (), PvPServerUtils.getTime ());
         }
     }

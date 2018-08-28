@@ -1,4 +1,4 @@
-package pvpmode.api.server.compatibility.events.modules.suffixForge;
+package pvpmode.api.server.compatibility.modules.suffixForge;
 
 public interface SuffixForgeServerConfigurationConstants
 {

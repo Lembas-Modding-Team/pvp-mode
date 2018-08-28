@@ -9,13 +9,17 @@ public class CommonProxy
 {
 
     public static Configuration configuration; // TODO: Only works because the client proxy doesn't use that
-    public static CompatibilityManagerImpl compatibilityManager = new CompatibilityManagerImpl (); // TODO: Only works because the client proxy doesn't use that
+    public static CompatibilityManagerImpl compatibilityManager = new CompatibilityManagerImpl (); // TODO: Only works
+                                                                                                   // because the client
+                                                                                                   // proxy doesn't use
+                                                                                                   // that
 
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
     {
         configuration = new Configuration (event.getSuggestedConfigurationFile ());
 
-        configuration.addCustomCategoryComment (CommonConfigurationConstants.MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
+        configuration.addCustomCategoryComment (CommonConfigurationConstants.MAIN_CONFIGURATION_CATEGORY,
+            "General configuration entries");
 
         registerCompatibilityModules ();
     }

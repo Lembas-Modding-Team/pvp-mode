@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.compatibility.events.PvPListEvent;
 import pvpmode.api.server.utils.*;
@@ -256,7 +257,7 @@ public class PvPCommandList extends AbstractPvPCommand
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                 {
                     String proximityDirection = ServerProxy.showProximityDirection
-                        ? PvPServerUtils.getPlayerDirection (senderPlayer, player)
+                        ? PvPCommonUtils.getPlayerDirection (senderPlayer, player)
                         : "";
                     additionalComponent = new ChatComponentText (
                         String.format (" - ~%d blocks %s", proximity, proximityDirection));

@@ -17,11 +17,13 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
 {
     private final Map<UUID, PvPData> playerData = new HashMap<> ();
 
+    @Override
     public EntityPlayerMP getPlayer (String name)
     {
         return ServerProxy.cfg.func_152612_a (name);
     }
 
+    @Override
     public boolean isOpped (ICommandSender sender)
     {
         if (sender instanceof EntityPlayerMP)
@@ -30,6 +32,7 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         return true;
     }
 
+    @Override
     public PvPData getPvPData (EntityPlayer player)
     {
         if (!playerData.containsKey (player.getUniqueID ()))
@@ -39,6 +42,7 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         return playerData.get (player.getUniqueID ());
     }
 
+    @Override
     public int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
     {
         double x = sender.posX - player.posX;
@@ -49,16 +53,19 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         return (int) (distance / ServerProxy.roundFactor + 1) * ServerProxy.roundFactor;
     }
 
+    @Override
     public boolean arePvPModeOverridesEnabled ()
     {
         return ServerProxy.overrideCheckInterval != -1;
     }
 
+    @Override
     public boolean isShiftClickingBlocked (EntityPlayer player)
     {
         return ServerProxy.blockShiftClicking && PvPServerUtils.isInPvP (player);
     }
 
+    @Override
     public void displayPvPStats (ICommandSender sender, EntityPlayer displayedPlayer)
     {
         boolean isSenderDisplayed = sender == displayedPlayer;

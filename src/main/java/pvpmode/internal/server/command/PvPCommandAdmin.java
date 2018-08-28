@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import net.minecraft.command.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.utils.*;
@@ -140,13 +141,13 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
             ServerChatUtils.green (sender,
                 String.format ("PvP is now %s for %s",
-                    PvPServerUtils.getEnabledString (!data.isPvPEnabled ()),
+                    PvPCommonUtils.getEnabledString (!data.isPvPEnabled ()),
                     player.getDisplayName ()));
         }
         else
         {
             ServerChatUtils.yellow (sender,
-                String.format ("PvP is already %s for %s", PvPServerUtils.getEnabledString (mode.booleanValue ()),
+                String.format ("PvP is already %s for %s", PvPCommonUtils.getEnabledString (mode.booleanValue ()),
                     player.getDisplayName ()));
         }
     }

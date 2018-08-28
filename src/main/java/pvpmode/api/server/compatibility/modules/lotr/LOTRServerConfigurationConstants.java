@@ -1,4 +1,4 @@
-package pvpmode.api.server.compatibility.events.modules.lotr;
+package pvpmode.api.server.compatibility.modules.lotr;
 
 public interface LOTRServerConfigurationConstants
 {

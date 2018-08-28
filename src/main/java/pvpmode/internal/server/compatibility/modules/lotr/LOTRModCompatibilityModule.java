@@ -1,6 +1,6 @@
 package pvpmode.internal.server.compatibility.modules.lotr;
 
-import static pvpmode.api.server.compatibility.events.modules.lotr.LOTRServerConfigurationConstants.*;
+import static pvpmode.api.server.compatibility.modules.lotr.LOTRServerConfigurationConstants.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -19,9 +19,11 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
+import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.ServerProxy;
 
 /**
@@ -51,24 +53,25 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     {
         MinecraftForge.EVENT_BUS.register (this);
 
-        areEnemyBiomeOverridesEnabled = ServerProxy.configuration.getBoolean (
+        areEnemyBiomeOverridesEnabled = CommonProxy.configuration.getBoolean (
             ENEMY_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY, true,
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
-        blockFTInPvP = ServerProxy.configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
+        blockFTInPvP = CommonProxy.configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY,
             true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
-        dropSkullWithKeepInventory = ServerProxy.configuration.getBoolean (ALWAYS_DROP_PLAYER_SKULLS_CONFIGURATION_NAME,
+        dropSkullWithKeepInventory = CommonProxy.configuration.getBoolean (ALWAYS_DROP_PLAYER_SKULLS_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY, true,
             "If true, players killed with a weapon with the headhunting modifier will drop their skulls even with keepInventory enabled.");
-        areSafeBiomeOverridesEnabled = ServerProxy.configuration.getBoolean (SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
+        areSafeBiomeOverridesEnabled = CommonProxy.configuration.getBoolean (
+            SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY, false,
             "If true, the PvP mode safe override condition for LOTR biomes will be enabled, which has a higher priority than the enemy override condition. Players who are aligned with a faction are forced to have PvP disabled while they're in a biome which is clearly assignable to that faction. This can also be applied without the alignment criterion. This is highly configurable.");
 
-        ServerProxy.configuration.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
+        CommonProxy.configuration.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"The Lord of the Rings Minecraft Mod\"");
 
-        Path configurationFolder = ServerProxy.configuration.getConfigFile ().getParentFile ().toPath ();
+        Path configurationFolder = CommonProxy.configuration.getConfigFile ().getParentFile ().toPath ();
 
         FMLLog.info (String.format ("PvP mode overrides for LOTR biomes are %s",
             areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled"));
@@ -120,7 +123,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             FMLLog.info ("The %s configuration file doesn't exist - it'll be created", configName);
             Files.createFile (biomeConfigurationFile);
 
-            PvPServerUtils.writeFromStreamToFile (
+            PvPCommonUtils.writeFromStreamToFile (
                 () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + defaultConfigFileName),
                 biomeConfigurationFile);
         }
@@ -146,7 +149,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             Files.createFile (biomeIdFile);
         }
 
-        PvPServerUtils.writeFromStreamToFile (
+        PvPCommonUtils.writeFromStreamToFile (
             () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
             biomeIdFile);
         FMLLog.info ("Recreated the %s", shortName);
