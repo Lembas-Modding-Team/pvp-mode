@@ -3,6 +3,9 @@
 ## 2.0.0-BETA
 ### General changes:
 
+### Breaking changes (see UPDATE_INSTRUCTIONS.md):
+* Changed the permission nodes of all commands
+
 ## 1.5.0-BETA
 ### General changes:
 * Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
