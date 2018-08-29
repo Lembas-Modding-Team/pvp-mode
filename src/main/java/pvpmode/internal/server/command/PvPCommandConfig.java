@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
+import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.utils.ServerChatUtils;
@@ -13,6 +14,13 @@ import pvpmode.internal.server.ServerProxy;
 
 public class PvPCommandConfig extends AbstractPvPCommand
 {
+
+    private final ServerProxy server;
+
+    public PvPCommandConfig ()
+    {
+        server = PvPMode.instance.getServerProxy ();
+    }
 
     @Override
     public String getCommandName ()
@@ -24,6 +32,12 @@ public class PvPCommandConfig extends AbstractPvPCommand
     public String getCommandUsage (ICommandSender sender)
     {
         return ServerCommandConstants.PVPCONFIG_COMMAND_USAGE;
+    }
+
+    @Override
+    public boolean isAdminCommand ()
+    {
+        return true;
     }
 
     @Override
@@ -62,47 +76,49 @@ public class PvPCommandConfig extends AbstractPvPCommand
     private void displayConfiguration (ICommandSender sender)
     {
         ServerChatUtils.green (sender, "--- PvP Mode Configuration ---");
-        postConfigEntry (sender, "Warmup off-on", Integer.toString (ServerProxy.warmup) + "s");
-        postConfigEntry (sender, "Warmup on-off", Integer.toString (ServerProxy.warmupOff) + "s");
-        postConfigEntry (sender, "Cooldown", Integer.toString (ServerProxy.cooldown) + "s");
-        postConfigEntry (sender, "Radar enabled", Boolean.toString (ServerProxy.radar));
-        postConfigEntry (sender, "Distance round factor", Integer.toString (ServerProxy.roundFactor));
-        postConfigEntry (sender, "CSV separator", ServerProxy.csvSeparator);
-        postConfigEntry (sender, "Combat logging handlers", ServerProxy.activatedPvPLoggingHandlers.toString ());
+        postConfigEntry (sender, "Warmup off-on", Integer.toString (server.getWarmup ()) + "s");
+        postConfigEntry (sender, "Warmup on-off", Integer.toString (server.getWarmupOff ()) + "s");
+        postConfigEntry (sender, "Cooldown", Integer.toString (server.getCooldown ()) + "s");
+        postConfigEntry (sender, "Radar enabled", Boolean.toString (server.isRadar ()));
+        postConfigEntry (sender, "Distance round factor", Integer.toString (server.getRoundFactor ()));
+        postConfigEntry (sender, "CSV separator", server.getCsvSeparator ());
+        postConfigEntry (sender, "Combat logging handlers", server.getActivatedPvPLoggingHandlers ().toString ());
         postConfigEntry (sender, "PvP Partial inventory loss enabled",
-            Boolean.toString (ServerProxy.partialInventoryLossEnabled));
+            Boolean.toString (server.isPartialInventoryLossEnabled ()));
         postConfigEntry (sender, "PvE Partial inventory loss enabled",
-            Boolean.toString (ServerProxy.enablePartialInventoryLossPvE));
-        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (ServerProxy.inventoryLossArmour) + " items");
-        postConfigEntry (sender, "PvP Hotbar item loss", Integer.toString (ServerProxy.inventoryLossHotbar) + " items");
-        postConfigEntry (sender, "PvP Main item loss", Integer.toString (ServerProxy.inventoryLossMain) + " items");
+            Boolean.toString (server.isEnablePartialInventoryLossPvE ()));
+        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (server.getInventoryLossArmour ()) + " items");
+        postConfigEntry (sender, "PvP Hotbar item loss",
+            Integer.toString (server.getInventoryLossHotbar ()) + " items");
+        postConfigEntry (sender, "PvP Main item loss", Integer.toString (server.getInventoryLossMain ()) + " items");
         postConfigEntry (sender, "PvE Armor item loss",
-            Integer.toString (ServerProxy.inventoryLossArmourPvE) + " items");
+            Integer.toString (server.getInventoryLossArmourPvE ()) + " items");
         postConfigEntry (sender, "PvE Hotbar item loss",
-            Integer.toString (ServerProxy.inventoryLossHotbarPvE) + " items");
-        postConfigEntry (sender, "PvE Main item loss", Integer.toString (ServerProxy.inventoryLossMainPvE) + " items");
-        postConfigEntry (sender, "Override check interval", Integer.toString (ServerProxy.overrideCheckInterval) + "s");
-        postConfigEntry (sender, "PvP timer", Integer.toString (ServerProxy.pvpTimer) + "s");
-        postConfigEntry (sender, "Command blacklist", ServerProxy.commandBlacklist.toString ());
-        postConfigEntry (sender, "Fast item transfer disabled", Boolean.toString (ServerProxy.blockShiftClicking));
+            Integer.toString (server.getInventoryLossHotbarPvE ()) + " items");
+        postConfigEntry (sender, "PvE Main item loss", Integer.toString (server.getInventoryLossMainPvE ()) + " items");
+        postConfigEntry (sender, "Override check interval",
+            Integer.toString (server.getOverrideCheckInterval ()) + "s");
+        postConfigEntry (sender, "PvP timer", Integer.toString (server.getPvpTimer ()) + "s");
+        postConfigEntry (sender, "Command blacklist", server.getCommandBlacklist ().toString ());
+        postConfigEntry (sender, "Fast item transfer disabled", Boolean.toString (server.isBlockShiftClicking ()));
         postConfigEntry (sender, "Extend armour inventory search",
-            Boolean.toString (ServerProxy.extendArmourInventorySearch));
+            Boolean.toString (server.isExtendArmourInventorySearch ()));
         postConfigEntry (sender, "Extend hotbar inventory search",
-            Boolean.toString (ServerProxy.extendHotbarInventorySearch));
+            Boolean.toString (server.isExtendHotbarInventorySearch ()));
         postConfigEntry (sender, "Extend main inventory search",
-            Boolean.toString (ServerProxy.extendMainInventorySearch));
-        postConfigEntry (sender, "Per player spying settings", Boolean.toString (ServerProxy.allowPerPlayerSpying));
-        postConfigEntry (sender, "Show proximity direction", Boolean.toString (ServerProxy.showProximityDirection));
-        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (ServerProxy.allowIndirectPvP));
-        postConfigEntry (sender, "Prefix global chat messages", Boolean.toString (ServerProxy.prefixGlobalMessages));
-        postConfigEntry (sender, "Global chat message prefix", ServerProxy.globalMessagePrefix);
-        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (ServerProxy.pvpTogglingEnabled));
-        postConfigEntry (sender, "Default PvP mode", EnumPvPMode.fromBoolean (ServerProxy.defaultPvPMode).name ());
-        postConfigEntry (sender, "Force default PvP mode", Boolean.toString (ServerProxy.forceDefaultPvPMode));
+            Boolean.toString (server.isExtendMainInventorySearch ()));
+        postConfigEntry (sender, "Per player spying settings", Boolean.toString (server.isAllowPerPlayerSpying ()));
+        postConfigEntry (sender, "Show proximity direction", Boolean.toString (server.isShowProximityDirection ()));
+        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (server.isAllowIndirectPvP ()));
+        postConfigEntry (sender, "Prefix global chat messages", Boolean.toString (server.isPrefixGlobalMessages ()));
+        postConfigEntry (sender, "Global chat message prefix", server.getGlobalMessagePrefix ());
+        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (server.isPvpTogglingEnabled ()));
+        postConfigEntry (sender, "Default PvP mode", EnumPvPMode.fromBoolean (server.getDefaultPvPMode ()).name ());
+        postConfigEntry (sender, "Force default PvP mode", Boolean.toString (server.isForceDefaultPvPMode ()));
         postConfigEntry (sender, "Announce PvP enabled globally",
-            Boolean.toString (ServerProxy.announcePvPEnabledGlobally));
+            Boolean.toString (server.isAnnouncePvPEnabledGlobally ()));
         postConfigEntry (sender, "Announce PvP disabled globally",
-            Boolean.toString (ServerProxy.announcePvPDisabledGlobally));
+            Boolean.toString (server.isAnnouncePvPDisabledGlobally ()));
         ServerChatUtils.green (sender, "---------------------------");
     }
 

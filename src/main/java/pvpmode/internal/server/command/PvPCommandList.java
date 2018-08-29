@@ -9,6 +9,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.command.ServerCommandConstants;
@@ -18,6 +19,14 @@ import pvpmode.internal.server.ServerProxy;
 
 public class PvPCommandList extends AbstractPvPCommand
 {
+
+    private final ServerProxy server;
+
+    public PvPCommandList ()
+    {
+        server = PvPMode.instance.getServerProxy ();
+    }
+
     @Override
     public String getCommandName ()
     {
@@ -56,12 +65,6 @@ public class PvPCommandList extends AbstractPvPCommand
     public String getGeneralHelpMessage (ICommandSender sender)
     {
         return "Gives you information about the PvP modes, warmup timers, and eventual spy info (proximity and direction) of the players on the server. These are sorted. Spy information can only be accessed if you have PvP enabled, and eventual spying (depending on the server configuration). If the server allows custom spy settings, you'll only retrieve spy information about players who have spying enabled. \nYou'll always be displayed on the top of the list.";
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
     }
 
     @Override
@@ -112,7 +115,7 @@ public class PvPCommandList extends AbstractPvPCommand
          * command can determine which entries are the most relevant for the calling
          * player and have to be displayed on the top of the list.
          */
-        for (Object o : ServerProxy.cfg.playerEntityList)
+        for (Object o : PvPMode.instance.getServerProxy ().getServerConfigurationManager ().playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
             EnumPvPMode mode = PvPServerUtils.getPvPMode (player);
@@ -137,9 +140,9 @@ public class PvPCommandList extends AbstractPvPCommand
                         {
                             // The player is unsafe with a high priority
                             int proximity = -1;
-                            if (ServerProxy.radar)
+                            if (server.isRadar ())
                             {
-                                if (ServerProxy.allowPerPlayerSpying
+                                if (server.isAllowPerPlayerSpying ()
                                     ? PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ()
                                         && PvPServerUtils.getPvPData (player).isSpyingEnabled ()
                                     : true)// If per player spying is enabled, both players need to have spying enabled
@@ -211,7 +214,8 @@ public class PvPCommandList extends AbstractPvPCommand
             }
         }
 
-        int playerCountWithoutSender = ServerProxy.cfg.playerEntityList.size () - 1;
+        int playerCountWithoutSender = PvPMode.instance.getServerProxy ()
+            .getServerConfigurationManager ().playerEntityList.size () - 1;
         if (playerCountWithoutSender != 0)
         {
             int unsafePlayersCount = (int) unsafePlayers.values ().parallelStream ()
@@ -256,7 +260,7 @@ public class PvPCommandList extends AbstractPvPCommand
                 if (proximity != -1
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                 {
-                    String proximityDirection = ServerProxy.showProximityDirection
+                    String proximityDirection = server.isShowProximityDirection ()
                         ? PvPCommonUtils.getPlayerDirection (senderPlayer, player)
                         : "";
                     additionalComponent = new ChatComponentText (
@@ -274,7 +278,7 @@ public class PvPCommandList extends AbstractPvPCommand
             modeComponent
                 .appendSibling (warmupComponent);
         }
-        if (isSenderPlayer && ServerProxy.radar && ServerProxy.allowPerPlayerSpying
+        if (isSenderPlayer && server.isRadar () && server.isAllowPerPlayerSpying ()
             && PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ())
         {
             modeComponent.appendSibling (spyComponent);

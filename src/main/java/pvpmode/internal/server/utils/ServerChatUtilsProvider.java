@@ -2,11 +2,19 @@ package pvpmode.internal.server.utils;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
+import pvpmode.PvPMode;
 import pvpmode.api.server.utils.ServerChatUtils;
 import pvpmode.internal.server.ServerProxy;
 
 public class ServerChatUtilsProvider implements ServerChatUtils.Provider
 {
+
+    private final ServerProxy server;
+
+    public ServerChatUtilsProvider (ServerProxy server)
+    {
+        this.server = server;
+    }
 
     @Override
     public void postLocalChatMessages (ICommandSender recipient, EnumChatFormatting color, String... messages)
@@ -43,10 +51,11 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
             for (String line : message.split ("\n"))
             {
                 ChatComponentText prefix = new ChatComponentText (
-                    ServerProxy.prefixGlobalMessages ? ServerProxy.globalMessagePrefix : "");
+                    server.isPrefixGlobalMessages () ? server.getGlobalMessagePrefix () : "");
                 ChatComponentText text = new ChatComponentText (line);
                 text.getChatStyle ().setColor (color);
-                ServerProxy.cfg.sendChatMsg (prefix.appendSibling (text));
+                PvPMode.instance.getServerProxy ().getServerConfigurationManager ()
+                    .sendChatMsg (prefix.appendSibling (text));
             }
         }
     }

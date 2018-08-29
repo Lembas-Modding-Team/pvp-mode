@@ -9,6 +9,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
+import pvpmode.PvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
@@ -17,6 +18,14 @@ import pvpmode.internal.server.ServerProxy;
 
 public class PvPCommand extends AbstractPvPCommand
 {
+
+    private final ServerProxy server;
+
+    public PvPCommand ()
+    {
+        server = PvPMode.instance.getServerProxy ();
+    }
+
     @Override
     public String getCommandName ()
     {
@@ -33,13 +42,13 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        if (ServerProxy.pvpTogglingEnabled)
+        if (server.isPvpTogglingEnabled ())
         {
             messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
             messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
         }
         messages.add (Triple.of ("pvp info", "", "Displays your PvP stats."));
-        if (ServerProxy.allowPerPlayerSpying && ServerProxy.radar)
+        if (server.isAllowPerPlayerSpying () && server.isRadar ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]", "Toggles the spy settings."));
         }
@@ -50,7 +59,7 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        if (ServerProxy.pvpTogglingEnabled)
+        if (server.isPvpTogglingEnabled ())
         {
             messages.add (
                 Triple.of ("pvp", "",
@@ -60,7 +69,7 @@ public class PvPCommand extends AbstractPvPCommand
         }
         messages.add (Triple.of ("pvp info", "",
             "Displays your PvP mode, your spying settings, your warmup, cooldown and PvP timer, whether your PvP mode is overridden, and other PvP Mode Mod related stats about you."));
-        if (ServerProxy.allowPerPlayerSpying && ServerProxy.radar)
+        if (server.isAllowPerPlayerSpying () && server.isRadar ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]",
                 "Allows you to either toggle your spy settings, or to set them to a specific value (on or off). If spying is enabled for you, you can receive proximity and direction information about other players with PvP enabled (via the PvP list). PvP needs to be enabled for you."));
@@ -72,12 +81,6 @@ public class PvPCommand extends AbstractPvPCommand
     public String getGeneralHelpMessage (ICommandSender sender)
     {
         return "Allows you to manage and view your PvP mode (OFF, ON without spy, ON with spy). You mustn't be able to fly, not in creative mode and not in PvP combat if you want to modify your PvP stats with this command.";
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class PvPCommand extends AbstractPvPCommand
 
     private void requireSpying ()
     {
-        if (! (ServerProxy.allowPerPlayerSpying && ServerProxy.radar))
+        if (! (server.isAllowPerPlayerSpying () && server.isRadar ()))
         {
             featureDisabled ();
         }
@@ -141,7 +144,7 @@ public class PvPCommand extends AbstractPvPCommand
 
     private void requireToggelingEnabled ()
     {
-        if (!ServerProxy.pvpTogglingEnabled)
+        if (!server.isPvpTogglingEnabled ())
         {
             featureDisabled ();
         }
@@ -172,7 +175,7 @@ public class PvPCommand extends AbstractPvPCommand
         if (!PvPServerUtils.isWarmupTimerRunning (sender))
         {
             long time = PvPServerUtils.getTime ();
-            long warmup = data.isPvPEnabled () ? ServerProxy.warmupOff : ServerProxy.warmup;
+            long warmup = data.isPvPEnabled () ? server.getWarmupOff () : server.getWarmup ();
             long toggleTime = time + warmup;
             long cooldownTime = data.getPvPCooldown ();
 

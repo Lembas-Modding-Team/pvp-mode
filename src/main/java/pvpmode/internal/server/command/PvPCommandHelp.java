@@ -9,9 +9,9 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
+import pvpmode.PvPMode;
 import pvpmode.api.server.command.ServerCommandConstants;
-import pvpmode.api.server.utils.ServerChatUtils;
-import pvpmode.internal.server.ServerProxy;
+import pvpmode.api.server.utils.*;
 
 public class PvPCommandHelp extends AbstractPvPCommand
 {
@@ -25,12 +25,6 @@ public class PvPCommandHelp extends AbstractPvPCommand
     public String getCommandUsage (ICommandSender sender)
     {
         return ServerCommandConstants.PVPHELP_COMMAND_USAGE;
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand (ICommandSender sender)
-    {
-        return true;
     }
 
     @Override
@@ -59,44 +53,55 @@ public class PvPCommandHelp extends AbstractPvPCommand
     @Override
     public void processCommand (ICommandSender sender, String[] args)
     {
+        Collection<AbstractPvPCommand> commands = PvPMode.instance.getServerProxy ().getServerCommands ();
         if (args.length == 0)
         {
             ServerChatUtils.green (sender, "------ PvP Mode Help ------");
             ServerChatUtils.blue (sender, "# General commands");
-            postShortCommandHelp (sender, ServerProxy.pvphelpCommandInstance,
+            postShortCommandHelp (sender, this,
                 EnumChatFormatting.DARK_GREEN,
                 EnumChatFormatting.GREEN);
-            postShortCommandHelp (sender, ServerProxy.pvpCommandInstance);
-            postShortCommandHelp (sender, ServerProxy.pvplistCommandInstance);
+
+            for (AbstractPvPCommand command : commands)
+            {
+                if (command != this && !command.isAdminCommand ())
+                {
+                    postShortCommandHelp (sender, command);
+                }
+            }
+
             ServerChatUtils.blue (sender, "# Admin commands");
-            postShortCommandHelp (sender, ServerProxy.pvpadminCommandInstance);
-            postShortCommandHelp (sender, ServerProxy.pvpconfigCommandInstance);
+
+            for (AbstractPvPCommand command : commands)
+            {
+                if (command != this && command.isAdminCommand ())
+                {
+                    postShortCommandHelp (sender, command);
+                }
+            }
+
             ServerChatUtils.green (sender, "-------------------------");
         }
         else
         {
             String command = args[0];
-            switch (command)
+
+            // Query all server commands and look for the specified one
+            boolean foundMatch = false;
+            for (AbstractPvPCommand pvpCommand : commands)
             {
-                case "pvp":
-                    postLongCommandHelp (sender, ServerProxy.pvpCommandInstance);
+                if (PvPServerUtils.matches (pvpCommand, command))
+                {
+                    this.postLongCommandHelp (sender, pvpCommand);
+                    foundMatch = true;
                     break;
-                case "pvpadmin":
-                    postLongCommandHelp (sender, ServerProxy.pvpadminCommandInstance);
-                    break;
-                case "pvplist":
-                    postLongCommandHelp (sender, ServerProxy.pvplistCommandInstance);
-                    break;
-                case "pvpconfig":
-                    postLongCommandHelp (sender, ServerProxy.pvpconfigCommandInstance);
-                    break;
-                case "pvphelp":
-                    postLongCommandHelp (sender, ServerProxy.pvphelpCommandInstance);
-                    break;
-                default:
-                    ServerChatUtils.red (sender,
-                        String.format ("The command \"%s\" doesn't exist or isn't a command of PvP Mode", command));
+                }
             }
+
+            if (!foundMatch)
+                ServerChatUtils.red (sender,
+                    String.format ("The command \"%s\" doesn't exist or isn't a command of PvP Mode", command));
+
         }
     }
 

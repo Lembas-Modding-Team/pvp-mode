@@ -122,4 +122,17 @@ public abstract class AbstractPvPCommand extends CommandBase
         throw new CommandException ("This feature is disabled on this server");
     }
 
+    public boolean isAdminCommand ()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canCommandSenderUseCommand (ICommandSender sender)
+    {
+        if (!isAdminCommand ())
+            return true;
+        return super.canCommandSenderUseCommand (sender);
+    }
+
 }

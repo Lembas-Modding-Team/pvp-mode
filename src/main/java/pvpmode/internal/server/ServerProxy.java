@@ -5,10 +5,11 @@ import static pvpmode.api.server.configuration.ServerConfigurationConstants.*;
 import java.nio.file.*;
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.configuration.CommonConfigurationConstants;
 import pvpmode.api.server.log.LogHandlerConstants;
 import pvpmode.api.server.utils.*;
@@ -24,56 +25,58 @@ import pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModul
 public class ServerProxy extends CommonProxy
 {
 
-    static
-    {
-        ServerChatUtils.setProvider (new ServerChatUtilsProvider ());
-        PvPServerUtils.setProvider (new PvPServerUtilsProvider ());
-    }
-
-    public static CombatLogManagerImpl combatLogManager;
-    public static OverrideManagerImpl overrideManager;
-    public static ServerConfigurationManager cfg;
+    private CombatLogManagerImpl combatLogManager;
+    private OverrideManagerImpl overrideManager;
+    private ServerConfigurationManager serverConfigurationManager;
 
     private Path combatLogDir;
 
-    public static PvPCommand pvpCommandInstance;
-    public static PvPCommandAdmin pvpadminCommandInstance;
-    public static PvPCommandConfig pvpconfigCommandInstance;
-    public static PvPCommandHelp pvphelpCommandInstance;
-    public static PvPCommandList pvplistCommandInstance;
+    private PvPCommand pvpCommandInstance;
+    private PvPCommandAdmin pvpadminCommandInstance;
+    private PvPCommandConfig pvpconfigCommandInstance;
+    private PvPCommandHelp pvphelpCommandInstance;
+    private PvPCommandList pvplistCommandInstance;
 
-    public static int roundFactor;
-    public static int warmup;
-    public static int cooldown;
-    public static boolean radar;
-    public static Collection<String> activatedPvPLoggingHandlers;
-    public static String csvSeparator;
-    public static boolean partialInventoryLossEnabled;
-    public static int inventoryLossArmour;
-    public static int inventoryLossHotbar;
-    public static int overrideCheckInterval;
-    public static int pvpTimer;
-    public static Collection<String> commandBlacklist;
-    public static int inventoryLossMain;
-    public static boolean blockShiftClicking;
-    public static boolean extendArmourInventorySearch;
-    public static boolean extendHotbarInventorySearch;
-    public static boolean extendMainInventorySearch;
-    public static boolean allowPerPlayerSpying;
-    public static int warmupOff;
-    public static boolean showProximityDirection;
-    public static boolean enablePartialInventoryLossPvE;
-    public static int inventoryLossArmourPvE;
-    public static int inventoryLossHotbarPvE;
-    public static int inventoryLossMainPvE;
-    public static boolean allowIndirectPvP;
-    public static boolean prefixGlobalMessages;
-    public static String globalMessagePrefix;
-    public static boolean pvpTogglingEnabled;
-    public static boolean defaultPvPMode;
-    public static boolean forceDefaultPvPMode;
-    public static boolean announcePvPEnabledGlobally;
-    public static boolean announcePvPDisabledGlobally;
+    private int roundFactor;
+    private int warmup;
+    private int cooldown;
+    private boolean radar;
+    private Collection<String> activatedPvPLoggingHandlers;
+    private String csvSeparator;
+    private boolean partialInventoryLossEnabled;
+    private int inventoryLossArmour;
+    private int inventoryLossHotbar;
+    private int overrideCheckInterval;
+    private int pvpTimer;
+    private Collection<String> commandBlacklist;
+    private int inventoryLossMain;
+    private boolean blockShiftClicking;
+    private boolean extendArmourInventorySearch;
+    private boolean extendHotbarInventorySearch;
+    private boolean extendMainInventorySearch;
+    private boolean allowPerPlayerSpying;
+    private int warmupOff;
+    private boolean showProximityDirection;
+    private boolean enablePartialInventoryLossPvE;
+    private int inventoryLossArmourPvE;
+    private int inventoryLossHotbarPvE;
+    private int inventoryLossMainPvE;
+    private boolean allowIndirectPvP;
+    private boolean prefixGlobalMessages;
+    private String globalMessagePrefix;
+    private boolean pvpTogglingEnabled;
+    private boolean defaultPvPMode;
+    private boolean forceDefaultPvPMode;
+    private boolean announcePvPEnabledGlobally;
+    private boolean announcePvPDisabledGlobally;
+
+    private PvPServerEventHandler eventHandler;
+
+    public ServerProxy ()
+    {
+        ServerChatUtils.setProvider (new ServerChatUtilsProvider (this));
+        PvPServerUtils.setProvider (new PvPServerUtilsProvider (this));
+    }
 
     @Override
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
@@ -233,7 +236,7 @@ public class ServerProxy extends CommonProxy
 
         FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
 
-        if (ServerProxy.forceDefaultPvPMode && ServerProxy.pvpTogglingEnabled)
+        if (forceDefaultPvPMode && pvpTogglingEnabled)
         {
             FMLLog.warning (
                 "The configuration property 'Force Default PvP Mode' is set to true but 'Pvp Toggeling Enabled' is set to false, but required to be set to true.");
@@ -313,7 +316,10 @@ public class ServerProxy extends CommonProxy
             combatLogManager.init (combatLogDir);
         }
 
-        PvPServerEventHandler.init ();
+        eventHandler = new PvPServerEventHandler ();
+
+        MinecraftForge.EVENT_BUS.register (eventHandler);
+        FMLCommonHandler.instance ().bus ().register (eventHandler);
     }
 
     @Override
@@ -324,7 +330,7 @@ public class ServerProxy extends CommonProxy
 
     public void onServerStarting (FMLServerStartingEvent event)
     {
-        cfg = MinecraftServer.getServer ().getConfigurationManager ();
+        serverConfigurationManager = MinecraftServer.getServer ().getConfigurationManager ();
 
         pvpCommandInstance = new PvPCommand ();
         pvplistCommandInstance = new PvPCommandList ();
@@ -346,5 +352,340 @@ public class ServerProxy extends CommonProxy
             combatLogManager.close ();
         }
     }
+
+    public CombatLogManagerImpl getCombatLogManager ()
+    {
+        return combatLogManager;
+    }
+
+    public OverrideManagerImpl getOverrideManager ()
+    {
+        return overrideManager;
+    }
+
+    public ServerConfigurationManager getServerConfigurationManager ()
+    {
+        return serverConfigurationManager;
+    }
+
+    public Collection<AbstractPvPCommand> getServerCommands ()
+    {
+        return Arrays.asList (pvpCommandInstance, pvpadminCommandInstance, pvpconfigCommandInstance,
+            pvphelpCommandInstance, pvplistCommandInstance);
+    }
+
+    // Configuration properties START
+
+    public int getRoundFactor ()
+    {
+        return roundFactor;
+    }
+
+    public void setRoundFactor (int roundFactor)
+    {
+        this.roundFactor = roundFactor;
+    }
+
+    public int getWarmup ()
+    {
+        return warmup;
+    }
+
+    public void setWarmup (int warmup)
+    {
+        this.warmup = warmup;
+    }
+
+    public int getCooldown ()
+    {
+        return cooldown;
+    }
+
+    public void setCooldown (int cooldown)
+    {
+        this.cooldown = cooldown;
+    }
+
+    public boolean isRadar ()
+    {
+        return radar;
+    }
+
+    public void setRadar (boolean radar)
+    {
+        this.radar = radar;
+    }
+
+    public String getCsvSeparator ()
+    {
+        return csvSeparator;
+    }
+
+    public void setCsvSeparator (String csvSeparator)
+    {
+        this.csvSeparator = csvSeparator;
+    }
+
+    public boolean isPartialInventoryLossEnabled ()
+    {
+        return partialInventoryLossEnabled;
+    }
+
+    public void setPartialInventoryLossEnabled (boolean partialInventoryLossEnabled)
+    {
+        this.partialInventoryLossEnabled = partialInventoryLossEnabled;
+    }
+
+    public int getInventoryLossArmour ()
+    {
+        return inventoryLossArmour;
+    }
+
+    public void setInventoryLossArmour (int inventoryLossArmour)
+    {
+        this.inventoryLossArmour = inventoryLossArmour;
+    }
+
+    public int getInventoryLossHotbar ()
+    {
+        return inventoryLossHotbar;
+    }
+
+    public void setInventoryLossHotbar (int inventoryLossHotbar)
+    {
+        this.inventoryLossHotbar = inventoryLossHotbar;
+    }
+
+    public int getOverrideCheckInterval ()
+    {
+        return overrideCheckInterval;
+    }
+
+    public void setOverrideCheckInterval (int overrideCheckInterval)
+    {
+        this.overrideCheckInterval = overrideCheckInterval;
+    }
+
+    public int getPvpTimer ()
+    {
+        return pvpTimer;
+    }
+
+    public void setPvpTimer (int pvpTimer)
+    {
+        this.pvpTimer = pvpTimer;
+    }
+
+    public int getInventoryLossMain ()
+    {
+        return inventoryLossMain;
+    }
+
+    public void setInventoryLossMain (int inventoryLossMain)
+    {
+        this.inventoryLossMain = inventoryLossMain;
+    }
+
+    public boolean isBlockShiftClicking ()
+    {
+        return blockShiftClicking;
+    }
+
+    public void setBlockShiftClicking (boolean blockShiftClicking)
+    {
+        this.blockShiftClicking = blockShiftClicking;
+    }
+
+    public boolean isExtendArmourInventorySearch ()
+    {
+        return extendArmourInventorySearch;
+    }
+
+    public void setExtendArmourInventorySearch (boolean extendArmourInventorySearch)
+    {
+        this.extendArmourInventorySearch = extendArmourInventorySearch;
+    }
+
+    public boolean isExtendHotbarInventorySearch ()
+    {
+        return extendHotbarInventorySearch;
+    }
+
+    public void setExtendHotbarInventorySearch (boolean extendHotbarInventorySearch)
+    {
+        this.extendHotbarInventorySearch = extendHotbarInventorySearch;
+    }
+
+    public boolean isExtendMainInventorySearch ()
+    {
+        return extendMainInventorySearch;
+    }
+
+    public void setExtendMainInventorySearch (boolean extendMainInventorySearch)
+    {
+        this.extendMainInventorySearch = extendMainInventorySearch;
+    }
+
+    public boolean isAllowPerPlayerSpying ()
+    {
+        return allowPerPlayerSpying;
+    }
+
+    public void setAllowPerPlayerSpying (boolean allowPerPlayerSpying)
+    {
+        this.allowPerPlayerSpying = allowPerPlayerSpying;
+    }
+
+    public int getWarmupOff ()
+    {
+        return warmupOff;
+    }
+
+    public void setWarmupOff (int warmupOff)
+    {
+        this.warmupOff = warmupOff;
+    }
+
+    public boolean isShowProximityDirection ()
+    {
+        return showProximityDirection;
+    }
+
+    public void setShowProximityDirection (boolean showProximityDirection)
+    {
+        this.showProximityDirection = showProximityDirection;
+    }
+
+    public boolean isEnablePartialInventoryLossPvE ()
+    {
+        return enablePartialInventoryLossPvE;
+    }
+
+    public void setEnablePartialInventoryLossPvE (boolean enablePartialInventoryLossPvE)
+    {
+        this.enablePartialInventoryLossPvE = enablePartialInventoryLossPvE;
+    }
+
+    public int getInventoryLossArmourPvE ()
+    {
+        return inventoryLossArmourPvE;
+    }
+
+    public void setInventoryLossArmourPvE (int inventoryLossArmourPvE)
+    {
+        this.inventoryLossArmourPvE = inventoryLossArmourPvE;
+    }
+
+    public int getInventoryLossHotbarPvE ()
+    {
+        return inventoryLossHotbarPvE;
+    }
+
+    public void setInventoryLossHotbarPvE (int inventoryLossHotbarPvE)
+    {
+        this.inventoryLossHotbarPvE = inventoryLossHotbarPvE;
+    }
+
+    public int getInventoryLossMainPvE ()
+    {
+        return inventoryLossMainPvE;
+    }
+
+    public void setInventoryLossMainPvE (int inventoryLossMainPvE)
+    {
+        this.inventoryLossMainPvE = inventoryLossMainPvE;
+    }
+
+    public boolean isAllowIndirectPvP ()
+    {
+        return allowIndirectPvP;
+    }
+
+    public void setAllowIndirectPvP (boolean allowIndirectPvP)
+    {
+        this.allowIndirectPvP = allowIndirectPvP;
+    }
+
+    public boolean isPrefixGlobalMessages ()
+    {
+        return prefixGlobalMessages;
+    }
+
+    public void setPrefixGlobalMessages (boolean prefixGlobalMessages)
+    {
+        this.prefixGlobalMessages = prefixGlobalMessages;
+    }
+
+    public String getGlobalMessagePrefix ()
+    {
+        return globalMessagePrefix;
+    }
+
+    public void setGlobalMessagePrefix (String globalMessagePrefix)
+    {
+        this.globalMessagePrefix = globalMessagePrefix;
+    }
+
+    public boolean isPvpTogglingEnabled ()
+    {
+        return pvpTogglingEnabled;
+    }
+
+    public void setPvpTogglingEnabled (boolean pvpTogglingEnabled)
+    {
+        this.pvpTogglingEnabled = pvpTogglingEnabled;
+    }
+
+    public boolean getDefaultPvPMode ()
+    {
+        return defaultPvPMode;
+    }
+
+    public void setDefaultPvPMode (boolean defaultPvPMode)
+    {
+        this.defaultPvPMode = defaultPvPMode;
+    }
+
+    public boolean isForceDefaultPvPMode ()
+    {
+        return forceDefaultPvPMode;
+    }
+
+    public void setForceDefaultPvPMode (boolean forceDefaultPvPMode)
+    {
+        this.forceDefaultPvPMode = forceDefaultPvPMode;
+    }
+
+    public boolean isAnnouncePvPEnabledGlobally ()
+    {
+        return announcePvPEnabledGlobally;
+    }
+
+    public void setAnnouncePvPEnabledGlobally (boolean announcePvPEnabledGlobally)
+    {
+        this.announcePvPEnabledGlobally = announcePvPEnabledGlobally;
+    }
+
+    public boolean isAnnouncePvPDisabledGlobally ()
+    {
+        return announcePvPDisabledGlobally;
+    }
+
+    public void setAnnouncePvPDisabledGlobally (boolean announcePvPDisabledGlobally)
+    {
+        this.announcePvPDisabledGlobally = announcePvPDisabledGlobally;
+    }
+
+    public Collection<String> getActivatedPvPLoggingHandlers ()
+    {
+        return activatedPvPLoggingHandlers;
+    }
+
+    public Collection<String> getCommandBlacklist ()
+    {
+        return commandBlacklist;
+    }
+
+    // Configuration properties END
 
 }

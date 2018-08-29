@@ -4,11 +4,11 @@ import static pvpmode.modules.siegeMode.api.server.SiegeModeServerConfigurationC
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PvPListEvent.UnsafeClassification;
-import pvpmode.internal.common.CommonProxy;
-import pvpmode.internal.server.ServerProxy;
 import siege.common.siege.SiegeDatabase;
 
 /**
@@ -27,14 +27,17 @@ public class SiegeModeCompatibilityModule implements CompatibilityModule
     {
         MinecraftForge.EVENT_BUS.register (this);
 
-        disablePvPLoggingDuringSieges = CommonProxy.configuration.getBoolean (
+        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+
+        disablePvPLoggingDuringSieges = configuration.getBoolean (
             DISABLE_PVP_LOGGING_DURING_SIEGES_CONFIGURATION_NAME,
             SIEGE_MODE_CONFIGURATION_CATEGORY, true, "If true, PvP events for all players of a siege won't be logged.");
 
-        CommonProxy.configuration.addCustomCategoryComment (SIEGE_MODE_CONFIGURATION_CATEGORY,
+        configuration.addCustomCategoryComment (SIEGE_MODE_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"Siege Mode\" Mod");
 
-        ServerProxy.overrideManager.registerOverrideCondition (new SiegeZoneOverrideCondition ());
+        PvPMode.instance.getServerProxy ().getOverrideManager ()
+            .registerOverrideCondition (new SiegeZoneOverrideCondition ());
     }
 
     @SubscribeEvent
