@@ -3,6 +3,9 @@
 ## 2.0.0-BETA
 ### General changes:
 
+### Breaking changes (see UPDATE_INSTRUCTIONS.md):
+* Changed the permission nodes of all commands
+
 ## 1.3.0-BETA
 ### General changes:
 * PvP toggling for players is now disableable
