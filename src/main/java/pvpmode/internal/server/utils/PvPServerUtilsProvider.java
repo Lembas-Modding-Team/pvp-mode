@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.*;
 import net.minecraft.util.EnumChatFormatting;
-import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
@@ -29,14 +28,14 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
     @Override
     public EntityPlayerMP getPlayer (String name)
     {
-        return PvPMode.instance.getServerProxy ().getServerConfigurationManager ().func_152612_a (name);
+        return server.getServerConfigurationManager ().func_152612_a (name);
     }
 
     @Override
     public boolean isOpped (ICommandSender sender)
     {
         if (sender instanceof EntityPlayerMP)
-            return PvPMode.instance.getServerProxy ().getServerConfigurationManager ()
+            return server.getServerConfigurationManager ()
                 .func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
 
         return true;

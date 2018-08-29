@@ -115,7 +115,7 @@ public class PvPCommandList extends AbstractPvPCommand
          * command can determine which entries are the most relevant for the calling
          * player and have to be displayed on the top of the list.
          */
-        for (Object o : PvPMode.instance.getServerProxy ().getServerConfigurationManager ().playerEntityList)
+        for (Object o : server.getServerConfigurationManager ().playerEntityList)
         {
             EntityPlayerMP player = (EntityPlayerMP) o;
             EnumPvPMode mode = PvPServerUtils.getPvPMode (player);
@@ -214,7 +214,7 @@ public class PvPCommandList extends AbstractPvPCommand
             }
         }
 
-        int playerCountWithoutSender = PvPMode.instance.getServerProxy ()
+        int playerCountWithoutSender = server
             .getServerConfigurationManager ().playerEntityList.size () - 1;
         if (playerCountWithoutSender != 0)
         {

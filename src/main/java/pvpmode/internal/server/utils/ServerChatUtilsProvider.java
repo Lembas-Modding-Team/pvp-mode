@@ -2,7 +2,6 @@ package pvpmode.internal.server.utils;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
-import pvpmode.PvPMode;
 import pvpmode.api.server.utils.ServerChatUtils;
 import pvpmode.internal.server.ServerProxy;
 
@@ -54,7 +53,7 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
                     server.isPrefixGlobalMessages () ? server.getGlobalMessagePrefix () : "");
                 ChatComponentText text = new ChatComponentText (line);
                 text.getChatStyle ().setColor (color);
-                PvPMode.instance.getServerProxy ().getServerConfigurationManager ()
+                server.getServerConfigurationManager ()
                     .sendChatMsg (prefix.appendSibling (text));
             }
         }

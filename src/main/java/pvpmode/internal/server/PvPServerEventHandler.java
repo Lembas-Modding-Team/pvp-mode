@@ -144,7 +144,7 @@ public class PvPServerEventHandler
         if (server.getActivatedPvPLoggingHandlers ().size () > 0
             && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
         {
-            PvPMode.instance.getServerProxy ().getCombatLogManager ().log (attacker, victim, event.ammount,
+            server.getCombatLogManager ().log (attacker, victim, event.ammount,
                 event.source);
         }
     }
