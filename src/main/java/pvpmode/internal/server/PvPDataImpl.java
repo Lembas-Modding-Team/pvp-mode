@@ -2,6 +2,7 @@ package pvpmode.internal.server;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import pvpmode.PvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
 
@@ -45,7 +46,7 @@ public class PvPDataImpl implements PvPData
     public boolean isPvPEnabled ()
     {
         return pvpDataTag.hasKey (PVP_ENABLED_NBT_KEY) ? pvpDataTag.getBoolean (PVP_ENABLED_NBT_KEY)
-            : ServerProxy.defaultPvPMode;
+            : PvPMode.instance.getServerProxy ().getDefaultPvPMode ();
     }
 
     @Override

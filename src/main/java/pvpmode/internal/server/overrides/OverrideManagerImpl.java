@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.*;
 import net.minecraft.util.EnumChatFormatting;
+import pvpmode.PvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.overrides.*;
@@ -14,12 +15,15 @@ import pvpmode.internal.server.ServerProxy;
 
 public class OverrideManagerImpl implements OverrideManager
 {
+    private final ServerProxy server;
+
     private TreeMap<Integer, Set<PvPOverrideCondition>> overrideConditions = new TreeMap<> ();
 
     private Map<UUID, Long> lastCheckTimes = new HashMap<> ();
 
     public OverrideManagerImpl ()
     {
+        server = PvPMode.instance.getServerProxy ();
         FMLCommonHandler.instance ().bus ().register (this);
     }
 
@@ -34,7 +38,7 @@ public class OverrideManagerImpl implements OverrideManager
         // A ton of checks whether the PvP mode of the current player can be overridden
         if (PvPServerUtils.arePvPModeOverridesEnabled () && event.phase == Phase.END
             && PvPServerUtils.getTime ()
-                - lastCheckTimes.get (event.player.getUniqueID ()) >= ServerProxy.overrideCheckInterval
+                - lastCheckTimes.get (event.player.getUniqueID ()) >= server.getOverrideCheckInterval ()
             && !PvPServerUtils.isCreativeMode (event.player)
             && !PvPServerUtils.canFly (event.player))
         {
@@ -53,8 +57,8 @@ public class OverrideManagerImpl implements OverrideManager
                         {
                             // Only display the message if the current PvP mode really changed
 
-                            boolean announceGlobal = isPvPEnabled ? ServerProxy.announcePvPEnabledGlobally
-                                : ServerProxy.announcePvPDisabledGlobally;
+                            boolean announceGlobal = isPvPEnabled ? server.isAnnouncePvPEnabledGlobally ()
+                                : server.isAnnouncePvPDisabledGlobally ();
 
                             // Get the global or the local message variant
                             String message = announceGlobal
