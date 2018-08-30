@@ -26,6 +26,12 @@ public abstract class ModCompatibilityModuleLoader implements CompatibilityModul
     }
 
     @Override
+    public String getInternalModuleName ()
+    {
+        return modid;
+    }
+
+    @Override
     public boolean canLoad ()
     {
         if (modLoaded == null)
