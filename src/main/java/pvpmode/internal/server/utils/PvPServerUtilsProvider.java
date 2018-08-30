@@ -15,19 +15,28 @@ import pvpmode.internal.server.*;
 
 public class PvPServerUtilsProvider implements PvPServerUtils.Provider
 {
+
+    private final ServerProxy server;
+
     private final Map<UUID, PvPData> playerData = new HashMap<> ();
+
+    public PvPServerUtilsProvider (ServerProxy server)
+    {
+        this.server = server;
+    }
 
     @Override
     public EntityPlayerMP getPlayer (String name)
     {
-        return ServerProxy.cfg.func_152612_a (name);
+        return server.getServerConfigurationManager ().func_152612_a (name);
     }
 
     @Override
     public boolean isOpped (ICommandSender sender)
     {
         if (sender instanceof EntityPlayerMP)
-            return ServerProxy.cfg.func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
+            return server.getServerConfigurationManager ()
+                .func_152596_g ( ((EntityPlayerMP) sender).getGameProfile ());
 
         return true;
     }
@@ -50,19 +59,19 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
 
         double distance = Math.sqrt (x * x + z * z);
 
-        return (int) (distance / ServerProxy.roundFactor + 1) * ServerProxy.roundFactor;
+        return (int) (distance / server.getRoundFactor () + 1) * server.getRoundFactor ();
     }
 
     @Override
     public boolean arePvPModeOverridesEnabled ()
     {
-        return ServerProxy.overrideCheckInterval != -1;
+        return server.getOverrideCheckInterval () != -1;
     }
 
     @Override
     public boolean isShiftClickingBlocked (EntityPlayer player)
     {
-        return ServerProxy.blockShiftClicking && PvPServerUtils.isInPvP (player);
+        return server.isBlockShiftClicking () && PvPServerUtils.isInPvP (player);
     }
 
     @Override
@@ -89,7 +98,7 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
             pvpMode == EnumPvPMode.ON ? EnumChatFormatting.RED : EnumChatFormatting.GREEN);
         ServerChatUtils.postLocalChatMessage (sender, "Is Overridden: ", Boolean.toString (isOverridden),
             EnumChatFormatting.GRAY, EnumChatFormatting.WHITE);
-        if (ServerProxy.allowPerPlayerSpying && ServerProxy.radar)
+        if (server.isAllowPerPlayerSpying () && server.isRadar ())
         {
             ServerChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying),
                 EnumChatFormatting.GRAY,
@@ -102,7 +111,7 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         ServerChatUtils.postLocalChatMessage (sender, "PvP Timer: ", Long.toString (pvpTimer) + "s",
             EnumChatFormatting.GRAY,
             pvpTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
-        if (ServerProxy.forceDefaultPvPMode && !ServerProxy.pvpTogglingEnabled && !isOverridden)
+        if (server.isForceDefaultPvPMode () && !server.isPvpTogglingEnabled () && !isOverridden)
         {
             ServerChatUtils.postLocalChatMessage (sender, "Default PvP Mode Forced: ",
                 Boolean.toString (defaultPvPModeForced),

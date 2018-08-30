@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import net.minecraft.command.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
+import pvpmode.PvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
@@ -16,6 +17,14 @@ import pvpmode.internal.server.ServerProxy;
 
 public class PvPCommandAdmin extends AbstractPvPCommand
 {
+
+    private final ServerProxy server;
+
+    public PvPCommandAdmin ()
+    {
+        server = PvPMode.instance.getServerProxy ();
+    }
+
     @Override
     public String getCommandName ()
     {
@@ -26,6 +35,12 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     public String getCommandUsage (ICommandSender sender)
     {
         return ServerCommandConstants.PVPADMIN_COMMAND_USAGE;
+    }
+
+    @Override
+    public boolean isAdminCommand ()
+    {
+        return true;
     }
 
     @Override
@@ -94,7 +109,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
                         togglePvPMode (admin, player, data, Boolean.TRUE);
                         break;
                     case "default":
-                        togglePvPMode (admin, player, data, ServerProxy.defaultPvPMode);
+                        togglePvPMode (admin, player, data, server.getDefaultPvPMode ());
                         break;
                 }
             }
@@ -137,7 +152,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
              */
             ServerChatUtils.red (player, "Your PvP mode is being toggled by an admin");
             data.setPvPWarmup (PvPServerUtils.getTime ());
-            data.setDefaultModeForced (data.isPvPEnabled () != ServerProxy.defaultPvPMode);
+            data.setDefaultModeForced (data.isPvPEnabled () != server.getDefaultPvPMode ());
 
             ServerChatUtils.green (sender,
                 String.format ("PvP is now %s for %s",

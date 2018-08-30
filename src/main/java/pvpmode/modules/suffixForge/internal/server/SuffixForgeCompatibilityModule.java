@@ -1,13 +1,15 @@
 package pvpmode.modules.suffixForge.internal.server;
 
-import static pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants.*;
+import static pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants.SUFFIX_FORGE_CONFIGURATION_CATEGORY;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
 import pvpmode.api.server.utils.PvPServerUtils;
-import pvpmode.internal.common.CommonProxy;
+import pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants;
 
 /**
  * The compatibility module for SuffixForge.
@@ -25,12 +27,14 @@ public class SuffixForgeCompatibilityModule implements CompatibilityModule
     {
         MinecraftForge.EVENT_BUS.register (this);
 
-        partialInvLossDropSoulboundItems = CommonProxy.configuration.getBoolean (
-            DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME,
+        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+
+        partialInvLossDropSoulboundItems = configuration.getBoolean (
+           SuffixForgeServerConfigurationConstants.DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME,
             SUFFIX_FORGE_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
 
-        CommonProxy.configuration.addCustomCategoryComment (SUFFIX_FORGE_CONFIGURATION_CATEGORY,
+        configuration.addCustomCategoryComment (SUFFIX_FORGE_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"Suffix Forge\" Mod");
 
     }

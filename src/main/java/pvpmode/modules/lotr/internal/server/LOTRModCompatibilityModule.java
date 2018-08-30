@@ -14,15 +14,15 @@ import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
-import pvpmode.internal.common.CommonProxy;
-import pvpmode.internal.server.ServerProxy;
 
 /**
  * The compatibility module for the LOTR Mod.
@@ -48,22 +48,24 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     {
         MinecraftForge.EVENT_BUS.register (this);
 
-        areEnemyBiomeOverridesEnabled = CommonProxy.configuration.getBoolean (
+        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+
+        areEnemyBiomeOverridesEnabled = configuration.getBoolean (
             ENEMY_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY, true,
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
-        blockFTInPvP = CommonProxy.configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
+        blockFTInPvP = configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY,
             true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
-        areSafeBiomeOverridesEnabled = CommonProxy.configuration.getBoolean (
+        areSafeBiomeOverridesEnabled = configuration.getBoolean (
             SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             LOTR_CONFIGURATION_CATEGORY, false,
             "If true, the PvP mode safe override condition for LOTR biomes will be enabled, which has a higher priority than the enemy override condition. Players who are aligned with a faction are forced to have PvP disabled while they're in a biome which is clearly assignable to that faction. This can also be applied without the alignment criterion. This is highly configurable.");
 
-        CommonProxy.configuration.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
+        configuration.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"The Lord of the Rings Minecraft Mod\"");
 
-        Path configurationFolder = CommonProxy.configuration.getConfigFile ().getParentFile ().toPath ();
+        Path configurationFolder = configuration.getConfigFile ().getParentFile ().toPath ();
 
         FMLLog.info (String.format ("PvP mode overrides for LOTR biomes are %s",
             areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled"));
@@ -121,7 +123,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         BiomeOverrideConfigParser parser = new BiomeOverrideConfigParser (configName,
             biomeConfigurationFile);
 
-        ServerProxy.overrideManager.registerOverrideCondition (conditionCreator.apply (parser.parse ()));
+        PvPMode.instance.getServerProxy ().getOverrideManager ()
+            .registerOverrideCondition (conditionCreator.apply (parser.parse ()));
     }
 
     private void initGeneralBiomeOverrides (Path configurationFolder) throws IOException

@@ -8,6 +8,13 @@ import pvpmode.internal.server.ServerProxy;
 public class ServerChatUtilsProvider implements ServerChatUtils.Provider
 {
 
+    private final ServerProxy server;
+
+    public ServerChatUtilsProvider (ServerProxy server)
+    {
+        this.server = server;
+    }
+
     @Override
     public void postLocalChatMessages (ICommandSender recipient, EnumChatFormatting color, String... messages)
     {
@@ -65,7 +72,7 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
                     if (root == null)
                     {
                         ChatComponentText prefix = new ChatComponentText (
-                            ServerProxy.prefixGlobalMessages ? ServerProxy.globalMessagePrefix : "");
+                            server.isPrefixGlobalMessages () ? server.getGlobalMessagePrefix () : "");
                         prefix.appendSibling (text);
                         root = prefix;
                     }
@@ -76,7 +83,7 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
                 }
                 if (root != null)
                 {
-                    ServerProxy.cfg.sendChatMsg (root);
+                    server.getServerConfigurationManager ().sendChatMsg (root);
                 }
             }
         }

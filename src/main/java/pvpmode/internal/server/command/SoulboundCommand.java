@@ -11,12 +11,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
+import pvpmode.PvPMode;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 
 public class SoulboundCommand extends AbstractPvPCommand
 {
+
+    private final ServerProxy server;
+
+    public SoulboundCommand ()
+    {
+        this.server = PvPMode.instance.getServerProxy ();
+    }
 
     @Override
     public String getCommandName ()
@@ -28,6 +36,12 @@ public class SoulboundCommand extends AbstractPvPCommand
     public String getCommandUsage (ICommandSender sender)
     {
         return ServerCommandConstants.SOULBOUND_COMMAND_USAGE;
+    }
+
+    @Override
+    public boolean isAdminCommand ()
+    {
+        return true;
     }
 
     @Override
@@ -183,7 +197,7 @@ public class SoulboundCommand extends AbstractPvPCommand
         stackTag.setBoolean ("SoulboundBool", soulbound);
 
         String currentTooltip = stackTag.hasKey ("SoulboundTooltip") ? stackTag.getString ("SoulboundTooltip")
-            : ServerProxy.soulboundTooltip;
+            : server.getSoulboundTooltip ();
 
         NBTTagCompound displayTag = stackTag.getCompoundTag ("display");
 
@@ -191,8 +205,8 @@ public class SoulboundCommand extends AbstractPvPCommand
 
         if (soulbound)
         {
-            lore.appendTag (new NBTTagString (ServerProxy.soulboundTooltip));
-            stackTag.setString ("SoulboundTooltip", ServerProxy.soulboundTooltip);
+            lore.appendTag (new NBTTagString (server.getSoulboundTooltip ()));
+            stackTag.setString ("SoulboundTooltip", server.getSoulboundTooltip ());
         }
         else
         {

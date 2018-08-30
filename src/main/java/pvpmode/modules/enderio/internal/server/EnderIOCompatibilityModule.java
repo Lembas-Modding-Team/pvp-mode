@@ -7,9 +7,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import crazypants.enderio.enchantment.*;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
-import pvpmode.internal.server.ServerProxy;
 import pvpmode.modules.enderio.api.server.EnderIOServerConfigurationConstants;
 
 /**
@@ -32,12 +33,14 @@ public class EnderIOCompatibilityModule implements CompatibilityModule
     {
         MinecraftForge.EVENT_BUS.register (this);
 
-        partialInvLossDropSoulboundItems = ServerProxy.configuration.getBoolean (
+        Configuration config = PvPMode.instance.getServerProxy ().getConfiguration ();
+
+        partialInvLossDropSoulboundItems = config.getBoolean (
             EnderIOServerConfigurationConstants.DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME,
             EnderIOServerConfigurationConstants.ENDER_IO_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
 
-        ServerProxy.configuration.addCustomCategoryComment (
+        config.addCustomCategoryComment (
             EnderIOServerConfigurationConstants.ENDER_IO_CONFIGURATION_CATEGORY,
             "Configuration entries for compatibility with the \"Ender IO\" Mod");
 
