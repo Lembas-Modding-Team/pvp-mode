@@ -4,19 +4,21 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
 import lotr.common.LOTRFaction;
+import pvpmode.api.common.SimpleLogger;
 
 public class BiomeOverrideConfigParser
 {
 
     private final String configName;
     private final Path file;
+    private final SimpleLogger logger;
 
-    public BiomeOverrideConfigParser (String configName, Path file)
+    public BiomeOverrideConfigParser (String configName, Path file, SimpleLogger logger)
     {
         this.configName = configName;
         this.file = file;
+        this.logger = logger;
     }
 
     public Map<Integer, Collection<BiomeFactionEntry>> parse () throws IOException
@@ -43,7 +45,7 @@ public class BiomeOverrideConfigParser
                     {
                         // There are more or less than three columns
                         ++invalidEntryCounter;
-                        FMLLog.warning (
+                        logger.warning (
                             "The %s config entry \"%s\" at line %d is invalid. There're too much or too less columns separated by semicolons!",
                             configName,
                             line,
@@ -59,7 +61,7 @@ public class BiomeOverrideConfigParser
                             {
                                 // The faction was specified already
                                 ++invalidEntryCounter;
-                                FMLLog.warning (
+                                logger.warning (
                                     "The %s config entry at line %d references a faction (\"%s\") which was referenced by an entry loaded before. It'll be ignored.",
                                     configName, i, faction);
                             }
@@ -77,7 +79,7 @@ public class BiomeOverrideConfigParser
                                     {
                                         // No biomes were specified
                                         ++invalidEntryCounter;
-                                        FMLLog.warning (
+                                        logger.warning (
                                             "The %s config entry at line %d contains no assigned biome ids", configName,
                                             i);
                                     }
@@ -93,7 +95,7 @@ public class BiomeOverrideConfigParser
                                                 if (!biomeIdsInt.add (Integer.parseInt (biomeStringTrimmed)))
                                                 {
                                                     // Duplicated biome ids specified
-                                                    FMLLog.warning (
+                                                    logger.warning (
                                                         "The %s config entry at line %d contains a duplicated biome id (%s).",
                                                         configName,
                                                         i, biomeStringTrimmed);
@@ -101,7 +103,7 @@ public class BiomeOverrideConfigParser
                                             }
                                             catch (NumberFormatException e)
                                             {
-                                                FMLLog.warning (
+                                                logger.warning (
                                                     "The %s config entry at line %d contains an invalid biome id (\"%s\"). The invalid id will be ignored.",
                                                     configName,
                                                     i, biomeStringTrimmed);
@@ -111,7 +113,7 @@ public class BiomeOverrideConfigParser
                                         {
                                             // Biome ids were specified, but all were invalid
                                             ++invalidEntryCounter;
-                                            FMLLog.warning (
+                                            logger.warning (
                                                 "The %s config entry at line %d contains only invalid biome ids. The entry will be ignored.",
                                                 configName,
                                                 i);
@@ -137,7 +139,7 @@ public class BiomeOverrideConfigParser
                                 catch (NumberFormatException e)
                                 {
                                     ++invalidEntryCounter;
-                                    FMLLog.warning (
+                                    logger.warning (
                                         "The %s config entry at line %d contains an invalid minimum alignment (\"%s\")",
                                         configName,
                                         i, alignmentString);
@@ -148,7 +150,7 @@ public class BiomeOverrideConfigParser
                         {
                             // The faction name is invalid
                             ++invalidEntryCounter;
-                            FMLLog.warning (
+                            logger.warning (
                                 "The %s config entry at line %d contains an invalid faction name (\"%s\").", configName,
                                 i, faction);
                         }
@@ -157,7 +159,7 @@ public class BiomeOverrideConfigParser
             }
         }
 
-        FMLLog.info ("Loaded %d of %d specified %s config entries. %d config entries are invalid.",
+        logger.info ("Loaded %d of %d specified %s config entries. %d config entries are invalid.",
             validEntryCounter, invalidEntryCounter + validEntryCounter, configName,
             invalidEntryCounter);
 

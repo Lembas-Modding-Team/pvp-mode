@@ -1,5 +1,7 @@
 package pvpmode.api.common.compatibility;
 
+import pvpmode.api.common.SimpleLogger;
+
 /**
  * A compatibility module interfaces with PvPMode and other mods and provides
  * compatibility with these. The module can contain compile-time dependencies
@@ -16,5 +18,5 @@ public interface CompatibilityModule
      * This function will be executed once when the module is loaded. If it throws
      * an exception, the module won't be loaded.
      */
-    public void load () throws Exception;
+    public void load (SimpleLogger logger) throws Exception;
 }
