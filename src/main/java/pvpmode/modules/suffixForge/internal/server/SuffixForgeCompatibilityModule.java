@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
 import pvpmode.api.server.utils.PvPServerUtils;
@@ -23,7 +24,7 @@ public class SuffixForgeCompatibilityModule implements CompatibilityModule
     private boolean partialInvLossDropSoulboundItems;
 
     @Override
-    public void load () throws Exception
+    public void load (SimpleLogger logger) throws Exception
     {
         MinecraftForge.EVENT_BUS.register (this);
 

@@ -21,6 +21,11 @@ public interface CompatibilityModuleLoader
     public String getModuleName ();
 
     /**
+     * Returns a short, internal and unlocalized name of the referenced module
+     */
+    public String getInternalModuleName ();
+
+    /**
      * Returns the class name of the referenced compatibility module
      */
     public String getCompatibilityModuleClassName ();

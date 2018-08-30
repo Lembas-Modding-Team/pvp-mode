@@ -2,13 +2,13 @@ package pvpmode.modules.enderio.internal.server;
 
 import java.lang.reflect.*;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import crazypants.enderio.enchantment.*;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
 import pvpmode.modules.enderio.api.server.EnderIOServerConfigurationConstants;
@@ -21,6 +21,8 @@ import pvpmode.modules.enderio.api.server.EnderIOServerConfigurationConstants;
  */
 public class EnderIOCompatibilityModule implements CompatibilityModule
 {
+    
+    private SimpleLogger logger;
 
     private boolean partialInvLossDropSoulboundItems;
 
@@ -29,8 +31,10 @@ public class EnderIOCompatibilityModule implements CompatibilityModule
     private Method isSoulboundStackMethod;
 
     @Override
-    public void load () throws Exception
+    public void load (SimpleLogger logger) throws Exception
     {
+        this.logger = logger;
+        
         MinecraftForge.EVENT_BUS.register (this);
 
         Configuration config = PvPMode.instance.getServerProxy ().getConfiguration ();
@@ -72,7 +76,7 @@ public class EnderIOCompatibilityModule implements CompatibilityModule
             }
             catch (Exception e)
             {
-                FMLLog.getLogger ().error ("Couldn't check whether the current item is an Ender IO soulbound one", e);
+               logger.errorThrowable ("Couldn't check whether the current item is an Ender IO soulbound one", e);
             }
         }
     }

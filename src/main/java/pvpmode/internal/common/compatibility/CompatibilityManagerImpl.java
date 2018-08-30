@@ -2,14 +2,25 @@ package pvpmode.internal.common.compatibility;
 
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+
+import pvpmode.PvPMode;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
+import pvpmode.internal.common.SimpleLoggerImpl;
 
 public class CompatibilityManagerImpl implements CompatibilityManager
 {
+    private SimpleLogger logger;
+
     private Collection<Class<? extends CompatibilityModuleLoader>> registeredModuleLoaders = new HashSet<> ();
 
     private boolean areModulesLoaded = false;
+
+    public CompatibilityManagerImpl ()
+    {
+        logger = PvPMode.proxy.getLogger ();
+    }
 
     @Override
     public boolean registerModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader)
@@ -36,7 +47,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
             {
                 if (loader.canLoad ())
                 {
-                    FMLLog.fine (
+                    logger.debug (
                         "The compatibility module \"%s\" can be loaded",
                         loader.getModuleName ());
 
@@ -51,45 +62,45 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                             {
                                 try
                                 {
-                                    module.load ();
+                                    module.load (new SimpleLoggerImpl (LogManager
+                                        .getLogger (logger.getName () + "." + loader.getInternalModuleName ())));
                                     ++loadedModulesCounter;
-                                    FMLLog.getLogger ()
-                                        .info (String.format ("The compatibility module \"%s\" was loaded successfully",
-                                            loader.getModuleName ()));
+                                    logger.info ("The compatibility module \"%s\" was loaded successfully",
+                                        loader.getModuleName ());
                                 }
                                 catch (Exception e)
                                 {
-                                    FMLLog.getLogger ().error (String.format (
+                                    logger.errorThrowable (
                                         "The compatibility module \"%s\" couldn't be loaded because of an exception while loading the module",
-                                        loader.getModuleName ()), e);
+                                        e,
+                                        loader.getModuleName ());
                                 }
                             }
                         }
                         else
                         {
-                            FMLLog.getLogger ().error (String.format (
+                            logger.error (
                                 "The compatibility module class \"%s\" specified by the compatibility module loader \"%s\" is not assignable from \"%s\"",
                                 moduleClass.getName (), moduleLoaderClass.getName (),
-                                CompatibilityModule.class.getName ()));
+                                CompatibilityModule.class.getName ());
                         }
                     }
                     catch (ClassNotFoundException e)
                     {
-                        FMLLog.getLogger ()
-                            .error (
-                                String.format ("The specified compatibility module class \"%s\" couldn't be found",
-                                    loader.getCompatibilityModuleClassName ()));
+                        logger
+                            .error ("The specified compatibility module class \"%s\" couldn't be found",
+                                loader.getCompatibilityModuleClassName ());
                     }
                 }
                 else
                 {
-                    FMLLog.info (
+                    logger.info (
                         "The compatibility module \"%s\" won't be loaded, because it's dependencies are missing",
                         loader.getModuleName ());
                 }
             }
         }
-        FMLLog.info ("Loaded %d of %d registered compatibility modules", loadedModulesCounter,
+        logger.info ("Loaded %d of %d registered compatibility modules", loadedModulesCounter,
             registeredModuleLoaders.size ());
         areModulesLoaded = true;
     }
@@ -103,15 +114,15 @@ public class CompatibilityManagerImpl implements CompatibilityManager
         }
         catch (InstantiationException e)
         {
-            FMLLog.getLogger ().error (String.format ("Couldn't instantiate the %s \"%s\"", instanceType,
-                clazz.getName ()), e);
+            logger.errorThrowable ("Couldn't instantiate the %s \"%s\"", e, instanceType,
+                clazz.getName ());
         }
         catch (IllegalAccessException e)
         {
-            FMLLog.getLogger ().error (String.format (
-                "Couldn't instantiate the %s \"%s\" because there's no accessible default constructor",
+            logger.errorThrowable (
+                "Couldn't instantiate the %s \"%s\" because there's no accessible default constructor", e,
                 instanceType,
-                clazz.getName ()), e);
+                clazz.getName ());
         }
         return null;
     }

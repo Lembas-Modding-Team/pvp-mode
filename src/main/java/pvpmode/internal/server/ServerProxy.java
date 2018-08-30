@@ -229,7 +229,7 @@ public class ServerProxy extends CommonProxy
 
         if (csvSeparator.length () != 1)
         {
-            FMLLog.warning ("The csv separator \"%s\" is invalid. The default one will be used.",
+            logger.warning ("The csv separator \"%s\" is invalid. The default one will be used.",
                 csvSeparator);
             csvSeparator = ";";
         }
@@ -247,27 +247,27 @@ public class ServerProxy extends CommonProxy
         if (globalMessagePrefix.trim ().isEmpty ())
         {
             globalMessagePrefix = ServerChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX;
-            FMLLog.warning ("The global chat message prefix is empty. A default one will be used.");
+            logger.warning ("The global chat message prefix is empty. A default one will be used.");
         }
 
-        FMLLog.info ("%d commands are blacklisted", commandBlacklist.size ());
+        logger.info ("%d commands are blacklisted", commandBlacklist.size ());
 
         if (forceDefaultPvPMode && pvpTogglingEnabled)
         {
-            FMLLog.warning (
+            logger.warning (
                 "The configuration property 'Force Default PvP Mode' is set to true but 'Pvp Toggeling Enabled' is set to false, but required to be set to true.");
         }
 
         if (Loader.isModLoaded ("suffixforge"))
         {
             soulboundItemsEnabled = false;
-            FMLLog.info ("SuffixForge is present - the soulbound command will be disabled");
+            logger.info ("SuffixForge is present - the soulbound command will be disabled");
         }
 
         if (soulboundTooltip.trim ().isEmpty ())
         {
             soulboundTooltip = DEFAULT_SOULBOUND_TOOLTIP;
-            FMLLog.warning ("The soulbound tooltip is empty. A default one will be used.");
+            logger.warning ("The soulbound tooltip is empty. A default one will be used.");
         }
 
         if (configuration.hasChanged ())
@@ -322,20 +322,20 @@ public class ServerProxy extends CommonProxy
                 String handlerName = activatedHandlersIterator.next ();
                 if (!combatLogManager.isValidHandlerName (handlerName))
                 {
-                    FMLLog.warning ("The pvp combat logging handler \"%s\" is not valid.",
+                    logger.warning ("The pvp combat logging handler \"%s\" is not valid.",
                         handlerName);
                     activatedHandlersIterator.remove ();
                 }
             }
             if (activatedPvPLoggingHandlers.isEmpty ())
             {
-                FMLLog.warning ("No valid pvp combat logging handlers were specified. A default one will be used");
+                logger.warning ("No valid pvp combat logging handlers were specified. A default one will be used");
                 activatedPvPLoggingHandlers.add (combatLogManager.getDefaultHandlerName ());
             }
         }
         else
         {
-            FMLLog.warning ("No pvp combat logging handlers were specified. PvP combat logging will be disabled.");
+            logger.warning ("No pvp combat logging handlers were specified. PvP combat logging will be disabled.");
         }
 
         if (configuration.hasChanged ())
@@ -346,7 +346,7 @@ public class ServerProxy extends CommonProxy
         if (activatedPvPLoggingHandlers.size () > 0)
         {
             activatedPvPLoggingHandlers.forEach (combatLogManager::activateHandler);
-            FMLLog.info ("Activated the following pvp combat logging handlers: %s", activatedPvPLoggingHandlers);
+            logger.info ("Activated the following pvp combat logging handlers: %s", activatedPvPLoggingHandlers);
             combatLogManager.init (combatLogDir);
         }
 

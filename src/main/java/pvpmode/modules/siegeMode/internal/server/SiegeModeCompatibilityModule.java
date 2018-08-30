@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PvPListEvent.UnsafeClassification;
@@ -23,7 +24,7 @@ public class SiegeModeCompatibilityModule implements CompatibilityModule
     private boolean disablePvPLoggingDuringSieges;
 
     @Override
-    public void load () throws Exception
+    public void load (SimpleLogger logger) throws Exception
     {
         MinecraftForge.EVENT_BUS.register (this);
 

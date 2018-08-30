@@ -7,7 +7,6 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Function;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import lotr.common.*;
 import lotr.common.entity.npc.LOTREntityNPC;
@@ -17,7 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.PvPMode;
-import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.*;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
@@ -33,6 +32,8 @@ import pvpmode.api.server.utils.*;
 public class LOTRModCompatibilityModule implements CompatibilityModule
 {
 
+    private SimpleLogger logger;
+
     private static final String ENEMY_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_enemy_biomes.txt";
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
     private static final String EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME = "extended_enemy_biomes.txt";
@@ -44,9 +45,11 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     private boolean areSafeBiomeOverridesEnabled;
 
     @Override
-    public void load () throws IOException
+    public void load (SimpleLogger logger) throws IOException
     {
         MinecraftForge.EVENT_BUS.register (this);
+        
+        this.logger = logger;
 
         Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
 
@@ -67,8 +70,8 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
 
         Path configurationFolder = configuration.getConfigFile ().getParentFile ().toPath ();
 
-        FMLLog.info (String.format ("PvP mode overrides for LOTR biomes are %s",
-            areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled"));
+        logger.info ("PvP mode overrides for LOTR biomes are %s",
+            areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled");
 
         if (areEnemyBiomeOverridesEnabled)
         {
@@ -112,7 +115,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         // Recreate the config file if it doesn't exist
         if (!Files.exists (biomeConfigurationFile))
         {
-            FMLLog.info ("The %s configuration file doesn't exist - it'll be created", configName);
+            logger.info ("The %s configuration file doesn't exist - it'll be created", configName);
             Files.createFile (biomeConfigurationFile);
 
             PvPCommonUtils.writeFromStreamToFile (
@@ -121,7 +124,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         }
 
         BiomeOverrideConfigParser parser = new BiomeOverrideConfigParser (configName,
-            biomeConfigurationFile);
+            biomeConfigurationFile, logger);
 
         PvPMode.instance.getServerProxy ().getOverrideManager ()
             .registerOverrideCondition (conditionCreator.apply (parser.parse ()));
@@ -138,14 +141,14 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         Path biomeIdFile = configurationFolder.getParent ().resolve (filename);
         if (!Files.exists (biomeIdFile))
         {
-            FMLLog.info ("The %s doesn't exist - it'll be created", shortName);
+            logger.info ("The %s doesn't exist - it'll be created", shortName);
             Files.createFile (biomeIdFile);
         }
 
         PvPCommonUtils.writeFromStreamToFile (
             () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
             biomeIdFile);
-        FMLLog.info ("Recreated the %s", shortName);
+        logger.info ("Recreated the %s", shortName);
     }
 
     @SubscribeEvent

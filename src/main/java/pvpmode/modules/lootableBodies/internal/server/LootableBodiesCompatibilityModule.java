@@ -8,6 +8,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
@@ -16,7 +17,7 @@ public class LootableBodiesCompatibilityModule implements CompatibilityModule
 {
 
     @Override
-    public void load () throws Exception
+    public void load (SimpleLogger logger) throws Exception
     {
         MinecraftForge.EVENT_BUS.register (this);
     }

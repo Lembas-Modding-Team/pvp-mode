@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.objectweb.asm.*;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityModule;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
@@ -30,6 +30,8 @@ import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
 public class DeathcraftCompatibilityModule implements CompatibilityModule
 {
 
+    private SimpleLogger logger;
+
     /*
      * This method allows us to inject dynamically generated classes into any
      * classloader, but it's not visible by default.
@@ -37,8 +39,10 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
     private Method defineClassMethod;
 
     @Override
-    public void load () throws Exception
+    public void load (SimpleLogger logger) throws Exception
     {
+        this.logger = logger;
+
         MinecraftForge.EVENT_BUS.register (this);
 
         defineClassMethod = ClassLoader.class.getDeclaredMethod ("defineClass",
@@ -183,11 +187,11 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
         }
         catch (IllegalAccessException e)
         {
-            FMLLog.getLogger ().error ("Couldn't access one of the methods or fields if deathcraft", e);
+            logger.errorThrowable ("Couldn't access one of the methods or fields of deathcraft", e);
         }
         catch (InvocationTargetException e)
         {
-            FMLLog.getLogger ().error ("A method of deathcraft threw an exception", e);
+            logger.errorThrowable ("A method of deathcraft threw an exception", e);
         }
 
         if (canCreateChest != Boolean.TRUE)
@@ -248,19 +252,19 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
         }
         catch (NoSuchFieldException e)
         {
-            FMLLog.getLogger ().error ("Couldn't find a required field of deathcraft", e);
+            logger.errorThrowable ("Couldn't find a required field of deathcraft", e);
         }
         catch (NoSuchMethodException e)
         {
-            FMLLog.getLogger ().error ("Couldn't find a required method of deathcraft", e);
+            logger.errorThrowable ("Couldn't find a required method of deathcraft", e);
         }
         catch (SecurityException e)
         {
-            FMLLog.getLogger ().error ("Couldn't change the visibility of deathcraft field or methods", e);
+            logger.errorThrowable ("Couldn't change the visibility of deathcraft field or methods", e);
         }
         catch (IllegalArgumentException e)
         {
-            FMLLog.getLogger ().error ("A method of deathcraft was used wrongly", e);
+            logger.errorThrowable ("A method of deathcraft was used wrongly", e);
         }
 
     }
@@ -287,7 +291,7 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
                                                                                                 // java/lang/String
             String className = bytecodeName.replaceAll ("/", "."); // A name like java.lang.String
 
-            FMLLog.warning (
+            logger.warning (
                 "The class \"%s\" referenced from a field of \"%s\" couldn't be found. We'll try to create it dynamically...",
                 className,
                 clazz.getName ());
@@ -295,20 +299,20 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
             try
             {
                 createClassDynamically (clazz.getClassLoader (), bytecodeName, className);
-                FMLLog.info ("Successfully created the class \"%s\" dynamically", className);
+                logger.info ("Successfully created the class \"%s\" dynamically", className);
             }
             catch (IllegalAccessException e1)
             {
-                FMLLog.getLogger ().error ("Couldn't access the method \"defineClass\" of the relevant classloader", e);
+                logger.errorThrowable ("Couldn't access the method \"defineClass\" of the relevant classloader", e);
             }
             catch (IllegalArgumentException e1)
             {
-                FMLLog.getLogger ().error ("The method \"defineClass\" of the relevant classloader was used wrongly",
+                logger.errorThrowable ("The method \"defineClass\" of the relevant classloader was used wrongly",
                     e);
             }
             catch (InvocationTargetException e1)
             {
-                FMLLog.getLogger ().error ("The method \"defineClass\" of the relevant classloader threw an exception",
+                logger.errorThrowable ("The method \"defineClass\" of the relevant classloader threw an exception",
                     e);
             }
             createMissingClasses (clazz); // Run it again until all undefined classes were generated
@@ -451,15 +455,15 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
             }
             catch (IllegalAccessException e)
             {
-                FMLLog.getLogger ().error ("Couldn't access the deathcraft function \"saveChest\"", e);
+                logger.errorThrowable ("Couldn't access the deathcraft function \"saveChest\"", e);
             }
             catch (IllegalArgumentException e)
             {
-                FMLLog.getLogger ().error ("The deathcraft function \"saveChest\" was used wrongly", e);
+                logger.errorThrowable ("The deathcraft function \"saveChest\" was used wrongly", e);
             }
             catch (InvocationTargetException e)
             {
-                FMLLog.getLogger ().error ("The deathcraft function \"saveChest\" threw an exception", e);
+                logger.errorThrowable ("The deathcraft function \"saveChest\" threw an exception", e);
             }
             finally
             {

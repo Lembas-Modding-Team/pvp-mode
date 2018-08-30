@@ -2,6 +2,8 @@ package pvpmode.api.common.compatibility;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A compatibility module loader base class which determines whether a
  * compatibility module can be loaded by an identifier of it's dependencies.
@@ -50,5 +52,11 @@ public abstract class IdentifierCompatibilityModuleLoader implements Compatibili
      * Returns true if the dependency of this module is present.
      */
     protected abstract boolean isDependencyLoaded (String identifier);
+
+    @Override
+    public String getInternalModuleName ()
+    {
+        return StringUtils.join (this.identifiers);
+    }
 
 }

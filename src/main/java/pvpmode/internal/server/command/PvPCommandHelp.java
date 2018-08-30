@@ -111,8 +111,10 @@ public class PvPCommandHelp extends AbstractPvPCommand
             }
 
             if (!foundMatch)
+            {
                 ServerChatUtils.red (sender,
                     String.format ("The command \"%s\" doesn't exist or isn't a command of PvP Mode", command));
+            }
 
         }
     }
