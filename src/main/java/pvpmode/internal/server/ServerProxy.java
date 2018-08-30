@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.configuration.CommonConfigurationConstants;
+import pvpmode.api.server.configuration.ServerConfigurationConstants;
 import pvpmode.api.server.log.LogHandlerConstants;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.common.CommonProxy;
@@ -181,7 +182,8 @@ public class ServerProxy extends CommonProxy
         allowIndirectPvP = configuration.getBoolean (ALLOW_INDIRECT_PVP_CONFIGURATION_NAME,
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If true, attacks from NPCs owned by a player (dogs, hired units, ...) will count as PvP and not as PvE.");
-        prefixGlobalMessages = configuration.getBoolean ("",
+        prefixGlobalMessages = configuration.getBoolean (
+            ServerConfigurationConstants.PREFIX_GLOBAL_CHAT_MESSAGES_CONFIGURATION_NAME,
             CommonConfigurationConstants.MAIN_CONFIGURATION_CATEGORY,
             true,
             "If true, all global chat messages sent by the PvP Mode Mod will be prefixed with a configurable, global prefix.");
