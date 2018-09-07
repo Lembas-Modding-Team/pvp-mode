@@ -18,7 +18,7 @@ import pvpmode.compatibility.modules.suffixForge.SuffixForgeCompatibilityModuleL
 import pvpmode.log.*;
 import pvpmode.overrides.PvPOverrideManager;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.3.0-BETA", acceptableRemoteVersions = "*")
+@Mod(modid = "pvp-mode", name = "PvP Mode", version = "1.3.1-BETA", acceptableRemoteVersions = "*")
 public class PvPMode
 {
     public static Configuration config;
