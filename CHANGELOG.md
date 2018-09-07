@@ -3,6 +3,9 @@
 ## 1.3.1-BETA
 ### General changes:
 
+#### Bug fixes:
+* Fixed a crash with some ownable entities
+
 ## 1.3.0-BETA
 ### General changes:
 * PvP toggling for players is now disableable
