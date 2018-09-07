@@ -256,7 +256,7 @@ public class PvPUtils
                 owner = ((IEntityOwnable) owner == null ? entity : owner).getOwner ();
                 if (entitiesChecked.contains (owner.getEntityId()) break;
                 entitiesChecked.add (owner.getEntityId())
-                if (owner instanceof EntityPlayer) return (EntityPlayerMP) owner;
+                if (owner instanceof EntityPlayerMP) return (EntityPlayerMP) owner;
             } while (owner instanceof IEntityOwnable);
 	}
 
