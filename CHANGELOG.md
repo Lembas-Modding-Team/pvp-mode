@@ -2,6 +2,7 @@
 
 ## 1.4.0-BETA
 ### General changes:
+* Improved the function to get the master of an owned entity
 
 ## 1.3.0-BETA
 ### General changes:
