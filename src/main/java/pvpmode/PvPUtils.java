@@ -252,14 +252,13 @@ public class PvPUtils
         {
             List<Integer> entitiesChecked = new ArrayList<>();
             Entity owner;
-            do
-            {
+            do {
                 owner = ((IEntityOwnable) owner == null ? entity : owner).getOwner ();
-                if (entitiesChecked.contains(owner.getEntityId()) break;
-                entitiesChecked.add(owner.getEntityId())
+                if (entitiesChecked.contains (owner.getEntityId()) break;
+                entitiesChecked.add (owner.getEntityId())
                 if (owner instanceof EntityPlayer) return (EntityPlayerMP) owner;
             } while (owner instanceof IEntityOwnable);
-		}
+	}
 
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
