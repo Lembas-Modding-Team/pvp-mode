@@ -33,7 +33,7 @@ public class PvPEventHandler
         EntityPlayerMP attacker = PvPUtils.getMaster (event.source.getEntity ());
         EntityPlayerMP victim = PvPUtils.getMaster (event.entity);
 
-        if (attacker == null || victim == null)
+        if (attacker == null || victim == null || attacker == victim)
             return;
 
         EnumPvPMode attackerMode = PvPUtils.getPvPMode (attacker);

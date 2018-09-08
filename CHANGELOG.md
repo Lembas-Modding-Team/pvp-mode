@@ -5,6 +5,7 @@
 
 #### Bug fixes:
 * Fixed a crash with some ownable entities
+* Fixed that players with PvP disabled couldn't attack themselves or their owned entities
 
 ### LOTR compatibility:
 * Updated to Beta 34.1 of the LOTR Mod
