@@ -247,17 +247,19 @@ public class PvPUtils
 
         if (entity instanceof EntityPlayerMP)
             return (EntityPlayerMP) entity;
-        
-        List<Entity> entitiesChecked = new ArrayList<>();
+
+        List<Entity> entitiesChecked = new ArrayList<> ();
         Entity owner = entity;
         while (owner instanceof IEntityOwnable)
         {
             owner = ((IEntityOwnable) owner).getOwner ();
-            if (owner == null || entitiesChecked.contains (owner)) break;
+            if (owner == null || entitiesChecked.contains (owner))
+                break;
             entitiesChecked.add (owner);
-            if (owner instanceof EntityPlayerMP) return (EntityPlayerMP) owner;
+            if (owner instanceof EntityPlayerMP)
+                return (EntityPlayerMP) owner;
         }
-        
+
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
@@ -416,5 +418,93 @@ public class PvPUtils
                 EnumChatFormatting.WHITE);
         }
         ChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
+    }
+
+    /**
+     * Returns a map with the content of the source map, which is completely
+     * unmodifiable, inclusive it's content and the content of the content and so
+     * on. Changes made to the source map WON'T be backed by the returned map.
+     * 
+     * @param source
+     *            The original map
+     * @return The deep unmodifiable map
+     */
+    public static <K, J> Map<K, J> deepUnmodifiableMap (Map<K, J> source)
+    {
+        Map<K, J> tmpMap = new HashMap<> (source.size ());
+
+        source.forEach ( (key, value) ->
+        {
+            tmpMap.put (getUnmodifiableObject (key), getUnmodifiableObject (value));
+        });
+        return Collections.unmodifiableMap (tmpMap);
+    }
+
+    /**
+     * Returns a list with the content of the source list, which is completely
+     * unmodifiable, inclusive it's content and the content of the content and so
+     * on. Changes made to the source list WON'T be backed by the returned list.
+     * 
+     * @param source
+     *            The original list
+     * @return The deep unmodifiable list
+     */
+    public static <K> List<K> deepUnmodifiableList (List<K> source)
+    {
+        return deepUnmodifiableCollection (source, new ArrayList<K> (source.size ()), Collections::unmodifiableList);
+    }
+
+    /**
+     * Returns a set with the content of the source set, which is completely
+     * unmodifiable, inclusive it's content and the content of the content and so
+     * on. Changes made to the source set WON'T be backed by the returned set.
+     * 
+     * @param source
+     *            The original list
+     * @return The deep unmodifiable list
+     */
+    public static <K> Set<K> deepUnmodifiableSet (Set<K> source)
+    {
+        return deepUnmodifiableCollection (source, new HashSet<K> (source.size ()), Collections::unmodifiableSet);
+    }
+
+    /**
+     * Returns a collection with the content of the source collection, which is
+     * completely unmodifiable, inclusive it's content and the content of the
+     * content and so on. Changes made to the source collection WON'T be backed by
+     * the returned collection.
+     * 
+     * @param source
+     *            The original collection
+     * @return The deep unmodifiable collection
+     */
+    public static <K> Collection<K> deepUnmodifiableCollection (Collection<K> source)
+    {
+        return deepUnmodifiableCollection (source, new ArrayList<K> (source.size ()),
+            Collections::unmodifiableCollection);
+    }
+
+    private static <K extends Collection<J>, J> K deepUnmodifiableCollection (K source, K tmpCollection,
+        Function<K, K> unmodifiableCollectionCreator)
+    {
+        source.forEach (element ->
+        {
+            tmpCollection.add (getUnmodifiableObject (element));
+        });
+        return unmodifiableCollectionCreator.apply (tmpCollection);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K> K getUnmodifiableObject (K object)
+    {
+        if (object instanceof List)
+            return (K) deepUnmodifiableList ((List<?>) object);
+        if (object instanceof Set)
+            return (K) deepUnmodifiableSet ((Set<?>) object);
+        if (object instanceof Map)
+            return (K) deepUnmodifiableMap ((Map<?, ?>) object);
+        if (object instanceof Collection)
+            return (K) deepUnmodifiableCollection ((Collection<?>) object);
+        return object;
     }
 }
