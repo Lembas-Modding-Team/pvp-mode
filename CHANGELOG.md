@@ -2,7 +2,7 @@
 
 ## 1.4.0-BETA
 ### General changes:
-* Improved the function to get the master of an owned entity
+* Determining the owner of an entity now recursively checks for it
 
 ## 1.3.1-BETA
 ### General changes:
