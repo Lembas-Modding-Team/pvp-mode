@@ -4,6 +4,7 @@
 ### General changes:
 
 #### Bug fixes:
+* Fixed a crash with some ownable entities
 * Fixed that players with PvP disabled couldn't attack themselves or their owned entities
 
 ## 1.3.0-BETA
