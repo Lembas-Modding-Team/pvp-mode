@@ -60,7 +60,7 @@
 51 Núrn
 52 Sea of Núrnen
 53 Núrn Marshes
-54 dummy *
+54 Adornland
 55 Angmar Mountains
 56 Mouths of Anduin
 57 Mouths of Entwash
@@ -102,20 +102,20 @@
 94 Beach *
 95 Gravel Beach *
 96 Near Harad
-97 Far Harad
+97 Far Harad Grasslands
 98 Harad Mountains *
 99 Umbar
 100 Far Harad Jungle
 101 Umbar Hills
-102 dummy *
+102 Near Harad Hills
 103 Far Harad Jungle Lake
 105 Far Harad Forest
-106 Near Harad Fertile
+106 Southron Coasts
 107 Pertorogwaith
 108 Umbar Forest
 109 Far Harad Jungle Edge
 110 Tauredain Clearing
-111 dummy *
+111 GulfofHarad
 112 Emyn Winion
 113 Tolfalas *
 114 Lebennin
@@ -124,21 +124,21 @@
 117 Red Mountains *
 118 Red Mountains Foothills *
 119 Dol Guldur
-120 Near Harad Semidesert
-121 Far Harad Arid Savannah
-122 Far Harad Arid Savannah Hills
+120 Near Harad Half-deserts
+121 Far Harad Arid Grasslands
+122 Far Harad Arid Hills
 123 Far Harad Swampland
 124 Far Harad Cloud Forest *
 125 Far Harad Bushland *
 126 Far Harad Bushland Hills *
 127 Far Harad Mangrove *
-128 Near Harad Fertile Forest
+128 Southron Forests
 129 Vales of Anduin
 130 The Wold
 131 Shire Moors
 132 Shire Marshes
 133 Near Harad Red Desert *
-134 Far Harad Volcano *
+134 Far Harad Volcano
 135 Udûn
 136 Gorgoroth
 137 Morgul Vale
@@ -146,16 +146,16 @@
 139 Dale
 140 Dorwinion
 141 Tower Hills
-142 dummy *
+142 Gulf of Harad Forest
 143 Northern Wilderland
 144 Forodwaith Coast *
-145 Far Harad Coast *
+145 Corsair Coasts
 146 Near Harad Riverbank
 147 Lossarnach
 148 Imloth Melui
 149 Near Harad Oasis
 150 White Beach *
-151 South Harondor
+151 Harnedor
 152 Lamedon
 153 Lamedon Hills
 154 Blackroot Vale

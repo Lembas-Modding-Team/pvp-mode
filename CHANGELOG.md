@@ -4,6 +4,16 @@
 ### General changes:
 * Improved the function to get the master of an owned entity
 
+## 1.3.1-BETA
+### General changes:
+
+#### Bug fixes:
+* Fixed a crash with some ownable entities
+* Fixed that players with PvP disabled couldn't attack themselves or their owned entities
+
+### LOTR compatibility:
+* Updated to Beta 34.1 of the LOTR Mod
+
 ## 1.3.0-BETA
 ### General changes:
 * PvP toggling for players is now disableable

@@ -57,6 +57,6 @@ This mod was developed especially for use on servers running the Lord of the Rin
 Besides the abovementioned basic features the mod provides quite a few more advanced features. These can be for general support of managing pvp combat on servers and/or for very specific aspects of the gameplay with the Lord of the Rings mod or other mods.
 For more information on those features, please check out the wiki pages of our GitHub portal at https://github.com/VulcanForge/pvp-mode/wiki
 
-If you notice a bug in-game, fire us an issue at our GitHub portal, or send an email to vulcanforgeyt@gmail.com.
+If you notice a bug in-game, fire us an issue at our GitHub portal.
 
 Cheers and enjoy your game!
