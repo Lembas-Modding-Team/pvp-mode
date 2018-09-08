@@ -12,8 +12,9 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
 import pvpmode.compatibility.CompatibilityManager;
-import pvpmode.compatibility.modules.enderio.EnderIOCompatibilityModuleLoader;
 import pvpmode.compatibility.modules.deathcraft.DeathcraftCompatibilityModuleLoader;
+import pvpmode.compatibility.modules.enderio.EnderIOCompatibilityModuleLoader;
+import pvpmode.compatibility.modules.lootableBodies.LootableBodiesCompatibilityModuleLoader;
 import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
 import pvpmode.compatibility.modules.siegeMode.SiegeModeCompatiblityModuleLoader;
 import pvpmode.compatibility.modules.suffixForge.SuffixForgeCompatibilityModuleLoader;
@@ -219,6 +220,7 @@ public class PvPMode
         compatibilityManager.registerModuleLoader (SiegeModeCompatiblityModuleLoader.class);
         compatibilityManager.registerModuleLoader (EnderIOCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (DeathcraftCompatibilityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (LootableBodiesCompatibilityModuleLoader.class);
     }
 
     @EventHandler
