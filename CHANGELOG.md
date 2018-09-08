@@ -2,6 +2,7 @@
 
 ## 1.4.0-BETA
 ### General changes:
+* Determining the owner of an entity now recursively checks for it
 
 ## 1.3.1-BETA
 ### General changes:

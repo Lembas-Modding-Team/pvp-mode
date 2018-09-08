@@ -247,14 +247,17 @@ public class PvPUtils
 
         if (entity instanceof EntityPlayerMP)
             return (EntityPlayerMP) entity;
-
-        if (entity instanceof IEntityOwnable)
+        
+        List<Entity> entitiesChecked = new ArrayList<>();
+        Entity owner = entity;
+        while (owner instanceof IEntityOwnable)
         {
-            Entity owner = ((IEntityOwnable) entity).getOwner ();
-            if (owner instanceof EntityPlayerMP)
-                return (EntityPlayerMP) owner;
+            owner = ((IEntityOwnable) owner).getOwner ();
+            if (owner == null || entitiesChecked.contains (owner)) break;
+            entitiesChecked.add (owner);
+            if (owner instanceof EntityPlayerMP) return (EntityPlayerMP) owner;
         }
-
+        
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPUtils.postEventAndGetResult (event, event::getMaster);
@@ -414,5 +417,4 @@ public class PvPUtils
         }
         ChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
     }
-
 }
