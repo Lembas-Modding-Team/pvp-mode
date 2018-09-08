@@ -4,6 +4,9 @@
 ### General changes:
 * Determining the owner of an entity now recursively checks for it
 
+### Deathcraft compatibility:
+* Deathcraft now works with the partial inventory loss
+
 ## 1.3.1-BETA
 ### General changes:
 
