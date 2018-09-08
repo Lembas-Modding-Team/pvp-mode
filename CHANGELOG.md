@@ -3,6 +3,9 @@
 ## 1.3.1-BETA
 ### General changes:
 
+#### Bug fixes:
+* Fixed a crash with some ownable entities
+
 ### LOTR compatibility:
 * Updated to Beta 34.1 of the LOTR Mod
 

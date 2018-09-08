@@ -249,7 +249,11 @@ public class PvPUtils
             return (EntityPlayerMP) entity;
 
         if (entity instanceof IEntityOwnable)
-            return (EntityPlayerMP) ((IEntityOwnable) entity).getOwner ();
+        {
+            Entity owner = ((IEntityOwnable) entity).getOwner ();
+            if (owner instanceof EntityPlayerMP)
+                return (EntityPlayerMP) owner;
+        }
 
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
