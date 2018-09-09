@@ -33,10 +33,12 @@ public abstract class IdentifierCompatibilityModuleLoader implements Compatibili
         if (loaded == null)
         {
             loaded = Boolean.TRUE;
+
             for (String identifier : identifiers)
             {
-                if (! (loaded = loaded && isDependencyLoaded (identifier)))
+                if (!isDependencyLoaded (identifier))
                 {
+                    loaded = Boolean.FALSE;
                     break;
                 }
             }
