@@ -1,6 +1,6 @@
 package pvpmode.compatibility.modules.suffixForge;
 
-import pvpmode.compatibility.ModCompatibilityModuleLoader;
+import pvpmode.compatibility.ForgeModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for SuffixForge.
@@ -8,7 +8,7 @@ import pvpmode.compatibility.ModCompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class SuffixForgeCompatibilityModuleLoader extends ModCompatibilityModuleLoader
+public class SuffixForgeCompatibilityModuleLoader extends ForgeModCompatibilityModuleLoader
 {
 
     public SuffixForgeCompatibilityModuleLoader ()

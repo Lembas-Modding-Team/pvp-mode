@@ -1,6 +1,6 @@
 package pvpmode.compatibility.modules.siegeMode;
 
-import pvpmode.compatibility.ModCompatibilityModuleLoader;
+import pvpmode.compatibility.ForgeModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for the Siege Mode Mod.
@@ -8,7 +8,7 @@ import pvpmode.compatibility.ModCompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class SiegeModeCompatiblityModuleLoader extends ModCompatibilityModuleLoader
+public class SiegeModeCompatiblityModuleLoader extends ForgeModCompatibilityModuleLoader
 {
 
     public SiegeModeCompatiblityModuleLoader ()

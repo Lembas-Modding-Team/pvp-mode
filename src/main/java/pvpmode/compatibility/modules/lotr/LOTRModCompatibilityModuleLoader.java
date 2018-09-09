@@ -1,6 +1,6 @@
 package pvpmode.compatibility.modules.lotr;
 
-import pvpmode.compatibility.ModCompatibilityModuleLoader;
+import pvpmode.compatibility.ForgeModCompatibilityModuleLoader;
 
 /**
  * The compatibility module loader for the LOTR Mod.
@@ -8,7 +8,7 @@ import pvpmode.compatibility.ModCompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class LOTRModCompatibilityModuleLoader extends ModCompatibilityModuleLoader
+public class LOTRModCompatibilityModuleLoader extends ForgeModCompatibilityModuleLoader
 {
 
     public LOTRModCompatibilityModuleLoader ()
