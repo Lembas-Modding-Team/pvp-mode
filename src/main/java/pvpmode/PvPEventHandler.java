@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.eventhandler.*;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraft.entity.Entity;
@@ -16,6 +16,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
 import pvpmode.compatibility.events.*;
+import pvpmode.compatibility.events.PartialItemDropEvent.Drop.Action;
+import pvpmode.compatibility.events.PartialItemDropEvent.EnumInventory;
 
 public class PvPEventHandler
 {
@@ -245,7 +247,7 @@ public class PvPEventHandler
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPlayerDeath (LivingDeathEvent event)
     {
         if (event.entityLiving instanceof EntityPlayer)
@@ -263,44 +265,112 @@ public class PvPEventHandler
                         if (wasPvP && PvPMode.partialInventoryLossEnabled
                             || !wasPvP && PvPMode.enablePartialInventoryLossPvE)
                         {
+                            // Collect all stacks that should be dropped
+                            Map<EnumInventory, TreeMap<Integer, ItemStack>> stacksToDrop = new HashMap<> ();
+
                             // Either use PvP or PvE inventory loss counts
                             int armorLoss = wasPvP ? PvPMode.inventoryLossArmour : PvPMode.inventoryLossArmourPvE;
                             int hotbarLoss = wasPvP ? PvPMode.inventoryLossHotbar : PvPMode.inventoryLossHotbarPvE;
                             int mainLoss = wasPvP ? PvPMode.inventoryLossMain : PvPMode.inventoryLossMainPvE;
 
-                            // Try to drop the specified amount of stacks from the inventories
+                            // Try to get the specified amount of stacks to be dropped from the inventories
                             int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
                                 0, 3,
-                                armorLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                                armorLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
                             int missingHotbarStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 0,
                                 8,
-                                hotbarLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                                hotbarLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
                             int missingMainStacks = dropItemsFromInventory (player, player.inventory.mainInventory, 9,
                                 35,
-                                mainLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                                mainLoss, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
 
                             /*
-                             * Try to drop the specified amount of stacks from other inventories if the
-                             * specified inventory contains too less items.
+                             * Try to get the specified amount of stacks to be dropped from other
+                             * inventories if the specified inventory contains too less items.
                              */
                             if (PvPMode.extendArmourInventorySearch)
                             {
                                 tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
                                     player.inventory.mainInventory, 0, 8,
-                                    PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER));
+                                    PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPUtils.ARMOUR_FILTER),
+                                    stacksToDrop);
                             }
                             if (PvPMode.extendHotbarInventorySearch)
                             {
                                 tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
                                     null,
-                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
                             }
                             if (PvPMode.extendMainInventorySearch)
                             {
                                 tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
                                     null,
-                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
+                                    -1, -1, PvPUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
                             }
+
+                            // The stacks that should be dropped without the inventory index
+                            Map<EnumInventory, List<ItemStack>> stacksToDropComputed = new HashMap<> ();
+
+                            stacksToDrop.forEach ( (key, value) ->
+                            {
+                                stacksToDropComputed.put (key, new ArrayList<> (value.values ()));
+                            });
+
+                            MinecraftForge.EVENT_BUS
+                                .post (new PartialItemDropEvent.Pre (player, stacksToDropComputed, wasPvP));
+
+                            // Monitor which stacks will be deleted, dropped or remain unprocessed
+                            Map<EnumInventory, List<ItemStack>> droppedStacks = new HashMap<> ();
+                            Map<EnumInventory, List<ItemStack>> deletedStacks = new HashMap<> ();
+                            Map<EnumInventory, List<ItemStack>> unprocessedStacks = new HashMap<> ();
+
+                            // Execute actions like deleting or dropping stacks after all iterations
+                            Collection<Runnable> actions = new ArrayList<> ();
+
+                            stacksToDrop.forEach ( (inventory, stackMap) ->
+                            {
+                                for (Map.Entry<Integer, ItemStack> entry : stackMap.entrySet ())
+                                {
+                                    int index = entry.getKey ();
+                                    ItemStack stack = entry.getValue ();
+
+                                    PartialItemDropEvent.Drop dropEvent = new PartialItemDropEvent.Drop (player, stack,
+                                        inventory);
+
+                                    PartialItemDropEvent.Drop.Action action = PvPUtils.postEventAndGetResult (dropEvent,
+                                        dropEvent::getAction);
+
+                                    // Categorize and process the stacks based on the action
+                                    if (action == Action.DELETE || action == Action.DELETE_AND_DROP)
+                                    {
+                                        this.addStack (deletedStacks, inventory, stack);
+                                        actions.add ( () ->
+                                        {
+                                            // Delete the item from the player's inventory
+                                            getPlayerInventoryFromEnum (player, inventory)[index] = null;
+                                        });
+                                    }
+                                    if (action == Action.DROP || action == Action.DELETE_AND_DROP)
+                                    {
+                                        this.addStack (droppedStacks, inventory, stack);
+                                        actions.add ( () ->
+                                        {
+                                            // Drops the item in the world
+                                            player.func_146097_a (stack, true, false);
+                                        });
+                                    }
+                                    if (action == Action.NOTHING)
+                                    {
+                                        this.addStack (unprocessedStacks, inventory, stack);
+                                    }
+                                }
+                            });
+
+                            actions.forEach (Runnable::run); // Execute these actions now
+
+                            MinecraftForge.EVENT_BUS
+                                .post (new PartialItemDropEvent.Post (player, droppedStacks, deletedStacks,
+                                    unprocessedStacks));
                         }
                     }
                 }
@@ -323,37 +393,84 @@ public class PvPEventHandler
 
     private int tryOtherInventories (EntityPlayer player, int inventoryLoss, ItemStack[] firstInventory,
         int firstStartIndex, int firstEndIndex, ItemStack[] secondInventory, int secondStartIndex, int secondEndIndex,
-        Predicate<ItemStack> filter)
+        Predicate<ItemStack> filter, Map<EnumInventory, TreeMap<Integer, ItemStack>> droppedItems)
     {
         if (inventoryLoss > 0)
         {
             int missingStacks = dropItemsFromInventory (player, firstInventory, firstStartIndex, firstEndIndex,
-                inventoryLoss, filter);
+                inventoryLoss, filter, droppedItems);
 
             if (missingStacks > 0 && secondInventory != null)
                 return dropItemsFromInventory (player, secondInventory, secondStartIndex,
                     secondEndIndex,
-                    missingStacks, filter);
+                    missingStacks, filter, droppedItems);
             return missingStacks;
         }
         return inventoryLoss;
     }
 
     private int dropItemsFromInventory (EntityPlayer player, ItemStack[] inventory, int startIndex, int endIndex,
-        int inventoryLoss, Predicate<ItemStack> filter)
+        int inventoryLoss, Predicate<ItemStack> filter, Map<EnumInventory, TreeMap<Integer, ItemStack>> droppedItems)
     {
         List<Integer> filledInventorySlots = new ArrayList<> (PvPUtils
             .getFilledInventorySlots (inventory, startIndex, endIndex, filter));
-        int size = filledInventorySlots.size ();// The size of the list itself
-                                                // decreases every iteration
+
+        int size = filledInventorySlots.size (); // The size of the list itself decreases every iteration
         for (int i = 0; i < Math.min (inventoryLoss, size); i++)
         {
             int randomSlotIndex = MathHelper.getRandomIntegerInRange (random, 0, filledInventorySlots.size () - 1);
             int randomSlot = filledInventorySlots.remove (randomSlotIndex);
-            player.func_146097_a (inventory[randomSlot], true, false); // Drops the item in the world
-            inventory[randomSlot] = null; // Make sure to delete the item from the player's inventory
+
+            EnumInventory enumInventory = getEnumFromPlayerInventory (player, inventory, randomSlot);
+
+            if (!droppedItems.containsKey (enumInventory))
+            {
+                droppedItems.put (enumInventory, new TreeMap<> ());
+            }
+            droppedItems.get (enumInventory).put (randomSlot, inventory[randomSlot]);
         }
         return Math.max (0, inventoryLoss - size); // Returns the count of stacks which still have to be dropped
+    }
+
+    private ItemStack[] getPlayerInventoryFromEnum (EntityPlayer player, EnumInventory inventory)
+    {
+        switch (inventory)
+        {
+            case ARMOUR:
+                return player.inventory.armorInventory;
+            default:
+                return player.inventory.mainInventory;
+        }
+    }
+
+    private EnumInventory getEnumFromPlayerInventory (EntityPlayer player, ItemStack[] inventory, int index)
+    {
+        if (inventory == player.inventory.armorInventory)
+        {
+            return EnumInventory.ARMOUR;
+        }
+        else
+        {
+            if (index == player.inventory.currentItem)
+            {
+                return EnumInventory.HELD;
+            }
+            else if (index < 9)
+            {
+                return EnumInventory.HOTBAR;
+            }
+            else
+            {
+                return EnumInventory.MAIN;
+            }
+        }
+    }
+
+    private void addStack (Map<EnumInventory, List<ItemStack>> map, EnumInventory inventory, ItemStack stack)
+    {
+        if (!map.containsKey (inventory))
+            map.put (inventory, new ArrayList<> ());
+        map.get (inventory).add (stack);
     }
 
     @SubscribeEvent
