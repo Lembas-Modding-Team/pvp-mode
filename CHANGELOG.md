@@ -4,6 +4,9 @@
 ### General changes:
 * Determining the owner of an entity now recursively checks for it
 
+### Ender IO compatibility:
+* Added a configuration option to prevent soulbound items from being dropped
+
 ## 1.3.1-BETA
 ### General changes:
 
