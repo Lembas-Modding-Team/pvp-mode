@@ -10,6 +10,9 @@
 ### Deathcraft compatibility:
 * Deathcraft now works with the partial inventory loss
 
+### Lootable Bodies compatibility:
+* Lootable Bodies now works with the partial inventory loss
+
 ## 1.3.1-BETA
 ### General changes:
 

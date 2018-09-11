@@ -10,6 +10,8 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 public class PvPModeCore implements IFMLLoadingPlugin
 {
 
+    static boolean obfuscatedEnvironment = true;
+
     @Override
     public String[] getASMTransformerClass ()
     {
@@ -32,7 +34,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
     @Override
     public void injectData (Map<String, Object> data)
     {
-
+        obfuscatedEnvironment = (boolean) data.get ("runtimeDeobfuscationEnabled");
     }
 
     @Override
