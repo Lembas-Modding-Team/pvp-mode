@@ -4,6 +4,9 @@
 ### General changes:
 * Determining the owner of an entity now recursively checks for it
 
+### Ender IO compatibility:
+* Added a configuration option to prevent soulbound items from being dropped
+
 ### Deathcraft compatibility:
 * Deathcraft now works with the partial inventory loss
 
