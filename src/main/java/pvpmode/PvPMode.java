@@ -13,6 +13,7 @@ import net.minecraftforge.common.config.Configuration;
 import pvpmode.command.*;
 import pvpmode.compatibility.CompatibilityManager;
 import pvpmode.compatibility.modules.enderio.EnderIOCompatibilityModuleLoader;
+import pvpmode.compatibility.modules.deathcraft.DeathcraftCompatibilityModuleLoader;
 import pvpmode.compatibility.modules.lotr.LOTRModCompatibilityModuleLoader;
 import pvpmode.compatibility.modules.siegeMode.SiegeModeCompatiblityModuleLoader;
 import pvpmode.compatibility.modules.suffixForge.SuffixForgeCompatibilityModuleLoader;
@@ -217,6 +218,7 @@ public class PvPMode
         compatibilityManager.registerModuleLoader (SuffixForgeCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SiegeModeCompatiblityModuleLoader.class);
         compatibilityManager.registerModuleLoader (EnderIOCompatibilityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (DeathcraftCompatibilityModuleLoader.class);
     }
 
     @EventHandler
@@ -224,7 +226,6 @@ public class PvPMode
 
     {
 
-        compatibilityManager.loadRegisteredModules ();
         combatLogManager.preInit ();
 
         String[] validPvPLogHandlerNames = combatLogManager.getRegisteredHandlerNames ();
@@ -295,6 +296,12 @@ public class PvPMode
         event.registerServerCommand (pvpadminCommandInstance);
         event.registerServerCommand (pvphelpCommandInstance);
         event.registerServerCommand (pvpconfigCommandInstance);
+
+        if (!compatibilityManager.areModulesLoaded ())
+            compatibilityManager.loadRegisteredModules ();
+
+        if (PvPMode.config.hasChanged ())
+            PvPMode.config.save (); // Save the configs of the compatibility modules
     }
 
     @EventHandler

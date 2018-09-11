@@ -7,6 +7,9 @@
 ### Ender IO compatibility:
 * Added a configuration option to prevent soulbound items from being dropped
 
+### Deathcraft compatibility:
+* Deathcraft now works with the partial inventory loss
+
 ## 1.3.1-BETA
 ### General changes:
 
