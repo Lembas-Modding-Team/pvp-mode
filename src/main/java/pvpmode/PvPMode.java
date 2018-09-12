@@ -300,10 +300,14 @@ public class PvPMode
         event.registerServerCommand (pvpconfigCommandInstance);
 
         if (!compatibilityManager.areModulesLoaded ())
+        {
             compatibilityManager.loadRegisteredModules ();
+        }
 
         if (PvPMode.config.hasChanged ())
+        {
             PvPMode.config.save (); // Save the configs of the compatibility modules
+        }
     }
 
     @EventHandler

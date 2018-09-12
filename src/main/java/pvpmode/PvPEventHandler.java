@@ -343,7 +343,7 @@ public class PvPEventHandler
                                     // Categorize and process the stacks based on the action
                                     if (action == Action.DELETE || action == Action.DELETE_AND_DROP)
                                     {
-                                        this.addStack (deletedStacks, inventory, stack);
+                                        addStack (deletedStacks, inventory, stack);
                                         actions.add ( () ->
                                         {
                                             // Delete the item from the player's inventory
@@ -352,7 +352,7 @@ public class PvPEventHandler
                                     }
                                     if (action == Action.DROP || action == Action.DELETE_AND_DROP)
                                     {
-                                        this.addStack (droppedStacks, inventory, stack);
+                                        addStack (droppedStacks, inventory, stack);
                                         actions.add ( () ->
                                         {
                                             // Drops the item in the world
@@ -361,7 +361,7 @@ public class PvPEventHandler
                                     }
                                     if (action == Action.NOTHING)
                                     {
-                                        this.addStack (unprocessedStacks, inventory, stack);
+                                        addStack (unprocessedStacks, inventory, stack);
                                     }
                                 }
                             });
@@ -446,30 +446,23 @@ public class PvPEventHandler
     private EnumInventory getEnumFromPlayerInventory (EntityPlayer player, ItemStack[] inventory, int index)
     {
         if (inventory == player.inventory.armorInventory)
-        {
             return EnumInventory.ARMOUR;
-        }
         else
         {
             if (index == player.inventory.currentItem)
-            {
                 return EnumInventory.HELD;
-            }
             else if (index < 9)
-            {
                 return EnumInventory.HOTBAR;
-            }
-            else
-            {
-                return EnumInventory.MAIN;
-            }
+            else return EnumInventory.MAIN;
         }
     }
 
     private void addStack (Map<EnumInventory, List<ItemStack>> map, EnumInventory inventory, ItemStack stack)
     {
         if (!map.containsKey (inventory))
+        {
             map.put (inventory, new ArrayList<> ());
+        }
         map.get (inventory).add (stack);
     }
 

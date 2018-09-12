@@ -30,7 +30,7 @@ public class PvPModeClassTransformer implements IClassTransformer
 
     private byte[] patchContainerPlayer (byte[] basicClass, boolean obfuscated)
     {
-        return this.patchMethod (basicClass, (node) ->
+        return patchMethod (basicClass, (node) ->
         {
             if (node.name.equals ("transferStackInSlot") || node.name.equals ("func_82846_b"))
             {
@@ -64,7 +64,7 @@ public class PvPModeClassTransformer implements IClassTransformer
 
     private byte[] patchLootableBodiesEventHandler (byte[] basicClass)
     {
-        return this.patchMethod (basicClass, (node) ->
+        return patchMethod (basicClass, (node) ->
         {
             if (node.name.equals ("playerDeathEvent"))
             {
@@ -105,7 +105,7 @@ public class PvPModeClassTransformer implements IClassTransformer
     /**
      * Iterates through all methods of the specified class and allows patches for
      * them. If the processor returns false, the iteration will be stopped.
-     * 
+     *
      * @param basicClass
      *            The unmodified class
      * @param methodProcessor
@@ -122,7 +122,9 @@ public class PvPModeClassTransformer implements IClassTransformer
         while (methods.hasNext ())
         {
             if (!methodProcessor.test (methods.next ()))
+            {
                 break;
+            }
         }
 
         ClassWriter writer = new ClassWriter (ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);

@@ -254,7 +254,9 @@ public class PvPUtils
         {
             owner = ((IEntityOwnable) owner).getOwner ();
             if (owner == null || entitiesChecked.contains (owner))
+            {
                 break;
+            }
             entitiesChecked.add (owner);
             if (owner instanceof EntityPlayerMP)
                 return (EntityPlayerMP) owner;
@@ -424,7 +426,7 @@ public class PvPUtils
      * Returns a map with the content of the source map, which is completely
      * unmodifiable, inclusive it's content and the content of the content and so
      * on. Changes made to the source map WON'T be backed by the returned map.
-     * 
+     *
      * @param source
      *            The original map
      * @return The deep unmodifiable map
@@ -444,7 +446,7 @@ public class PvPUtils
      * Returns a list with the content of the source list, which is completely
      * unmodifiable, inclusive it's content and the content of the content and so
      * on. Changes made to the source list WON'T be backed by the returned list.
-     * 
+     *
      * @param source
      *            The original list
      * @return The deep unmodifiable list
@@ -458,7 +460,7 @@ public class PvPUtils
      * Returns a set with the content of the source set, which is completely
      * unmodifiable, inclusive it's content and the content of the content and so
      * on. Changes made to the source set WON'T be backed by the returned set.
-     * 
+     *
      * @param source
      *            The original list
      * @return The deep unmodifiable list
@@ -473,7 +475,7 @@ public class PvPUtils
      * completely unmodifiable, inclusive it's content and the content of the
      * content and so on. Changes made to the source collection WON'T be backed by
      * the returned collection.
-     * 
+     *
      * @param source
      *            The original collection
      * @return The deep unmodifiable collection

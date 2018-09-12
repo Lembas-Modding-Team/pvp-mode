@@ -3,7 +3,6 @@ package pvpmode.compatibility.modules.lootableBodies;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cyano.lootable.LootableBodies;
 import cyano.lootable.entities.EntityLootableBody;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
@@ -93,7 +92,7 @@ public class LootableBodiesCompatibilityModule implements CompatibilityModule
             corpse.vacuumItem (new ItemStack (Items.bone, world.rand.nextInt (3) + 1));
         }
 
-        world.spawnEntityInWorld ((Entity) corpse);
+        world.spawnEntityInWorld (corpse);
         corpse.setOwner (player.getGameProfile ());
         corpse.setRotation (rotation);
     }
