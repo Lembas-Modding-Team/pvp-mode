@@ -17,7 +17,18 @@ A server-side Minecraft mod that allows management of PvP interaction between pl
 
 ### Compatibility:
 
-The mod is highly compatible with, and in many cases offers dedicated feature for, the LOTRmod and the SiegeMode mod. Compatibility is also aranged for some features of SuffixForge, a serverside utility and roleplay mod. See the wiki page for more info on this.
+The mod contains specific compatibility for the mods/plugins listed below. Older and/or newer versions may work too, but it's not guaranteed. See the wiki page for more info on this.
+
+#### Forge Mods:
+* The Lord of the Rings Mod v34.2
+* Siege Mode Mod 1.0
+* SuffixForge 2.4
+* Dr. Cyanos Lootable Bodies Mod 1.7.10-backport_1.3.6
+* Ender IO 1.7.10-2.3.0.429_beta
+ 
+#### Bukkit Plugins:
+Only NMS v1_7_R4 is supported.
+* deathcraft 1.12a
 
 ### Usage:
 
