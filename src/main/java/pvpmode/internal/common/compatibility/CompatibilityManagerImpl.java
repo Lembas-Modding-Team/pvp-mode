@@ -1,5 +1,6 @@
 package pvpmode.internal.common.compatibility;
 
+import java.nio.file.Path;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,14 +12,17 @@ import pvpmode.internal.common.SimpleLoggerImpl;
 
 public class CompatibilityManagerImpl implements CompatibilityManager
 {
-    private SimpleLogger logger;
+    private final Path configurationFolder;
+
+    private final SimpleLogger logger;
 
     private Collection<Class<? extends CompatibilityModuleLoader>> registeredModuleLoaders = new HashSet<> ();
 
     private boolean areModulesLoaded = false;
 
-    public CompatibilityManagerImpl ()
+    public CompatibilityManagerImpl (Path configurationFolder)
     {
+        this.configurationFolder = configurationFolder;
         logger = PvPMode.proxy.getLogger ();
     }
 
@@ -62,8 +66,12 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                             {
                                 try
                                 {
-                                    module.load (new SimpleLoggerImpl (LogManager
-                                        .getLogger (logger.getName () + "." + loader.getInternalModuleName ())));
+                                    module.load (loader,
+                                        configurationFolder.resolve (loader.getInternalModuleName ()),
+                                        new SimpleLoggerImpl (
+                                            LogManager
+                                                .getLogger (
+                                                    logger.getName () + "." + loader.getInternalModuleName ())));
                                     ++loadedModulesCounter;
                                     logger.info ("The compatibility module \"%s\" was loaded successfully",
                                         loader.getModuleName ());

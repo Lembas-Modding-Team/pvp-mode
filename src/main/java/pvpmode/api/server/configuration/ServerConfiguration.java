@@ -1,7 +1,14 @@
 package pvpmode.api.server.configuration;
 
-public interface ServerConfigurationConstants
+import java.util.Collection;
+
+import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.configuration.CommonConfiguration;
+
+public interface ServerConfiguration extends CommonConfiguration
 {
+
+    public static final String SERVER_CONFIGURATION_CATEGORY = "server";
 
     public static final String WARMUP_OFF_ON_CONFIGURATION_NAME = "Warmup (seconds)";
     public static final String COOLDOWN_CONFIGURATION_NAME = "Cooldown (seconds)";
@@ -13,6 +20,7 @@ public interface ServerConfigurationConstants
     public static final String PER_PLAYER_SPYING_SETTINGS_CONFIGURATION_NAME = "Allow Per Player Spying Settings";
 
     public static final String CSV_SEPARATOR_CONFIGURATION_NAME = "CSV separator";
+    public static final String ACTIVE_COMBAT_LOG_HANDLERS_CONFIGURATION_NAME = "Active Pvp Logging Handlers";
 
     public static final String PVP_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME = "Enable Partial Inventory Loss";
     public static final String PVP_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME = "Armour Item Loss";
@@ -42,7 +50,73 @@ public interface ServerConfigurationConstants
     public static final String DEFAULT_PVP_MODE_CONFIGURATION_NAME = "Default PvP Mode";
     public static final String FORCE_DEFAULT_PVP_MODE_CONFIGURATION_NAME = "Force Default PvP Mode";
 
-    public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
-    public static final String PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY = "PARTIAL_INVENTORY_LOSS";
+    public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+        + ".pvplogging.csv";
+    public static final String PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+        + ".partial_inventory_loss";
+
+    public int getWarmupOffOn ();
+
+    public int getCooldown ();
+
+    public int getWarmupOnOff ();
+
+    public boolean isShowProximityDirection ();
+
+    public boolean isRadarEnabled ();
+
+    public int getDistanceRoundingFactor ();
+
+    public boolean arePerPlayerSpyingSettingsAllowed ();
+
+    public String getCSVSeparator ();
+    
+    public Collection<String> getActiveCombatLogHandlers();
+
+    public boolean isPvPPartialInventoryLossEnabled ();
+
+    public int getPvPArmourItemLoss ();
+
+    public int getPvPHotbarItemLoss ();
+
+    public int getPvPMainItemLoss ();
+
+    public boolean isFastItemTransferDisabled ();
+
+    public boolean isArmourInventorySearchExtended ();
+
+    public boolean isHotbarInventorySearchExtended ();
+
+    public boolean isMainInventorySearchExtended ();
+
+    public boolean isPvEPartialInventoryLossEnabled ();
+
+    public int getPvEArmourItemLoss ();
+
+    public int getPvEHotbarItemLoss ();
+
+    public int getPvEMainItemLoss ();
+
+    public boolean isIndirectPvPAllowed ();
+
+    public int getOverrideCheckInterval ();
+
+    public int getPvPTimer ();
+
+    public Collection<String> getBlacklistedCommands ();
+
+    public boolean areGlobalChatMessagesPrefixed ();
+
+    public String getGlobalChatMessagePrefix ();
+
+    public boolean isPvPEnabledAnnouncedGlobally ();
+
+    public boolean isPvPDisabledAnnouncedGlobally ();
+
+    public boolean isPvPTogglingEnabled ();
+
+    public EnumPvPMode getDefaultPvPMode ();
+
+    public boolean isDefaultPvPModeForced ();
 
 }

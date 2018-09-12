@@ -9,6 +9,7 @@ import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.overrides.*;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
@@ -16,6 +17,7 @@ import pvpmode.internal.server.ServerProxy;
 public class OverrideManagerImpl implements OverrideManager
 {
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     private TreeMap<Integer, Set<PvPOverrideCondition>> overrideConditions = new TreeMap<> ();
 
@@ -24,6 +26,7 @@ public class OverrideManagerImpl implements OverrideManager
     public OverrideManagerImpl ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
         FMLCommonHandler.instance ().bus ().register (this);
     }
 
@@ -38,7 +41,7 @@ public class OverrideManagerImpl implements OverrideManager
         // A ton of checks whether the PvP mode of the current player can be overridden
         if (PvPServerUtils.arePvPModeOverridesEnabled () && event.phase == Phase.END
             && PvPServerUtils.getTime ()
-                - lastCheckTimes.get (event.player.getUniqueID ()) >= server.getOverrideCheckInterval ()
+                - lastCheckTimes.get (event.player.getUniqueID ()) >= config.getOverrideCheckInterval ()
             && !PvPServerUtils.isCreativeMode (event.player)
             && !PvPServerUtils.canFly (event.player))
         {
@@ -57,8 +60,8 @@ public class OverrideManagerImpl implements OverrideManager
                         {
                             // Only display the message if the current PvP mode really changed
 
-                            boolean announceGlobal = isPvPEnabled ? server.isAnnouncePvPEnabledGlobally ()
-                                : server.isAnnouncePvPDisabledGlobally ();
+                            boolean announceGlobal = isPvPEnabled ? config.isPvPEnabledAnnouncedGlobally ()
+                                : config.isPvPDisabledAnnouncedGlobally ();
 
                             // Get the global or the local message variant
                             String message = announceGlobal

@@ -46,7 +46,7 @@ public class PvPDataImpl implements PvPData
     public boolean isPvPEnabled ()
     {
         return pvpDataTag.hasKey (PVP_ENABLED_NBT_KEY) ? pvpDataTag.getBoolean (PVP_ENABLED_NBT_KEY)
-            : PvPMode.instance.getServerProxy ().getDefaultPvPMode ();
+            : PvPMode.instance.getServerProxy ().getConfiguration ().getDefaultPvPMode ().toBoolean ();
     }
 
     @Override

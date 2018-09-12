@@ -2,6 +2,7 @@ package pvpmode.internal.server.utils;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.ServerChatUtils;
 import pvpmode.internal.server.ServerProxy;
 
@@ -9,10 +10,16 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
 {
 
     private final ServerProxy server;
+    private ServerConfiguration config;
 
     public ServerChatUtilsProvider (ServerProxy server)
     {
         this.server = server;
+    }
+
+    public void preInit ()
+    {
+        this.config = server.getConfiguration ();
     }
 
     @Override
@@ -50,7 +57,7 @@ public class ServerChatUtilsProvider implements ServerChatUtils.Provider
             for (String line : message.split ("\n"))
             {
                 ChatComponentText prefix = new ChatComponentText (
-                    server.isPrefixGlobalMessages () ? server.getGlobalMessagePrefix () : "");
+                    config.areGlobalChatMessagesPrefixed () ? config.getGlobalChatMessagePrefix () : "");
                 ChatComponentText text = new ChatComponentText (line);
                 text.getChatStyle ().setColor (color);
                 server.getServerConfigurationManager ()
