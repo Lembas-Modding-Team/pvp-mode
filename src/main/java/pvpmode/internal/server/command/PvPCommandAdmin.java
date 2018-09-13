@@ -12,6 +12,7 @@ import pvpmode.PvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 
@@ -19,10 +20,12 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     public PvPCommandAdmin ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
                         togglePvPMode (admin, player, data, Boolean.TRUE);
                         break;
                     case "default":
-                        togglePvPMode (admin, player, data, server.getDefaultPvPMode ());
+                        togglePvPMode (admin, player, data, config.getDefaultPvPMode ().toBoolean ());
                         break;
                 }
             }
@@ -152,7 +155,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
              */
             ServerChatUtils.red (player, "Your PvP mode is being toggled by an admin");
             data.setPvPWarmup (PvPServerUtils.getTime ());
-            data.setDefaultModeForced (data.isPvPEnabled () != server.getDefaultPvPMode ());
+            data.setDefaultModeForced (data.isPvPEnabled () != config.getDefaultPvPMode ().toBoolean ());
 
             ServerChatUtils.green (sender,
                 String.format ("PvP is now %s for %s",

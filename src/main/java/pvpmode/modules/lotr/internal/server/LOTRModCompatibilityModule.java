@@ -2,7 +2,7 @@ package pvpmode.modules.lotr.internal.server;
 
 import static pvpmode.modules.lotr.api.server.LOTRServerConfigurationConstants.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.*;
 import java.util.*;
@@ -19,9 +19,10 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.*;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
 
@@ -31,10 +32,8 @@ import pvpmode.api.server.utils.*;
  * @author CraftedMods
  *
  */
-public class LOTRModCompatibilityModule implements CompatibilityModule
+public class LOTRModCompatibilityModule extends AbstractCompatibilityModule
 {
-
-    private SimpleLogger logger;
 
     private static final String ENEMY_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_enemy_biomes.txt";
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
@@ -50,33 +49,33 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     private LOTREventHandler eventHandler;
 
     @Override
-    public void load (SimpleLogger logger) throws IOException
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
     {
-        MinecraftForge.EVENT_BUS.register (this);
-        
-        this.logger = logger;
+        super.load (loader, configurationFolder, logger);
 
-        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+        MinecraftForge.EVENT_BUS.register (this);
+
+        Configuration configuration = this.getDefaultConfiguration ();
 
         areEnemyBiomeOverridesEnabled = configuration.getBoolean (
             ENEMY_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
-            LOTR_CONFIGURATION_CATEGORY, true,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
         blockFTInPvP = configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
-            LOTR_CONFIGURATION_CATEGORY,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
         dropSkullWithKeepInventory = configuration.getBoolean (ALWAYS_DROP_PLAYER_SKULLS_CONFIGURATION_NAME,
-            LOTR_CONFIGURATION_CATEGORY, true,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
             "If true, players killed with a weapon with the headhunting modifier will drop their skulls even with keepInventory enabled.");
         areSafeBiomeOverridesEnabled = configuration.getBoolean (
             SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
-            LOTR_CONFIGURATION_CATEGORY, false,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, false,
             "If true, the PvP mode safe override condition for LOTR biomes will be enabled, which has a higher priority than the enemy override condition. Players who are aligned with a faction are forced to have PvP disabled while they're in a biome which is clearly assignable to that faction. This can also be applied without the alignment criterion. This is highly configurable.");
 
-        configuration.addCustomCategoryComment (LOTR_CONFIGURATION_CATEGORY,
-            "Configuration entries for compatibility with the \"The Lord of the Rings Minecraft Mod\"");
-
-        Path configurationFolder = configuration.getConfigFile ().getParentFile ().toPath ();
+        if (configuration.hasChanged ())
+        {
+            configuration.save ();
+        }
 
         logger.info ("PvP mode overrides for LOTR biomes are %s",
             areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled");
@@ -103,10 +102,12 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             "default_enemy_biomes.txt", (data) -> new HostileBiomeOverrideCondition (data));
 
         // (Re)Create the extended enemy biome config file
-        recreateFile (configurationFolder, EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
+        recreateFile (configurationFolder.getParent ().getParent ().getParent (),// TODO temporary
+            EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
             "LOTR extended enemy biomes configuration file template");
         // (Re)Create the default config map image
-        recreateFile (configurationFolder, DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
+        recreateFile (configurationFolder.getParent ().getParent ().getParent (),
+            DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
     }
 
     private void initSafeBiomeOverrides (Path configurationFolder) throws IOException
@@ -143,21 +144,22 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
     private void initGeneralBiomeOverrides (Path configurationFolder) throws IOException
     {
         // (Re)Create the LOTR biome id file
-        recreateFile (configurationFolder, LOTR_BIOME_IDS_FILE_NAME, "LOTR biome id file");
+        recreateFile (configurationFolder.getParent ().getParent ().getParent (), LOTR_BIOME_IDS_FILE_NAME,
+            "LOTR biome id file");// TODO temporary
     }
 
-    private void recreateFile (Path configurationFolder, String filename, String shortName) throws IOException
+    private void recreateFile (Path targetFolder, String filename, String shortName) throws IOException
     {
-        Path biomeIdFile = configurationFolder.getParent ().resolve (filename);
-        if (!Files.exists (biomeIdFile))
+        Path file = targetFolder.resolve (filename);
+        if (!Files.exists (file))
         {
             logger.info ("The %s doesn't exist - it'll be created", shortName);
-            Files.createFile (biomeIdFile);
+            Files.createFile (file);
         }
 
         PvPCommonUtils.writeFromStreamToFile (
             () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
-            biomeIdFile);
+            file);
         logger.info ("Recreated the %s", shortName);
     }
 

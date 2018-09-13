@@ -18,17 +18,20 @@ import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 
 public class PvPServerEventHandler
 {
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     private final Random random = new Random ();
 
     public PvPServerEventHandler ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     /**
@@ -109,8 +112,8 @@ public class PvPServerEventHandler
                     ServerChatUtils.yellow (victim, "You're now in PvP combat");
                 }
 
-                attackerData.setPvPTimer (time + server.getPvpTimer ());
-                victimData.setPvPTimer (time + server.getPvpTimer ());
+                attackerData.setPvPTimer (time + config.getPvPTimer ());
+                victimData.setPvPTimer (time + config.getPvPTimer ());
 
                 if (attackerData.getPvPWarmup () != 0)
                 {
@@ -141,7 +144,7 @@ public class PvPServerEventHandler
         if (attacker == null || victim == null)
             return;
 
-        if (server.getActivatedPvPLoggingHandlers ().size () > 0
+        if (config.getActiveCombatLogHandlers ().size () > 0
             && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
         {
             server.getCombatLogManager ().log (attacker, victim, event.ammount,
@@ -170,13 +173,15 @@ public class PvPServerEventHandler
                 {
                     if (!PvPServerUtils.canFly (player))
                     {
-                        if (server.isForceDefaultPvPMode () && !server.isPvpTogglingEnabled ())
+                        if (config.isDefaultPvPModeForced () && !config.isPvPTogglingEnabled ())
                         {
-                            if (data.isDefaultModeForced () && data.isPvPEnabled () != server.getDefaultPvPMode ())
+                            if (data.isDefaultModeForced ()
+                                && data.isPvPEnabled () != config.getDefaultPvPMode ().toBoolean ())
                             {
                                 data.setPvPWarmup (time);
                             }
-                            if (!data.isDefaultModeForced () && data.isPvPEnabled () == server.getDefaultPvPMode ()
+                            if (!data.isDefaultModeForced ()
+                                && data.isPvPEnabled () == config.getDefaultPvPMode ().toBoolean ()
                                 && data.getPvPWarmup () == 0)
                             {
                                 data.setDefaultModeForced (true);
@@ -192,7 +197,7 @@ public class PvPServerEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                if (server.isAnnouncePvPEnabledGlobally ())
+                                if (config.isPvPEnabledAnnouncedGlobally ())
                                 {
                                     ServerChatUtils.postGlobalChatMessages (EnumChatFormatting.RED,
                                         "PvP is now enabled for "
@@ -206,7 +211,7 @@ public class PvPServerEventHandler
                             else
                             {
                                 data.setPvPEnabled (false);
-                                if (server.isAnnouncePvPDisabledGlobally ())
+                                if (config.isPvPDisabledAnnouncedGlobally ())
                                 {
                                     ServerChatUtils.postGlobalChatMessages (EnumChatFormatting.GREEN,
                                         "PvP is now disabled for "
@@ -218,7 +223,7 @@ public class PvPServerEventHandler
                                 }
                             }
 
-                            data.setPvPCooldown (time + server.getCooldown ());
+                            data.setPvPCooldown (time + config.getCooldown ());
                         }
                     }
                     else if (data.getPvPWarmup () != 0)
@@ -272,15 +277,15 @@ public class PvPServerEventHandler
                     {
                         boolean wasPvP = wasDeathCausedByPvP (event.source);
 
-                        if (wasPvP && server.isPartialInventoryLossEnabled ()
-                            || !wasPvP && server.isEnablePartialInventoryLossPvE ())
+                        if (wasPvP && config.isPvPPartialInventoryLossEnabled ()
+                            || !wasPvP && config.isPvEPartialInventoryLossEnabled ())
                         {
                             // Either use PvP or PvE inventory loss counts
-                            int armorLoss = wasPvP ? server.getInventoryLossArmour ()
-                                : server.getInventoryLossArmourPvE ();
-                            int hotbarLoss = wasPvP ? server.getInventoryLossHotbar ()
-                                : server.getInventoryLossHotbarPvE ();
-                            int mainLoss = wasPvP ? server.getInventoryLossMain () : server.getInventoryLossMainPvE ();
+                            int armorLoss = wasPvP ? config.getPvPArmourItemLoss ()
+                                : config.getPvEArmourItemLoss ();
+                            int hotbarLoss = wasPvP ? config.getPvPHotbarItemLoss ()
+                                : config.getPvEHotbarItemLoss ();
+                            int mainLoss = wasPvP ? config.getPvPMainItemLoss () : config.getPvEMainItemLoss ();
 
                             // Try to drop the specified amount of stacks from the inventories
                             int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
@@ -297,20 +302,20 @@ public class PvPServerEventHandler
                              * Try to drop the specified amount of stacks from other inventories if the
                              * specified inventory contains too less items.
                              */
-                            if (server.isExtendArmourInventorySearch ())
+                            if (config.isArmourInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
                                     player.inventory.mainInventory, 0, 8,
                                     PvPServerUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER
                                         .and (PvPServerUtils.ARMOUR_FILTER));
                             }
-                            if (server.isExtendHotbarInventorySearch ())
+                            if (config.isHotbarInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
                                     null,
                                     -1, -1, PvPServerUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER);
                             }
-                            if (server.isExtendMainInventorySearch ())
+                            if (config.isMainInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
                                     null,
@@ -329,7 +334,7 @@ public class PvPServerEventHandler
         Entity killer = source.getEntity ();
         if (killer != null)
         {
-            if (server.isAllowIndirectPvP ())
+            if (config.isIndirectPvPAllowed ())
                 return PvPServerUtils.getMaster (killer) != null;
             else return killer instanceof EntityPlayer;
         }
@@ -379,7 +384,7 @@ public class PvPServerEventHandler
         {
             if (PvPServerUtils.isInPvP ((EntityPlayer) event.sender))
             {
-                for (String command : server.getCommandBlacklist ())
+                for (String command : config.getBlacklistedCommands ())
                 {
                     if (PvPServerUtils.matches (event.command, command))
                     {

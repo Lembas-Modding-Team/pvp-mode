@@ -8,6 +8,4 @@ public interface LOTRServerConfigurationConstants
     public static final String ALWAYS_DROP_PLAYER_SKULLS_CONFIGURATION_NAME = "Always Drop Player Skulls";
     public static final String SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME = "Enable safe biome override condition";
 
-    public static final String LOTR_CONFIGURATION_CATEGORY = "LOTR_MOD_COMPATIBILITY";
-
 }

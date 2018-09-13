@@ -13,6 +13,7 @@ import pvpmode.PvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.command.ServerCommandConstants;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 
@@ -20,10 +21,12 @@ public class PvPCommand extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     public PvPCommand ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     @Override
@@ -42,13 +45,13 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getShortHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        if (server.isPvpTogglingEnabled ())
+        if (config.isPvPTogglingEnabled ())
         {
             messages.add (Triple.of ("pvp", "", "Starts the warmup timer to toggle PvP."));
             messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
         }
         messages.add (Triple.of ("pvp info", "", "Displays your PvP stats."));
-        if (server.isAllowPerPlayerSpying () && server.isRadar ())
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]", "Toggles the spy settings."));
         }
@@ -59,7 +62,7 @@ public class PvPCommand extends AbstractPvPCommand
     public Collection<Triple<String, String, String>> getLongHelpMessages (ICommandSender sender)
     {
         Collection<Triple<String, String, String>> messages = new ArrayList<> ();
-        if (server.isPvpTogglingEnabled ())
+        if (config.isPvPTogglingEnabled ())
         {
             messages.add (
                 Triple.of ("pvp", "",
@@ -69,7 +72,7 @@ public class PvPCommand extends AbstractPvPCommand
         }
         messages.add (Triple.of ("pvp info", "",
             "Displays your PvP mode, your spying settings, your warmup, cooldown and PvP timer, whether your PvP mode is overridden, and other PvP Mode Mod related stats about you."));
-        if (server.isAllowPerPlayerSpying () && server.isRadar ())
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]",
                 "Allows you to either toggle your spy settings, or to set them to a specific value (on or off). If spying is enabled for you, you can receive proximity and direction information about other players with PvP enabled (via the PvP list). PvP needs to be enabled for you."));
@@ -136,7 +139,7 @@ public class PvPCommand extends AbstractPvPCommand
 
     private void requireSpying ()
     {
-        if (! (server.isAllowPerPlayerSpying () && server.isRadar ()))
+        if (! (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ()))
         {
             featureDisabled ();
         }
@@ -144,7 +147,7 @@ public class PvPCommand extends AbstractPvPCommand
 
     private void requireToggelingEnabled ()
     {
-        if (!server.isPvpTogglingEnabled ())
+        if (!config.isPvPTogglingEnabled ())
         {
             featureDisabled ();
         }
@@ -175,7 +178,7 @@ public class PvPCommand extends AbstractPvPCommand
         if (!PvPServerUtils.isWarmupTimerRunning (sender))
         {
             long time = PvPServerUtils.getTime ();
-            long warmup = data.isPvPEnabled () ? server.getWarmupOff () : server.getWarmup ();
+            long warmup = data.isPvPEnabled () ? config.getWarmupOnOff () : config.getWarmupOffOn ();
             long toggleTime = time + warmup;
             long cooldownTime = data.getPvPCooldown ();
 

@@ -5,6 +5,7 @@
 
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
+* Restructured the whole configuration system
 
 ## 1.3.0-BETA
 ### General changes:

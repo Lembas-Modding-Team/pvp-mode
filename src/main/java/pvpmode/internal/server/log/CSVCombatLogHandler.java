@@ -45,7 +45,7 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
 
     public String getCSVSeparator ()
     {
-        return PvPMode.instance.getServerProxy ().getCsvSeparator ();
+        return PvPMode.instance.getServerProxy ().getConfiguration ().getCSVSeparator ();
     }
 
 }

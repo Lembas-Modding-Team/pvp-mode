@@ -2,14 +2,16 @@ package pvpmode.modules.suffixForge.internal.server;
 
 import static pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants.*;
 
+import java.nio.file.Path;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
+import pvpmode.api.server.configuration.ServerConfiguration;
 
 /**
  * The compatibility module for SuffixForge.
@@ -17,25 +19,29 @@ import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
  * @author CraftedMods
  *
  */
-public class SuffixForgeCompatibilityModule implements CompatibilityModule
+public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 {
 
     private boolean partialInvLossDropSoulboundItems;
 
     @Override
-    public void load (SimpleLogger logger) throws Exception
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
     {
+        super.load (loader, configurationFolder, logger);
+
         MinecraftForge.EVENT_BUS.register (this);
 
-        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+        Configuration configuration = this.getDefaultConfiguration ();
 
         partialInvLossDropSoulboundItems = configuration.getBoolean (
             DROP_SOULBOUND_ITEMS_CONFIGURATION_CATEGORY,
-            SUFFIX_FORGE_CONFIGURATION_CATEGORY,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
 
-        configuration.addCustomCategoryComment (SUFFIX_FORGE_CONFIGURATION_CATEGORY,
-            "Configuration entries for compatibility with the \"Suffix Forge\" Mod");
+        if (configuration.hasChanged ())
+        {
+            configuration.save ();
+        }
 
     }
 
