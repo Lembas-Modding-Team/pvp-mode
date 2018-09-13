@@ -24,7 +24,7 @@ import siege.common.siege.SiegeDatabase;
 public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
 {
 
-    private boolean disablePvPLoggingDuringSieges;
+    private boolean pvpLoggingDuringSiegesDisabled;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -35,8 +35,8 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
 
         Configuration configuration = this.getDefaultConfiguration ();
 
-        disablePvPLoggingDuringSieges = configuration.getBoolean (
-            DISABLE_PVP_LOGGING_DURING_SIEGES_CONFIGURATION_NAME,
+        pvpLoggingDuringSiegesDisabled = configuration.getBoolean (
+            PVP_LOGGING_DURING_SIEGES_DISABLED_CONFIGURATION_NAME,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
             "If true, PvP events for all players of a siege won't be logged.");
 
@@ -61,7 +61,7 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
     @SubscribeEvent
     public void onPvPLog (OnPvPLogEvent event)
     {
-        if (disablePvPLoggingDuringSieges && (SiegeDatabase.getActiveSiegeForPlayer (event.getAttacker ()) != null
+        if (pvpLoggingDuringSiegesDisabled && (SiegeDatabase.getActiveSiegeForPlayer (event.getAttacker ()) != null
             || SiegeDatabase.getActiveSiegeForPlayer (event.getVictim ()) != null))
         {
             event.setCanceled (true);
