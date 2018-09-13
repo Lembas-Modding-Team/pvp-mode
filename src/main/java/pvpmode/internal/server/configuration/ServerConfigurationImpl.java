@@ -15,12 +15,18 @@ public class ServerConfigurationImpl implements ServerConfiguration
     private final Configuration configuration;
     private final SimpleLogger logger;
 
+    private EnumPvPMode defaultPvPMode;
+    private boolean defaultPvPModeForced;
+    private int overrideCheckInterval;
+
+    private boolean pvpTogglingEnabled;
     private int warmupOffOn;
-    private int cooldown;
     private int warmupOnOff;
-    private boolean proximityDirectionShown;
+    private int cooldown;
+
     private boolean intelligenceEnabled;
     private int distanceRoundingFactor;
+    private boolean proximityDirectionShown;
     private boolean perPlayerSpyingSettingsAllowed;
 
     private Collection<String> activeCombatLoggingHandlers;
@@ -31,16 +37,16 @@ public class ServerConfigurationImpl implements ServerConfiguration
     private int pvpHotbarItemLoss;
     private int pvpMainItemLoss;
     private boolean fastItemTransferDisabled;
-    private boolean armourInventorySearchExtended;
-    private boolean hotbarInventorySearchExtended;
-    private boolean mainInventorySearchExtended;
+
     private boolean pvePartialInventoryLossEnabled;
     private int pveArmourItemLoss;
     private int pveHotbarItemLoss;
     private int pveMainItemLoss;
-    private boolean indirectPvPAllowed;
 
-    private int overrideCheckInterval;
+    private boolean armourInventorySearchExtended;
+    private boolean hotbarInventorySearchExtended;
+    private boolean mainInventorySearchExtended;
+    private boolean indirectPvPAllowed;
 
     private int pvpTimer;
     private Collection<String> blacklistedCommands;
@@ -49,10 +55,6 @@ public class ServerConfigurationImpl implements ServerConfiguration
     private String globalChatMessagePrefix;
     private boolean pvpEnabledAnnouncedGlobally;
     private boolean pvpDisabledAnnouncedGlobally;
-
-    private boolean pvpTogglingEnabled;
-    private EnumPvPMode defaultPvPMode;
-    private boolean defaultPvPModeForced;
 
     public ServerConfigurationImpl (ServerProxy server, Configuration configuration)
     {
@@ -75,33 +77,57 @@ public class ServerConfigurationImpl implements ServerConfiguration
     {
         configuration.load ();
 
+        defaultPvPMode = EnumPvPMode.fromBoolean (configuration.getBoolean (DEFAULT_PVP_MODE_CONFIGURATION_NAME,
+            SERVER_CONFIGURATION_CATEGORY, false,
+            "This specifies the default PvP mode players will have (true for PvP enabled, false for disabled)."));
+        defaultPvPModeForced = configuration.getBoolean (DEFAULT_PVP_MODE_FORCED_CONFIGURATION_NAME,
+            SERVER_CONFIGURATION_CATEGORY, false,
+            "If true, the default PvP mode will be forced for all players. For that PvP toggling has to be set to false. Admins can still override the PvP mode of a player with /pvpadmin, and the override conditions still overrule this setting.");
+        overrideCheckInterval = configuration.getInt (OVERRIDE_CHECK_INTERVAL_CONFIGURATION_NAME,
+            SERVER_CONFIGURATION_CATEGORY, 10, -1, 60,
+            "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
+
+        pvpTogglingEnabled = configuration.getBoolean (PVP_TOGGLING_ENABLED_CONFIGURATION_NAME,
+            PVP_TOGGLING_CONFIGURATION_CATEGORY, true,
+            "If true, players can decide by themselves with /pvp whether they want to have PvP enabled or not (as long as no overrides apply).");
         warmupOffOn = configuration.getInt (WARMUP_OFF_ON_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, 30,
+            ServerConfiguration.PVP_TOGGLING_CONFIGURATION_CATEGORY, 30,
             0, Integer.MAX_VALUE,
             "The delay after which the PvP mode of a player with PvP OFF will be actually toggled (after initiating the toggling).");
-        cooldown = configuration.getInt (COOLDOWN_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
-            900, 0, Integer.MAX_VALUE,
-            "The duration after a PvP mode toggling while which the PvP mode cannot be toggled again.");
         warmupOnOff = configuration.getInt (WARMUP_ON_OFF_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, 300, 0,
+            ServerConfiguration.PVP_TOGGLING_CONFIGURATION_CATEGORY, 300, 0,
             Integer.MAX_VALUE,
             "The delay after which the PvP mode of a player with PvP ON will be actually toggled (after initiating the toggling).");
-        proximityDirectionShown = configuration.getBoolean (PROXIMITY_DIRECTION_SHOWN_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
-            true,
-            "Shows additionally to the proximity information the direction of the other players.");
+        cooldown = configuration.getInt (COOLDOWN_CONFIGURATION_NAME,
+            ServerConfiguration.PVP_TOGGLING_CONFIGURATION_CATEGORY,
+            900, 0, Integer.MAX_VALUE,
+            "The duration after a PvP mode toggling while which the PvP mode cannot be toggled again.");
+
         intelligenceEnabled = configuration.getBoolean (INTELLIGENCE_ENABLED_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
+            ServerConfiguration.INTELLIGENCE_CONFIGURATION_CATEGORY, true,
             "If true, players with PvP mode enabled will receive proximity information about other players with PvP enabled. If per player spy settings are allowed this info will only be available for players who enabled spying.");
         distanceRoundingFactor = configuration.getInt (DISTANCE_ROUNDING_FACTOR_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, 100, 1,
+            ServerConfiguration.INTELLIGENCE_CONFIGURATION_CATEGORY, 100, 1,
             Integer.MAX_VALUE,
             "The factor by which the proximity information will be rounded. The distance will be displayed in a multiple of this factor.");
+        proximityDirectionShown = configuration.getBoolean (PROXIMITY_DIRECTION_SHOWN_CONFIGURATION_NAME,
+            ServerConfiguration.INTELLIGENCE_CONFIGURATION_CATEGORY,
+            true,
+            "Shows additionally to the proximity information the direction of the other players.");
         perPlayerSpyingSettingsAllowed = configuration.getBoolean (
             PER_PLAYER_SPYING_SETTINGS_ALLOWED_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
+            ServerConfiguration.INTELLIGENCE_CONFIGURATION_CATEGORY, true,
             "If true, players can decide whether they want to enable spying or not. If enabled, they can see proximity information of other players if they have PvP enabled, and also their proximity information will be accessible.");
+
+        String[] validPvPLogHandlerNames = server.getCombatLogManager ().getRegisteredHandlerNames ();
+        activeCombatLoggingHandlers = new HashSet<> (Arrays.asList (
+            configuration.getStringList (ACTIVE_COMBAT_LOGGING_HANDLERS_CONFIGURATION_NAME,
+                COMBAT_LOGGING_CONFIGURATION_CATEGORY, new String[]
+                {server.getCombatLogManager ().getDefaultHandlerName ()},
+                "The combat logging handlers that will be used. Valid values: "
+                    + Arrays.toString (validPvPLogHandlerNames)
+                    + ". Leave it empty (without empty lines!) to disable combat logging.",
+                validPvPLogHandlerNames)));
 
         csvSeparator = configuration.getString (CSV_SEPARATOR_CONFIGURATION_NAME,
             CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
@@ -109,36 +135,44 @@ public class ServerConfigurationImpl implements ServerConfiguration
             "The separator character used between columns in the CSV file. Usually a semicolon or comma. Please note that in some countries the decimal separator is a comma. Decimal numbers will be written to the logs.")
             .trim ();
 
-        String[] validPvPLogHandlerNames = server.getCombatLogManager ().getRegisteredHandlerNames ();
-        activeCombatLoggingHandlers = new HashSet<> (Arrays.asList (
-            configuration.getStringList (ACTIVE_COMBAT_LOGGING_HANDLERS_CONFIGURATION_NAME,
-                SERVER_CONFIGURATION_CATEGORY, new String[]
-                {server.getCombatLogManager ().getDefaultHandlerName ()},
-                "The combat logging handlers that will be used. Valid values: "
-                    + Arrays.toString (validPvPLogHandlerNames)
-                    + ". Leave it empty (without empty lines!) to disable combat logging.",
-                validPvPLogHandlerNames)));
-
         pvpPartialInventoryLossEnabled = configuration.getBoolean (
             PVP_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY,
             true,
             "If set to true, the partial inventory loss for PvP will be enabled. If keepInventory is enabled, the player will loose a specified amount of item stacks from his hotbar and armor and main inventory slots upon death caused by PvP. The item stacks will be dropped.");
         pvpArmourItemLoss = configuration.getInt (PVP_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY,
             1, 0, 4,
             "The amount of item stacks from the armour inventory the player looses upon death caused by PvP.");
         pvpHotbarItemLoss = configuration.getInt (PVP_HOTBAR_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
+            PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY,
             2, 0, 9,
             "The amount of item stacks from the hotbar the player looses upon death caused by PvP.");
         pvpMainItemLoss = configuration.getInt (PVP_MAIN_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 0, 0,
+            PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY, 0, 0,
             27,
             "The amount of item stacks from the main inventory the player looses upon death caused by PvP.");
         fastItemTransferDisabled = configuration.getBoolean (FAST_ITEM_TRANSFER_DISABLED_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, false,
-            "If true, players won't be able to transfer item stacks in their inventory with shift-clicking while in PvP");
+            PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY, false,
+            "If true, players won't be able to transfer item stacks in their inventory with shift-clicking while in PvP.");
+
+        pvePartialInventoryLossEnabled = configuration.getBoolean (
+            PVE_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME,
+            PARTIAL_INVENTORY_LOSS_PVE_CONFIGURATION_CATEGORY, true,
+            "If set to true, the partial inventory loss for PvE (Player versus Environment) will be enabled. All deaths caused by the environment (water, height, fire, plants, ...), and also NPCs, count as PvE. If keepInventory is enabled, the player will loose a specified amount of item stacks from his hotbar and armor and main inventory slots upon death caused by PvE. The item stacks will be dropped.");
+        pveArmourItemLoss = configuration.getInt (PVE_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME,
+            PARTIAL_INVENTORY_LOSS_PVE_CONFIGURATION_CATEGORY,
+            1, 0, 4,
+            "The amount of item stacks from the armour inventory the player looses upon death caused by PvE.");
+        pveHotbarItemLoss = configuration.getInt (PVE_HOTBAR_ITEM_LOSS_CONFIGURATION_NAME,
+            PARTIAL_INVENTORY_LOSS_PVE_CONFIGURATION_CATEGORY,
+            2, 0, 9,
+            "The amount of item stacks from the hotbar the player looses upon death caused by PvE.");
+        pveMainItemLoss = configuration.getInt (PVE_MAIN_ITEM_LOSS_CONFIGURATION_NAME,
+            PARTIAL_INVENTORY_LOSS_PVE_CONFIGURATION_CATEGORY, 0, 0,
+            27,
+            "The amount of item stacks from the main inventory the player looses upon death caused by PvE.");
+
         armourInventorySearchExtended = configuration.getBoolean (ARMOUR_INVENTORY_SEARCH_EXTENDED_CONFIGURATION_NAME,
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If the armour inventory contains less item stacks than have to be dropped, the game will additionally look at the main inventory (first) and the hotbar for armour item stacks.");
@@ -148,70 +182,34 @@ public class ServerConfigurationImpl implements ServerConfiguration
         mainInventorySearchExtended = configuration.getBoolean (MAIN_INVENTORY_SEARCH_EXTENDED_CONFIGURATION_NAME,
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If the main inventory contains less item stacks than have to be dropped, the game will additionally look at the hotbar for item stacks to be dropped.");
-        pvePartialInventoryLossEnabled = configuration.getBoolean (
-            PVE_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
-            "If set to true, the partial inventory loss for PvE (Player versus Environment) will be enabled. All deaths caused by the environment (water, height, fire, plants, ...), and also NPCs, count as PvE. If keepInventory is enabled, the player will loose a specified amount of item stacks from his hotbar and armor and main inventory slots upon death caused by PvE. The item stacks will be dropped.");
-        pveArmourItemLoss = configuration.getInt (PVE_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
-            1, 0, 4,
-            "The amount of item stacks from the armour inventory the player looses upon death caused by PvE.");
-        pveHotbarItemLoss = configuration.getInt (PVE_HOTBAR_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
-            2, 0, 9,
-            "The amount of item stacks from the hotbar the player looses upon death caused by PvE.");
-        pveMainItemLoss = configuration.getInt (PVE_MAIN_ITEM_LOSS_CONFIGURATION_NAME,
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, 0, 0,
-            27,
-            "The amount of item stacks from the main inventory the player looses upon death caused by PvE.");
         indirectPvPAllowed = configuration.getBoolean (INDIRECT_PVP_ALLOWED_CONFIGURATION_NAME,
             PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY, true,
             "If true, attacks from NPCs owned by a player (dogs, hired units, ...) will count as PvP and not as PvE regarding the partial inventory loss.");
 
-        overrideCheckInterval = configuration.getInt (OVERRIDE_CHECK_INTERVAL_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY, 10, -1, 60,
-            "Specifies how often the mod checks for PvP mode overrides. If set to zero, the checks will be executed every tick. Set it to -1 to disable the PvP mode overrides.");
-
         pvpTimer = configuration.getInt (PVP_TIMER_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY, 45, 10, 300,
+            PVP_COMBAT_CONFIGURATION_CATEGORY, 45, 10, 300,
             "Specifies the time interval after a combat event while which all involved players are seen as \"in PvP\".");
         blacklistedCommands = Arrays.asList (
             configuration.getStringList (BLOCKED_COMMANDS_CONFIGURATION_NAME,
-                SERVER_CONFIGURATION_CATEGORY,
+                PVP_COMBAT_CONFIGURATION_CATEGORY,
                 new String[] {},
                 "Commands in this list cannot be executed by players who are in PvP. Note that this only applies for commands which are registered on the server. The commands are specified by the command name, without the slash. Invalid command names will be ignored."));
 
         globalChatMessagesPrefixed = configuration.getBoolean (
             GLOBAL_CHAT_MESSAGES_PREFIXED_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY,
+            CHAT_MESSAGES_CONFIGURATION_CATEGORY,
             true,
             "If true, all global chat messages sent by the PvP Mode Mod will be prefixed with a configurable, global prefix.");
         globalChatMessagePrefix = configuration.getString (GLOBAT_CHAT_MESSAGE_PREFIX_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY,
+            CHAT_MESSAGES_CONFIGURATION_CATEGORY,
             ServerChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX,
             "The prefix appended to every global chat message (if prefixing is enabled). It must not be blank. You can also use the MC formatting codes to give the prefix a color.");
         pvpEnabledAnnouncedGlobally = configuration.getBoolean (PVP_ENABLED_ANNOUNCED_GLOBALLY_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY,
+            CHAT_MESSAGES_CONFIGURATION_CATEGORY,
             true, "Sends a message to all players if PvP is enabled for a player.");
         pvpDisabledAnnouncedGlobally = configuration.getBoolean (PVP_DISABLED_ANNOUNCED_GLOBALLY_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY,
+            CHAT_MESSAGES_CONFIGURATION_CATEGORY,
             false, "Sends a message to all players if PvP is disabled for a player.");
-
-        pvpTogglingEnabled = configuration.getBoolean (PVP_TOGGLING_ENABLED_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY, true,
-            "If true, players can decide by themselves with /pvp whether they want to have PvP enabled or not (as long as no overrides apply).");
-        defaultPvPMode = EnumPvPMode.fromBoolean (configuration.getBoolean (DEFAULT_PVP_MODE_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY, false,
-            "This specifies the default PvP mode players will have (true for PvP enabled, false for disabled)."));
-        defaultPvPModeForced = configuration.getBoolean (DEFAULT_PVP_MODE_FORCED_CONFIGURATION_NAME,
-            SERVER_CONFIGURATION_CATEGORY, false,
-            "If true, the default PvP mode will be forced for all players. For that PvP toggling has to be set to false. Admins can still override the PvP mode of a player with /pvpadmin, and the override conditions still overrule this setting.");
-
-        configuration.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
-            "Configuration entries related to the CSV combat logging handler");
-        configuration.addCustomCategoryComment (
-            PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY,
-            "Configuration entries related to the partial inventory loss");
 
         this.validateConfigurationData ();
 
@@ -278,15 +276,33 @@ public class ServerConfigurationImpl implements ServerConfiguration
     }
 
     @Override
-    public int getWarmupOffOn ()
+    public EnumPvPMode getDefaultPvPMode ()
     {
-        return warmupOffOn;
+        return defaultPvPMode;
     }
 
     @Override
-    public int getCooldown ()
+    public boolean isDefaultPvPModeForced ()
     {
-        return cooldown;
+        return defaultPvPModeForced;
+    }
+
+    @Override
+    public int getOverrideCheckInterval ()
+    {
+        return overrideCheckInterval;
+    }
+
+    @Override
+    public boolean isPvPTogglingEnabled ()
+    {
+        return pvpTogglingEnabled;
+    }
+
+    @Override
+    public int getWarmupOffOn ()
+    {
+        return warmupOffOn;
     }
 
     @Override
@@ -296,9 +312,9 @@ public class ServerConfigurationImpl implements ServerConfiguration
     }
 
     @Override
-    public boolean isProximityDirectionShown ()
+    public int getCooldown ()
     {
-        return proximityDirectionShown;
+        return cooldown;
     }
 
     @Override
@@ -314,21 +330,27 @@ public class ServerConfigurationImpl implements ServerConfiguration
     }
 
     @Override
+    public boolean isProximityDirectionShown ()
+    {
+        return proximityDirectionShown;
+    }
+
+    @Override
     public boolean arePerPlayerSpyingSettingsAllowed ()
     {
         return perPlayerSpyingSettingsAllowed;
     }
 
     @Override
-    public String getCSVSeparator ()
-    {
-        return csvSeparator;
-    }
-
-    @Override
     public Collection<String> getActiveCombatLoggingHandlers ()
     {
         return activeCombatLoggingHandlers;
+    }
+
+    @Override
+    public String getCSVSeparator ()
+    {
+        return csvSeparator;
     }
 
     @Override
@@ -410,12 +432,6 @@ public class ServerConfigurationImpl implements ServerConfiguration
     }
 
     @Override
-    public int getOverrideCheckInterval ()
-    {
-        return overrideCheckInterval;
-    }
-
-    @Override
     public int getPvPTimer ()
     {
         return pvpTimer;
@@ -449,24 +465,6 @@ public class ServerConfigurationImpl implements ServerConfiguration
     public boolean isPvPDisabledAnnouncedGlobally ()
     {
         return pvpDisabledAnnouncedGlobally;
-    }
-
-    @Override
-    public boolean isPvPTogglingEnabled ()
-    {
-        return pvpTogglingEnabled;
-    }
-
-    @Override
-    public EnumPvPMode getDefaultPvPMode ()
-    {
-        return defaultPvPMode;
-    }
-
-    @Override
-    public boolean isDefaultPvPModeForced ()
-    {
-        return defaultPvPModeForced;
     }
 
 }
