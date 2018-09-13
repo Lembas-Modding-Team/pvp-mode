@@ -15,6 +15,7 @@ The configuration system changed a lot - the old configuration files are no long
 * All configuration files are now located at the directory `config/pvp-mode`
 * Subdirectories contain configuration files for the compatibility modules (example: `config/pvp-mode/lotr`)
 * The configuration file `pvp-mode.cfg` no longer contains configuration entries for the compatibility modules
+* Most configuration entries are categorized now
 
 ### Renamed properties:
 #### General configuration:
