@@ -1,7 +1,6 @@
 package pvpmode.compatibility.modules.lotr;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.Function;
@@ -13,8 +12,7 @@ import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.*;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.*;
@@ -38,10 +36,7 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
 
     private boolean areEnemyBiomeOverridesEnabled;
     private boolean blockFTInPvP;
-    private boolean dropSkullWithKeepInventory;
     private boolean areSafeBiomeOverridesEnabled;
-
-    private LOTREventHandler eventHandler;
 
     @Override
     public void load () throws IOException
@@ -53,9 +48,6 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
         blockFTInPvP = PvPMode.config.getBoolean ("Block fast traveling in PvP", LOTR_CONFIGURATION_CATEGORY,
             true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
-        dropSkullWithKeepInventory = PvPMode.config.getBoolean ("Always Drop Player Skulls",
-            LOTR_CONFIGURATION_CATEGORY, true,
-            "If true, players killed with a weapon with the headhunting modifier will drop their skulls even with keepInventory enabled.");
         areSafeBiomeOverridesEnabled = PvPMode.config.getBoolean ("Enable safe biome override condition",
             LOTR_CONFIGURATION_CATEGORY, false,
             "If true, the PvP mode safe override condition for LOTR biomes will be enabled, which has a higher priority than the enemy override condition. Players who are aligned with a faction are forced to have PvP disabled while they're in a biome which is clearly assignable to that faction. This can also be applied without the alignment criterion. This is highly configurable.");
@@ -80,8 +72,6 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         {
             initGeneralBiomeOverrides (configurationFolder);
         }
-
-        retrieveLOTREventHandler ();
     }
 
     private void initEnemyBiomeOverrides (Path configurationFolder) throws IOException
@@ -147,28 +137,6 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
         FMLLog.info ("Recreated the %s", shortName);
     }
 
-    private void retrieveLOTREventHandler ()
-    {
-        try
-        {
-            Field eventHandlerField = LOTRMod.class.getDeclaredField ("modEventHandler");
-            eventHandlerField.setAccessible (true);
-            eventHandler = (LOTREventHandler) eventHandlerField.get (null);
-            if (eventHandler != null)
-            {
-                FMLLog.info ("Successfully retrieved the LOTR event handler");
-            }
-            else
-            {
-                FMLLog.warning ("Couldn't retrieve the LOTR event handler - features depending on it won't be enabled");
-            }
-        }
-        catch (Exception e)
-        {
-            FMLLog.getLogger ().error ("Couldn't retrieve the LOTR event handler", e);
-        }
-    }
-
     @SubscribeEvent
     public void onEntityMasterExtraction (EntityMasterExtractionEvent event)
     {
@@ -229,21 +197,6 @@ public class LOTRModCompatibilityModule implements CompatibilityModule
                         npc.setRevengeTarget (null);
                     }
                 }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerDeath (LivingDeathEvent event)
-    {
-        if (dropSkullWithKeepInventory && eventHandler != null
-            && event.entityLiving.worldObj.getGameRules ().getGameRuleBooleanValue ("keepInventory"))
-        {
-            if (event.entityLiving instanceof EntityPlayer)
-            {
-                EntityPlayer player = (EntityPlayer) event.entityLiving;
-                // The last two parameters are not used by the current implementation
-                eventHandler.onPlayerDrops (new PlayerDropsEvent (player, event.source, null, false));
             }
         }
     }

@@ -1,5 +1,9 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.4.1-BETA
+### LOTR compatibility:
+* Fixed a crash with v34.3 when a player dies
+
 ## 1.4.0-BETA
 ### General changes:
 * Determining the owner of an entity now recursively checks for it
