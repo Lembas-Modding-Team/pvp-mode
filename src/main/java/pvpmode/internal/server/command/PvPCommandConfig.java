@@ -81,48 +81,48 @@ public class PvPCommandConfig extends AbstractPvPCommand
         postConfigEntry (sender, "Warmup off-on", Integer.toString (config.getWarmupOffOn ()) + "s");
         postConfigEntry (sender, "Warmup on-off", Integer.toString (config.getWarmupOnOff ()) + "s");
         postConfigEntry (sender, "Cooldown", Integer.toString (config.getCooldown ()) + "s");
-        postConfigEntry (sender, "Radar enabled", Boolean.toString (config.isRadarEnabled ()));
-        postConfigEntry (sender, "Distance round factor", Integer.toString (config.getDistanceRoundingFactor ()));
-        postConfigEntry (sender, "CSV separator", config.getCSVSeparator ());
-        postConfigEntry (sender, "Combat logging handlers", config.getActiveCombatLogHandlers ().toString ());
-        postConfigEntry (sender, "PvP Partial inventory loss enabled",
+        postConfigEntry (sender, "Intelligence Enabled", Boolean.toString (config.isIntelligenceEnabled ()));
+        postConfigEntry (sender, "Distance Rounding Factor", Integer.toString (config.getDistanceRoundingFactor ()));
+        postConfigEntry (sender, "CSV Separator", config.getCSVSeparator ());
+        postConfigEntry (sender, "Active Combat Logging Handlers", config.getActiveCombatLoggingHandlers ().toString ());
+        postConfigEntry (sender, "PvP Partial Inventory Loss Enabled",
             Boolean.toString (config.isPvPPartialInventoryLossEnabled ()));
-        postConfigEntry (sender, "PvE Partial inventory loss enabled",
+        postConfigEntry (sender, "PvE Partial Inventory Loss Enabled",
             Boolean.toString (config.isPvEPartialInventoryLossEnabled ()));
-        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (config.getPvPArmourItemLoss ()) + " items");
-        postConfigEntry (sender, "PvP Hotbar item loss",
-            Integer.toString (config.getPvPHotbarItemLoss ()) + " items");
-        postConfigEntry (sender, "PvP Main item loss", Integer.toString (config.getPvPMainItemLoss ()) + " items");
-        postConfigEntry (sender, "PvE Armor item loss",
-            Integer.toString (config.getPvEArmourItemLoss ()) + " items");
-        postConfigEntry (sender, "PvE Hotbar item loss",
-            Integer.toString (config.getPvEHotbarItemLoss ()) + " items");
-        postConfigEntry (sender, "PvE Main item loss", Integer.toString (config.getPvEMainItemLoss ()) + " items");
-        postConfigEntry (sender, "Override check interval",
+        postConfigEntry (sender, "PvP Armor Item Loss", Integer.toString (config.getPvPArmourItemLoss ()) + " stacks");
+        postConfigEntry (sender, "PvP Hotbar Item Loss",
+            Integer.toString (config.getPvPHotbarItemLoss ()) + " stacks");
+        postConfigEntry (sender, "PvP Main Item Loss", Integer.toString (config.getPvPMainItemLoss ()) + " stacks");
+        postConfigEntry (sender, "PvE Armor Item Loss",
+            Integer.toString (config.getPvEArmourItemLoss ()) + " stacks");
+        postConfigEntry (sender, "PvE Hotbar Item Loss",
+            Integer.toString (config.getPvEHotbarItemLoss ()) + " stacks");
+        postConfigEntry (sender, "PvE Main Item Loss", Integer.toString (config.getPvEMainItemLoss ()) + " stacks");
+        postConfigEntry (sender, "Override Check Interval",
             Integer.toString (config.getOverrideCheckInterval ()) + "s");
-        postConfigEntry (sender, "PvP timer", Integer.toString (config.getPvPTimer ()) + "s");
-        postConfigEntry (sender, "Command blacklist", config.getBlacklistedCommands ().toString ());
-        postConfigEntry (sender, "Fast item transfer disabled",
+        postConfigEntry (sender, "PvP Timer", Integer.toString (config.getPvPTimer ()) + "s");
+        postConfigEntry (sender, "Blocked Commands", config.getBlockedCommands ().toString ());
+        postConfigEntry (sender, "Fast Item Transfer Disabled",
             Boolean.toString (config.isFastItemTransferDisabled ()));
-        postConfigEntry (sender, "Extend armour inventory search",
+        postConfigEntry (sender, "Armour Inventory Search Extended",
             Boolean.toString (config.isArmourInventorySearchExtended ()));
-        postConfigEntry (sender, "Extend hotbar inventory search",
+        postConfigEntry (sender, "Hotbar Inventory Search Extended",
             Boolean.toString (config.isHotbarInventorySearchExtended ()));
-        postConfigEntry (sender, "Extend main inventory search",
+        postConfigEntry (sender, "Main Inventory Search Extended",
             Boolean.toString (config.isMainInventorySearchExtended ()));
-        postConfigEntry (sender, "Per player spying settings",
+        postConfigEntry (sender, "Per Player Spying Settings Allowed",
             Boolean.toString (config.arePerPlayerSpyingSettingsAllowed ()));
-        postConfigEntry (sender, "Show proximity direction", Boolean.toString (config.isShowProximityDirection ()));
-        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (config.isIndirectPvPAllowed ()));
-        postConfigEntry (sender, "Prefix global chat messages",
+        postConfigEntry (sender, "Proximity Direction Shown", Boolean.toString (config.isProximityDirectionShown ()));
+        postConfigEntry (sender, "Indirect PvP Allowed", Boolean.toString (config.isIndirectPvPAllowed ()));
+        postConfigEntry (sender, "Global Chat Messages Prefixed",
             Boolean.toString (config.areGlobalChatMessagesPrefixed ()));
-        postConfigEntry (sender, "Global chat message prefix", config.getGlobalChatMessagePrefix ());
-        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (config.isPvPTogglingEnabled ()));
-        postConfigEntry (sender, "Default PvP mode", config.getDefaultPvPMode ().name ());
-        postConfigEntry (sender, "Force default PvP mode", Boolean.toString (config.isDefaultPvPModeForced ()));
-        postConfigEntry (sender, "Announce PvP enabled globally",
+        postConfigEntry (sender, "Global Chat Message Prefix", config.getGlobalChatMessagePrefix ());
+        postConfigEntry (sender, "PvP Toggling Enabled", Boolean.toString (config.isPvPTogglingEnabled ()));
+        postConfigEntry (sender, "Default PvP Mode", config.getDefaultPvPMode ().name ());
+        postConfigEntry (sender, "Default PvP Mode Forced", Boolean.toString (config.isDefaultPvPModeForced ()));
+        postConfigEntry (sender, "PvP Enabled Announced Globally",
             Boolean.toString (config.isPvPEnabledAnnouncedGlobally ()));
-        postConfigEntry (sender, "Announce PvP disabled globally",
+        postConfigEntry (sender, "PvP Disabled Announced Globally",
             Boolean.toString (config.isPvPDisabledAnnouncedGlobally ()));
         ServerChatUtils.green (sender, "---------------------------");
     }

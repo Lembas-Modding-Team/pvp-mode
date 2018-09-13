@@ -105,7 +105,7 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
             pvpMode == EnumPvPMode.ON ? EnumChatFormatting.RED : EnumChatFormatting.GREEN);
         ServerChatUtils.postLocalChatMessage (sender, "Is Overridden: ", Boolean.toString (isOverridden),
             EnumChatFormatting.GRAY, EnumChatFormatting.WHITE);
-        if (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ())
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
         {
             ServerChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying),
                 EnumChatFormatting.GRAY,

@@ -22,7 +22,7 @@ import pvpmode.api.server.configuration.ServerConfiguration;
 public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 {
 
-    private boolean partialInvLossDropSoulboundItems;
+    private boolean soulboundItemsDropped;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -33,8 +33,8 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 
         Configuration configuration = this.getDefaultConfiguration ();
 
-        partialInvLossDropSoulboundItems = configuration.getBoolean (
-            DROP_SOULBOUND_ITEMS_CONFIGURATION_CATEGORY,
+        soulboundItemsDropped = configuration.getBoolean (
+            SOULBOUND_ITEMS_DROPPED_CONFIGURATION_CATEGORY,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
 
@@ -48,7 +48,7 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
     @SubscribeEvent
     public void onPartialItemLoss (PartialItemLossEvent event)
     {
-        if (!partialInvLossDropSoulboundItems)
+        if (!soulboundItemsDropped)
         {
             ItemStack stack = event.getStack ();
             if (stack.hasTagCompound ())

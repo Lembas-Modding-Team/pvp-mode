@@ -77,7 +77,7 @@ public class ServerProxy extends CommonProxy
         chatUtilsProvider.preInit ();
         serverUtilsProvider.preInit ();
 
-        Collection<String> activePvPLoggingHandlers = this.getConfiguration ().getActiveCombatLogHandlers ();
+        Collection<String> activePvPLoggingHandlers = this.getConfiguration ().getActiveCombatLoggingHandlers ();
 
         if (activePvPLoggingHandlers.size () > 0)
         {
@@ -132,7 +132,7 @@ public class ServerProxy extends CommonProxy
 
     public void onServerStopping (FMLServerStoppingEvent event)
     {
-        if (this.getConfiguration ().getActiveCombatLogHandlers ().size () > 0)
+        if (this.getConfiguration ().getActiveCombatLoggingHandlers ().size () > 0)
         {
             combatLogManager.close ();
         }

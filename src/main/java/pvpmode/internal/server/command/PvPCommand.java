@@ -51,7 +51,7 @@ public class PvPCommand extends AbstractPvPCommand
             messages.add (Triple.of ("pvp cancel", "", "Cancels the warmup timer."));
         }
         messages.add (Triple.of ("pvp info", "", "Displays your PvP stats."));
-        if (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ())
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]", "Toggles the spy settings."));
         }
@@ -72,7 +72,7 @@ public class PvPCommand extends AbstractPvPCommand
         }
         messages.add (Triple.of ("pvp info", "",
             "Displays your PvP mode, your spying settings, your warmup, cooldown and PvP timer, whether your PvP mode is overridden, and other PvP Mode Mod related stats about you."));
-        if (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ())
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
         {
             messages.add (Triple.of ("pvp spy ", "[on|off]",
                 "Allows you to either toggle your spy settings, or to set them to a specific value (on or off). If spying is enabled for you, you can receive proximity and direction information about other players with PvP enabled (via the PvP list). PvP needs to be enabled for you."));
@@ -139,7 +139,7 @@ public class PvPCommand extends AbstractPvPCommand
 
     private void requireSpying ()
     {
-        if (! (config.arePerPlayerSpyingSettingsAllowed () && config.isRadarEnabled ()))
+        if (! (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ()))
         {
             featureDisabled ();
         }
