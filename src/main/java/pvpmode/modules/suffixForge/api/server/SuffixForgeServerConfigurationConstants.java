@@ -5,6 +5,4 @@ public interface SuffixForgeServerConfigurationConstants
 
     public static final String DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME = "Drop Soulbound Items";
 
-    public static final String SUFFIX_FORGE_CONFIGURATION_CATEGORY = "SUFFIX_FORGE_COMPATIBILITY";
-
 }

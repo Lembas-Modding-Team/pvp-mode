@@ -7,8 +7,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.*;
 import pvpmode.PvPMode;
-import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.server.command.ServerCommandConstants;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.ServerChatUtils;
 import pvpmode.internal.server.ServerProxy;
 
@@ -16,10 +16,12 @@ public class PvPCommandConfig extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     public PvPCommandConfig ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     @Override
@@ -76,49 +78,52 @@ public class PvPCommandConfig extends AbstractPvPCommand
     private void displayConfiguration (ICommandSender sender)
     {
         ServerChatUtils.green (sender, "--- PvP Mode Configuration ---");
-        postConfigEntry (sender, "Warmup off-on", Integer.toString (server.getWarmup ()) + "s");
-        postConfigEntry (sender, "Warmup on-off", Integer.toString (server.getWarmupOff ()) + "s");
-        postConfigEntry (sender, "Cooldown", Integer.toString (server.getCooldown ()) + "s");
-        postConfigEntry (sender, "Radar enabled", Boolean.toString (server.isRadar ()));
-        postConfigEntry (sender, "Distance round factor", Integer.toString (server.getRoundFactor ()));
-        postConfigEntry (sender, "CSV separator", server.getCsvSeparator ());
-        postConfigEntry (sender, "Combat logging handlers", server.getActivatedPvPLoggingHandlers ().toString ());
+        postConfigEntry (sender, "Warmup off-on", Integer.toString (config.getWarmupOffOn ()) + "s");
+        postConfigEntry (sender, "Warmup on-off", Integer.toString (config.getWarmupOnOff ()) + "s");
+        postConfigEntry (sender, "Cooldown", Integer.toString (config.getCooldown ()) + "s");
+        postConfigEntry (sender, "Radar enabled", Boolean.toString (config.isRadarEnabled ()));
+        postConfigEntry (sender, "Distance round factor", Integer.toString (config.getDistanceRoundingFactor ()));
+        postConfigEntry (sender, "CSV separator", config.getCSVSeparator ());
+        postConfigEntry (sender, "Combat logging handlers", config.getActiveCombatLogHandlers ().toString ());
         postConfigEntry (sender, "PvP Partial inventory loss enabled",
-            Boolean.toString (server.isPartialInventoryLossEnabled ()));
+            Boolean.toString (config.isPvPPartialInventoryLossEnabled ()));
         postConfigEntry (sender, "PvE Partial inventory loss enabled",
-            Boolean.toString (server.isEnablePartialInventoryLossPvE ()));
-        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (server.getInventoryLossArmour ()) + " items");
+            Boolean.toString (config.isPvEPartialInventoryLossEnabled ()));
+        postConfigEntry (sender, "PvP Armor item loss", Integer.toString (config.getPvPArmourItemLoss ()) + " items");
         postConfigEntry (sender, "PvP Hotbar item loss",
-            Integer.toString (server.getInventoryLossHotbar ()) + " items");
-        postConfigEntry (sender, "PvP Main item loss", Integer.toString (server.getInventoryLossMain ()) + " items");
+            Integer.toString (config.getPvPHotbarItemLoss ()) + " items");
+        postConfigEntry (sender, "PvP Main item loss", Integer.toString (config.getPvPMainItemLoss ()) + " items");
         postConfigEntry (sender, "PvE Armor item loss",
-            Integer.toString (server.getInventoryLossArmourPvE ()) + " items");
+            Integer.toString (config.getPvEArmourItemLoss ()) + " items");
         postConfigEntry (sender, "PvE Hotbar item loss",
-            Integer.toString (server.getInventoryLossHotbarPvE ()) + " items");
-        postConfigEntry (sender, "PvE Main item loss", Integer.toString (server.getInventoryLossMainPvE ()) + " items");
+            Integer.toString (config.getPvEHotbarItemLoss ()) + " items");
+        postConfigEntry (sender, "PvE Main item loss", Integer.toString (config.getPvEMainItemLoss ()) + " items");
         postConfigEntry (sender, "Override check interval",
-            Integer.toString (server.getOverrideCheckInterval ()) + "s");
-        postConfigEntry (sender, "PvP timer", Integer.toString (server.getPvpTimer ()) + "s");
-        postConfigEntry (sender, "Command blacklist", server.getCommandBlacklist ().toString ());
-        postConfigEntry (sender, "Fast item transfer disabled", Boolean.toString (server.isBlockShiftClicking ()));
+            Integer.toString (config.getOverrideCheckInterval ()) + "s");
+        postConfigEntry (sender, "PvP timer", Integer.toString (config.getPvPTimer ()) + "s");
+        postConfigEntry (sender, "Command blacklist", config.getBlacklistedCommands ().toString ());
+        postConfigEntry (sender, "Fast item transfer disabled",
+            Boolean.toString (config.isFastItemTransferDisabled ()));
         postConfigEntry (sender, "Extend armour inventory search",
-            Boolean.toString (server.isExtendArmourInventorySearch ()));
+            Boolean.toString (config.isArmourInventorySearchExtended ()));
         postConfigEntry (sender, "Extend hotbar inventory search",
-            Boolean.toString (server.isExtendHotbarInventorySearch ()));
+            Boolean.toString (config.isHotbarInventorySearchExtended ()));
         postConfigEntry (sender, "Extend main inventory search",
-            Boolean.toString (server.isExtendMainInventorySearch ()));
-        postConfigEntry (sender, "Per player spying settings", Boolean.toString (server.isAllowPerPlayerSpying ()));
-        postConfigEntry (sender, "Show proximity direction", Boolean.toString (server.isShowProximityDirection ()));
-        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (server.isAllowIndirectPvP ()));
-        postConfigEntry (sender, "Prefix global chat messages", Boolean.toString (server.isPrefixGlobalMessages ()));
-        postConfigEntry (sender, "Global chat message prefix", server.getGlobalMessagePrefix ());
-        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (server.isPvpTogglingEnabled ()));
-        postConfigEntry (sender, "Default PvP mode", EnumPvPMode.fromBoolean (server.getDefaultPvPMode ()).name ());
-        postConfigEntry (sender, "Force default PvP mode", Boolean.toString (server.isForceDefaultPvPMode ()));
+            Boolean.toString (config.isMainInventorySearchExtended ()));
+        postConfigEntry (sender, "Per player spying settings",
+            Boolean.toString (config.arePerPlayerSpyingSettingsAllowed ()));
+        postConfigEntry (sender, "Show proximity direction", Boolean.toString (config.isShowProximityDirection ()));
+        postConfigEntry (sender, "Allow indirect PvP", Boolean.toString (config.isIndirectPvPAllowed ()));
+        postConfigEntry (sender, "Prefix global chat messages",
+            Boolean.toString (config.areGlobalChatMessagesPrefixed ()));
+        postConfigEntry (sender, "Global chat message prefix", config.getGlobalChatMessagePrefix ());
+        postConfigEntry (sender, "PvP toggling enabled", Boolean.toString (config.isPvPTogglingEnabled ()));
+        postConfigEntry (sender, "Default PvP mode", config.getDefaultPvPMode ().name ());
+        postConfigEntry (sender, "Force default PvP mode", Boolean.toString (config.isDefaultPvPModeForced ()));
         postConfigEntry (sender, "Announce PvP enabled globally",
-            Boolean.toString (server.isAnnouncePvPEnabledGlobally ()));
+            Boolean.toString (config.isPvPEnabledAnnouncedGlobally ()));
         postConfigEntry (sender, "Announce PvP disabled globally",
-            Boolean.toString (server.isAnnouncePvPDisabledGlobally ()));
+            Boolean.toString (config.isPvPDisabledAnnouncedGlobally ()));
         ServerChatUtils.green (sender, "---------------------------");
     }
 

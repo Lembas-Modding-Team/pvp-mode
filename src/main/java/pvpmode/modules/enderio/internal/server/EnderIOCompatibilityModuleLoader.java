@@ -28,4 +28,10 @@ public class EnderIOCompatibilityModuleLoader extends ForgeModCompatibilityModul
         return "pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModule";
     }
 
+    @Override
+    public String getInternalModuleName ()
+    {
+        return "enderio";
+    }
+
 }

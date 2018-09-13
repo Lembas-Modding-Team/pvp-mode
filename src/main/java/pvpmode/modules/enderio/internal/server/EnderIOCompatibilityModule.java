@@ -1,16 +1,17 @@
 package pvpmode.modules.enderio.internal.server;
 
 import java.lang.reflect.*;
+import java.nio.file.Path;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import crazypants.enderio.enchantment.*;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.modules.enderio.api.server.EnderIOServerConfigurationConstants;
 
 /**
@@ -19,11 +20,9 @@ import pvpmode.modules.enderio.api.server.EnderIOServerConfigurationConstants;
  * @author CraftedMods
  *
  */
-public class EnderIOCompatibilityModule implements CompatibilityModule
+public class EnderIOCompatibilityModule extends AbstractCompatibilityModule
 {
     
-    private SimpleLogger logger;
-
     private boolean partialInvLossDropSoulboundItems;
 
     private EnchantmentSoulBound soulboundEnchantment;
@@ -31,22 +30,18 @@ public class EnderIOCompatibilityModule implements CompatibilityModule
     private Method isSoulboundStackMethod;
 
     @Override
-    public void load (SimpleLogger logger) throws Exception
-    {
-        this.logger = logger;
-        
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
+    {        
+        super.load (loader, configurationFolder, logger);
+
         MinecraftForge.EVENT_BUS.register (this);
 
-        Configuration config = PvPMode.instance.getServerProxy ().getConfiguration ();
+        Configuration configuration = this.getDefaultConfiguration ();
 
-        partialInvLossDropSoulboundItems = config.getBoolean (
+        partialInvLossDropSoulboundItems = configuration.getBoolean (
             EnderIOServerConfigurationConstants.DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME,
-            EnderIOServerConfigurationConstants.ENDER_IO_CONFIGURATION_CATEGORY,
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
-
-        config.addCustomCategoryComment (
-            EnderIOServerConfigurationConstants.ENDER_IO_CONFIGURATION_CATEGORY,
-            "Configuration entries for compatibility with the \"Ender IO\" Mod");
 
         Enchantments enchantments = Enchantments.getInstance ();
 

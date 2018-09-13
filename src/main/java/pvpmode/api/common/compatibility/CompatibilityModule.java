@@ -1,5 +1,7 @@
 package pvpmode.api.common.compatibility;
 
+import java.nio.file.Path;
+
 import pvpmode.api.common.SimpleLogger;
 
 /**
@@ -16,7 +18,17 @@ public interface CompatibilityModule
 {
     /**
      * This function will be executed once when the module is loaded. If it throws
-     * an exception, the module won't be loaded.
+     * an exception, the module won't be loaded. The configuration folder isn't
+     * required to exist on the filesystem.
+     * 
+     * @param loader
+     *            The loader that loaded this module
+     * @param configurationFolder
+     *            The configuration folder for the module
+     * @param logger
+     *            The logger of the module
+     * @throws Exception
+     *             Thrown by the provider
      */
-    public void load (SimpleLogger logger) throws Exception;
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception;
 }

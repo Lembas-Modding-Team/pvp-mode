@@ -14,6 +14,7 @@ import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.compatibility.events.PvPListEvent;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 
@@ -21,10 +22,12 @@ public class PvPCommandList extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     public PvPCommandList ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     @Override
@@ -140,9 +143,9 @@ public class PvPCommandList extends AbstractPvPCommand
                         {
                             // The player is unsafe with a high priority
                             int proximity = -1;
-                            if (server.isRadar ())
+                            if (config.isRadarEnabled ())
                             {
-                                if (server.isAllowPerPlayerSpying ()
+                                if (config.arePerPlayerSpyingSettingsAllowed ()
                                     ? PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ()
                                         && PvPServerUtils.getPvPData (player).isSpyingEnabled ()
                                     : true)// If per player spying is enabled, both players need to have spying enabled
@@ -260,7 +263,7 @@ public class PvPCommandList extends AbstractPvPCommand
                 if (proximity != -1
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                 {
-                    String proximityDirection = server.isShowProximityDirection ()
+                    String proximityDirection = config.isShowProximityDirection ()
                         ? PvPCommonUtils.getPlayerDirection (senderPlayer, player)
                         : "";
                     additionalComponent = new ChatComponentText (
@@ -278,7 +281,7 @@ public class PvPCommandList extends AbstractPvPCommand
             modeComponent
                 .appendSibling (warmupComponent);
         }
-        if (isSenderPlayer && server.isRadar () && server.isAllowPerPlayerSpying ()
+        if (isSenderPlayer && config.isRadarEnabled () && config.arePerPlayerSpyingSettingsAllowed ()
             && PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ())
         {
             modeComponent.appendSibling (spyComponent);

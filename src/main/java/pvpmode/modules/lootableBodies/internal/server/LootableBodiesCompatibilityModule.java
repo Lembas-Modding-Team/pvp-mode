@@ -1,5 +1,7 @@
 package pvpmode.modules.lootableBodies.internal.server;
 
+import java.nio.file.Path;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cyano.lootable.LootableBodies;
 import cyano.lootable.entities.EntityLootableBody;
@@ -9,16 +11,18 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
 
-public class LootableBodiesCompatibilityModule implements CompatibilityModule
+public class LootableBodiesCompatibilityModule extends AbstractCompatibilityModule
 {
-
+    
     @Override
-    public void load (SimpleLogger logger) throws Exception
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
     {
+        super.load (loader, configurationFolder, logger);
+        
         MinecraftForge.EVENT_BUS.register (this);
     }
 

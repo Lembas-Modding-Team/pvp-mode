@@ -23,17 +23,20 @@ import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.EnumInventory;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 
 public class PvPServerEventHandler
 {
     private final ServerProxy server;
+    private final ServerConfiguration config;
 
     private final Random random = new Random ();
 
     public PvPServerEventHandler ()
     {
         server = PvPMode.instance.getServerProxy ();
+        config = server.getConfiguration ();
     }
 
     /**
@@ -114,8 +117,8 @@ public class PvPServerEventHandler
                     ServerChatUtils.yellow (victim, "You're now in PvP combat");
                 }
 
-                attackerData.setPvPTimer (time + server.getPvpTimer ());
-                victimData.setPvPTimer (time + server.getPvpTimer ());
+                attackerData.setPvPTimer (time + config.getPvPTimer ());
+                victimData.setPvPTimer (time + config.getPvPTimer ());
 
                 if (attackerData.getPvPWarmup () != 0)
                 {
@@ -146,7 +149,7 @@ public class PvPServerEventHandler
         if (attacker == null || victim == null)
             return;
 
-        if (server.getActivatedPvPLoggingHandlers ().size () > 0
+        if (config.getActiveCombatLogHandlers ().size () > 0
             && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
         {
             server.getCombatLogManager ().log (attacker, victim, event.ammount,
@@ -175,13 +178,15 @@ public class PvPServerEventHandler
                 {
                     if (!PvPServerUtils.canFly (player))
                     {
-                        if (server.isForceDefaultPvPMode () && !server.isPvpTogglingEnabled ())
+                        if (config.isDefaultPvPModeForced () && !config.isPvPTogglingEnabled ())
                         {
-                            if (data.isDefaultModeForced () && data.isPvPEnabled () != server.getDefaultPvPMode ())
+                            if (data.isDefaultModeForced ()
+                                && data.isPvPEnabled () != config.getDefaultPvPMode ().toBoolean ())
                             {
                                 data.setPvPWarmup (time);
                             }
-                            if (!data.isDefaultModeForced () && data.isPvPEnabled () == server.getDefaultPvPMode ()
+                            if (!data.isDefaultModeForced ()
+                                && data.isPvPEnabled () == config.getDefaultPvPMode ().toBoolean ()
                                 && data.getPvPWarmup () == 0)
                             {
                                 data.setDefaultModeForced (true);
@@ -197,7 +202,7 @@ public class PvPServerEventHandler
                             if (!data.isPvPEnabled ())
                             {
                                 data.setPvPEnabled (true);
-                                if (server.isAnnouncePvPEnabledGlobally ())
+                                if (config.isPvPEnabledAnnouncedGlobally ())
                                 {
                                     ServerChatUtils.postGlobalChatMessages (EnumChatFormatting.RED,
                                         "PvP is now enabled for "
@@ -211,7 +216,7 @@ public class PvPServerEventHandler
                             else
                             {
                                 data.setPvPEnabled (false);
-                                if (server.isAnnouncePvPDisabledGlobally ())
+                                if (config.isPvPDisabledAnnouncedGlobally ())
                                 {
                                     ServerChatUtils.postGlobalChatMessages (EnumChatFormatting.GREEN,
                                         "PvP is now disabled for "
@@ -223,7 +228,7 @@ public class PvPServerEventHandler
                                 }
                             }
 
-                            data.setPvPCooldown (time + server.getCooldown ());
+                            data.setPvPCooldown (time + config.getCooldown ());
                         }
                     }
                     else if (data.getPvPWarmup () != 0)
@@ -277,18 +282,18 @@ public class PvPServerEventHandler
                     {
                         boolean wasPvP = wasDeathCausedByPvP (event.source);
 
-                        if (wasPvP && server.isPartialInventoryLossEnabled ()
-                            || !wasPvP && server.isEnablePartialInventoryLossPvE ())
+                        if (wasPvP && config.isPvPPartialInventoryLossEnabled ()
+                            || !wasPvP && config.isPvEPartialInventoryLossEnabled ())
                         {
                             // Collect all stacks that should be dropped
                             Map<EnumInventory, TreeMap<Integer, ItemStack>> stacksToDrop = new HashMap<> ();
 
                             // Either use PvP or PvE inventory loss counts
-                            int armorLoss = wasPvP ? server.getInventoryLossArmour ()
-                                : server.getInventoryLossArmourPvE ();
-                            int hotbarLoss = wasPvP ? server.getInventoryLossHotbar ()
-                                : server.getInventoryLossHotbarPvE ();
-                            int mainLoss = wasPvP ? server.getInventoryLossMain () : server.getInventoryLossMainPvE ();
+                            int armorLoss = wasPvP ? config.getPvPArmourItemLoss ()
+                                : config.getPvEArmourItemLoss ();
+                            int hotbarLoss = wasPvP ? config.getPvPHotbarItemLoss ()
+                                : config.getPvEHotbarItemLoss ();
+                            int mainLoss = wasPvP ? config.getPvPMainItemLoss () : config.getPvEMainItemLoss ();
 
                             // Try to get the specified amount of stacks to be dropped from the inventories
                             int missingArmourStacks = dropItemsFromInventory (player, player.inventory.armorInventory,
@@ -305,20 +310,21 @@ public class PvPServerEventHandler
                              * Try to get the specified amount of stacks to be dropped from other
                              * inventories if the specified inventory contains too less items.
                              */
-                            if (server.isExtendArmourInventorySearch ())
+                            if (config.isArmourInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingArmourStacks, player.inventory.mainInventory, 9, 35,
                                     player.inventory.mainInventory, 0, 8,
-                                    PvPServerUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER.and (PvPServerUtils.ARMOUR_FILTER),
+                                    PvPServerUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER
+                                        .and (PvPServerUtils.ARMOUR_FILTER),
                                     stacksToDrop);
                             }
-                            if (server.isExtendHotbarInventorySearch ())
+                            if (config.isHotbarInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingHotbarStacks, player.inventory.mainInventory, 9, 35,
                                     null,
                                     -1, -1, PvPServerUtils.PARTIAL_INVENTORY_LOSS_COMP_FILTER, stacksToDrop);
                             }
-                            if (server.isExtendMainInventorySearch ())
+                            if (config.isMainInventorySearchExtended ())
                             {
                                 tryOtherInventories (player, missingMainStacks, player.inventory.mainInventory, 0, 8,
                                     null,
@@ -354,7 +360,8 @@ public class PvPServerEventHandler
                                     PartialItemDropEvent.Drop dropEvent = new PartialItemDropEvent.Drop (player, stack,
                                         inventory);
 
-                                    PartialItemDropEvent.Drop.Action action = PvPServerUtils.postEventAndGetResult (dropEvent,
+                                    PartialItemDropEvent.Drop.Action action = PvPServerUtils.postEventAndGetResult (
+                                        dropEvent,
                                         dropEvent::getAction);
 
                                     // Categorize and process the stacks based on the action
@@ -401,12 +408,13 @@ public class PvPServerEventHandler
         Entity killer = source.getEntity ();
         if (killer != null)
         {
-            if (server.isAllowIndirectPvP ())
+            if (config.isIndirectPvPAllowed ())
                 return PvPServerUtils.getMaster (killer) != null;
             else return killer instanceof EntityPlayer;
         }
         return false;
     }
+
     private int tryOtherInventories (EntityPlayer player, int inventoryLoss, ItemStack[] firstInventory,
         int firstStartIndex, int firstEndIndex, ItemStack[] secondInventory, int secondStartIndex, int secondEndIndex,
         Predicate<ItemStack> filter, Map<EnumInventory, TreeMap<Integer, ItemStack>> droppedItems)
@@ -490,7 +498,7 @@ public class PvPServerEventHandler
         {
             if (PvPServerUtils.isInPvP ((EntityPlayer) event.sender))
             {
-                for (String command : server.getCommandBlacklist ())
+                for (String command : config.getBlacklistedCommands ())
                 {
                     if (PvPServerUtils.matches (event.command, command))
                     {
@@ -503,13 +511,13 @@ public class PvPServerEventHandler
             }
         }
     }
-    
+
     private Map<EntityPlayer, Collection<ItemStack>> soulboundItems = new HashMap<> ();
 
     @SubscribeEvent
     public void onPlayerDrops (PlayerDropsEvent event)
     {
-        if (server.isSoulboundItemsEnabled ())
+        if (config.areSoulboundItemsEnabled ())
         {
             ListIterator<EntityItem> drops = event.drops.listIterator ();
             while (drops.hasNext ())
@@ -531,7 +539,7 @@ public class PvPServerEventHandler
     @SubscribeEvent
     public void onPlayerRespawn (PlayerRespawnEvent event)
     {
-        if (server.isSoulboundItemsEnabled () && soulboundItems.containsKey (event.player))
+        if (config.areSoulboundItemsEnabled () && soulboundItems.containsKey (event.player))
         {
             soulboundItems.get (event.player).forEach (event.player.inventory::addItemStackToInventory);
             soulboundItems.remove (event.player);
@@ -541,7 +549,7 @@ public class PvPServerEventHandler
     @SubscribeEvent
     public void onPartialItemLoss (PartialItemLossEvent event)
     {
-        event.setCanceled (server.isSoulboundItemsEnabled () && PvPServerUtils.isSoulbound (event.getStack ()));
+        event.setCanceled (config.areSoulboundItemsEnabled () && PvPServerUtils.isSoulbound (event.getStack ()));
     }
 
     // @SubscribeEvent

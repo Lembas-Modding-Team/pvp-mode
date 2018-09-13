@@ -2,14 +2,17 @@ package pvpmode.modules.siegeMode.internal.server;
 
 import static pvpmode.modules.siegeMode.api.server.SiegeModeServerConfigurationConstants.*;
 
+import java.nio.file.Path;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PvPListEvent.UnsafeClassification;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import siege.common.siege.SiegeDatabase;
 
 /**
@@ -18,24 +21,29 @@ import siege.common.siege.SiegeDatabase;
  * @author CraftedMods
  *
  */
-public class SiegeModeCompatibilityModule implements CompatibilityModule
+public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
 {
 
     private boolean disablePvPLoggingDuringSieges;
 
     @Override
-    public void load (SimpleLogger logger) throws Exception
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
     {
+        super.load (loader, configurationFolder, logger);
+
         MinecraftForge.EVENT_BUS.register (this);
 
-        Configuration configuration = PvPMode.instance.getServerProxy ().getConfiguration ();
+        Configuration configuration = this.getDefaultConfiguration ();
 
         disablePvPLoggingDuringSieges = configuration.getBoolean (
             DISABLE_PVP_LOGGING_DURING_SIEGES_CONFIGURATION_NAME,
-            SIEGE_MODE_CONFIGURATION_CATEGORY, true, "If true, PvP events for all players of a siege won't be logged.");
+            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
+            "If true, PvP events for all players of a siege won't be logged.");
 
-        configuration.addCustomCategoryComment (SIEGE_MODE_CONFIGURATION_CATEGORY,
-            "Configuration entries for compatibility with the \"Siege Mode\" Mod");
+        if (configuration.hasChanged ())
+        {
+            configuration.save ();
+        }
 
         PvPMode.instance.getServerProxy ().getOverrideManager ()
             .registerOverrideCondition (new SiegeZoneOverrideCondition ());

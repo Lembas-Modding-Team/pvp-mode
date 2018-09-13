@@ -1,6 +1,7 @@
 package pvpmode.modules.deathcraft.internal.server;
 
 import java.lang.reflect.*;
+import java.nio.file.Path;
 import java.util.*;
 
 import org.bukkit.*;
@@ -14,7 +15,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityModule;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
 
@@ -27,10 +28,8 @@ import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
  * @author CraftedMods
  *
  */
-public class DeathcraftCompatibilityModule implements CompatibilityModule
+public class DeathcraftCompatibilityModule extends AbstractCompatibilityModule
 {
-
-    private SimpleLogger logger;
 
     /*
      * This method allows us to inject dynamically generated classes into any
@@ -39,9 +38,9 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
     private Method defineClassMethod;
 
     @Override
-    public void load (SimpleLogger logger) throws Exception
+    public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
     {
-        this.logger = logger;
+        super.load (loader, configurationFolder, logger);
 
         MinecraftForge.EVENT_BUS.register (this);
 

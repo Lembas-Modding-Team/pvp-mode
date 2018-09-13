@@ -27,5 +27,4 @@ public class SuffixForgeCompatibilityModuleLoader extends ForgeModCompatibilityM
     {
         return "pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModule";
     }
-
 }

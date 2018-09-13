@@ -12,6 +12,7 @@ import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
 import pvpmode.PvPMode;
 import pvpmode.api.server.command.ServerCommandConstants;
+import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 
@@ -19,10 +20,12 @@ public class PvPCommandHelp extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
+    private final ServerConfiguration config; 
 
     public PvPCommandHelp ()
     {
         this.server = PvPMode.instance.getServerProxy ();
+        this.config = server.getConfiguration ();
     }
 
     @Override
@@ -86,7 +89,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
             {
                 if (command != this && command.isAdminCommand ())
                 {
-                    if (command instanceof SoulboundCommand ? server.isSoulboundItemsEnabled () : true)
+                    if (command instanceof SoulboundCommand ? config.areSoulboundItemsEnabled () : true)
                         postShortCommandHelp (sender, command);
                 }
             }
@@ -103,7 +106,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
             {
                 if (PvPServerUtils.matches (pvpCommand, command))
                 {
-                    if (pvpCommand instanceof SoulboundCommand ? server.isSoulboundItemsEnabled () : true)
+                    if (pvpCommand instanceof SoulboundCommand ? config.areSoulboundItemsEnabled () : true)
                         this.postLongCommandHelp (sender, pvpCommand);
                     foundMatch = true;
                     break;
@@ -192,7 +195,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
             String[] commands =
             {"pvp", "pvpadmin", "pvplist", "pvphelp",
                 "pvpconfig"};
-            if (server.isSoulboundItemsEnabled ())
+            if (config.areSoulboundItemsEnabled ())
                 commands = ArrayUtils.add (commands, "soulbound");
             return getListOfStringsMatchingLastWord (args, commands);
         }

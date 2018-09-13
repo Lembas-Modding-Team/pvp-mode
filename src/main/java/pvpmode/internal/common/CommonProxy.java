@@ -1,16 +1,20 @@
 package pvpmode.internal.common;
 
+import java.nio.file.*;
+
 import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityManager;
-import pvpmode.api.common.configuration.CommonConfigurationConstants;
+import pvpmode.api.common.configuration.CommonConfiguration;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
 
 public class CommonProxy
 {
 
-    protected Configuration configuration;
+    protected Configuration forgeConfiguration;
+    protected Path configurationFolder;
+    protected CommonConfiguration configuration;
     protected CompatibilityManagerImpl compatibilityManager;
 
     protected SimpleLogger logger;
@@ -19,12 +23,13 @@ public class CommonProxy
     {
         logger = new SimpleLoggerImpl (event.getModLog ());
 
-        configuration = new Configuration (event.getSuggestedConfigurationFile ());
+        configurationFolder = event.getSuggestedConfigurationFile ().getParentFile ().toPath ().resolve ("pvp-mode");
 
-        configuration.addCustomCategoryComment (CommonConfigurationConstants.MAIN_CONFIGURATION_CATEGORY,
-            "General configuration entries");
+        Files.createDirectories (configurationFolder);
 
-        compatibilityManager = new CompatibilityManagerImpl ();
+        forgeConfiguration = new Configuration (configurationFolder.resolve ("pvp-mode.cfg").toFile ());
+
+        compatibilityManager = new CompatibilityManagerImpl (configurationFolder);
 
         registerCompatibilityModules ();
     }
@@ -43,7 +48,7 @@ public class CommonProxy
 
     }
 
-    public Configuration getConfiguration ()
+    public CommonConfiguration getConfiguration ()
     {
         return configuration;
     }

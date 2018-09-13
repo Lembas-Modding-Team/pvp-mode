@@ -56,7 +56,7 @@ public abstract class IdentifierCompatibilityModuleLoader implements Compatibili
     @Override
     public String getInternalModuleName ()
     {
-        return StringUtils.join (this.identifiers);
+        return StringUtils.join (identifiers);
     }
 
 }
