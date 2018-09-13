@@ -143,7 +143,7 @@ public class PvPCommandList extends AbstractPvPCommand
                         {
                             // The player is unsafe with a high priority
                             int proximity = -1;
-                            if (config.isRadarEnabled ())
+                            if (config.isIntelligenceEnabled ())
                             {
                                 if (config.arePerPlayerSpyingSettingsAllowed ()
                                     ? PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ()
@@ -263,7 +263,7 @@ public class PvPCommandList extends AbstractPvPCommand
                 if (proximity != -1
                     && !isSenderPlayer && hasSenderPlayerPvPEnabled)
                 {
-                    String proximityDirection = config.isShowProximityDirection ()
+                    String proximityDirection = config.isProximityDirectionShown ()
                         ? PvPCommonUtils.getPlayerDirection (senderPlayer, player)
                         : "";
                     additionalComponent = new ChatComponentText (
@@ -281,7 +281,7 @@ public class PvPCommandList extends AbstractPvPCommand
             modeComponent
                 .appendSibling (warmupComponent);
         }
-        if (isSenderPlayer && config.isRadarEnabled () && config.arePerPlayerSpyingSettingsAllowed ()
+        if (isSenderPlayer && config.isIntelligenceEnabled () && config.arePerPlayerSpyingSettingsAllowed ()
             && PvPServerUtils.getPvPData (senderPlayer).isSpyingEnabled ())
         {
             modeComponent.appendSibling (spyComponent);

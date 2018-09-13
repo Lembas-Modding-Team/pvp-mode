@@ -149,7 +149,7 @@ public class PvPServerEventHandler
         if (attacker == null || victim == null)
             return;
 
-        if (config.getActiveCombatLogHandlers ().size () > 0
+        if (config.getActiveCombatLoggingHandlers ().size () > 0
             && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
         {
             server.getCombatLogManager ().log (attacker, victim, event.ammount,
@@ -498,7 +498,7 @@ public class PvPServerEventHandler
         {
             if (PvPServerUtils.isInPvP ((EntityPlayer) event.sender))
             {
-                for (String command : config.getBlacklistedCommands ())
+                for (String command : config.getBlockedCommands ())
                 {
                     if (PvPServerUtils.matches (event.command, command))
                     {

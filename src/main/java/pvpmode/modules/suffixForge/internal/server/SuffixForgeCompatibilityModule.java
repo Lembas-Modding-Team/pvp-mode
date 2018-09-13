@@ -21,7 +21,7 @@ import pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationCons
 public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 {
 
-    private boolean partialInvLossDropSoulboundItems;
+    private boolean soulboundItemsDropped;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -32,8 +32,8 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 
         Configuration configuration = this.getDefaultConfiguration ();
 
-        partialInvLossDropSoulboundItems = configuration.getBoolean (
-            SuffixForgeServerConfigurationConstants.DROP_SOULBOUND_ITEMS_CONFIGURATION_NAME,
+        soulboundItemsDropped = configuration.getBoolean (
+            SuffixForgeServerConfigurationConstants.SOULBOUND_ITEMS_DROPPED_CONFIGURATION_CONFIGURATION_NAME,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
 
@@ -47,7 +47,7 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
     @SubscribeEvent
     public void onPartialItemLoss (PartialItemLossEvent event)
     {
-        if (!partialInvLossDropSoulboundItems)
+        if (!soulboundItemsDropped)
         {
             event.setCanceled (PvPServerUtils.isSoulbound (event.getStack ())); // TODO: The soulbound feature is now
             // incorporated into the PvP Mode Mod. The

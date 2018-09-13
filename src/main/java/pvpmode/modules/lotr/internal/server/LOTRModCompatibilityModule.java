@@ -39,9 +39,9 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule
     private static final String DEFAULT_ENEMY_BIOME_MAP_FILE_NAME = "default_enemy_biomes_map.png";
     private static final String SAFE_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_safe_biomes.txt";
 
-    private boolean areEnemyBiomeOverridesEnabled;
+    private boolean enemyBiomeOverridesEnabled;
     private boolean blockFTInPvP;
-    private boolean areSafeBiomeOverridesEnabled;
+    private boolean safeBiomeOverridesEnabled;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -52,14 +52,14 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule
 
         Configuration configuration = this.getDefaultConfiguration ();
 
-        areEnemyBiomeOverridesEnabled = configuration.getBoolean (
+        enemyBiomeOverridesEnabled = configuration.getBoolean (
             ENEMY_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
             "If true, the PvP mode enemy biome override condition for LOTR biomes will be enabled. Players who are an enemy of a faction are forced to have PvP enabled while they're in a biome which is clearly assignable to that faction. This is highly configurable.");
-        blockFTInPvP = configuration.getBoolean (BLOCK_FAST_TRAVELING_WHILE_PVP_CONFIGURATION_NAME,
+        blockFTInPvP = configuration.getBoolean (FAST_TRAVELING_WHILE_PVP_BLOCKED_CONFIGURATION_NAME,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
             true, "If enabled, players cannot use the LOTR fast travel system while they're in PvP.");
-        areSafeBiomeOverridesEnabled = configuration.getBoolean (
+        safeBiomeOverridesEnabled = configuration.getBoolean (
             SAFE_BIOME_OVERRIDES_ENABLED_CONFIGURATION_NAME,
             ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, false,
             "If true, the PvP mode safe override condition for LOTR biomes will be enabled, which has a higher priority than the enemy override condition. Players who are aligned with a faction are forced to have PvP disabled while they're in a biome which is clearly assignable to that faction. This can also be applied without the alignment criterion. This is highly configurable.");
@@ -70,17 +70,17 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule
         }
 
         logger.info ("PvP mode overrides for LOTR biomes are %s",
-            areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled ? "enabled" : "disabled");
+            enemyBiomeOverridesEnabled || safeBiomeOverridesEnabled ? "enabled" : "disabled");
 
-        if (areEnemyBiomeOverridesEnabled)
+        if (enemyBiomeOverridesEnabled)
         {
             initEnemyBiomeOverrides (configurationFolder);
         }
-        if (areSafeBiomeOverridesEnabled)
+        if (safeBiomeOverridesEnabled)
         {
             initSafeBiomeOverrides (configurationFolder);
         }
-        if (areEnemyBiomeOverridesEnabled || areSafeBiomeOverridesEnabled)
+        if (enemyBiomeOverridesEnabled || safeBiomeOverridesEnabled)
         {
             initGeneralBiomeOverrides (configurationFolder);
         }
