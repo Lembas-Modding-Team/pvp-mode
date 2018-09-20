@@ -1,5 +1,8 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.5.0-BETA
+### General changes:
+
 ## 1.4.1-BETA
 ### LOTR compatibility:
 * Fixed a crash with v34.3 when a player dies
