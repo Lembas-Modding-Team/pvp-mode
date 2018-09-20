@@ -165,6 +165,10 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
                                     : true)
                                 {
                                     canCreateChest = true; // All checks have passed, we can create the chest
+                                    if (drops == null)
+                                    {
+                                        drops = new ArrayList<> ();
+                                    }
                                 }
                             }
                             else
@@ -333,10 +337,6 @@ public class DeathcraftCompatibilityModule implements CompatibilityModule
     {
         if (canCreateChest == Boolean.TRUE) // Only proceed if the checks passed
         {
-            if (drops == null)
-            {
-                drops = new ArrayList<> ();
-            }
             drops.add (event.getStack ());
             event.setAction (Action.DELETE);
         }

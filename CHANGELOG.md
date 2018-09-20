@@ -3,6 +3,9 @@
 ## 1.5.0-BETA
 ### General changes:
 
+### Deathcraft compatibility:
+* Fixed a crash occurring when a player dies with empty inventory
+
 ## 1.4.1-BETA
 ### LOTR compatibility:
 * Fixed a crash with v34.3 when a player dies
