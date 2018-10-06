@@ -1,9 +1,8 @@
 package pvpmode.compatibility.modules.suffixForge;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import pvpmode.PvPMode;
+import pvpmode.*;
 import pvpmode.compatibility.CompatibilityModule;
 import pvpmode.compatibility.events.PartialItemLossEvent;
 
@@ -38,14 +37,11 @@ public class SuffixForgeCompatibilityModule implements CompatibilityModule
     {
         if (!partialInvLossDropSoulboundItems)
         {
-            ItemStack stack = event.getStack ();
-            if (stack.hasTagCompound ())
-            {
-                if (stack.getTagCompound ().getBoolean ("SoulboundBool"))
-                {
-                    event.setCanceled (true);
-                }
-            }
+            event.setCanceled (PvPUtils.isSoulbound (event.getStack ())); // TODO: The soulbound feature is now
+                                                                          // incorporated into the PvP Mode Mod. The
+                                                                          // compatibiltiy module stays for
+                                                                          // compatibility reasons, with 2.0.0-BETA it
+                                                                          // will be removed.
         }
     }
 

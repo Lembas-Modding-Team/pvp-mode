@@ -3,6 +3,7 @@ package pvpmode.command;
 import java.util.*;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.ICommandSender;
@@ -69,6 +70,8 @@ public class PvPCommandHelp extends AbstractPvPCommand
             ChatUtils.blue (sender, "# Admin commands");
             postShortCommandHelp (sender, PvPMode.pvpadminCommandInstance);
             postShortCommandHelp (sender, PvPMode.pvpconfigCommandInstance);
+            if (PvPMode.soulboundItemsEnabled)
+                postShortCommandHelp (sender, PvPMode.soulboundCommandInstance);
             ChatUtils.green (sender, "-------------------------");
         }
         else
@@ -91,6 +94,12 @@ public class PvPCommandHelp extends AbstractPvPCommand
                 case "pvphelp":
                     postLongCommandHelp (sender, PvPMode.pvphelpCommandInstance);
                     break;
+                case "soulbound":
+                    if (PvPMode.soulboundItemsEnabled)
+                    {
+                        postLongCommandHelp (sender, PvPMode.soulboundCommandInstance);
+                        break;
+                    }
                 default:
                     ChatUtils.red (sender,
                         String.format ("The command \"%s\" doesn't exist or isn't a command of PvP Mode", command));
@@ -167,8 +176,14 @@ public class PvPCommandHelp extends AbstractPvPCommand
     public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
-            return getListOfStringsMatchingLastWord (args, "pvp", "pvpadmin", "pvplist", "pvphelp",
-                "pvpconfig");
+        {
+            String[] commands =
+            {"pvp", "pvpadmin", "pvplist", "pvphelp",
+                "pvpconfig"};
+            if (PvPMode.soulboundItemsEnabled)
+                commands = ArrayUtils.add (commands, "soulbound");
+            return getListOfStringsMatchingLastWord (args, commands);
+        }
         return null;
     }
 }

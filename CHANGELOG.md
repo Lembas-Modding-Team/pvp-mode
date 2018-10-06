@@ -2,6 +2,7 @@
 
 ## 1.5.0-BETA
 ### General changes:
+* Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
 
 ### Deathcraft compatibility:
 * Fixed a crash occurring when a player dies with empty inventory

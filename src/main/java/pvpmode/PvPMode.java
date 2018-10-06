@@ -63,6 +63,9 @@ public class PvPMode
     public static boolean announcePvPEnabledGlobally;
     public static boolean announcePvPDisabledGlobally;
 
+    public static boolean soulboundItemsEnabled;
+    public static String soulboundTooltip;
+
     public static final String MAIN_CONFIGURATION_CATEGORY = "MAIN";
     public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = "PVP_LOGGING_CSV";
     public static final String PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY = "PARTIAL_INVENTORY_LOSS";
@@ -74,6 +77,9 @@ public class PvPMode
     public static PvPCommandConfig pvpconfigCommandInstance;
     public static PvPCommandHelp pvphelpCommandInstance;
     public static PvPCommandList pvplistCommandInstance;
+    public static SoulboundCommand soulboundCommandInstance;
+
+    public static final String DEFAULT_SOULBOUND_TOOLTIP = "\u00A7r\u00A78[\u00A75Soulbound\u00A7r\u00A78]";
 
     @EventHandler
     public void preinit (FMLPreInitializationEvent event) throws IOException
@@ -166,6 +172,13 @@ public class PvPMode
         announcePvPDisabledGlobally = config.getBoolean ("Announce PvP Disabled Globally", MAIN_CONFIGURATION_CATEGORY,
             false, "Sends a message to all players if PvP is disabled for a player.");
 
+        soulboundItemsEnabled = config.getBoolean ("Enable Soulbound Items",
+            MAIN_CONFIGURATION_CATEGORY, true,
+            "If true, the soulbound command of the PvP Mode Mod will be enabled and items marked as soulbound won't be dropped. If SuffixForge is present, the soulbound command will be disabled.");
+        soulboundTooltip = config.getString ("Soulbound Item Tooltip", MAIN_CONFIGURATION_CATEGORY,
+            DEFAULT_SOULBOUND_TOOLTIP,
+            "The tooltip shown for soulbound items. It musn't be blank. You can use the MC formatting codes to format the tooltip.");
+
         config.addCustomCategoryComment (MAIN_CONFIGURATION_CATEGORY, "General configuration entries");
         config.addCustomCategoryComment (CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY,
             "Configuration entries related to the CSV combat logging handler");
@@ -201,6 +214,18 @@ public class PvPMode
         {
             FMLLog.warning (
                 "The configuration property 'Force Default PvP Mode' is set to true but 'Pvp Toggeling Enabled' is set to false, but required to be set to true.");
+        }
+
+        if (Loader.isModLoaded ("suffixforge"))
+        {
+            soulboundItemsEnabled = false;
+            FMLLog.info ("SuffixForge is present - the soulbound command will be disabled");
+        }
+
+        if (soulboundTooltip.trim ().isEmpty ())
+        {
+            soulboundTooltip = DEFAULT_SOULBOUND_TOOLTIP;
+            FMLLog.warning ("The soulbound tooltip is empty. A default one will be used.");
         }
 
         if (config.hasChanged ())
@@ -292,12 +317,18 @@ public class PvPMode
         pvpadminCommandInstance = new PvPCommandAdmin ();
         pvphelpCommandInstance = new PvPCommandHelp ();
         pvpconfigCommandInstance = new PvPCommandConfig ();
+        soulboundCommandInstance = new SoulboundCommand ();
 
         event.registerServerCommand (pvpCommandInstance);
         event.registerServerCommand (pvplistCommandInstance);
         event.registerServerCommand (pvpadminCommandInstance);
         event.registerServerCommand (pvphelpCommandInstance);
         event.registerServerCommand (pvpconfigCommandInstance);
+
+        if (soulboundItemsEnabled)
+        {
+            event.registerServerCommand (soulboundCommandInstance);// TODO: Can be done with the compatibility module
+        }
 
         if (!compatibilityManager.areModulesLoaded ())
         {

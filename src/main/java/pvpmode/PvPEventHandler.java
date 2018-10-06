@@ -5,9 +5,11 @@ import java.util.function.Predicate;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.*;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -15,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.*;
 import pvpmode.compatibility.events.*;
 import pvpmode.compatibility.events.PartialItemDropEvent.Drop.Action;
 import pvpmode.compatibility.events.PartialItemDropEvent.EnumInventory;
@@ -487,6 +490,55 @@ public class PvPEventHandler
             }
         }
     }
+
+    private Map<EntityPlayer, Collection<ItemStack>> soulboundItems = new HashMap<> ();
+
+    @SubscribeEvent
+    public void onPlayerDrops (PlayerDropsEvent event)
+    {
+        if (PvPMode.soulboundItemsEnabled)
+        {
+            ListIterator<EntityItem> drops = event.drops.listIterator ();
+            while (drops.hasNext ())
+            {
+                ItemStack drop = drops.next ().getEntityItem ();
+                if (PvPUtils.isSoulbound (drop))
+                {
+                    drops.remove ();
+                    if (soulboundItems.containsKey (event.entityPlayer))
+                    {
+                        soulboundItems.put (event.entityPlayer, new ArrayList<> ());
+                    }
+                    soulboundItems.get (event.entityPlayer).add (drop);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerRespawn (PlayerRespawnEvent event)
+    {
+        if (PvPMode.soulboundItemsEnabled && soulboundItems.containsKey (event.player))
+        {
+            soulboundItems.get (event.player).forEach (event.player.inventory::addItemStackToInventory);
+            soulboundItems.remove (event.player);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPartialItemLoss (PartialItemLossEvent event)
+    {
+        event.setCanceled (PvPMode.soulboundItemsEnabled && PvPUtils.isSoulbound (event.getStack ()));
+    }
+
+//    @SubscribeEvent
+//    public void onItemTooltip (ItemTooltipEvent event)
+//    {
+//        if (PvPUtils.isSoulbound (event.itemStack) && PvPMode.soulboundItemsEnabled)
+//        {
+//            event.toolTip.add (PvPMode.soulboundTooltip);
+//        }
+//    }TODO: clientside mod
 
     public static void init ()
     {

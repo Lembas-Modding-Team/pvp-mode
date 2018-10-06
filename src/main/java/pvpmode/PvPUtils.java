@@ -509,4 +509,10 @@ public class PvPUtils
             return (K) deepUnmodifiableCollection ((Collection<?>) object);
         return object;
     }
+
+    public static boolean isSoulbound (ItemStack stack)
+    {
+        return stack.hasTagCompound () && stack.getTagCompound ().getBoolean ("SoulboundBool");
+    }
+
 }
