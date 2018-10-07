@@ -74,7 +74,9 @@ public class ChatUtils
                     }
                 }
                 if (root != null)
+                {
                     recipient.addChatMessage (root);
+                }
             }
         }
     }
@@ -134,7 +136,9 @@ public class ChatUtils
                     }
                 }
                 if (root != null)
+                {
                     PvPMode.cfg.sendChatMsg (root);
+                }
             }
         }
     }

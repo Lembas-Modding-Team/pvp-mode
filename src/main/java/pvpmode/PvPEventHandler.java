@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.compatibility.events.*;
 import pvpmode.compatibility.events.PartialItemDropEvent.Drop.Action;
 import pvpmode.compatibility.events.PartialItemDropEvent.EnumInventory;
@@ -531,14 +531,14 @@ public class PvPEventHandler
         event.setCanceled (PvPMode.soulboundItemsEnabled && PvPUtils.isSoulbound (event.getStack ()));
     }
 
-//    @SubscribeEvent
-//    public void onItemTooltip (ItemTooltipEvent event)
-//    {
-//        if (PvPUtils.isSoulbound (event.itemStack) && PvPMode.soulboundItemsEnabled)
-//        {
-//            event.toolTip.add (PvPMode.soulboundTooltip);
-//        }
-//    }TODO: clientside mod
+    // @SubscribeEvent
+    // public void onItemTooltip (ItemTooltipEvent event)
+    // {
+    // if (PvPUtils.isSoulbound (event.itemStack) && PvPMode.soulboundItemsEnabled)
+    // {
+    // event.toolTip.add (PvPMode.soulboundTooltip);
+    // }
+    // }TODO: clientside mod
 
     public static void init ()
     {

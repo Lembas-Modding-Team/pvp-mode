@@ -71,7 +71,9 @@ public class PvPCommandHelp extends AbstractPvPCommand
             postShortCommandHelp (sender, PvPMode.pvpadminCommandInstance);
             postShortCommandHelp (sender, PvPMode.pvpconfigCommandInstance);
             if (PvPMode.soulboundItemsEnabled)
+            {
                 postShortCommandHelp (sender, PvPMode.soulboundCommandInstance);
+            }
             ChatUtils.green (sender, "-------------------------");
         }
         else
@@ -181,7 +183,9 @@ public class PvPCommandHelp extends AbstractPvPCommand
             {"pvp", "pvpadmin", "pvplist", "pvphelp",
                 "pvpconfig"};
             if (PvPMode.soulboundItemsEnabled)
+            {
                 commands = ArrayUtils.add (commands, "soulbound");
+            }
             return getListOfStringsMatchingLastWord (args, commands);
         }
         return null;
