@@ -59,9 +59,22 @@ public class ChatUtils
         {
             for (String line : message.split ("\n"))
             {
-                ChatComponentText text = new ChatComponentText (line);
-                text.getChatStyle ().setColor (color);
-                recipient.addChatMessage (text);
+                ChatComponentText root = null;
+                for (String part : line.split ("§r"))
+                {
+                    ChatComponentText text = new ChatComponentText (part);
+                    text.getChatStyle ().setColor (color);
+                    if (root == null)
+                    {
+                        root = text;
+                    }
+                    else
+                    {
+                        root.appendSibling (text);
+                    }
+                }
+                if (root != null)
+                    recipient.addChatMessage (root);
             }
         }
     }
@@ -103,11 +116,25 @@ public class ChatUtils
         {
             for (String line : message.split ("\n"))
             {
-                ChatComponentText prefix = new ChatComponentText (
-                    PvPMode.prefixGlobalMessages ? PvPMode.globalMessagePrefix : "");
-                ChatComponentText text = new ChatComponentText (line);
-                text.getChatStyle ().setColor (color);
-                PvPMode.cfg.sendChatMsg (prefix.appendSibling (text));
+                ChatComponentText root = null;
+                for (String part : line.split ("§r"))
+                {
+                    ChatComponentText text = new ChatComponentText (part);
+                    text.getChatStyle ().setColor (color);
+                    if (root == null)
+                    {
+                        ChatComponentText prefix = new ChatComponentText (
+                            PvPMode.prefixGlobalMessages ? PvPMode.globalMessagePrefix : "");
+                        prefix.appendSibling (text);
+                        root = prefix;
+                    }
+                    else
+                    {
+                        root.appendSibling (text);
+                    }
+                }
+                if (root != null)
+                    PvPMode.cfg.sendChatMsg (root);
             }
         }
     }

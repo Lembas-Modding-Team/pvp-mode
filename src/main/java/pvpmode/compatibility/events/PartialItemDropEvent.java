@@ -23,7 +23,7 @@ public abstract class PartialItemDropEvent extends Event
      * @author CraftedMods
      *
      */
-    public enum EnumInventory
+    public enum EnumInventory// TODO: Externalize to utils
     {
     ARMOUR, HOTBAR, MAIN, HELD;
     }
