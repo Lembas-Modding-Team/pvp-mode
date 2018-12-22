@@ -1,137 +1,252 @@
 package pvpmode.api.server.configuration;
 
-import java.util.Collection;
+import static pvpmode.api.common.configuration.ConfigurationPropertyKey.Unit.*;
+
+import java.util.*;
 
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.configuration.CommonConfiguration;
+import pvpmode.api.common.configuration.ConfigurationPropertyKey.Unit;
+import pvpmode.api.common.configuration.auto.*;
+import pvpmode.api.common.utils.Process;
+import pvpmode.api.server.log.LogHandlerConstants;
+import pvpmode.api.server.utils.ServerChatUtils;
 
+/**
+ * The configuration interface for the PvP Mode Mod server configuration.
+ * 
+ * @author CraftedMods
+ *
+ */
+@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "=" + ServerConfiguration.SERVER_CONFIG_PID)
 public interface ServerConfiguration extends CommonConfiguration
 {
 
-    public static final String SERVER_CONFIGURATION_CATEGORY = "server";
+    public static final String SERVER_CONFIG_PID = "pvp-mode-server";
 
-    public static final String DEFAULT_PVP_MODE_CONFIGURATION_NAME = "Default PvP Mode";
-    public static final String DEFAULT_PVP_MODE_FORCED_CONFIGURATION_NAME = "Default PvP Mode Forced";
-    public static final String OVERRIDE_CHECK_INTERVAL_CONFIGURATION_NAME = "Override Check Interval (seconds)";
+    public static final String SERVER_CATEGORY = "server";
 
-    public static final String PVP_TOGGLING_ENABLED_CONFIGURATION_NAME = "PvP Toggling Enabled";
-    public static final String WARMUP_OFF_ON_CONFIGURATION_NAME = "Warmup off-on (seconds)";
-    public static final String WARMUP_ON_OFF_CONFIGURATION_NAME = "Warmup on-off (seconds)";
-    public static final String COOLDOWN_CONFIGURATION_NAME = "Cooldown (seconds)";
-
-    public static final String INTELLIGENCE_ENABLED_CONFIGURATION_NAME = "Intelligence Enabled";
-    public static final String DISTANCE_ROUNDING_FACTOR_CONFIGURATION_NAME = "Distance Rounding Factor";
-    public static final String PROXIMITY_DIRECTION_SHOWN_CONFIGURATION_NAME = "Proximity Direction Shown";
-    public static final String PER_PLAYER_SPYING_SETTINGS_ALLOWED_CONFIGURATION_NAME = "Per Player Spying Settings Allowed";
-
-    public static final String ACTIVE_COMBAT_LOGGING_HANDLERS_CONFIGURATION_NAME = "Active Combat Logging Handlers";
-    public static final String CSV_SEPARATOR_CONFIGURATION_NAME = "CSV Separator";
-
-    public static final String PVP_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME = "PvP Partial Inventory Loss Enabled";
-    public static final String PVP_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME = "PvP Armour Item Loss";
-    public static final String PVP_HOTBAR_ITEM_LOSS_CONFIGURATION_NAME = "PvP Hotbar Item Loss";
-    public static final String PVP_MAIN_ITEM_LOSS_CONFIGURATION_NAME = "PvP Main Item Loss";
-    public static final String FAST_ITEM_TRANSFER_DISABLED_CONFIGURATION_NAME = "Fast Item Transfer Disabled";
-
-    public static final String PVE_PARTIAL_INVENTORY_LOSS_ENABLED_CONFIGURATION_NAME = "PvE Partial Inventory Loss Enabled";
-    public static final String PVE_ARMOUR_ITEM_LOSS_CONFIGURATION_NAME = "PvE Armour Item Loss";
-    public static final String PVE_HOTBAR_ITEM_LOSS_CONFIGURATION_NAME = "PvE Hotbar Item Loss";
-    public static final String PVE_MAIN_ITEM_LOSS_CONFIGURATION_NAME = "PvE Main Item Loss";
-
-    public static final String ARMOUR_INVENTORY_SEARCH_EXTENDED_CONFIGURATION_NAME = "Armour Inventory Search Extended";
-    public static final String HOTBAR_INVENTORY_SEARCH_EXTENDED_CONFIGURATION_NAME = "Hotbar Inventory Search Extended";
-    public static final String MAIN_INVENTORY_SEARCH_EXTENDED_CONFIGURATION_NAME = "Main Inventory Search Extended";
-    public static final String INDIRECT_PVP_ALLOWED_CONFIGURATION_NAME = "Indirect PvP Allowed";
-
-    public static final String PVP_TIMER_CONFIGURATION_NAME = "PvP Timer (seconds)";
-    public static final String BLOCKED_COMMANDS_CONFIGURATION_NAME = "Blocked Commands";
-
-    public static final String GLOBAL_CHAT_MESSAGES_PREFIXED_CONFIGURATION_NAME = "Global Chat Messages Prefixed";
-    public static final String GLOBAT_CHAT_MESSAGE_PREFIX_CONFIGURATION_NAME = "Global Chat Message Prefix";
-    public static final String PVP_ENABLED_ANNOUNCED_GLOBALLY_CONFIGURATION_NAME = "PvP Enabled Announced Globally";
-    public static final String PVP_DISABLED_ANNOUNCED_GLOBALLY_CONFIGURATION_NAME = "PvP Disabled Announced Globally";
-
-    public static final String PVP_TOGGLING_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String PVP_TOGGLING_CATEGORY = SERVER_CATEGORY
         + ".pvp_toggling";
-    public static final String INTELLIGENCE_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String INTELLIGENCE_CATEGORY = SERVER_CATEGORY
         + ".intelligence";
-    public static final String COMBAT_LOGGING_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String COMBAT_LOGGING_CATEGORY = SERVER_CATEGORY
         + ".combat_logging";
-    public static final String CSV_COMBAT_LOGGING_CONFIGURATION_CATEGORY = COMBAT_LOGGING_CONFIGURATION_CATEGORY
+    public static final String CSV_COMBAT_LOGGING_CATEGORY = COMBAT_LOGGING_CATEGORY
         + ".csv";
-    public static final String PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String PARTIAL_INVENTORY_LOSS_CATEGORY = SERVER_CATEGORY
         + ".partial_inventory_loss";
-    public static final String PARTIAL_INVENTORY_LOSS_PVP_CONFIGURATION_CATEGORY = PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY
+    public static final String PARTIAL_INVENTORY_LOSS_PVP_CATEGORY = PARTIAL_INVENTORY_LOSS_CATEGORY
         + ".pvp";
-    public static final String PARTIAL_INVENTORY_LOSS_PVE_CONFIGURATION_CATEGORY = PARTIAL_INVENTORY_LOSS_CONFIGURATION_CATEGORY
+    public static final String PARTIAL_INVENTORY_LOSS_PVE_CATEGORY = PARTIAL_INVENTORY_LOSS_CATEGORY
         + ".pve";
-    public static final String PVP_COMBAT_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String PVP_COMBAT_CATEGORY = SERVER_CATEGORY
         + ".pvp_combat";
-    public static final String CHAT_MESSAGES_CONFIGURATION_CATEGORY = SERVER_CONFIGURATION_CATEGORY
+    public static final String CHAT_MESSAGES_CATEGORY = SERVER_CATEGORY
         + ".chat_messages";
 
-    public EnumPvPMode getDefaultPvPMode ();
+    @ConfigurationPropertyGetter(category = SERVER_CATEGORY)
+    public default EnumPvPMode getDefaultPvPMode ()
+    {
+        return EnumPvPMode.OFF;
+    };
 
-    public boolean isDefaultPvPModeForced ();
+    @ConfigurationPropertyGetter(category = SERVER_CATEGORY)
+    public default boolean isDefaultPvPModeForced ()
+    {
+        return false;
+    };
 
-    public int getOverrideCheckInterval ();
+    @ConfigurationPropertyGetter(category = SERVER_CATEGORY, unit = SECONDS)
+    @Bounded(min = "-1", max = "60")
+    public default int getOverrideCheckInterval ()
+    {
+        return 10;
+    };
 
-    public boolean isPvPTogglingEnabled ();
+    @ConfigurationPropertyGetter(category = PVP_TOGGLING_CATEGORY)
+    public default boolean isPvPTogglingEnabled ()
+    {
+        return true;
+    }
 
-    public int getWarmupOffOn ();
+    @ConfigurationPropertyGetter(internalName = "warmup_off-on", category = PVP_TOGGLING_CATEGORY, unit = SECONDS)
+    @Bounded(min = "0")
+    public default int getWarmupOffOn ()
+    {
+        return 30;
+    }
 
-    public int getWarmupOnOff ();
+    @ConfigurationPropertyGetter(internalName = "warmup_on-off", category = PVP_TOGGLING_CATEGORY, unit = SECONDS)
+    @Bounded(min = "0")
+    public default int getWarmupOnOff ()
+    {
+        return 300;
+    }
 
-    public int getCooldown ();
+    @ConfigurationPropertyGetter(category = PVP_TOGGLING_CATEGORY, unit = SECONDS)
+    @Bounded(min = "0")
+    public default int getCooldown ()
+    {
+        return 900;
+    }
 
-    public boolean isIntelligenceEnabled ();
+    @ConfigurationPropertyGetter(category = INTELLIGENCE_CATEGORY)
+    public default boolean isIntelligenceEnabled ()
+    {
+        return true;
+    }
 
-    public int getDistanceRoundingFactor ();
+    @ConfigurationPropertyGetter(category = INTELLIGENCE_CATEGORY, unit = BLOCKS)
+    @Bounded(min = "1")
+    public default int getDistanceRoundingFactor ()
+    {
+        return 100;
+    }
 
-    public boolean isProximityDirectionShown ();
+    @ConfigurationPropertyGetter(category = INTELLIGENCE_CATEGORY)
+    public default boolean isProximityDirectionShown ()
+    {
+        return true;
+    }
 
-    public boolean arePerPlayerSpyingSettingsAllowed ();
+    @ConfigurationPropertyGetter(category = INTELLIGENCE_CATEGORY)
+    public default boolean arePerPlayerSpyingSettingsAllowed ()
+    {
+        return true;
+    }
 
-    public Collection<String> getActiveCombatLoggingHandlers ();
+    @ConfigurationPropertyGetter(category = COMBAT_LOGGING_CATEGORY)
+    public default Set<String> getActiveCombatLoggingHandlers ()
+    {
+        return new HashSet<> (Arrays.asList (LogHandlerConstants.CSV_CONFIG_NAME));
+    }
 
-    public String getCSVSeparator ();
+    @ConfigurationPropertyGetter(category = COMBAT_LOGGING_CATEGORY)
+    public default String getCSVSeparator ()
+    {
+        return ";";
+    }
 
-    public boolean isPvPPartialInventoryLossEnabled ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVP_CATEGORY)
+    public default boolean isPvPPartialInventoryLossEnabled ()
+    {
+        return true;
+    }
 
-    public int getPvPArmourItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVP_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "4")
+    public default int getPvPArmourItemLoss ()
+    {
+        return 1;
+    }
 
-    public int getPvPHotbarItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVP_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "9")
+    public default int getPvPHotbarItemLoss ()
+    {
+        return 2;
+    }
 
-    public int getPvPMainItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVP_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "27")
+    public default int getPvPMainItemLoss ()
+    {
+        return 0;
+    }
 
-    public boolean isFastItemTransferDisabled ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVP_CATEGORY)
+    public default boolean isFastItemTransferDisabled ()
+    {
+        return false;
+    }
 
-    public boolean isPvEPartialInventoryLossEnabled ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVE_CATEGORY)
+    public default boolean isPvEPartialInventoryLossEnabled ()
+    {
+        return true;
+    }
 
-    public int getPvEArmourItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVE_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "4")
+    public default int getPvEArmourItemLoss ()
+    {
+        return 1;
+    }
 
-    public int getPvEHotbarItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVE_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "9")
+    public default int getPvEHotbarItemLoss ()
+    {
+        return 2;
+    }
 
-    public int getPvEMainItemLoss ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_PVE_CATEGORY, unit = Unit.ITEM_STACKS)
+    @Bounded(min = "0", max = "4")
+    public default int getPvEMainItemLoss ()
+    {
+        return 0;
+    }
 
-    public boolean isArmourInventorySearchExtended ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_CATEGORY)
+    public default boolean isArmourInventorySearchExtended ()
+    {
+        return true;
+    }
 
-    public boolean isHotbarInventorySearchExtended ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_CATEGORY)
+    public default boolean isHotbarInventorySearchExtended ()
+    {
+        return true;
+    }
 
-    public boolean isMainInventorySearchExtended ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_CATEGORY)
+    public default boolean isMainInventorySearchExtended ()
+    {
+        return true;
+    }
 
-    public boolean isIndirectPvPAllowed ();
+    @ConfigurationPropertyGetter(category = PARTIAL_INVENTORY_LOSS_CATEGORY)
+    public default boolean isIndirectPvPAllowed ()
+    {
+        return true;
+    }
 
-    public int getPvPTimer ();
+    @ConfigurationPropertyGetter(category = PVP_COMBAT_CATEGORY, unit = Unit.SECONDS)
+    @Bounded(min = "10", max = "300")
+    public default int getPvPTimer ()
+    {
+        return 45;
+    }
 
-    public Collection<String> getBlockedCommands ();
+    @ConfigurationPropertyGetter(category = PVP_COMBAT_CATEGORY)
+    public default Set<String> getBlockedCommands ()
+    {
+        return new HashSet<> ();
+    }
 
-    public boolean areGlobalChatMessagesPrefixed ();
+    @ConfigurationPropertyGetter(category = CHAT_MESSAGES_CATEGORY)
+    public default boolean areGlobalChatMessagesPrefixed ()
+    {
+        return true;
+    }
 
-    public String getGlobalChatMessagePrefix ();
+    @ConfigurationPropertyGetter(category = CHAT_MESSAGES_CATEGORY)
+    public default String getGlobalChatMessagePrefix ()
+    {
+        return ServerChatUtils.DEFAULT_CHAT_MESSAGE_PREFIX;
+    }
 
-    public boolean isPvPEnabledAnnouncedGlobally ();
+    @ConfigurationPropertyGetter(category = CHAT_MESSAGES_CATEGORY)
+    public default boolean isPvPEnabledAnnouncedGlobally ()
+    {
+        return true;
+    }
 
-    public boolean isPvPDisabledAnnouncedGlobally ();
+    @ConfigurationPropertyGetter(category = CHAT_MESSAGES_CATEGORY)
+    public default boolean isPvPDisabledAnnouncedGlobally ()
+    {
+        return false;
+    }
 
 }

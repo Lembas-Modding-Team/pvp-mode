@@ -1,17 +1,16 @@
 package pvpmode.modules.suffixForge.internal.server;
 
-import static pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfigurationConstants.*;
-
 import java.nio.file.Path;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
+import pvpmode.api.common.configuration.*;
 import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
-import pvpmode.api.server.configuration.ServerConfiguration;
+import pvpmode.modules.suffixForge.api.server.SuffixForgeServerConfiguration;
 
 /**
  * The compatibility module for SuffixForge.
@@ -19,10 +18,10 @@ import pvpmode.api.server.configuration.ServerConfiguration;
  * @author CraftedMods
  *
  */
-public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
+public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule implements Configurable
 {
 
-    private boolean soulboundItemsDropped;
+    private SuffixForgeServerConfiguration config;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -31,24 +30,18 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
 
         MinecraftForge.EVENT_BUS.register (this);
 
-        Configuration configuration = this.getDefaultConfiguration ();
-
-        soulboundItemsDropped = configuration.getBoolean (
-            SOULBOUND_ITEMS_DROPPED_CONFIGURATION_CATEGORY,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY,
-            false, "If true, items tagged with soulbound can be dropped with the partial inventory loss.");
-
-        if (configuration.hasChanged ())
+        config = this.createConfiguration (configFile ->
         {
-            configuration.save ();
-        }
+            return new SuffixForgeServerConfigurationImpl (configFile, PvPMode.proxy.getAutoConfigManager ()
+                .getGeneratedKeys ().get (SuffixForgeServerConfiguration.SUFFIX_FORGE_SERVER_CONFIG_PID), logger);
+        });
 
     }
 
     @SubscribeEvent
     public void onPartialItemLoss (PartialItemLossEvent event)
     {
-        if (!soulboundItemsDropped)
+        if (!config.areSoulboundItemsDropped ())
         {
             ItemStack stack = event.getStack ();
             if (stack.hasTagCompound ())
@@ -59,6 +52,12 @@ public class SuffixForgeCompatibilityModule extends AbstractCompatibilityModule
                 }
             }
         }
+    }
+
+    @Override
+    public ConfigurationManager getConfiguration ()
+    {
+        return config;
     }
 
 }

@@ -20,7 +20,7 @@ The configuration system changed a lot - the old configuration files are no long
 ### Renamed properties:
 #### General configuration:
 * `Active Pvp Logging Handlers` --> `Active Combat Logging Handlers`
-* `Warmup (seconds)` --> `Warmup off-on (seconds)`
+* `Warmup (seconds)` --> `Warmup off-on (in seconds)`
 * `Radar` --> `Intelligence Enabled`
 * `CSV separator` --> `CSV Separator`
 * `Enable Partial Inventory Loss` --> `PvP Partial Inventory Loss Enabled`
@@ -28,8 +28,8 @@ The configuration system changed a lot - the old configuration files are no long
 * `Armour Item Loss` --> `PvP Armour Item Loss`
 * `Hotbar Item Loss` --> `PvP Hotbar Item Loss`
 * `Main Item Loss` --> `PvP Main Item Loss`
-* `PvP Mode Override Check Interval (Seconds)` --> `Override Check Interval (seconds)`
-* `PvP Timer (Seconds)` --> `PvP Timer (seconds)`
+* `PvP Mode Override Check Interval (Seconds)` --> `Override Check Interval (in seconds)`
+* `PvP Timer (Seconds)` --> `PvP Timer (in seconds)`
 * `Allow Per Player Spying Settings` --> `Per Player Spying Settings Allowed`
 * `Enable PvP Toggling` --> `PvP Toggling Enabled`
 * `Disable Fast Item Transfer` --> `Fast Item Transfer Disabled`

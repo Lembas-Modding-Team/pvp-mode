@@ -3,6 +3,12 @@
 ## 2.0.0-BETA
 ### General changes:
 
+#### Configuration:
+* Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all ones
+* Added support for compatibility modules, which means that their configuration data are now accessible via `pvpconfig`
+* Recoded`pvpconfig display`, with more data shown and a new, chat-based GUI with clickable entries and tooltips
+* Added `pvpconfig display [configurationName] [categoryName] [propertyName]`, which shows the required data directly
+
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
