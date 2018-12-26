@@ -435,7 +435,9 @@ public class ConfigurationPropertyKey<T>
     }
 
     /**
-     * An extension of the configuration property key class for integers.
+     * An extension of the configuration property key class for property keys which
+     * validate the property value against a defined collection of valid property
+     * values.
      *
      * @author CraftedMods
      *
