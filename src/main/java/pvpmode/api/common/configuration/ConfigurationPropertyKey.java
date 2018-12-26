@@ -269,7 +269,7 @@ public class ConfigurationPropertyKey<T>
         public boolean isValidValue (T value)
         {
             return super.isValidValue (value) || this.compare (value, minValue) >= 0
-                || this.compare (value, defaultValue) <= 0;
+                || this.compare (value, maxValue) <= 0;
         }
 
         @Override
