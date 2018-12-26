@@ -194,12 +194,12 @@ public class ConfigurationPropertyKey<T>
      * @author CraftedMods
      *
      */
-    public static class BooleanKey extends ConfigurationPropertyKey<java.lang.Boolean>
+    public static class BooleanKey extends ConfigurationPropertyKey<Boolean>
     {
 
         public BooleanKey (String name, String category, boolean defaultValue)
         {
-            super (name, java.lang.Boolean.class, category, defaultValue);
+            super (name, Boolean.class, category, defaultValue);
         }
 
         public BooleanKey (String name, String category)
@@ -223,7 +223,7 @@ public class ConfigurationPropertyKey<T>
      * @param <T>
      *            The number type
      */
-    public static abstract class AbstractNumberKey<T extends java.lang.Number> extends ConfigurationPropertyKey<T>
+    public static abstract class AbstractNumberKey<T extends Number> extends ConfigurationPropertyKey<T>
         implements Comparator<T>
     {
 
@@ -371,43 +371,43 @@ public class ConfigurationPropertyKey<T>
      * @author CraftedMods
      *
      */
-    public static class FloatKey extends AbstractNumberKey<java.lang.Float>
+    public static class FloatKey extends AbstractNumberKey<Float>
     {
 
-        public FloatKey (String name, String category, Unit unit, java.lang.Float defaultValue,
-            java.lang.Float minValue,
-            java.lang.Float maxValue)
+        public FloatKey (String name, String category, Unit unit, Float defaultValue,
+            Float minValue,
+            Float maxValue)
         {
-            super (name, java.lang.Float.class, category, unit, defaultValue, minValue, maxValue);
+            super (name, Float.class, category, unit, defaultValue, minValue, maxValue);
         }
 
-        public FloatKey (String name, String category, java.lang.Float defaultValue, java.lang.Float minValue,
-            java.lang.Float maxValue)
+        public FloatKey (String name, String category, Float defaultValue, Float minValue,
+            Float maxValue)
         {
-            super (name, java.lang.Float.class, category, defaultValue, minValue, maxValue);
+            super (name, Float.class, category, defaultValue, minValue, maxValue);
         }
 
-        public FloatKey (String name, String category, Unit unit, java.lang.Float defaultValue)
+        public FloatKey (String name, String category, Unit unit, Float defaultValue)
         {
-            super (name, java.lang.Float.class, category, unit, defaultValue, java.lang.Float.MIN_VALUE,
-                java.lang.Float.MAX_VALUE);
+            super (name, Float.class, category, unit, defaultValue, Float.MIN_VALUE,
+                Float.MAX_VALUE);
         }
 
-        public FloatKey (String name, String category, java.lang.Float defaultValue)
+        public FloatKey (String name, String category, Float defaultValue)
         {
-            super (name, java.lang.Float.class, category, defaultValue, java.lang.Float.MIN_VALUE,
-                java.lang.Float.MAX_VALUE);
+            super (name, Float.class, category, defaultValue, Float.MIN_VALUE,
+                Float.MAX_VALUE);
         }
 
         public FloatKey (String name, String category, Unit unit)
         {
-            super (name, java.lang.Float.class, category, unit, 0f, java.lang.Float.MIN_VALUE,
-                java.lang.Float.MAX_VALUE);
+            super (name, Float.class, category, unit, 0f, Float.MIN_VALUE,
+                Float.MAX_VALUE);
         }
 
         public FloatKey (String name, String category)
         {
-            super (name, java.lang.Float.class, category, 0f, java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE);
+            super (name, Float.class, category, 0f, Float.MIN_VALUE, Float.MAX_VALUE);
         }
 
         @Override
