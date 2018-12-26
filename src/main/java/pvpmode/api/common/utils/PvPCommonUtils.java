@@ -132,7 +132,8 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns the wrapper class of the specified primitive class.
+     * Returns the wrapper class of the specified primitive class. If the supplied
+     * class is not a primitive one, the supplied class is returned.
      * 
      * @param primitive
      *            The primitive class
@@ -140,11 +141,12 @@ public class PvPCommonUtils
      */
     public static Class<?> toWrapper (Class<?> primitive)
     {
-        return primitive.isPrimitive () ? PRIMITIVE_TO_WRAPPERS_MAP.get (primitive) : primitive;
+        return PRIMITIVE_TO_WRAPPERS_MAP.getOrDefault (primitive, primitive);
     }
 
     /**
-     * Returns the primitive class of the specified wrapper class.
+     * Returns the primitive class of the specified wrapper class. If the supplied
+     * class is not a wrapper, the supplied class is returned.
      * 
      * @param wrapper
      *            The wrapper class
@@ -152,7 +154,7 @@ public class PvPCommonUtils
      */
     public static Class<?> toPrimitive (Class<?> wrapper)
     {
-        return wrapper.isPrimitive () ? WRAPPERS_TO_PRIMITIVE_MAP.get (wrapper) : wrapper;
+        return WRAPPERS_TO_PRIMITIVE_MAP.getOrDefault (wrapper, wrapper);
     }
 
     /**
