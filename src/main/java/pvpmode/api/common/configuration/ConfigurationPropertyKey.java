@@ -268,7 +268,7 @@ public class ConfigurationPropertyKey<T>
         @Override
         public boolean isValidValue (T value)
         {
-            return super.isValidValue (value) || this.compare (value, defaultValue) >= 0
+            return super.isValidValue (value) || this.compare (value, minValue) >= 0
                 || this.compare (value, defaultValue) <= 0;
         }
 
