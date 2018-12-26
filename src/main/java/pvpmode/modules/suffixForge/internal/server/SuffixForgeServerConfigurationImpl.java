@@ -1,5 +1,6 @@
 package pvpmode.modules.suffixForge.internal.server;
 
+import java.io.*;
 import java.util.Map;
 
 import net.minecraftforge.common.config.Configuration;
@@ -20,6 +21,20 @@ public class SuffixForgeServerConfigurationImpl extends AutoForgeConfigurationMa
         Map<String, ConfigurationPropertyKey<?>> propertyKeys, SimpleLogger logger)
     {
         super (configuration, propertyKeys, logger);
+    }
+
+    @Override
+    protected InputStream openDisplayNameInputStream () throws IOException
+    {
+        return this.getClass ()
+            .getResourceAsStream ("/assets/pvpmode/modules/suffixForge/configurationDisplayNames.properties");
+    }
+
+    @Override
+    protected InputStream openCommentInputStream () throws IOException
+    {
+        return this.getClass ()
+            .getResourceAsStream ("/assets/pvpmode/modules/suffixForge/configurationComments.properties");
     }
 
 }

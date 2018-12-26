@@ -1,5 +1,6 @@
 package pvpmode.modules.lotr.internal.server;
 
+import java.io.*;
 import java.util.Map;
 
 import net.minecraftforge.common.config.Configuration;
@@ -29,6 +30,19 @@ public class LOTRServerConfigurationImpl extends AutoForgeConfigurationManager i
     {
         super.load ();
         module.reloadConfiguration (this);
+    }
+
+    @Override
+    protected InputStream openDisplayNameInputStream () throws IOException
+    {
+        return this.getClass ()
+            .getResourceAsStream ("/assets/pvpmode/modules/lotr/configurationDisplayNames.properties");
+    }
+
+    @Override
+    protected InputStream openCommentInputStream () throws IOException
+    {
+        return this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/configurationComments.properties");
     }
 
 }

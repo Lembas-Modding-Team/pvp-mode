@@ -1,5 +1,6 @@
 package pvpmode.modules.siegeMode.internal.server;
 
+import java.io.*;
 import java.util.Map;
 
 import net.minecraftforge.common.config.Configuration;
@@ -20,6 +21,20 @@ public class SiegeModeServerConfigurationImpl extends AutoForgeConfigurationMana
         Map<String, ConfigurationPropertyKey<?>> propertyKeys, SimpleLogger logger)
     {
         super (configuration, propertyKeys, logger);
+    }
+
+    @Override
+    protected InputStream openDisplayNameInputStream () throws IOException
+    {
+        return this.getClass ()
+            .getResourceAsStream ("/assets/pvpmode/modules/siegeMode/configurationDisplayNames.properties");
+    }
+
+    @Override
+    protected InputStream openCommentInputStream () throws IOException
+    {
+        return this.getClass ()
+            .getResourceAsStream ("/assets/pvpmode/modules/siegeMode/configurationComments.properties");
     }
 
 }

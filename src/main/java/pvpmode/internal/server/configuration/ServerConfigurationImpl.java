@@ -1,5 +1,6 @@
 package pvpmode.internal.server.configuration;
 
+import java.io.*;
 import java.util.*;
 
 import net.minecraftforge.common.config.Configuration;
@@ -99,6 +100,18 @@ public class ServerConfigurationImpl extends AutoForgeConfigurationManager imple
             logger.warning ("No combat logging handlers were specified. Combat logging will be disabled.");
         }
 
+    }
+
+    @Override
+    protected InputStream openDisplayNameInputStream () throws IOException
+    {
+        return this.getClass ().getResourceAsStream ("/assets/pvpmode/configurationDisplayNames.properties");
+    }
+
+    @Override
+    protected InputStream openCommentInputStream () throws IOException
+    {
+        return this.getClass ().getResourceAsStream ("/assets/pvpmode/configurationComments.properties");
     }
 
 }

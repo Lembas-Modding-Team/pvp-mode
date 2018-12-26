@@ -93,12 +93,7 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
      * @throws IOException
      *             If IO errors occur
      */
-    protected InputStream openDisplayNameInputStream () throws IOException
-    {
-        return this.getClass ().getClassLoader ()
-            .getResourceAsStream (this.getClass ().getPackage ().getName ().replaceAll ("\\.", "/")
-                + "/configurationDisplayNames.properties");
-    }
+    protected abstract InputStream openDisplayNameInputStream () throws IOException;
 
     /**
      * Returns an input stream leading to the comment property source.
@@ -107,12 +102,7 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
      * @throws IOException
      *             If IO errors occur
      */
-    protected InputStream openCommentInputStream () throws IOException
-    {
-        return this.getClass ().getClassLoader ()
-            .getResourceAsStream (this.getClass ().getPackage ().getName ().replaceAll ("\\.", "/")
-                + "/configurationComments.properties");
-    }
+    protected abstract InputStream openCommentInputStream () throws IOException;
 
     @Override
     @SuppressWarnings("unchecked")
