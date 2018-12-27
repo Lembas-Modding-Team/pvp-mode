@@ -6,18 +6,25 @@ import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityManager;
-import pvpmode.api.common.configuration.CommonConfiguration;
+import pvpmode.api.common.configuration.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
+import pvpmode.internal.common.configuration.*;
+import pvpmode.internal.common.core.PvPModeCore;
+import pvpmode.internal.common.utils.ClassDiscoverer;
 
-public class CommonProxy
+public class CommonProxy implements Configurable
 {
 
     protected Configuration forgeConfiguration;
     protected Path configurationFolder;
     protected CommonConfiguration configuration;
     protected CompatibilityManagerImpl compatibilityManager;
+    protected final ClassDiscoverer discoverer = PvPModeCore.classDiscoverer;
 
     protected SimpleLogger logger;
+
+    protected AutoConfigurationCreator autoConfigManager;
+    protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.autoConfigurationMapperManager;
 
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
     {
@@ -32,6 +39,10 @@ public class CommonProxy
         compatibilityManager = new CompatibilityManagerImpl (configurationFolder);
 
         registerCompatibilityModules ();
+
+        autoConfigManager = new AutoConfigurationCreator ();
+
+        autoConfigManager.processClasspath (discoverer, 30000);
     }
 
     protected void registerCompatibilityModules ()
@@ -61,6 +72,16 @@ public class CommonProxy
     public SimpleLogger getLogger ()
     {
         return logger;
+    }
+
+    public AutoConfigurationCreator getAutoConfigManager ()
+    {
+        return autoConfigManager;
+    }
+
+    public AutoConfigurationMapperManager getAutoConfigMapperManager ()
+    {
+        return autoConfigMapperManager;
     }
 
 }

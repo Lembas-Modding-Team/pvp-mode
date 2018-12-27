@@ -21,7 +21,7 @@ public class PvPServerUtils extends PvPCommonUtils
 
     private static Provider provider;
 
-    public static final boolean setProvider (Provider provider)
+    public static boolean setProvider (Provider provider)
     {
         if (PvPServerUtils.provider == null)
         {

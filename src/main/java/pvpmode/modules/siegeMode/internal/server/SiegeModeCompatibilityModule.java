@@ -1,18 +1,16 @@
 package pvpmode.modules.siegeMode.internal.server;
 
-import static pvpmode.modules.siegeMode.api.server.SiegeModeServerConfigurationConstants.*;
-
 import java.nio.file.Path;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
+import pvpmode.api.common.configuration.*;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PvPListEvent.UnsafeClassification;
-import pvpmode.api.server.configuration.ServerConfiguration;
+import pvpmode.modules.siegeMode.api.server.SiegeModeServerConfiguration;
 import siege.common.siege.SiegeDatabase;
 
 /**
@@ -21,10 +19,10 @@ import siege.common.siege.SiegeDatabase;
  * @author CraftedMods
  *
  */
-public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
+public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule implements Configurable
 {
 
-    private boolean pvpLoggingDuringSiegesDisabled;
+    private SiegeModeServerConfiguration config;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -33,17 +31,11 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
 
         MinecraftForge.EVENT_BUS.register (this);
 
-        Configuration configuration = this.getDefaultConfiguration ();
-
-        pvpLoggingDuringSiegesDisabled = configuration.getBoolean (
-            PVP_LOGGING_DURING_SIEGES_DISABLED_CONFIGURATION_NAME,
-            ServerConfiguration.SERVER_CONFIGURATION_CATEGORY, true,
-            "If true, PvP events for all players of a siege won't be logged.");
-
-        if (configuration.hasChanged ())
+        config = this.createConfiguration (configFile ->
         {
-            configuration.save ();
-        }
+            return new SiegeModeServerConfigurationImpl (configFile, PvPMode.proxy.getAutoConfigManager ()
+                .getGeneratedKeys ().get (SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID), logger);
+        });
 
         PvPMode.instance.getServerProxy ().getOverrideManager ()
             .registerOverrideCondition (new SiegeZoneOverrideCondition ());
@@ -61,8 +53,9 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
     @SubscribeEvent
     public void onPvPLog (OnPvPLogEvent event)
     {
-        if (pvpLoggingDuringSiegesDisabled && (SiegeDatabase.getActiveSiegeForPlayer (event.getAttacker ()) != null
-            || SiegeDatabase.getActiveSiegeForPlayer (event.getVictim ()) != null))
+        if (config.isPvPLoggingDuringSiegesDisabled ()
+            && (SiegeDatabase.getActiveSiegeForPlayer (event.getAttacker ()) != null
+                || SiegeDatabase.getActiveSiegeForPlayer (event.getVictim ()) != null))
         {
             event.setCanceled (true);
         }
@@ -76,6 +69,12 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule
         {
             event.setCanceled (true);
         }
+    }
+
+    @Override
+    public ConfigurationManager getConfiguration ()
+    {
+        return config;
     }
 
 }

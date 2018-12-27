@@ -1,11 +1,16 @@
 package pvpmode.api.common.configuration;
 
-public interface CommonConfiguration
+import pvpmode.api.common.configuration.auto.AutoConfigurationManager;
+
+/**
+ * An interface containing the common configuration API of the PvP Mode Mod.
+ * 
+ * @author CraftedMods
+ *
+ */
+public interface CommonConfiguration extends AutoConfigurationManager
 {
 
     public static final String COMMON_CONFIGURATION_CATEGORY = "common";
 
-    public void save ();
-
-    public void load ();
 }

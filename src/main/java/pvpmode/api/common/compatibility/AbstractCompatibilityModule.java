@@ -2,9 +2,11 @@ package pvpmode.api.common.compatibility;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.function.Function;
 
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.api.common.SimpleLogger;
+import pvpmode.api.common.configuration.ConfigurationManager;
 
 public abstract class AbstractCompatibilityModule implements CompatibilityModule
 {
@@ -25,12 +27,22 @@ public abstract class AbstractCompatibilityModule implements CompatibilityModule
 
     }
 
-    protected Configuration getDefaultConfiguration () throws IOException
+    protected Configuration createForgeConfigurationFile () throws IOException
     {
         File configurationFile = configurationFolder.resolve (loader.getInternalModuleName () + ".cfg").toFile ();
         if (!configurationFile.exists ())
             configurationFile.createNewFile ();
         return new Configuration (configurationFile);
+    }
+
+    protected <T extends ConfigurationManager, U extends T> T createConfiguration (
+        Function<Configuration, U> configurationManagerCreator)
+        throws IOException
+    {
+        Configuration forgeConfiguration = this.createForgeConfigurationFile ();
+        T configurationManager = configurationManagerCreator.apply (forgeConfiguration);
+        configurationManager.load ();
+        return configurationManager;
     }
 
 }
