@@ -87,7 +87,7 @@ public class PvPCommand extends AbstractPvPCommand
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args, String[] originalArgs)
     {
         EntityPlayerMP player = getCommandSenderAsPlayer (sender);
         PvPData data = PvPServerUtils.getPvPData (player);

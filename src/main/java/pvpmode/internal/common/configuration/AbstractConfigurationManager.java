@@ -2,6 +2,7 @@ package pvpmode.internal.common.configuration;
 
 import java.util.*;
 
+import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.configuration.*;
 
 /**
@@ -23,12 +24,27 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     @Override
     public void load ()
     {
+        Map<ConfigurationPropertyKey<?>, Object> oldProperties = new HashMap<> (properties);
+
         properties.clear ();
         properties.putAll (retrieveProperties ());
         properties.keySet ().forEach (key -> propertyKeys.put (key.getInternalName (), key));
         unmodifiablePropertyKeys = Collections.unmodifiableMap (propertyKeys);
 
         createCategoryHierarchy ();
+
+        // Fire the property changed event for every property that changed after the
+        // reload
+        properties.forEach ( (key, newValue) ->
+        {
+            Object oldValue = oldProperties.get (key);
+            if (!newValue.equals (oldValue))
+            {
+                this.onPropertyChanged (key, oldValue, newValue);
+            }
+        });
+
+        this.onPropertiesChanged ();
     }
 
     private void createCategoryHierarchy ()
@@ -76,11 +92,50 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
      */
     protected abstract Map<? extends ConfigurationPropertyKey<?>, Object> retrieveProperties ();
 
+    /**
+     * Called when the value of the supplied property was changed, or when the property
+     * was initialized for the first time. In that case the old value is null.
+     * 
+     * @param key
+     *            The configuration property key
+     * @param oldValue
+     *            The old property value
+     * @param newValue
+     *            The new property value
+     */
+    protected void onPropertyChanged (ConfigurationPropertyKey<?> key, Object oldValue, Object newValue)
+    {
+        MinecraftForge.EVENT_BUS.post (new OnConfigurationPropertyChangedEvent (key, newValue, oldValue));
+    }
+
+    /**
+     * A fuunction that will be called after
+     * {@link AbstractConfigurationManager#onPropertyChanged(ConfigurationPropertyKey, Object, Object)}
+     * has been called for all properties that have been changed.
+     */
+    protected void onPropertiesChanged ()
+    {
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty (ConfigurationPropertyKey<T> key)
     {
         return (T) properties.get (key);
+    }
+
+    @Override
+    public <T> boolean setProperty (ConfigurationPropertyKey<T> key, T newValue)
+    {
+        Object oldValue = properties.get (key);
+        if (key.isValidValue (newValue) && !newValue.equals (oldValue))
+        {
+            properties.replace (key, newValue);
+            this.onPropertyChanged (key, newValue, oldValue);
+            this.onPropertiesChanged ();
+            return true;
+        }
+        return false;
     }
 
     @Override

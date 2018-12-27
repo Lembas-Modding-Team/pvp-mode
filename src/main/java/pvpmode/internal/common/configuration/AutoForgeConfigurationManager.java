@@ -7,7 +7,6 @@ import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey;
-import pvpmode.api.common.configuration.ConfigurationPropertyKey.*;
 import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.*;
 import pvpmode.api.common.utils.Process;
@@ -24,7 +23,6 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
 {
 
     private Map<String, ConfigurationPropertyKey<?>> propertyKeys;
-    protected final SimpleLogger logger;
 
     protected final Properties configurationDisplayNames = new Properties ();
     protected final Properties configurationComments = new Properties ();
@@ -35,8 +33,7 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
         Map<String, ConfigurationPropertyKey<?>> propertyKeys,
         SimpleLogger logger)
     {
-        super (configuration);
-        this.logger = logger;
+        super (configuration, logger);
         this.propertyKeys = propertyKeys;
 
         this.loadProperties (this::openDisplayNameInputStream, configurationDisplayNames, "display name");
@@ -86,6 +83,12 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
         }
     }
 
+    @Override
+    protected Map<String, ConfigurationPropertyKey<?>> getRegisteredPropertyKeys ()
+    {
+        return this.propertyKeys;
+    }
+
     /**
      * Returns an input stream leading to the display name property source.
      * 
@@ -104,121 +107,27 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
      */
     protected abstract InputStream openCommentInputStream () throws IOException;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected Map<ConfigurationPropertyKey<?>, Object> retrieveProperties ()
-    {
-        Map<ConfigurationPropertyKey<?>, Object> ret = new HashMap<> ();
-        for (ConfigurationPropertyKey<?> key : propertyKeys.values ())
-        {
-            if (Boolean.class.isAssignableFrom (key.getValueType ()))
-            {
-                ret.put (key,
-                    getBoolean ((ConfigurationPropertyKey<Boolean>) key, (Boolean) key.getDefaultValue (),
-                        getComment (key)));
-            }
-            else if (Enum.class.isAssignableFrom (key.getValueType ()))
-            {
-                ret.put (key,
-                    this.getEnum ((ConfigurationPropertyKey<? extends Enum<?>>) key,
-                        (Enum<?>) key.getDefaultValue ()));
-            }
-            else if (key instanceof IntegerKey)
-            {
-                IntegerKey intKey = (IntegerKey) key;
-                ret.put (intKey,
-                    getInt (intKey, intKey.getDefaultValue (), intKey.getMinValue (), intKey.getMaxValue (),
-                        getComment (key)));
-            }
-            else if (key instanceof FloatKey)
-            {
-                FloatKey floatKey = (FloatKey) key;
-                ret.put (floatKey,
-                    getFloat (floatKey, floatKey.getDefaultValue (), floatKey.getMinValue (),
-                        floatKey.getMaxValue (),
-                        getComment (key)));
-            }
-            else if (String.class.isAssignableFrom (key.getValueType ()))
-            {
-                ret.put (key, getString ((ConfigurationPropertyKey<String>) key, (String) key.getDefaultValue (),
-                    getComment (key)));
-            }
-            else if (key instanceof StringList)
-            {
-                ret.put (key,
-                    getStringList ((ConfigurationPropertyKey<List<String>>) key,
-                        (List<String>) key.getDefaultValue (),
-                        (List<String>) ((StringList) key).getValidValues (), getComment (key)));
-            }
-            else if (key instanceof StringSet)
-            {
-                ret.put (key,
-                    getStringSet ((ConfigurationPropertyKey<Set<String>>) key,
-                        (Set<String>) key.getDefaultValue (),
-                        (Set<String>) ((StringSet) key).getValidValues (), getComment (key)));
-            }
-            else
-            {
-                logger.warning ("The type \"%s\" of the configuration property key \"%s\" is not supported",
-                    key.getValueType (),
-                    key.getInternalName ());
-            }
-        }
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends Enum<?>, J extends Enum<J>> Enum<?> getEnum (ConfigurationPropertyKey<T> key,
-        Enum<?> defaultValue)
-    {
-        return this.getEnum ((ConfigurationPropertyKey.EnumKey<J>) (ConfigurationPropertyKey<?>) key, (J) defaultValue,
-            getComment (key));
-    }
-
     private String getProperty (ConfigurationPropertyKey<?> propertyKey, Properties properties, String defaultValue)
     {
         String prop = properties.getProperty (propertyKey.getInternalName ());
         return prop == null ? defaultValue : prop;
     }
 
-    /**
-     * Returns the configuration comment for the specified property key or an empty
-     * string of none was found.
-     * 
-     * @param propertyKey
-     *            The configuration property key
-     * @return The comment for that key
-     */
-    public String getComment (ConfigurationPropertyKey<?> propertyKey)
+    @Override
+    public String getComment (ConfigurationPropertyKey<?> key)
     {
-        return getProperty (propertyKey, configurationComments, "");
-    }
-
-    /**
-     * Returns the display name for the specified property key. The manager will
-     * first attempt to look at the specified property source
-     * {@link AutoForgeConfigurationManager#openDisplayNameInputStream()} for the
-     * display name, if that fails, it'll use the
-     * {@link AutoConfigurationMapperManager}.
-     * 
-     * @param propertyKey
-     *            The configuration property key
-     * @return The display name for that key
-     */
-    public String getDisplayName (ConfigurationPropertyKey<?> propertyKey)
-    {
-        String displayName = getProperty (propertyKey, configurationDisplayNames, propertyKey.getInternalName ());
-        if (displayName.equals (propertyKey.getInternalName ()) && propertyKeys.containsValue (propertyKey))
-        {
-            displayName = PvPMode.proxy.getAutoConfigMapperManager ().getDisplayName (propertyKey.getInternalName ());
-        }
-        return displayName;
+        return getProperty (key, configurationComments, "");
     }
 
     @Override
-    protected String getNameWithUnit (ConfigurationPropertyKey<?> key)
+    public String getDisplayName (ConfigurationPropertyKey<?> key)
     {
-        return this.getNameWithUnit (getDisplayName (key), key.getUnit ());
+        String displayName = getProperty (key, configurationDisplayNames, key.getInternalName ());
+        if (displayName.equals (key.getInternalName ()) && propertyKeys.containsValue (key))
+        {
+            displayName = PvPMode.proxy.getAutoConfigMapperManager ().getDisplayName (key.getInternalName ());
+        }
+        return displayName;
     }
 
 }

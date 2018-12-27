@@ -58,34 +58,7 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     }
 
-    public void reloadConfiguration (LOTRServerConfiguration config)
-    {
-        try
-        {
-            logger.info ("PvP mode overrides for LOTR biomes are %s",
-                config.areEnemyBiomeOverridesEnabled () || config.areSafeBiomeOverridesEnabled () ? "enabled"
-                    : "disabled");
-
-            if (config.areEnemyBiomeOverridesEnabled ())
-            {
-                initEnemyBiomeOverrides (configurationFolder);
-            }
-            if (config.areSafeBiomeOverridesEnabled ())
-            {
-                initSafeBiomeOverrides (configurationFolder);
-            }
-            if (config.areEnemyBiomeOverridesEnabled () || config.areSafeBiomeOverridesEnabled ())
-            {
-                initGeneralBiomeOverrides (configurationFolder);
-            }
-        }
-        catch (Exception e)
-        {
-            this.logger.errorThrowable ("Couldn't initialize the biome overrides", e);
-        }
-    }
-
-    private void initEnemyBiomeOverrides (Path configurationFolder) throws IOException
+    void initEnemyBiomeOverrides ()
     {
         initBiomeOverrides (configurationFolder, ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
             "default_enemy_biomes.txt", (data) -> new HostileBiomeOverrideCondition (data),
@@ -101,7 +74,25 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
             DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
     }
 
-    private void initSafeBiomeOverrides (Path configurationFolder) throws IOException
+    void removeEnemyBiomeOverrideCondition ()
+    {
+        if (hostileBiomeOverrideCondition != null)
+        {
+            PvPMode.instance.getServerProxy ().getOverrideManager ()
+                .unregisterOverrideCondition (hostileBiomeOverrideCondition);
+        }
+    }
+
+    void removeSafeBiomeOverrideCondition ()
+    {
+        if (safeBiomeOverrideCondition != null)
+        {
+            PvPMode.instance.getServerProxy ().getOverrideManager ()
+                .unregisterOverrideCondition (safeBiomeOverrideCondition);
+        }
+    }
+
+    void initSafeBiomeOverrides ()
     {
         initBiomeOverrides (configurationFolder, SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
             "default_safe_biomes.txt", (data) -> new SafeBiomeOverrideCondition (data),
@@ -113,57 +104,66 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         String defaultConfigFileName,
         Function<Map<Integer, Collection<BiomeFactionEntry>>, PvPOverrideCondition> conditionCreator,
         Supplier<PvPOverrideCondition> currentConditionGetter, Consumer<PvPOverrideCondition> currentConditionSetter)
-        throws IOException
     {
-        Path biomeConfigurationFile = configurationFolder.resolve (configFileName);
-
-        // Recreate the config file if it doesn't exist
-        if (!Files.exists (biomeConfigurationFile))
-        {
-            logger.info ("The %s configuration file doesn't exist - it'll be created", configName);
-            Files.createFile (biomeConfigurationFile);
-
-            PvPCommonUtils.writeFromStreamToFile (
-                () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + defaultConfigFileName),
-                biomeConfigurationFile);
-        }
+        this.recreateFile (configurationFolder, defaultConfigFileName, configFileName, configName);
 
         BiomeOverrideConfigParser parser = new BiomeOverrideConfigParser (configName,
-            biomeConfigurationFile, logger);
+            configurationFolder.resolve (configFileName), logger);
 
-        PvPOverrideCondition condition = conditionCreator.apply (parser.parse ());
-
-        if (currentConditionGetter.get () != null)
+        try
         {
-            PvPMode.instance.getServerProxy ().getOverrideManager ()
-                .unregisterOverrideCondition (currentConditionGetter.get ());
+
+            PvPOverrideCondition condition = conditionCreator.apply (parser.parse ());
+
+            if (currentConditionGetter.get () != null)
+            {
+                PvPMode.instance.getServerProxy ().getOverrideManager ()
+                    .unregisterOverrideCondition (currentConditionGetter.get ());
+            }
+
+            if (PvPMode.instance.getServerProxy ().getOverrideManager ()
+                .registerOverrideCondition (condition))
+                currentConditionSetter.accept (condition);
+        }
+        catch (IOException e)
+        {
+            this.logger.errorThrowable ("Couldn't parse the %s", e, configName);
         }
 
-        if (PvPMode.instance.getServerProxy ().getOverrideManager ()
-            .registerOverrideCondition (condition))
-            currentConditionSetter.accept (condition);
     }
 
-    private void initGeneralBiomeOverrides (Path configurationFolder) throws IOException
+    void initGeneralBiomeOverrides ()
     {
         // (Re)Create the LOTR biome id file
         recreateFile (configurationFolder.getParent ().getParent ().getParent (), LOTR_BIOME_IDS_FILE_NAME,
             "LOTR biome id file");// TODO temporary
     }
 
-    private void recreateFile (Path targetFolder, String filename, String shortName) throws IOException
+    private void recreateFile (Path targetFolder, String filename, String shortName)
     {
-        Path file = targetFolder.resolve (filename);
-        if (!Files.exists (file))
-        {
-            logger.info ("The %s doesn't exist - it'll be created", shortName);
-            Files.createFile (file);
-        }
+        this.recreateFile (targetFolder, filename, filename, shortName);
+    }
 
-        PvPCommonUtils.writeFromStreamToFile (
-            () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
-            file);
-        logger.info ("Recreated the %s", shortName);
+    private void recreateFile (Path targetFolder, String filename, String targetFilename, String shortName)
+    {
+        try
+        {
+            Path file = targetFolder.resolve (targetFilename);
+            if (!Files.exists (file))
+            {
+                logger.info ("The %s doesn't exist - it'll be created", shortName);
+                Files.createFile (file);
+            }
+
+            PvPCommonUtils.writeFromStreamToFile (
+                () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
+                file);
+            logger.info ("Recreated the %s", shortName);
+        }
+        catch (IOException e)
+        {
+            logger.errorThrowable ("Couldn't recreate the %s", e, shortName);
+        }
     }
 
     @SubscribeEvent

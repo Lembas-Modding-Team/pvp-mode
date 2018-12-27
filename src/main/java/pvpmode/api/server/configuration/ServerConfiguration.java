@@ -47,6 +47,8 @@ public interface ServerConfiguration extends CommonConfiguration
     public static final String SOULBOUND_CATEGORY = SERVER_CATEGORY
         + ".soulbound";
 
+    public static final String ADMINISTRATION_CATEGORY = SERVER_CATEGORY + ".administration";
+
     @ConfigurationPropertyGetter(category = SERVER_CATEGORY)
     public default EnumPvPMode getDefaultPvPMode ()
     {
@@ -252,13 +254,21 @@ public interface ServerConfiguration extends CommonConfiguration
     }
 
     @ConfigurationPropertyGetter(category = SOULBOUND_CATEGORY)
-    public default boolean areSoulboundItemsEnabled () {
+    public default boolean areSoulboundItemsEnabled ()
+    {
         return false;
     }
 
     @ConfigurationPropertyGetter(category = SOULBOUND_CATEGORY)
-    public default String getSoulboundItemTooltip () {
+    public default String getSoulboundItemTooltip ()
+    {
         return "\u00A7r\u00A78[\u00A75Soulbound\u00A7r\u00A78]";
+    }
+
+    @ConfigurationPropertyGetter(category = ADMINISTRATION_CATEGORY)
+    public default boolean isOneClickTogglingEnabled ()
+    {
+        return true;
     }
 
 }

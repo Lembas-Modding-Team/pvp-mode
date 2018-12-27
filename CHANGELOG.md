@@ -8,6 +8,9 @@
 * Added support for compatibility modules, which means that their configuration data are now accessible via `pvpconfig`
 * Recoded `pvpconfig display`, with more data shown and a new, chat-based GUI with clickable entries and tooltips
 * Added `pvpconfig display [configurationName] [categoryName] [propertyName]`, which shows the required data directly
+* Added `pvpconfig set` which allows the modification of configuration properties
+* Added support for the `pvpconfig display` GUI for the modification of configuration properties
+* Added a configurable one-click toggling feature for boolean configuration properties, enabled by default
 
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands

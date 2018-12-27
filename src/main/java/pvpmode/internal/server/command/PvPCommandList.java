@@ -71,7 +71,7 @@ public class PvPCommandList extends AbstractPvPCommand
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args, String[] originalArgs)
     {
         EntityPlayerMP senderPlayer = getCommandSenderAsPlayer (sender);
 

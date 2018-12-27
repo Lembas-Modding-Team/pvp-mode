@@ -1,10 +1,13 @@
 package pvpmode.internal.common.configuration;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.*;
 
-import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.*;
+import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey;
-import pvpmode.api.common.configuration.ConfigurationPropertyKey.Unit;
+import pvpmode.api.common.configuration.ConfigurationPropertyKey.*;
 
 /**
  * A configuration manager using the MinecraftForge configuration system.
@@ -17,9 +20,14 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
 
     protected final Configuration configuration;
 
-    protected ForgeConfigurationManager (Configuration configuration)
+    protected final SimpleLogger logger;
+
+    private boolean wasSavedWithFirstLoading = false;
+
+    protected ForgeConfigurationManager (Configuration configuration, SimpleLogger logger)
     {
         this.configuration = configuration;
+        this.logger = logger;
     }
 
     @Override
@@ -28,8 +36,12 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
         configuration.load ();
         super.load ();
 
-        this.save (); // If the configuration is created for the first time, the configuration file
-                      // has to be written with this method
+        if (!wasSavedWithFirstLoading)
+        {
+            this.save (); // If the configuration is created for the first time, the configuration file
+                          // has to be written with this method
+            wasSavedWithFirstLoading = true;
+        }
     }
 
     @Override
@@ -40,6 +52,158 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
             configuration.save ();
         }
     }
+
+    @SuppressWarnings(
+    {"unchecked", "rawtypes"})
+    @Override
+    public <T> boolean setProperty (ConfigurationPropertyKey<T> key, T newValue)
+    {
+        if (super.setProperty (key, newValue))
+        {
+            String[] categoryParts = key.getCategory ().split ("\\" + ConfigurationPropertyKey.CATEGORY_SEPARATOR);
+
+            ConfigCategory currentCategory = null;
+            Map<String, ConfigCategory> childCategories = this.configuration.getCategoryNames ().stream ()
+                .collect (Collectors.toMap (Function.identity (), configuration::getCategory));
+
+            for (int i = 0; i < categoryParts.length; i++)
+            {
+                String part = categoryParts[i];
+
+                if (childCategories.containsKey (part))
+                {
+                    currentCategory = childCategories.get (part);
+                    childCategories = currentCategory.getChildren ().stream ()
+                        .collect (Collectors.toMap (category -> category.getName (), Function.identity ()));
+                }
+                else
+                {
+                    logger.error (
+                        "Cannot set the new property value: The category \"%s\" of the configuration property key \"%s\" is not a valid one. This is an internal error, because this should never happen.",
+                        key.getCategory (),
+                        key.getInternalName ());
+                    return false;
+                }
+            }
+
+            if (currentCategory != null)
+            {
+
+                String propertyName = this.getNameWithUnit (key);
+                if (currentCategory.containsKey (propertyName))
+                {
+                    Property property = currentCategory.get (propertyName);
+
+                    if (Boolean.class.isAssignableFrom (key.getValueType ()))
+                    {
+                        property.set ((Boolean) newValue);
+                    }
+                    else if (Enum.class.isAssignableFrom (key.getValueType ()))
+                    {
+                        property.set ( ((Enum) newValue).name ());
+                    }
+                    else if (key instanceof IntegerKey)
+                    {
+                        property.set ((Integer) newValue);
+                    }
+                    else if (key instanceof FloatKey)
+                    {
+                        property.set ((Float) newValue);
+                    }
+                    else if (String.class.isAssignableFrom (key.getValueType ()))
+                    {
+                        property.set ((String) newValue);
+                    }
+                    else if (key instanceof StringList)
+                    {
+                        List<String> stringList = (List<String>) newValue;
+                        property.set (stringList.toArray (new String[stringList.size ()]));
+                    }
+                    else if (key instanceof StringSet)
+                    {
+                        Set<String> stringSet = (Set<String>) newValue;
+                        property.set (stringSet.toArray (new String[stringSet.size ()]));
+                    }
+                    else
+                    {
+                        logger.warning (
+                            "Cannot set the new property value: The type \"%s\" of the configuration property key \"%s\" is not supported, though it seems that this property is registered",
+                            key.getValueType (),
+                            key.getInternalName ());
+                        return false;
+                    }
+                    this.save ();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Map<ConfigurationPropertyKey<?>, Object> retrieveProperties ()
+    {
+        Map<ConfigurationPropertyKey<?>, Object> ret = new HashMap<> ();
+        for (ConfigurationPropertyKey<?> key : getRegisteredPropertyKeys ().values ())
+        {
+            if (Boolean.class.isAssignableFrom (key.getValueType ()))
+            {
+                ret.put (key,
+                    getBoolean ((ConfigurationPropertyKey<Boolean>) key, (Boolean) key.getDefaultValue (),
+                        getComment (key)));
+            }
+            else if (Enum.class.isAssignableFrom (key.getValueType ()))
+            {
+                ret.put (key,
+                    this.getEnum ((ConfigurationPropertyKey<? extends Enum<?>>) key,
+                        (Enum<?>) key.getDefaultValue ()));
+            }
+            else if (key instanceof IntegerKey)
+            {
+                IntegerKey intKey = (IntegerKey) key;
+                ret.put (intKey,
+                    getInt (intKey, intKey.getDefaultValue (), intKey.getMinValue (), intKey.getMaxValue (),
+                        getComment (key)));
+            }
+            else if (key instanceof FloatKey)
+            {
+                FloatKey floatKey = (FloatKey) key;
+                ret.put (floatKey,
+                    getFloat (floatKey, floatKey.getDefaultValue (), floatKey.getMinValue (),
+                        floatKey.getMaxValue (),
+                        getComment (key)));
+            }
+            else if (String.class.isAssignableFrom (key.getValueType ()))
+            {
+                ret.put (key, getString ((ConfigurationPropertyKey<String>) key, (String) key.getDefaultValue (),
+                    getComment (key)));
+            }
+            else if (key instanceof StringList)
+            {
+                ret.put (key,
+                    getStringList ((ConfigurationPropertyKey<List<String>>) key,
+                        (List<String>) key.getDefaultValue (),
+                        (List<String>) ((StringList) key).getValidValues (), getComment (key)));
+            }
+            else if (key instanceof StringSet)
+            {
+                ret.put (key,
+                    getStringSet ((ConfigurationPropertyKey<Set<String>>) key,
+                        (Set<String>) key.getDefaultValue (),
+                        (Set<String>) ((StringSet) key).getValidValues (), getComment (key)));
+            }
+            else
+            {
+                logger.warning ("The type \"%s\" of the configuration property key \"%s\" is not supported",
+                    key.getValueType (),
+                    key.getInternalName ());
+            }
+        }
+        return ret;
+    }
+
+    protected abstract Map<String, ConfigurationPropertyKey<?>> getRegisteredPropertyKeys ();
 
     /**
      * Gets or creates a string property assigned to the specified property key,
@@ -79,6 +243,14 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
             configuration.getString (this.getNameWithUnit (key), key.getCategory (),
                 defaultValue.toString (),
                 getCommentWithValidValues (comment, key.getValidValues ())));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Enum<?>, J extends Enum<J>> Enum<?> getEnum (ConfigurationPropertyKey<T> key,
+        Enum<?> defaultValue)
+    {
+        return this.getEnum ((ConfigurationPropertyKey.EnumKey<J>) (ConfigurationPropertyKey<?>) key, (J) defaultValue,
+            getComment (key));
     }
 
     /**
@@ -220,6 +392,18 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
     }
 
     /**
+     * Returns the display name of the supplied configuration property key.
+     * 
+     * @param key
+     *            The property key
+     * @return The display name of this key
+     */
+    public String getDisplayName (ConfigurationPropertyKey<?> key)
+    {
+        return key.getInternalName ();
+    }
+
+    /**
      * Returns the property key name appended with the unit of this key. Subclasses
      * can override this function to use a property key name more suitable for
      * display purposed than the internal name.
@@ -230,24 +414,24 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
      */
     protected String getNameWithUnit (ConfigurationPropertyKey<?> key)
     {
-        return getNameWithUnit (key.getInternalName (), key.getUnit ());
-    }
-
-    /**
-     * Returns a name and appends the unit, if specified. For display purposes.
-     * 
-     * @param name
-     *            A name
-     * @param unit
-     *            The unit
-     * @return The name with the unit
-     */
-    protected String getNameWithUnit (String name, Unit unit)
-    {
+        Unit unit = key.getUnit ();
+        String name = getDisplayName (key);
         return unit != null && unit != Unit.NONE
             ? String.format ("%s (in %s)", name,
                 unit.name ().toLowerCase ().replaceAll ("_", " "))
             : name;
+    }
+
+    /**
+     * Returns the comment for the supplied configuration property key.
+     * 
+     * @param key
+     *            The property key
+     * @return The comment of this key
+     */
+    public String getComment (ConfigurationPropertyKey<?> key)
+    {
+        return "";
     }
 
     /**

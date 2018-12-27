@@ -19,7 +19,7 @@ import net.minecraft.util.DamageSource;
 public interface CombatLogHandler
 {
     /**
-     * Called on startup when the module is active and should be initialized.
+     * Called when the module is activated for the first time.
      *
      * @param pvpLoggingDir
      *            The directory where the handler can store logging data
@@ -44,7 +44,7 @@ public interface CombatLogHandler
         DamageSource damageSource);
 
     /**
-     * Called on server shutdown when the module is active for cleanup purposes.
+     * Called on server shutdown when the module was activated.
      */
     public void cleanup ();
 

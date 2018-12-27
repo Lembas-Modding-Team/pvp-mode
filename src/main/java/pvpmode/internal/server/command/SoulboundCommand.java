@@ -80,7 +80,7 @@ public class SoulboundCommand extends AbstractPvPCommand
     }
 
     @Override
-    public void processCommand (ICommandSender admin, String[] args)
+    public void processCommand (ICommandSender admin, String[] args, String[] originalArgs)
     {
         requireMinLength (admin, args, 1);
 

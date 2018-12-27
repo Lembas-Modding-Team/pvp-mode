@@ -64,7 +64,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args, String[] originalArgs)
     {
         Collection<AbstractPvPCommand> commands = PvPMode.instance.getServerProxy ().getServerCommands ();
         if (args.length == 0)
