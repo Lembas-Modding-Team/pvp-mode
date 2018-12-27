@@ -3,12 +3,10 @@ package pvpmode.internal.common.compatibility;
 import java.nio.file.Path;
 import java.util.*;
 
-import org.apache.logging.log4j.LogManager;
-
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
-import pvpmode.internal.common.SimpleLoggerImpl;
+import pvpmode.api.common.utils.PvPCommonUtils;
 
 public class CompatibilityManagerImpl implements CompatibilityManager
 {
@@ -19,6 +17,8 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     private Collection<Class<? extends CompatibilityModuleLoader>> registeredModuleLoaders = new HashSet<> ();
 
     private boolean areModulesLoaded = false;
+
+    private Map<CompatibilityModuleLoader, CompatibilityModule> loadedModules = new HashMap<> ();
 
     public CompatibilityManagerImpl (Path configurationFolder)
     {
@@ -67,11 +67,9 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                                 try
                                 {
                                     module.load (loader,
-                                        configurationFolder.resolve (loader.getInternalModuleName ()),
-                                        new SimpleLoggerImpl (
-                                            LogManager
-                                                .getLogger (
-                                                    logger.getName () + "." + loader.getInternalModuleName ())));
+                                        configurationFolder.resolve (loader.getInternalModuleName ()), PvPCommonUtils
+                                            .getLogger (logger.getName () + "." + loader.getInternalModuleName ()));
+                                    loadedModules.put (loader, module);
                                     ++loadedModulesCounter;
                                     logger.info ("The compatibility module \"%s\" was loaded successfully",
                                         loader.getModuleName ());
@@ -139,6 +137,12 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     public boolean areModulesLoaded ()
     {
         return areModulesLoaded;
+    }
+
+    @Override
+    public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ()
+    {
+        return loadedModules;
     }
 
     private void checkState ()

@@ -1,5 +1,7 @@
 package pvpmode.api.common.compatibility;
 
+import java.util.Map;
+
 /**
  * The compatibility manager manages and loads the compatibility modules.
  * PvPMode and other mods will register their compatibility modules via this
@@ -31,6 +33,15 @@ public interface CompatibilityManager
      * @return Whether the loaded could be unregistered
      */
     public boolean unregisterModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader);
+
+    /**
+     * Returns a map containing the compatibility module loader as key and the
+     * compatibility module as value for all loaded compatibility modules. If the
+     * registered modules weren't loaded, an empty map will be returned.
+     * 
+     * @return The loaded compatibility module with their loaders
+     */
+    public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ();
 
     /**
      * Returns whether the registered compatibility modules were loaded.

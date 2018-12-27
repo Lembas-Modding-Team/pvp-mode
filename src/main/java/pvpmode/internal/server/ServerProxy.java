@@ -3,11 +3,15 @@ package pvpmode.internal.server;
 import java.nio.file.*;
 import java.util.*;
 
-import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.api.common.configuration.ConfigurationPropertyKey;
+import pvpmode.api.common.configuration.ConfigurationPropertyKey.StringSet;
+import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
+import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.compatibility.events.CombatLoggingHandlerRegistryEvent;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.log.LogHandlerConstants;
@@ -22,6 +26,7 @@ import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
 import pvpmode.modules.siegeMode.internal.server.SiegeModeCompatiblityModuleLoader;
 import pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModuleLoader;
 
+@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "=" + ServerConfiguration.SERVER_CONFIG_PID)
 public class ServerProxy extends CommonProxy
 {
 
@@ -44,6 +49,7 @@ public class ServerProxy extends CommonProxy
 
     public ServerProxy ()
     {
+        super ();
         ServerChatUtils.setProvider (chatUtilsProvider = new ServerChatUtilsProvider (this));
         PvPServerUtils.setProvider (serverUtilsProvider = new PvPServerUtilsProvider (this));
     }
@@ -69,7 +75,8 @@ public class ServerProxy extends CommonProxy
 
         combatLogManager.preInit ();
 
-        configuration = new ServerConfigurationImpl (this, forgeConfiguration);
+        configuration = new ServerConfigurationImpl (this, forgeConfiguration,
+            this.getModifiedConfigurationPropertyKeys ());
         configuration.load ();
 
         overrideManager = new OverrideManagerImpl ();
@@ -94,6 +101,24 @@ public class ServerProxy extends CommonProxy
         compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SuffixForgeCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SiegeModeCompatiblityModuleLoader.class);
+    }
+
+    private Map<String, ConfigurationPropertyKey<?>> getModifiedConfigurationPropertyKeys ()
+    {
+        Map<String, ConfigurationPropertyKey<?>> generatedKeys = autoConfigManager.getGeneratedKeys ()
+            .get (ServerConfiguration.SERVER_CONFIG_PID);
+        for (String internalName : generatedKeys.keySet ())
+        {
+            if (internalName.equals ("active_combat_logging_handlers"))
+            {
+                ConfigurationPropertyKey.StringSet key = (StringSet) generatedKeys.get (internalName);
+                generatedKeys.replace (internalName,
+                    new ConfigurationPropertyKey.StringSet (internalName, key.getCategory (),
+                        key.getDefaultValue (),
+                        new HashSet<> (Arrays.asList (combatLogManager.getRegisteredHandlerNames ()))));
+            }
+        }
+        return generatedKeys;
     }
 
     @Override
