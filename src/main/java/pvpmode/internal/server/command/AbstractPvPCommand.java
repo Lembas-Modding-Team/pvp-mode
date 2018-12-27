@@ -1,6 +1,6 @@
 package pvpmode.internal.server.command;
 
-import java.util.Collection;
+import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -134,5 +134,44 @@ public abstract class AbstractPvPCommand extends CommandBase
             return true;
         return super.canCommandSenderUseCommand (sender);
     }
+
+    @Override
+    public void processCommand (ICommandSender sender, String[] args)
+    {
+
+        List<String> parsedArgs = new ArrayList<> ();
+
+        StringBuilder argBuilder = new StringBuilder ();
+        boolean isBuildingArg = false;
+
+        for (int i = 0; i < args.length; i++)
+        {
+            String arg = args[i];
+
+            if (arg.startsWith ("\"") && !isBuildingArg)
+            {
+                isBuildingArg = true;
+                argBuilder.append (args[i].replaceFirst ("\"", ""));
+            }
+            else if (isBuildingArg)
+            {
+                argBuilder.append (" " + args[i]);
+                if (args[i].endsWith ("\""))
+                {
+                    argBuilder.deleteCharAt (argBuilder.length () - 1);
+                    isBuildingArg = false;
+                    parsedArgs.add (argBuilder.toString ());
+                    argBuilder.delete (0, argBuilder.length ());
+                }
+            }
+            else
+            {
+                parsedArgs.add (arg);
+            }
+        }
+        this.processCommand (sender, parsedArgs.toArray (new String[parsedArgs.size ()]), args);
+    }
+
+    protected abstract void processCommand (ICommandSender sender, String[] parsedArgs, String[] originalArgs);
 
 }

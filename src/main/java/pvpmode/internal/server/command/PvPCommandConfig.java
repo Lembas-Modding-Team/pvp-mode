@@ -1,6 +1,7 @@
 package pvpmode.internal.server.command;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.*;
 
@@ -15,7 +16,7 @@ import pvpmode.api.common.configuration.ConfigurationPropertyKey.*;
 import pvpmode.api.server.command.ServerCommandConstants;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.ServerChatUtils;
-import pvpmode.internal.common.configuration.AutoForgeConfigurationManager;
+import pvpmode.internal.common.configuration.ForgeConfigurationManager;
 import pvpmode.internal.server.ServerProxy;
 
 public class PvPCommandConfig extends AbstractPvPCommand
@@ -80,6 +81,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
             "Displays the server configuration."));
         messages.add (Triple.of ("pvpconfig reload ", "[configurationName]",
             "Reloads the server configuration."));
+        messages.add (Triple.of ("pvpconfig set ", "<configurationName> <categoryName> <propertyName> <newValue>",
+            "Sets the specified property value."));
 
         return messages;
     }
@@ -93,6 +96,10 @@ public class PvPCommandConfig extends AbstractPvPCommand
             "Displays most of the server configuration data in a chat GUI. The entries there are clickable, admins can navigate with them through the configurations. One can also navigate directly to a specific configuration property/category by entering the configuration name (\"core\" for the main configuration, the compatibility module name for the others), eventually the category and the property name after the general command."));
         messages.add (Triple.of ("pvpconfig reload ", "[configurationName]",
             "Reloads all configuration data, which means that the settings in the configuration files will replace the ones that are currently loaded in the game. One can also specify a specific configuration that should be reloaded."));
+        messages.add (Triple.of ("pvpconfig set ", "<configurationName> <categoryName> <propertyName> <newValue>",
+            String.format (
+                "Sets the specified property value to the new value. This will override the value specified in the configuration file. For the values, one can use %s as placeholder for the paragraph and %s as placeholder for an empty collection.",
+                ServerCommandConstants.PARAGRAPH_PLACEHOLDER, ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER)));
 
         return messages;
     }
@@ -104,9 +111,9 @@ public class PvPCommandConfig extends AbstractPvPCommand
     }
 
     @Override
-    public void processCommand (ICommandSender sender, String[] args)
+    public void processCommand (ICommandSender sender, String[] args, String[] originalArgs)
     {
-        switch (this.requireArguments (sender, args, 0, "display", "reload"))
+        switch (this.requireArguments (sender, args, 0, "display", "reload", "set"))
         {
             case "display":
                 this.displayConfiguration (sender, args);
@@ -122,8 +129,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 {
                     String configurationName = args[1];
 
-                    if (!configurationManagers.containsKey (configurationName))
-                        this.invalidConfigurationName (configurationName);
+                    this.requireValidConfigurationName (configurationName);
 
                     configurationManagers.get (configurationName).load ();
 
@@ -135,6 +141,9 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 {
                     this.usageError (sender);
                 }
+                break;
+            case "set":
+                this.setConfigurationProperty (sender, args);
                 break;
         }
     }
@@ -149,8 +158,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
         {
             String configurationName = args[1];
 
-            if (!configurationManagers.containsKey (configurationName))
-                this.invalidConfigurationName (configurationName);
+            this.requireValidConfigurationName (configurationName);
 
             if (args.length == 2)
             {
@@ -169,7 +177,6 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 this.usageError (sender);
             }
         }
-        ServerChatUtils.green (sender, "-------------------------------------");
     }
 
     private void displayConfigurationManagers (ICommandSender sender)
@@ -196,6 +203,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
             sender.addChatMessage (entry);
 
         });
+
+        this.displayFooter (sender);
     }
 
     private void displayCategories (ICommandSender sender, String configurationName, String currentCategoryName)
@@ -212,6 +221,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
 
         displayChildCategories (sender, configurationName, categoryData.getKey (), categoryData.getValue ().values ());
         displayConfigurationEntries (sender, configurationName, categoryData.getKey ());
+
+        this.displayFooter (sender);
     }
 
     private void displayChildCategories (ICommandSender sender, String configurationName,
@@ -250,16 +261,10 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 " >>> Properties: ");
 
             ConfigurationManager manager = configurationManagers.get (configurationName);
-            AutoForgeConfigurationManager forgeManager = null;
-            if (manager instanceof AutoForgeConfigurationManager)
-            {
-                forgeManager = (AutoForgeConfigurationManager) manager;
-            }
 
             for (ConfigurationPropertyKey<?> key : currentCategory.getProperties ().values ())
             {
-                String nameString = forgeManager != null ? forgeManager.getDisplayName (key)
-                    : server.getAutoConfigMapperManager ().getDisplayName (key.getInternalName ());
+                String nameString = getDisplayName (manager, key);
                 ChatComponentText keyText = new ChatComponentText ("  - " + nameString + ": ");
                 keyText.getChatStyle ().setColor (EnumChatFormatting.WHITE);
 
@@ -289,7 +294,31 @@ public class PvPCommandConfig extends AbstractPvPCommand
 
                 ChatComponentText valueText = new ChatComponentText (
                     configurationManagers.get (configurationName).getProperty (key).toString () + unit);
+
                 valueText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
+                if (Boolean.class.isAssignableFrom (key.getValueType ()) && config.isOneClickTogglingEnabled ())
+                {
+                    valueText.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+                    valueText.getChatStyle ()
+                        .setChatClickEvent (new ClickEvent (ClickEvent.Action.RUN_COMMAND,
+                            "/pvpconfig set "
+                                + configurationName + " " + key.getCategory () + " " + key.getInternalName () + " "
+                                + Boolean.toString ( (!(Boolean) manager.getProperty (key)))));
+                    valueText.getChatStyle ().setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                        new ChatComponentText ("Click to immediately toggle the property value")));
+                }
+                else
+                {
+                    valueText.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+                    valueText.getChatStyle ()
+                        .setChatClickEvent (new ClickEvent (ClickEvent.Action.SUGGEST_COMMAND,
+                            "/pvpconfig set "
+                                + configurationName + " " + key.getCategory () + " " + key.getInternalName () + " "));
+                    valueText.getChatStyle ().setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                        new ChatComponentText (
+                            "Click to insert the command into the chat which allows admins to set the property value")));
+                }
+
                 sender.addChatMessage (keyText.appendSibling (valueText));
             }
         }
@@ -313,17 +342,10 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 this.displayNavigationBar (sender, configurationName,
                     keyCategory, propertyName);
 
-                AutoForgeConfigurationManager forgeManager = null;
-                if (manager instanceof AutoForgeConfigurationManager)
-                {
-                    forgeManager = (AutoForgeConfigurationManager) manager;
-                }
-
                 ServerChatUtils.blue (sender, "", ">> Property: ");
 
                 ServerChatUtils.postLocalChatMessage (sender, " Name: ",
-                    forgeManager != null ? forgeManager.getDisplayName (key)
-                        : key.getInternalName (),
+                    getDisplayName (manager, key),
                     EnumChatFormatting.WHITE, EnumChatFormatting.GRAY);
                 ServerChatUtils.postLocalChatMessage (sender, " Value: ",
                     manager.getProperty (key).toString (),
@@ -363,53 +385,59 @@ public class PvPCommandConfig extends AbstractPvPCommand
                     }
                 }
 
-                if (forgeManager != null)
+                String comment = getComment (manager, key);
+
+                if (!comment.equals (""))
                 {
                     ServerChatUtils.postLocalChatMessage (sender, " Comment: ",
-                        forgeManager.getComment (key),
+                        comment,
                         EnumChatFormatting.WHITE, EnumChatFormatting.GRAY);
                 }
+
+                ServerChatUtils.blue (sender, "", ">> Operations: ");
+
+                if (Boolean.class.isAssignableFrom (key.getValueType ()) && config.isOneClickTogglingEnabled ())
+                {
+                    ChatComponentText modifyTextPart1 = new ChatComponentText (" - ");
+                    ChatComponentText modifyTextPart2 = new ChatComponentText ("Toggle value");
+
+                    modifyTextPart2.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+                    modifyTextPart2.getChatStyle ()
+                        .setChatClickEvent (new ClickEvent (ClickEvent.Action.RUN_COMMAND,
+                            "/pvpconfig set "
+                                + configurationName + " " + key.getCategory () + " " + key.getInternalName () + " "
+                                + Boolean.toString ( (!(Boolean) manager.getProperty (key)))));
+                    modifyTextPart2.getChatStyle ().setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                        new ChatComponentText (
+                            "Click to immediately toggle the property value")));
+
+                    sender.addChatMessage (modifyTextPart1.appendSibling (modifyTextPart2));
+                }
+
+                ChatComponentText modifyTextPart1 = new ChatComponentText (" - ");
+                ChatComponentText modifyTextPart2 = new ChatComponentText ("Set value");
+
+                modifyTextPart2.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+                modifyTextPart2.getChatStyle ().setChatClickEvent (new ClickEvent (ClickEvent.Action.SUGGEST_COMMAND,
+                    "/pvpconfig set " + configurationName + " " + category + " " + propertyName + " "));
+                modifyTextPart2.getChatStyle ().setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                    new ChatComponentText (
+                        "Click to insert the command into the chat which allows admins to set the property value")));
+
+                sender.addChatMessage (modifyTextPart1.appendSibling (modifyTextPart2));
+
+                this.displayFooter (sender);
 
             }
             else
             {
-                throw new CommandException (
-                    String.format ("There's no configuration property with the name \"%s\"", propertyName));
+                this.invalidConfigurationProperty (propertyName);
             }
         }
         else
         {
             this.invalidConfigurationCategory (category);
         }
-    }
-
-    private Pair<Category, Map<String, Category>> computeCurrentCategoryWithChilds (String configurationName,
-        String currentCategoryName)
-    {
-        Category currentCategory = null;
-        Map<String, Category> childCategories = configurationManagers.get (configurationName).getRootCategories ();
-
-        if (currentCategoryName != null)
-        {
-            String[] baseParts = currentCategoryName.split ("\\" + ConfigurationPropertyKey.CATEGORY_SEPARATOR);
-
-            for (int i = 0; i < baseParts.length; i++)
-            {
-                String part = baseParts[i];
-
-                if (childCategories.containsKey (part))
-                {
-                    currentCategory = childCategories.get (part);
-                    childCategories = currentCategory.getSubcategories ();
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        return Pair.of (currentCategory, childCategories);
     }
 
     private void displayNavigationBar (ICommandSender sender, String configurationName, Category currentCategory,
@@ -502,6 +530,123 @@ public class PvPCommandConfig extends AbstractPvPCommand
         ServerChatUtils.green (sender, "-------- PvP Mode Configuration --------");
     }
 
+    private void displayFooter (ICommandSender sender)
+    {
+        ServerChatUtils.green (sender, "-------------------------------------");
+    }
+
+    @SuppressWarnings(
+    {"unchecked", "rawtypes"})
+    private void setConfigurationProperty (ICommandSender sender, String[] args)
+    {
+        this.requireMinLength (sender, args, 5);
+
+        this.requireValidConfigurationName (args[1]);
+
+        ConfigurationManager manager = this.configurationManagers.get (args[1]);
+
+        Pair<Category, Map<String, Category>> categoryData = this.computeCurrentCategoryWithChilds (args[1], args[2]);
+
+        if (categoryData == null)
+            this.invalidConfigurationCategory (args[2]);
+
+        Category category = categoryData.getKey ();
+
+        if (!category.getProperties ().containsKey (args[3]))
+            this.invalidConfigurationProperty (args[3]);
+
+        ConfigurationPropertyKey<?> key = category.getProperties ().get (args[3]);
+
+        String value = args[4].replaceAll ("&", "§");
+
+        if (Boolean.class.isAssignableFrom (key.getValueType ()))
+        {
+            this.setPropertyValue (sender, manager, key, parseBoolean (sender, value));
+        }
+        else if (Enum.class.isAssignableFrom (key.getValueType ()))
+        {
+            this.<Enum>setPropertyValue (sender, manager, key,
+                (Enum) Enum.valueOf ((Class) key.getValueType (), value));
+        }
+        else if (key instanceof IntegerKey)
+        {
+            this.setPropertyValue (sender, manager, key, parseInt (sender, value));
+        }
+        else if (key instanceof FloatKey)
+        {
+            this.setPropertyValue (sender, manager, key, parseDouble (sender, value));
+        }
+        else if (String.class.isAssignableFrom (key.getValueType ()))
+        {
+            this.setPropertyValue (sender, manager, key, value);
+        }
+        else if (key instanceof StringList)
+        {
+            this.setPropertyValue (sender, manager, key, new ArrayList<String> (this.parseStringCollection (args, 4)));
+        }
+        else if (key instanceof StringSet)
+        {
+            this.setPropertyValue (sender, manager, key, new HashSet<String> (this.parseStringCollection (args, 4)));
+        }
+        else
+        {
+            throw new CommandException (
+                String.format ("The type \"%s\" of the specified property key is not supported", key.getValueType ()));
+        }
+    }
+
+    private Collection<String> parseStringCollection (String[] args, int startIndex)
+    {
+        return args[startIndex].equals (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER) ? new ArrayList<> ()
+            : Arrays.asList (Arrays.copyOfRange (args, startIndex, args.length));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void setPropertyValue (ICommandSender sender, ConfigurationManager manager,
+        ConfigurationPropertyKey<?> key, T newValue)
+    {
+        ConfigurationPropertyKey<T> castKey = (ConfigurationPropertyKey<T>) key;
+
+        if (manager.getProperty (key).equals (newValue))
+        {
+            ServerChatUtils.yellow (sender, String.format (
+                "The new value \"%s\" for \"%s\" is equal to the current one",
+                newValue.toString (), getDisplayName (manager, castKey)));
+            return;
+        }
+
+        if (!castKey.isValidValue (newValue))
+            throw new CommandException (
+                String.format ("\"%s\" is not a valid value for \"%s\"", newValue,
+                    getDisplayName (manager, castKey)));
+
+        manager.setProperty (castKey, newValue);
+
+        ServerChatUtils.green (sender,
+            String.format ("Set the value of \"%s\" to \"%s\"", getDisplayName (manager, castKey), newValue));
+    }
+
+    private String getDisplayName (ConfigurationManager manager, ConfigurationPropertyKey<?> key)
+    {
+        ForgeConfigurationManager forgeManager = null;
+        if (manager instanceof ForgeConfigurationManager)
+        {
+            forgeManager = (ForgeConfigurationManager) manager;
+        }
+        return forgeManager != null ? forgeManager.getDisplayName (key)
+            : server.getAutoConfigMapperManager ().getDisplayName (key.getInternalName ());
+    }
+
+    private String getComment (ConfigurationManager manager, ConfigurationPropertyKey<?> key)
+    {
+        ForgeConfigurationManager forgeManager = null;
+        if (manager instanceof ForgeConfigurationManager)
+        {
+            forgeManager = (ForgeConfigurationManager) manager;
+        }
+        return forgeManager != null ? forgeManager.getComment (key) : "";
+    }
+
     protected void invalidConfigurationCategory (String category)
     {
         throw new CommandException (
@@ -509,10 +654,17 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 category));
     }
 
-    protected void invalidConfigurationName (String configurationName)
+    protected void requireValidConfigurationName (String configurationName)
+    {
+        if (!configurationManagers.containsKey (configurationName))
+            throw new CommandException (
+                String.format ("The configuration with the name \"%s\" doesn't exist", configurationName));
+    }
+
+    protected void invalidConfigurationProperty (String propertyName)
     {
         throw new CommandException (
-            String.format ("The configuration with the name \"%s\" doesn't exist", configurationName));
+            String.format ("There's no configuration property with the name \"%s\"", propertyName));
     }
 
     @Override
@@ -520,13 +672,12 @@ public class PvPCommandConfig extends AbstractPvPCommand
     {
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord (args, "display", "reload");
+            return getListOfStringsMatchingLastWord (args, "display", "reload", "set");
         }
         else if (args.length == 2)
         {
-            if (args[0].equals ("display") || args[0].equals ("reload"))
-                return getListOfStringsMatchingLastWord (args,
-                    this.configurationManagers.keySet ().toArray (new String[configurationManagers.size ()]));
+            return getListOfStringsMatchingLastWord (args,
+                this.configurationManagers.keySet ().toArray (new String[configurationManagers.size ()]));
         }
         else if (args.length == 3)
         {
@@ -578,6 +729,82 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 }
             }
         }
+        else if (args.length >= 5 && args[0].equals ("set"))
+        {
+            String configurationName = args[1];
+            String categoryName = args[2];
+
+            if (configurationManagers.containsKey (configurationName))
+            {
+                Pair<Category, Map<String, Category>> result = this.computeCurrentCategoryWithChilds (
+                    configurationName,
+                    categoryName);
+
+                if (result != null)
+                {
+                    Category category = result.getKey ();
+
+                    if (category.getProperties ().containsKey (args[3]))
+                    {
+                        ConfigurationPropertyKey<?> key = category.getProperties ().get (args[3]);
+
+                        if (args.length == 5 && Boolean.class.isAssignableFrom (key.getValueType ()))
+                        {
+                            return getListOfStringsMatchingLastWord (args, "true", "false");
+                        }
+                        else if (key instanceof ValidValuesHolder<?, ?>
+                            && (args.length == 5 || args.length >= 5 && key instanceof AbstractStringCollectionKey
+                                && !args[4].equals (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER)))
+                        {
+                            ValidValuesHolder<?, ?> holder = (ValidValuesHolder<?, ?>) key;
+
+                            Set<String> validValues = new HashSet<> ();
+
+                            if (key instanceof AbstractStringCollectionKey && args.length == 5)
+                                validValues.add (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER);
+
+                            if (holder.getValidValues () != null)
+                                validValues.addAll (holder.getValidValues ().stream ()
+                                    .map (validValue -> validValue.toString ()).collect (Collectors.toSet ()));
+
+                            return getListOfStringsMatchingLastWord (args, validValues
+                                .toArray (new String[validValues.size ()]));
+                        }
+
+                    }
+                }
+            }
+        }
         return null;
+
+    }
+
+    private Pair<Category, Map<String, Category>> computeCurrentCategoryWithChilds (String configurationName,
+        String currentCategoryName)
+    {
+        Category currentCategory = null;
+        Map<String, Category> childCategories = configurationManagers.get (configurationName).getRootCategories ();
+
+        if (currentCategoryName != null)
+        {
+            String[] baseParts = currentCategoryName.split ("\\" + ConfigurationPropertyKey.CATEGORY_SEPARATOR);
+
+            for (int i = 0; i < baseParts.length; i++)
+            {
+                String part = baseParts[i];
+
+                if (childCategories.containsKey (part))
+                {
+                    currentCategory = childCategories.get (part);
+                    childCategories = currentCategory.getSubcategories ();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        return Pair.of (currentCategory, childCategories);
     }
 }

@@ -10,19 +10,21 @@ import pvpmode.api.server.log.*;
 public class CombatLogManagerImpl implements CombatLogManager
 {
     private final String defaultHandlerName;
+    private final Path pvpLoggingDirectory;
 
     private Map<String, CombatLogHandler> registeredCombatLogHandlers = new HashMap<> ();
 
+    private Collection<String> initializedHandlerNames = new HashSet<> ();
     private Collection<String> activatedHandlerNames = new HashSet<> ();
 
     private boolean canRegisterHandler = true;
-    private boolean canActivateHandler = false;
 
-    public CombatLogManagerImpl (String defaultHandlerName)
+    public CombatLogManagerImpl (String defaultHandlerName, Path pvpLoggingDirectory)
     {
         Objects.requireNonNull (defaultHandlerName);
 
         this.defaultHandlerName = defaultHandlerName;
+        this.pvpLoggingDirectory = pvpLoggingDirectory;
     }
 
     @Override
@@ -32,11 +34,15 @@ public class CombatLogManagerImpl implements CombatLogManager
     }
 
     @Override
-    public void registerCombatLogHandler (String name, CombatLogHandler handler)
+    public boolean registerCombatLogHandler (String name, CombatLogHandler handler)
     {
-        checkState (canRegisterHandler);
-        Objects.requireNonNull (name);
-        registeredCombatLogHandlers.put (name, handler);
+        if (canRegisterHandler)
+        {
+            Objects.requireNonNull (name);
+            registeredCombatLogHandlers.put (name, handler);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -53,10 +59,31 @@ public class CombatLogManagerImpl implements CombatLogManager
     }
 
     @Override
-    public void activateHandler (String handler)
+    public boolean activateHandler (String handler)
     {
-        checkState (canActivateHandler);
-        activatedHandlerNames.add (handler);
+        if (!canRegisterHandler && registeredCombatLogHandlers.containsKey (handler))
+        {
+            activatedHandlerNames.add (handler);
+
+            if (!initializedHandlerNames.contains (handler))
+            {
+                initializedHandlerNames.add (handler);
+                registeredCombatLogHandlers.get (handler).init (pvpLoggingDirectory);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deactivateHandler (String handler)
+    {
+        if (!canRegisterHandler && activatedHandlerNames.contains (handler))
+        {
+            activatedHandlerNames.remove (handler);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -69,33 +96,10 @@ public class CombatLogManagerImpl implements CombatLogManager
      * Pre-initializes the log manager. After calling this method, handlers can be
      * activated. From now on, no new handler can be registered.
      */
-    public void preInit ()
+    public void init ()
     {
         checkState (canRegisterHandler);
         canRegisterHandler = false;
-        canActivateHandler = true;
-    }
-
-    /**
-     * Initializes the log manager and loads all activated handlers.</br>
-     * You've to call preInit before invoking this function! After calling this
-     * function, no new handler can be activated.
-     *
-     * @param pvpLoggingDir
-     *            The directory where logging handlers can store data
-     */
-    public void init (Path pvpLoggingDir)
-    {
-        checkState (!canRegisterHandler);
-        checkState (canActivateHandler);
-        Objects.requireNonNull (pvpLoggingDir);
-
-        for (String handlerName : activatedHandlerNames)
-        {
-            registeredCombatLogHandlers.get (handlerName).init (pvpLoggingDir);
-        }
-
-        canActivateHandler = false;
     }
 
     /**
@@ -113,8 +117,8 @@ public class CombatLogManagerImpl implements CombatLogManager
      */
     public void log (EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
     {
-        checkState (!canRegisterHandler);
-        checkState (!canActivateHandler);
+        this.checkState (!canRegisterHandler);
+
         Objects.requireNonNull (attacker);
         Objects.requireNonNull (victim);
         Objects.requireNonNull (damageSource);
@@ -133,8 +137,8 @@ public class CombatLogManagerImpl implements CombatLogManager
     public void close ()
     {
         checkState (!canRegisterHandler);
-        checkState (!canActivateHandler);
-        for (String handlerName : activatedHandlerNames)
+
+        for (String handlerName : initializedHandlerNames)
         {
             registeredCombatLogHandlers.get (handlerName).cleanup ();
         }

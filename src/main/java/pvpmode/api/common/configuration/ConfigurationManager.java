@@ -34,6 +34,22 @@ public interface ConfigurationManager
     public <T> T getProperty (ConfigurationPropertyKey<T> key);
 
     /**
+     * Sets the value of the property key to the specified one.
+     * {@link ConfigurationPropertyKey#isValidValue(Object)} has to return true for
+     * the specified value so that it can replace the old one. The method returns
+     * whether the property was actually modified, so it returns false, if the
+     * property isn't modifiable, the supplied value wasn't valid or the supplied
+     * value was the same as the current one.
+     * 
+     * @param key
+     *            The configuration property key
+     * @param value
+     *            The new value for the property
+     * @return Whether the property value could be changeda
+     */
+    public <T> boolean setProperty (ConfigurationPropertyKey<T> key, T value);
+
+    /**
      * Returns a map containing all configuration property keys assigned to this
      * configuration manager. The key of the map is the internal property key name,
      * the value is the actual key instance.

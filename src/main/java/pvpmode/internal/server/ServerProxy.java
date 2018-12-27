@@ -63,7 +63,7 @@ public class ServerProxy extends CommonProxy
 
         Files.createDirectories (combatLogDir);
 
-        combatLogManager = new CombatLogManagerImpl (LogHandlerConstants.CSV_CONFIG_NAME);
+        combatLogManager = new CombatLogManagerImpl (LogHandlerConstants.CSV_CONFIG_NAME, combatLogDir);
 
         combatLogManager.registerCombatLogHandler (LogHandlerConstants.SIMPLE_CONFIG_NAME,
             new SimpleCombatLogHandler ());
@@ -73,7 +73,7 @@ public class ServerProxy extends CommonProxy
         PvPServerUtils.postEventAndGetResult (combatLogHandlerRegistryEvent,
             combatLogHandlerRegistryEvent::getRegisteredHandlers).forEach (combatLogManager::registerCombatLogHandler);
 
-        combatLogManager.preInit ();
+        combatLogManager.init ();
 
         configuration = new ServerConfigurationImpl (this, forgeConfiguration,
             this.getModifiedConfigurationPropertyKeys ());
@@ -83,15 +83,6 @@ public class ServerProxy extends CommonProxy
 
         chatUtilsProvider.preInit ();
         serverUtilsProvider.preInit ();
-
-        Collection<String> activePvPLoggingHandlers = this.getConfiguration ().getActiveCombatLoggingHandlers ();
-
-        if (activePvPLoggingHandlers.size () > 0)
-        {
-            activePvPLoggingHandlers.forEach (combatLogManager::activateHandler);
-            logger.info ("Activated the following pvp combat logging handlers: %s", activePvPLoggingHandlers);
-            combatLogManager.init (combatLogDir);
-        }
     }
 
     @Override

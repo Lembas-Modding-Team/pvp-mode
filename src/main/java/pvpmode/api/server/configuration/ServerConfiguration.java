@@ -45,6 +45,8 @@ public interface ServerConfiguration extends CommonConfiguration
     public static final String CHAT_MESSAGES_CATEGORY = SERVER_CATEGORY
         + ".chat_messages";
 
+    public static final String ADMINISTRATIONF_CATEGORY = SERVER_CATEGORY + ".administration";
+
     @ConfigurationPropertyGetter(category = SERVER_CATEGORY)
     public default EnumPvPMode getDefaultPvPMode ()
     {
@@ -247,6 +249,12 @@ public interface ServerConfiguration extends CommonConfiguration
     public default boolean isPvPDisabledAnnouncedGlobally ()
     {
         return false;
+    }
+
+    @ConfigurationPropertyGetter(category = ADMINISTRATIONF_CATEGORY)
+    public default boolean isOneClickTogglingEnabled ()
+    {
+        return true;
     }
 
 }

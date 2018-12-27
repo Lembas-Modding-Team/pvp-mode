@@ -119,7 +119,7 @@ public class ConfigurationPropertyKey<T>
      */
     public boolean isValidValue (T value)
     {
-        return value == null ? false : value.equals (defaultValue) ? true : false;
+        return value != null;
     }
 
     @Override
@@ -210,7 +210,7 @@ public class ConfigurationPropertyKey<T>
         @Override
         public boolean isValidValue (Boolean value)
         {
-            return super.isValidValue (value) || value != null;
+            return super.isValidValue (value) || value.equals (defaultValue);
         }
 
     }
@@ -268,8 +268,8 @@ public class ConfigurationPropertyKey<T>
         @Override
         public boolean isValidValue (T value)
         {
-            return super.isValidValue (value) || this.compare (value, minValue) >= 0
-                || this.compare (value, maxValue) <= 0;
+            return (super.isValidValue (value) || value.equals (defaultValue)) && this.compare (value, minValue) >= 0
+                && this.compare (value, maxValue) <= 0;
         }
 
         @Override
@@ -432,6 +432,12 @@ public class ConfigurationPropertyKey<T>
             super (name, String.class, category, defaultValue);
         }
 
+        @Override
+        public boolean isValidValue (String value)
+        {
+            return super.isValidValue (value) || value.equals (defaultValue);
+        }
+
     }
 
     /**
@@ -540,14 +546,10 @@ public class ConfigurationPropertyKey<T>
         public boolean isValidValue (T value)
         {
             boolean isValid = super.isValidValue (value);
-            if (!isValid && validValues != null)
+            if (isValid && validValues != null)
             {
-                for (String string : value)
-                {
-                    if (validValues.contains (string))
-                        return true;
-
-                }
+                if (validValues.containsAll (value))
+                    return true;
             }
             return isValid;
         }
