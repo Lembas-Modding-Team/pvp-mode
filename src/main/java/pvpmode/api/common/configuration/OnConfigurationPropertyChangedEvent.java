@@ -5,7 +5,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 /**
  * This event has to be fired every time the configuration property values of a
  * registered configuration property will be changed, also, if the properties
- * were reloaded and the new values aren't equal to the old ones. It don't has
+ * were reloaded and the new values aren't equal to the old ones. It doesn’t have
  * to be fired if the property value changed before it can be accessed by
  * components outside of the configuration environment, to example directly
  * after the properties have been reloaded in the
