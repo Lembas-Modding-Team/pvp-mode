@@ -47,7 +47,7 @@ public interface CombatLogManager
 
     /**
      * Activates the specified handler and returns true if it was activated. Returns
-     * false if the hander couldn't be activated or it isn't a registered one.
+     * false if the hander couldn't be activated or if it isn't a registered one.
      *
      * @param handler
      *            The handler which should be activated
