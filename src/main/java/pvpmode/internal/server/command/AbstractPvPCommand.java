@@ -151,7 +151,7 @@ public abstract class AbstractPvPCommand extends CommandBase
             if (arg.startsWith ("\"") && !isBuildingArg)
             {
                 isBuildingArg = true;
-                argBuilder.append (args[i].replaceFirst ("\"", ""));
+                argBuilder.append (args[i].substring (1));
             }
             else if (isBuildingArg)
             {

@@ -76,6 +76,14 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
                     childCategories = currentCategory.getChildren ().stream ()
                         .collect (Collectors.toMap (category -> category.getName (), Function.identity ()));
                 }
+                else
+                {
+                    logger.error (
+                        "Cannot set the new property value: The category \"%s\" of the configuration property key \"%s\" is not a valid one. This is an internal error, because this should never happen.",
+                        key.getCategory (),
+                        key.getInternalName ());
+                    return false;
+                }
             }
 
             if (currentCategory != null)

@@ -267,7 +267,7 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
             {
                 EntityPlayer player = (EntityPlayer) event.entityLiving;
                 // The last two parameters are not used by the current implementation
-                 eventHandler.onPlayerDrops (new PlayerDropsEvent (player, event.source, null,
+                eventHandler.onPlayerDrops (new PlayerDropsEvent (player, event.source, null,
                  false));
             }
         }

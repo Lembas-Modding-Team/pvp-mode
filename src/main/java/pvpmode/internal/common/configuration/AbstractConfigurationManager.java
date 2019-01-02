@@ -93,8 +93,8 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     protected abstract Map<? extends ConfigurationPropertyKey<?>, Object> retrieveProperties ();
 
     /**
-     * Called when the value of the supplied property was changed, or the property
-     * was initialized for the first time. In the case the old value is null.
+     * Called when the value of the supplied property was changed, or when the property
+     * was initialized for the first time. In that case the old value is null.
      * 
      * @param key
      *            The configuration property key

@@ -45,7 +45,7 @@ public interface ConfigurationManager
      *            The configuration property key
      * @param value
      *            The new value for the property
-     * @return Whether the property value could be changeda
+     * @return Whether the property value could be changed
      */
     public <T> boolean setProperty (ConfigurationPropertyKey<T> key, T value);
 
