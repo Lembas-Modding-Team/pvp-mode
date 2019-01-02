@@ -57,7 +57,7 @@ public interface CombatLogManager
 
     /**
      * Deactivates the specified handler and returns true if it was deactivated.
-     * Returns false if the hander couldn't be deactivated or it isn't a registered
+     * Returns false if the hander couldn't be deactivated or if it isn't a registered
      * or activated one.
      *
      * @param handler
