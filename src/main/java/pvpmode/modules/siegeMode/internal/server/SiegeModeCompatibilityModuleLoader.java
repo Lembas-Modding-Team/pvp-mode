@@ -8,10 +8,10 @@ import pvpmode.api.common.compatibility.ForgeModCompatibilityModuleLoader;
  * @author CraftedMods
  *
  */
-public class SiegeModeCompatiblityModuleLoader extends ForgeModCompatibilityModuleLoader
+public class SiegeModeCompatibilityModuleLoader extends ForgeModCompatibilityModuleLoader
 {
 
-    public SiegeModeCompatiblityModuleLoader ()
+    public SiegeModeCompatibilityModuleLoader ()
     {
         super ("siegemode");
     }

@@ -2,6 +2,7 @@
 
 ## 2.0.0-BETA
 ### General changes:
+* Changed the level of the log indicating that a compatibility module wasn't loaded because of missing dependencies to debug
 * Tab-completions now only work for players which are permitted to use a certain command
 
 #### Configuration:
@@ -16,6 +17,9 @@
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
+
+### LOTR compatibility:
+* Removed an invalid and unnecessary line from the default enemy biome override configuration file
 
 ## 1.5.0-BETA
 ### General changes:

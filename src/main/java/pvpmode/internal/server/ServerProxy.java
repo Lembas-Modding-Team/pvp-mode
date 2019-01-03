@@ -25,7 +25,7 @@ import pvpmode.internal.server.utils.*;
 import pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModuleLoader;
 import pvpmode.modules.lootableBodies.internal.server.LootableBodiesCompatibilityModuleLoader;
 import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
-import pvpmode.modules.siegeMode.internal.server.SiegeModeCompatiblityModuleLoader;
+import pvpmode.modules.siegeMode.internal.server.SiegeModeCompatibilityModuleLoader;
 import pvpmode.modules.suffixForge.internal.server.SuffixForgeCompatibilityModuleLoader;
 
 @Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "=" + ServerConfiguration.SERVER_CONFIG_PID)
@@ -94,7 +94,7 @@ public class ServerProxy extends CommonProxy
         super.registerCompatibilityModules ();
         compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SuffixForgeCompatibilityModuleLoader.class);
-        compatibilityManager.registerModuleLoader (SiegeModeCompatiblityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (SiegeModeCompatibilityModuleLoader.class);
         // compatibilityManager.registerModuleLoader
         // (DeathcraftCompatibilityModuleLoader.class); TODO Until the compatibility
         // module

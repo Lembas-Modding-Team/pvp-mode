@@ -5,6 +5,7 @@ import java.util.*;
 import lotr.common.world.biome.LOTRBiome;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
+import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 
 /**
@@ -24,9 +25,9 @@ public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCo
     }
 
     @Override
-    public Boolean isPvPEnabled (EntityPlayer player)
+    public EnumForcedPvPMode getForcedPvPMode (EntityPlayer player)
     {
-        Boolean pvpEnabled = null;
+        EnumForcedPvPMode forcedPvPMode = EnumForcedPvPMode.UNDEFINED;
         BiomeGenBase currentBiome = player.worldObj.getWorldChunkManager ().getBiomeGenAt ((int) player.posX,
             (int) player.posZ);
         // Check if we are in a relevant LOTR biome
@@ -34,17 +35,17 @@ public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCo
         {
             for (BiomeFactionEntry entry : configurationData.get (currentBiome.biomeID))
             {
-                Boolean enabled = handleCondition (entry, player);
-                if (enabled != null)
+                EnumForcedPvPMode enabled = handleCondition (entry, player);
+                if (enabled != EnumForcedPvPMode.UNDEFINED)
                 {
-                    pvpEnabled = enabled;
+                    forcedPvPMode = enabled;
                 }
 
             }
         }
-        return pvpEnabled;
+        return forcedPvPMode;
     }
 
-    protected abstract Boolean handleCondition (BiomeFactionEntry entry, EntityPlayer player);
+    protected abstract EnumForcedPvPMode handleCondition (BiomeFactionEntry entry, EntityPlayer player);
 
 }

@@ -100,7 +100,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                 }
                 else
                 {
-                    logger.info (
+                    logger.debug (
                         "The compatibility module \"%s\" won't be loaded, because it's dependencies are missing",
                         loader.getModuleName ());
                 }

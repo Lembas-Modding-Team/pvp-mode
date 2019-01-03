@@ -18,4 +18,9 @@ public enum EnumForcedPvPMode
             throw new RuntimeException ("Cannot refer from UNDEFINED to an actual PvPMode");
         return this == ON ? EnumPvPMode.ON : EnumPvPMode.OFF;
     }
+
+    public static EnumForcedPvPMode fromBoolean (Boolean mode)
+    {
+        return mode == null ? UNDEFINED : mode ? ON : OFF;
+    }
 }
