@@ -123,7 +123,7 @@ public class ServerConfigurationImpl extends AutoForgeConfigurationManager imple
         }
         else if (key == SOULBOUND_ITEMS_ENABLED)
         {
-            if (Loader.isModLoaded ("suffixforge"))
+            if (Loader.isModLoaded ("suffixforge")) // TODO: Drop with 3.0.0-BETA
             {
                 this.properties.replace (SOULBOUND_ITEMS_ENABLED, false);
                 logger.info ("SuffixForge is present - the soulbound command will be disabled");
