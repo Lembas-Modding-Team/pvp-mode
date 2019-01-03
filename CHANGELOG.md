@@ -19,6 +19,7 @@
 
 ### LOTR compatibility:
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
+* Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
 
 ## 1.5.0-BETA
 ### General changes:
