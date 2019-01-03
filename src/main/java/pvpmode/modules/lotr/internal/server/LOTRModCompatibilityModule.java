@@ -66,11 +66,11 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
             (condition) -> hostileBiomeOverrideCondition = (HostileBiomeOverrideCondition) condition);
 
         // (Re)Create the extended enemy biome config file
-        recreateFile (configurationFolder.getParent ().getParent ().getParent (),// TODO temporary
+        recreateFile (PvPMode.proxy.getGeneratedFilesFolder (),
             EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME,
             "LOTR extended enemy biomes configuration file template");
         // (Re)Create the default config map image
-        recreateFile (configurationFolder.getParent ().getParent ().getParent (),
+        recreateFile (PvPMode.proxy.getGeneratedFilesFolder (),
             DEFAULT_ENEMY_BIOME_MAP_FILE_NAME, "LOTR default enemy biome map");
     }
 
@@ -135,8 +135,8 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
     void initGeneralBiomeOverrides ()
     {
         // (Re)Create the LOTR biome id file
-        recreateFile (configurationFolder.getParent ().getParent ().getParent (), LOTR_BIOME_IDS_FILE_NAME,
-            "LOTR biome id file");// TODO temporary
+        recreateFile (PvPMode.proxy.getGeneratedFilesFolder (), LOTR_BIOME_IDS_FILE_NAME,
+            "LOTR biome id file");
     }
 
     private void recreateFile (Path targetFolder, String filename, String shortName)

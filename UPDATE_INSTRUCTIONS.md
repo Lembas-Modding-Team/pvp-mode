@@ -56,3 +56,6 @@ The configuration system changed a lot - the old configuration files are no long
 
 #### Suffix Forge compatibility configuration:
 * `Drop Soulbound Items` --> `Soulbound Items Dropped`
+
+## Other changes
+* The generated files (biome id file, ...) are now in the folder `pvp-mode` in the MC main directory. The old ones won't be updated anymore. 
