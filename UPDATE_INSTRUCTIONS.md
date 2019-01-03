@@ -53,6 +53,3 @@ The configuration system changed a lot - the old configuration files are no long
 
 #### Siege Mode compatibility configuration:
 * `Disable PvP Logging During Sieges` --> `PvP Logging During Sieges Disabled`
-
-#### Suffix Forge compatibility configuration:
-* `Drop Soulbound Items` --> `Soulbound Items Dropped`
