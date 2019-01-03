@@ -17,6 +17,9 @@
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
 
+### LOTR compatibility:
+* Removed an invalid and unnecessary line from the default enemy biome override configuration file
+
 ## 1.5.0-BETA
 ### General changes:
 * Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
