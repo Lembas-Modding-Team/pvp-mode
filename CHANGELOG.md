@@ -16,6 +16,7 @@
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
+* The generated files (for example the LOTR biome ID file) are now in the folder `pvp-mode` in the MC main directory
 
 ### LOTR compatibility:
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
