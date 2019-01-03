@@ -13,6 +13,9 @@
 * Added support for the `pvpconfig display` GUI for the modification of configuration properties
 * Added a configurable one-click toggling feature for boolean configuration properties, enabled by default
 
+#### Bug fixes:
+* Fixed that previously soulbound items couldn't be stacked with unbound ones after they were unbound
+
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
