@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import cpw.mods.fml.relauncher.*;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 import pvpmode.api.common.utils.*;
 import pvpmode.api.common.utils.Process;
@@ -20,6 +20,8 @@ public class PvPModeCore implements IFMLLoadingPlugin
 {
     
     static boolean obfuscatedEnvironment = true;
+    
+    static boolean serverside = FMLLaunchHandler.side () == Side.SERVER;
 
     public static final ClassDiscoverer classDiscoverer;
 
