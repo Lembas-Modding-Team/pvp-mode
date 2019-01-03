@@ -260,7 +260,8 @@ public class SoulboundCommand extends AbstractPvPCommand
     }
 
     @Override
-    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    @SuppressWarnings("unchecked")
+    public List<String> getTabCompletionOptions (ICommandSender sender, String[] args)
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args,

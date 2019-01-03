@@ -174,4 +174,14 @@ public abstract class AbstractPvPCommand extends CommandBase
 
     protected abstract void processCommand (ICommandSender sender, String[] parsedArgs, String[] originalArgs);
 
+    @Override
+    public List<?> addTabCompletionOptions (ICommandSender sender, String[] args)
+    {
+        if (canCommandSenderUseCommand (sender))
+            return getTabCompletionOptions (sender, args);
+        return null;
+    }
+
+    public abstract List<String> getTabCompletionOptions (ICommandSender sender, String[] args);
+
 }

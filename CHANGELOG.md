@@ -2,6 +2,7 @@
 
 ## 2.0.0-BETA
 ### General changes:
+* Tab-completions now only work for players which are permitted to use a certain command
 
 #### Configuration:
 * Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all configurations
