@@ -54,8 +54,5 @@ The configuration system changed a lot - the old configuration files are no long
 #### Siege Mode compatibility configuration:
 * `Disable PvP Logging During Sieges` --> `PvP Logging During Sieges Disabled`
 
-#### Suffix Forge compatibility configuration:
-* `Drop Soulbound Items` --> `Soulbound Items Dropped`
-
 ## Other changes
 * The generated files (biome id file, ...) are now in the folder `pvp-mode` in MC’s main directory. The old ones won't be updated anymore. 
