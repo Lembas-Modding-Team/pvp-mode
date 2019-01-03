@@ -94,36 +94,39 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         long pvpTimer = PvPServerUtils.getPvPTimer (displayedPlayer);
         boolean defaultPvPModeForced = data.isDefaultModeForced ();
 
+        EnumChatFormatting prefixColor = EnumChatFormatting.WHITE;
+        EnumChatFormatting valueColor = EnumChatFormatting.YELLOW;
+
         ServerChatUtils.green (sender, String.format ("------ %sPvP Stats ------", isSenderDisplayed ? "Your " : ""));
         if (!isSenderDisplayed)
         {
             ServerChatUtils.postLocalChatMessage (sender, "For: ", displayedPlayer.getDisplayName (),
-                EnumChatFormatting.GRAY,
+                prefixColor,
                 EnumChatFormatting.DARK_GREEN);
         }
-        ServerChatUtils.postLocalChatMessage (sender, "PvP Mode: ", pvpMode.toString (), EnumChatFormatting.GRAY,
+        ServerChatUtils.postLocalChatMessage (sender, "PvP Mode: ", pvpMode.toString (), prefixColor,
             pvpMode == EnumPvPMode.ON ? EnumChatFormatting.RED : EnumChatFormatting.GREEN);
         ServerChatUtils.postLocalChatMessage (sender, "Is Overridden: ", Boolean.toString (isOverridden),
-            EnumChatFormatting.GRAY, EnumChatFormatting.WHITE);
+            prefixColor, valueColor);
         if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
         {
             ServerChatUtils.postLocalChatMessage (sender, "Spying Enabled: ", Boolean.toString (spying),
-                EnumChatFormatting.GRAY,
-                EnumChatFormatting.WHITE);
+                prefixColor,
+                valueColor);
         }
         ServerChatUtils.postLocalChatMessage (sender, "Warmup Timer: ", Long.toString (warmupTimer) + "s",
-            EnumChatFormatting.GRAY, warmupTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+            prefixColor, warmupTimer == 0 ? valueColor : EnumChatFormatting.GOLD);
         ServerChatUtils.postLocalChatMessage (sender, "Cooldown Timer: ", Long.toString (cooldownTimer) + "s",
-            EnumChatFormatting.GRAY, cooldownTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+            prefixColor, cooldownTimer == 0 ? valueColor : EnumChatFormatting.GOLD);
         ServerChatUtils.postLocalChatMessage (sender, "PvP Timer: ", Long.toString (pvpTimer) + "s",
-            EnumChatFormatting.GRAY,
-            pvpTimer == 0 ? EnumChatFormatting.WHITE : EnumChatFormatting.YELLOW);
+            prefixColor,
+            pvpTimer == 0 ? valueColor : EnumChatFormatting.GOLD);
         if (config.isDefaultPvPModeForced () && !config.isPvPTogglingEnabled () && !isOverridden)
         {
             ServerChatUtils.postLocalChatMessage (sender, "Default PvP Mode Forced: ",
                 Boolean.toString (defaultPvPModeForced),
-                EnumChatFormatting.GRAY,
-                EnumChatFormatting.WHITE);
+                prefixColor,
+                valueColor);
         }
         ServerChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
     }

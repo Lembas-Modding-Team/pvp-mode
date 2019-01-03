@@ -2,6 +2,7 @@
 
 ## 2.0.0-BETA
 ### General changes:
+* Unified the appearance of the chat GUIs
 
 #### Configuration:
 * Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all configurations
