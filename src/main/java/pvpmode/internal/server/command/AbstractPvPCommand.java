@@ -2,7 +2,7 @@ package pvpmode.internal.server.command;
 
 import java.util.*;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.*;
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.*;
@@ -141,6 +141,10 @@ public abstract class AbstractPvPCommand extends CommandBase
 
         List<String> parsedArgs = new ArrayList<> ();
 
+        if (StringUtils.countMatches (StringUtils.join (args), "\"") % 2 != 0)
+            throw new SyntaxErrorException (
+                "The command contains an odd number of quotes, which leads to incorrect argument parsing");
+
         StringBuilder argBuilder = new StringBuilder ();
         boolean isBuildingArg = false;
 
@@ -148,25 +152,32 @@ public abstract class AbstractPvPCommand extends CommandBase
         {
             String arg = args[i];
 
-            if (arg.startsWith ("\"") && !isBuildingArg)
+            boolean doesArgStartWithQuote = arg.startsWith ("\"");
+            boolean doesArgEndWithQuote = arg.endsWith ("\"");
+
+            arg = arg.replaceAll ("\"", "");
+
+            if (doesArgStartWithQuote && !isBuildingArg)
             {
                 isBuildingArg = true;
-                argBuilder.append (args[i].substring (1));
+                argBuilder.append (arg);
             }
             else if (isBuildingArg)
             {
-                argBuilder.append (" " + args[i]);
-                if (args[i].endsWith ("\""))
-                {
-                    argBuilder.deleteCharAt (argBuilder.length () - 1);
-                    isBuildingArg = false;
-                    parsedArgs.add (argBuilder.toString ());
-                    argBuilder.delete (0, argBuilder.length ());
-                }
+                argBuilder.append (" " + arg);
             }
             else
             {
                 parsedArgs.add (arg);
+            }
+
+            if (isBuildingArg && (doesArgEndWithQuote || i == args.length - 1))
+            {
+                isBuildingArg = false;
+                String argString = argBuilder.toString ();
+                if (!argString.isEmpty ())
+                    parsedArgs.add (argString);
+                argBuilder.delete (0, argBuilder.length ());
             }
         }
         this.processCommand (sender, parsedArgs.toArray (new String[parsedArgs.size ()]), args);
