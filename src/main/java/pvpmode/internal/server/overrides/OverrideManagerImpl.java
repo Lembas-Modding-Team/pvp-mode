@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.*;
 import net.minecraft.util.EnumChatFormatting;
 import pvpmode.PvPMode;
+import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.configuration.ServerConfiguration;
@@ -51,12 +52,14 @@ public class OverrideManagerImpl implements OverrideManager
             {
                 for (PvPOverrideCondition condition : conditions)
                 {
-                    Boolean isPvPEnabled = condition.isPvPEnabled (event.player);
-                    if (isPvPEnabled != null)
+                    EnumForcedPvPMode newPvPMode = condition.getForcedPvPMode (event.player);
+                    if (newPvPMode != EnumForcedPvPMode.UNDEFINED)
                     {
-                        EnumForcedPvPMode newPvPMode = isPvPEnabled ? EnumForcedPvPMode.ON : EnumForcedPvPMode.OFF;
+                        EnumPvPMode pvpMode = newPvPMode.toPvPMode ();
+                        Boolean isPvPEnabled = pvpMode.toBoolean ();
+
                         if (newPvPMode != pvpData.getForcedPvPMode ()
-                            && newPvPMode.toPvPMode () != PvPServerUtils.getPvPMode (event.player))
+                            && pvpMode != PvPServerUtils.getPvPMode (event.player))
                         {
                             // Only display the message if the current PvP mode really changed
 
@@ -64,9 +67,8 @@ public class OverrideManagerImpl implements OverrideManager
                                 : config.isPvPDisabledAnnouncedGlobally ();
 
                             // Get the global or the local message variant
-                            String message = announceGlobal
-                                ? condition.getForcedOverrideMessage (event.player, isPvPEnabled)
-                                : condition.getLocalForcedOverrideMessage (event.player, isPvPEnabled);
+                            String message = condition.getForcedOverrideMessage (event.player, pvpMode,
+                                announceGlobal);
                             if (message != null)
                             {
                                 // If there's a message, post it
