@@ -22,6 +22,9 @@
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
 * Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
 
+### SuffixForge compatibility:
+* Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)
+
 ## 1.5.0-BETA
 ### General changes:
 * Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
