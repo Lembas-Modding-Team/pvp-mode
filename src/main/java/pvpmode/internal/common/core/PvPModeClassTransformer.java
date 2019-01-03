@@ -14,13 +14,16 @@ public class PvPModeClassTransformer implements IClassTransformer
     @Override
     public byte[] transform (String name, String transformedName, byte[] basicClass)
     {
-        switch (name)
+        if (PvPModeCore.serverside) // TODO temporary, until we have a clientside mod
         {
-            case "net.minecraft.inventory.ContainerPlayer":
-            case "aap":
-                return patchContainerPlayer (basicClass, name.equals ("aap"));
-            case "cyano.lootable.events.PlayerDeathEventHandler":
-                return patchLootableBodiesEventHandler (basicClass);
+            switch (name)
+            {
+                case "net.minecraft.inventory.ContainerPlayer":
+                case "aap":
+                    return patchContainerPlayer (basicClass, name.equals ("aap"));
+                case "cyano.lootable.events.PlayerDeathEventHandler":
+                    return patchLootableBodiesEventHandler (basicClass);
+            }
         }
         return basicClass;
     }
