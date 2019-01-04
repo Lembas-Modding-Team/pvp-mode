@@ -4,6 +4,7 @@
 ### General changes:
 * Changed the level of the log indicating that a compatibility module wasn't loaded because of missing dependencies to debug
 * Unified the appearance of the chat GUIs
+* Tab-completions now only work for players which are permitted to use a certain command
 
 #### Configuration:
 * Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all configurations
