@@ -41,6 +41,7 @@ dependencies {
 jar {
    from('./') {
       include 'CHANGELOG.md'
+      include 'UPDATE_INSTRUCTIONS.md'
    }
    
    from('src/main/java') {
