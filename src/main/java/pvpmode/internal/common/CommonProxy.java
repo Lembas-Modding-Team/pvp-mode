@@ -33,7 +33,7 @@ public class CommonProxy implements Configurable
     protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.autoConfigurationMapperManager;
 
     protected VersionChecker versionChecker = new VersionCheckerImpl (
-        "https://github.com/Lembas-Modding-Team/pvp-mode/blob/development/version.txt");// TODO Change with release
+        "https://raw.githubusercontent.com/Lembas-Modding-Team/pvp-mode/development/version.txt");// TODO Change with release
 
     private RemoteVersion remoteVersion;
     private EnumVersionComparison versionComparison;
