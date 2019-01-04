@@ -1,6 +1,5 @@
 package pvpmode.internal.server.configuration;
 
-import java.io.*;
 import java.util.*;
 
 import cpw.mods.fml.common.Loader;
@@ -10,11 +9,11 @@ import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Inject;
 import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.configuration.ServerConfiguration;
-import pvpmode.internal.common.configuration.AutoForgeConfigurationManager;
+import pvpmode.internal.common.configuration.CommonConfigurationImpl;
 import pvpmode.internal.server.ServerProxy;
 
 @Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "=" + ServerConfiguration.SERVER_CONFIG_PID)
-public class ServerConfigurationImpl extends AutoForgeConfigurationManager implements ServerConfiguration
+public class ServerConfigurationImpl extends CommonConfigurationImpl implements ServerConfiguration
 {
 
     @Inject
@@ -46,8 +45,7 @@ public class ServerConfigurationImpl extends AutoForgeConfigurationManager imple
     public ServerConfigurationImpl (ServerProxy server, Configuration configuration,
         Map<String, ConfigurationPropertyKey<?>> propertyKeys)
     {
-        super (configuration, propertyKeys,
-            server.getLogger ());
+        super (server, configuration, propertyKeys);
         this.server = server;
     }
 
@@ -138,17 +136,4 @@ public class ServerConfigurationImpl extends AutoForgeConfigurationManager imple
             }
         }
     }
-
-    @Override
-    protected InputStream openDisplayNameInputStream () throws IOException
-    {
-        return this.getClass ().getResourceAsStream ("/assets/pvpmode/configurationDisplayNames.properties");
-    }
-
-    @Override
-    protected InputStream openCommentInputStream () throws IOException
-    {
-        return this.getClass ().getResourceAsStream ("/assets/pvpmode/configurationComments.properties");
-    }
-
 }

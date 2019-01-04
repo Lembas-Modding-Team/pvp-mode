@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraftforge.common.MinecraftForge;
-import pvpmode.api.common.configuration.ConfigurationPropertyKey;
+import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey.StringSet;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Process;
@@ -105,6 +105,8 @@ public class ServerProxy extends CommonProxy
     {
         Map<String, ConfigurationPropertyKey<?>> generatedKeys = autoConfigManager.getGeneratedKeys ()
             .get (ServerConfiguration.SERVER_CONFIG_PID);
+        generatedKeys.putAll (autoConfigManager.getGeneratedKeys ()
+            .get (CommonConfiguration.COMMON_CONFIG_PID));
         for (String internalName : generatedKeys.keySet ())
         {
             if (internalName.equals ("active_combat_logging_handlers"))

@@ -2,15 +2,20 @@ package pvpmode.internal.common;
 
 import java.nio.file.*;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.CompatibilityManager;
 import pvpmode.api.common.configuration.*;
+import pvpmode.api.common.version.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
 import pvpmode.internal.common.configuration.*;
 import pvpmode.internal.common.core.PvPModeCore;
 import pvpmode.internal.common.utils.ClassDiscoverer;
+import pvpmode.internal.common.version.VersionCheckerImpl;
 
 public class CommonProxy implements Configurable
 {
@@ -26,6 +31,12 @@ public class CommonProxy implements Configurable
 
     protected AutoConfigurationCreator autoConfigManager;
     protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.autoConfigurationMapperManager;
+
+    protected VersionChecker versionChecker = new VersionCheckerImpl (
+        "https://github.com/Lembas-Modding-Team/pvp-mode/blob/development/version.txt");// TODO Change with release
+
+    private RemoteVersion remoteVersion;
+    private EnumVersionComparison versionComparison;
 
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
     {
@@ -58,6 +69,20 @@ public class CommonProxy implements Configurable
     public void onInit (FMLInitializationEvent event) throws Exception
     {
         compatibilityManager.loadRegisteredModules ();
+
+        if (configuration.isVersionCheckerEnabled ())
+        {
+            Pair<RemoteVersion, EnumVersionComparison> result = versionChecker.checkVersion (PvPMode.SEMANTIC_VERSION);
+            remoteVersion = result.getKey ();
+            versionComparison = result.getValue ();
+
+            if (remoteVersion != null)
+            {
+                logger.info ("Found a remote version for the PvP Mode Mod: %s (%s version)",
+                    remoteVersion.getRemoteVersion ().toString (),
+                    versionComparison);
+            }
+        }
     }
 
     public void onPostInit (FMLPostInitializationEvent event) throws Exception
@@ -93,6 +118,16 @@ public class CommonProxy implements Configurable
     public Path getGeneratedFilesFolder ()
     {
         return generatedFilesFolder;
+    }
+
+    public RemoteVersion getRemoteVersion ()
+    {
+        return remoteVersion;
+    }
+
+    public EnumVersionComparison getVersionComparison ()
+    {
+        return versionComparison;
     }
 
 }
