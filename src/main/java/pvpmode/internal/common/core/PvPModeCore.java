@@ -15,7 +15,7 @@ import pvpmode.internal.common.utils.*;
 @MCVersion(value = "1.7.10")
 @SortingIndex(value = 15000)
 @TransformerExclusions(value =
-{"pvpmode.internal.common.core", "pvpmode.internal.common.configuration"})
+{"pvpmode.internal.common.core"})
 public class PvPModeCore implements IFMLLoadingPlugin
 {
     

@@ -15,6 +15,19 @@ A server-side Minecraft mod that allows management of PvP interaction between pl
 
 2. Place the JAR file in the server mods folder.
 
+### Updating:
+We use semantic versioning for the PvP Mode Mod. Every version looks like the following: `major.minor.patch-SUFFIX`.
+* `major` is the API version - as long as the major version *doesn't* change, you can update the PvP Mode Mod without the risk of breaking anything in your server. Usually new major versions contain a file `UPDATE_INSTRUCTIONS.md`, where the breaking changes are listed.
+* `minor` is the feature version - when we add new features or change things that don't break the API, the minor version is increased.
+* `patch` is the bugfix version - when we fix bugs without adding anything new, we increase that version number.
+* `-SUFFIX` is the version suffix, it can be `-ALPHA.pre`, `-BETA.pre` or `-PRE.pre`.
+    * `pre` is the pre-release version, we use it for snapshots of versions that are currently in development; these are released for testing purposes. Snapshots can contain severe bugs, we don't maintain compatibility between snapshots.
+    * `-ALPHA` is appended to alpha versions
+    * `-BETA` is appended to beta versions
+    * `-PRE` is appended to pre-releases of full versions
+
+The PvP Mode Mod contains a version checker, which connects to our Github repository, and checks whether a new version is available. If yes, that will be logged and operators will receive a chat message upon joining the server. The version checker can be disabled via the configuration file.
+
 ### Compatibility:
 
 The mod contains specific compatibility for the mods/plugins listed below. Older and/or newer versions may work too, but it's not guaranteed. See the wiki page for more info on this.

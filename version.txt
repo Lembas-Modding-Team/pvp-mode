@@ -1,0 +1,1 @@
+2.0.0-BETA.1|https://github.com/Lembas-Modding-Team/pvp-mode/releases|https://github.com/Lembas-Modding-Team/pvp-mode/blob/development/CHANGELOG.md

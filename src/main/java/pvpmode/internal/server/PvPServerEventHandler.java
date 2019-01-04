@@ -4,12 +4,13 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import cpw.mods.fml.common.eventhandler.*;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.*;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.*;
+import net.minecraft.event.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -19,6 +20,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.version.*;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
@@ -560,5 +562,68 @@ public class PvPServerEventHandler
     // event.toolTip.add (PvPMode.soulboundTooltip);
     // }
     // }TO
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn (PlayerLoggedInEvent event)
+    {
+        if (config.isVersionCheckerEnabled () && config.isNewVersionAnnouncedInChat ()
+            && PvPServerUtils.isOpped (event.player)
+            && server.getVersionComparison () == EnumVersionComparison.NEWER)
+        {
+            RemoteVersion version = server.getRemoteVersion ();
+
+            ChatComponentText messagePart0 = new ChatComponentText ("[Server]: ");
+            ChatComponentText messagePart1 = new ChatComponentText ("A ");
+            ChatComponentText messagePart2 = new ChatComponentText ("new version");
+            ChatComponentText messagePart3 = new ChatComponentText (" (");
+            ChatComponentText messagePart4 = new ChatComponentText (
+                server.getRemoteVersion ().getRemoteVersion ().toString ());
+            ChatComponentText messagePart5 = new ChatComponentText (
+                ") of the PvP Mode Mod is available.");
+
+            messagePart0.getChatStyle ().setColor (EnumChatFormatting.GOLD);
+            messagePart1.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+
+            if (version.getChangelogURL () != null)
+            {
+                messagePart2.getChatStyle ().setColor (EnumChatFormatting.BLUE);
+                messagePart2.getChatStyle ()
+                    .setChatClickEvent (
+                        new ClickEvent (ClickEvent.Action.OPEN_URL, version.getChangelogURL ().toString ()));
+                messagePart2.getChatStyle ()
+                    .setChatHoverEvent (
+                        new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                            new ChatComponentText ("Click to open the changelog")));
+            }
+            else
+            {
+                messagePart2.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+            }
+
+            messagePart3.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+
+            if (version.getDownloadURL () != null)
+            {
+                messagePart4.getChatStyle ().setColor (EnumChatFormatting.GREEN);
+                messagePart4.getChatStyle ()
+                    .setChatClickEvent (
+                        new ClickEvent (ClickEvent.Action.OPEN_URL, version.getDownloadURL ().toString ()));
+                messagePart4.getChatStyle ()
+                    .setChatHoverEvent (
+                        new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                            new ChatComponentText ("Click to open the download page of the new version")));
+            }
+            else
+            {
+                messagePart4.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+            }
+
+            messagePart5.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
+
+            event.player.addChatComponentMessage (
+                messagePart0.appendSibling (messagePart1.appendSibling (messagePart2).appendSibling (messagePart3)
+                    .appendSibling (messagePart4).appendSibling (messagePart5)));
+        }
+    }
 
 }
