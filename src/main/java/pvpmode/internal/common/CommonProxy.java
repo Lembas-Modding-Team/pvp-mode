@@ -17,6 +17,7 @@ public class CommonProxy implements Configurable
 
     protected Configuration forgeConfiguration;
     protected Path configurationFolder;
+    protected Path generatedFilesFolder;
     protected CommonConfiguration configuration;
     protected CompatibilityManagerImpl compatibilityManager;
     protected final ClassDiscoverer discoverer = PvPModeCore.classDiscoverer;
@@ -33,6 +34,11 @@ public class CommonProxy implements Configurable
         configurationFolder = event.getSuggestedConfigurationFile ().getParentFile ().toPath ().resolve ("pvp-mode");
 
         Files.createDirectories (configurationFolder);
+
+        generatedFilesFolder = event.getSuggestedConfigurationFile ().getParentFile ().getParentFile ().toPath ()
+            .resolve ("pvp-mode");
+
+        Files.createDirectories (generatedFilesFolder);
 
         forgeConfiguration = new Configuration (configurationFolder.resolve ("pvp-mode.cfg").toFile ());
 
@@ -82,6 +88,11 @@ public class CommonProxy implements Configurable
     public AutoConfigurationMapperManager getAutoConfigMapperManager ()
     {
         return autoConfigMapperManager;
+    }
+
+    public Path getGeneratedFilesFolder ()
+    {
+        return generatedFilesFolder;
     }
 
 }

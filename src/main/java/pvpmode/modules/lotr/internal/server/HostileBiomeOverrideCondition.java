@@ -4,6 +4,8 @@ import java.util.*;
 
 import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
+import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.overrides.EnumForcedPvPMode;
 
 /**
  * The override condition for the LOTR biomes. Players which enter a biome
@@ -28,32 +30,26 @@ public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondi
     }
 
     @Override
-    protected Boolean handleCondition (BiomeFactionEntry entry, EntityPlayer player)
+    protected EnumForcedPvPMode handleCondition (BiomeFactionEntry entry, EntityPlayer player)
     {
         String factionName = entry.getFactionName ();
         if (factionName.equals ("ALL"))
-            return Boolean.TRUE;
+            return EnumForcedPvPMode.ON;
         else
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);
             if (data.getAlignment (LOTRFaction.forName (factionName)) < entry.getAlignment ())
-                return Boolean.TRUE;
+                return EnumForcedPvPMode.ON;
         }
-        return null;
+        return EnumForcedPvPMode.UNDEFINED;
     }
 
     @Override
-    public String getForcedOverrideMessage (EntityPlayer player, Boolean mode)
+    public String getForcedOverrideMessage (EntityPlayer player, EnumPvPMode forcedMode, boolean global)
     {
         return String.format (
             "PvP is now enabled for %s upon entering an enemy biome",
-            player.getDisplayName ());
-    }
-
-    @Override
-    public String getLocalForcedOverrideMessage (EntityPlayer player, Boolean mode)
-    {
-        return "PvP is now enabled for you upon entering an enemy biome";
+            global ? player.getDisplayName () : "you");
     }
 
 }

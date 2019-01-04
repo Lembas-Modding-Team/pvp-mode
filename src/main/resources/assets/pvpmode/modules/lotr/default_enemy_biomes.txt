@@ -33,7 +33,7 @@ HIGH_ELF; 0; 44,45,64,141
 # GUNDABAD: 2 MistyMountains, 32 GreyMountains, 43 Eregion, 85 MistyMountainsFoothills, 86 GreyMountainsFoothills
 GUNDABAD; 0; 2,32,43,85,86
 # ANGMAR: 13 Trollshaws, 26 Ettenmoors, 42 Angmar, 55 AngmarMountains, 71 Coldfells
-ANGMAR; 0; 13,21,22,26,42,55,71
+ANGMAR; 0; 13,26,42,55,71
 # WOOD_ELF: 14 WoodlandRealm, 79 NorthernMirkwood, 80 WoodlandRealmHills
 WOOD_ELF; 0; 14,79,80
 # DOL_GULDUR: 15 MirkwoodCorrupted, 46 EastBight, 48 MirkwoodMountains, 119 DolGuldur
@@ -68,5 +68,3 @@ MOREDAIN; 0; 97,105,121,122
 TAUREDAIN; 0; 100,103,109,110
 # HALF_TROLL: 107 Pertorogwaith, 134 FarHaradVolcano
 HALF_TROLL; 0; 107,134
-# ALL:
-ALL; 66666;
