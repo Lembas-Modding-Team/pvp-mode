@@ -3,6 +3,7 @@
 ## 2.0.0-BETA
 ### General changes:
 * Changed the level of the log indicating that a compatibility module wasn't loaded because of missing dependencies to debug
+* Unified the appearance of the chat GUIs
 
 #### Configuration:
 * Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all configurations
