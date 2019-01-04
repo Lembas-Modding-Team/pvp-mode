@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.event.ClickEvent;
+import net.minecraft.event.*;
 import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.util.*;
 import pvpmode.PvPMode;
@@ -70,7 +70,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
         if (args.length == 0)
         {
             ServerChatUtils.green (sender, "------ PvP Mode Help ------");
-            ServerChatUtils.blue (sender, "# General commands");
+            ServerChatUtils.blue (sender, "> General commands:");
             postShortCommandHelp (sender, this,
                 EnumChatFormatting.DARK_GREEN,
                 EnumChatFormatting.GREEN);
@@ -83,7 +83,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
                 }
             }
 
-            ServerChatUtils.blue (sender, "# Admin commands");
+            ServerChatUtils.blue (sender, "", "> Admin commands:");
 
             for (AbstractPvPCommand command : commands)
             {
@@ -137,13 +137,13 @@ public class PvPCommandHelp extends AbstractPvPCommand
     private void postLongCommandHelp (ICommandSender sender, AbstractPvPCommand command)
     {
         ServerChatUtils.green (sender, "------ PvP Mode Help ------");
-        ChatComponentText usageText = new ChatComponentText ("General usage: ");
+        ChatComponentText usageText = new ChatComponentText ("> General usage: ");
         usageText.getChatStyle ().setColor (EnumChatFormatting.BLUE);
         ChatComponentText usageMessage = new ChatComponentText (command.getCommandUsage (sender));
         usageMessage.getChatStyle ().setColor (EnumChatFormatting.DARK_GREEN);
         sender.addChatMessage (usageText.appendSibling (usageMessage));
         ServerChatUtils.white (sender, command.getGeneralHelpMessage (sender));
-        ServerChatUtils.blue (sender, "Subcommand explanation:");
+        ServerChatUtils.blue (sender, "> Subcommand explanation:");
         postCommandHelp (sender, command, command::getLongHelpMessages);
         ServerChatUtils.green (sender, "-------------------------");
     }
@@ -171,17 +171,21 @@ public class PvPCommandHelp extends AbstractPvPCommand
 
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help)
     {
-        this.postCommandHelp (sender, commandName, commandUsage, help, EnumChatFormatting.GRAY,
-            EnumChatFormatting.WHITE);
+        this.postCommandHelp (sender, commandName, commandUsage, help, EnumChatFormatting.WHITE,
+            EnumChatFormatting.GRAY);
     }
 
     private void postCommandHelp (ICommandSender sender, String commandName, String commandUsage, String help,
         EnumChatFormatting commandColor, EnumChatFormatting textColor)
     {
         ChatComponentText commandPart = new ChatComponentText (
-            ("/" + commandName.trim () + " " + commandUsage).trim ());
+            " /" + (commandName.trim () + " " + commandUsage).trim ());
         commandPart.getChatStyle ().setChatClickEvent (new ClickEvent (Action.SUGGEST_COMMAND, "/" + commandName))
             .setColor (commandColor);
+        commandPart.getChatStyle ()
+            .setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                new ChatComponentText ("Click to insert the command into the chat")));
+
         ChatComponentText helpPart = new ChatComponentText (": " + help);
         helpPart.getChatStyle ().setColor (textColor);
         sender.addChatMessage (commandPart.appendSibling (helpPart));

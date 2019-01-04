@@ -285,7 +285,7 @@ public class PvPCommandConfig extends AbstractPvPCommand
                         unit = " stacks";
                         break;
                     case SECONDS:
-                        unit = " s";
+                        unit = "s";
                         break;
                     case TICKS:
                         unit = " ticks";

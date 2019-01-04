@@ -3,6 +3,7 @@
 ## 2.0.0-BETA
 ### General changes:
 * Changed the level of the log indicating that a compatibility module wasn't loaded because of missing dependencies to debug
+* Unified the appearance of the chat GUIs
 * Tab-completions now only work for players which are permitted to use a certain command
 
 #### Configuration:
@@ -14,12 +15,20 @@
 * Added support for the `pvpconfig display` GUI for the modification of configuration properties
 * Added a configurable one-click toggling feature for boolean configuration properties, enabled by default
 
+#### Bug fixes:
+* Fixed that previously soulbound items couldn't be stacked with unbound ones after they were unbound
+
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
 * Restructured the whole configuration system
+* The generated files (for example the LOTR biome ID file) are now in the folder `pvp-mode` in the MC main directory
 
 ### LOTR compatibility:
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
+* Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
+
+### SuffixForge compatibility:
+* Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)
 
 ## 1.5.0-BETA
 ### General changes:

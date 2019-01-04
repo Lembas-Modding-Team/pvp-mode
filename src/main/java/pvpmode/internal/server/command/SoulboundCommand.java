@@ -193,11 +193,17 @@ public class SoulboundCommand extends AbstractPvPCommand
     private void setSoulbound (ItemStack stack, boolean soulbound)
     {
         if (!stack.hasTagCompound ())
-            stack.setTagCompound (new NBTTagCompound ());
+        {
+            if (soulbound)
+                stack.setTagCompound (new NBTTagCompound ());
+            else return;
+        }
 
         NBTTagCompound stackTag = stack.getTagCompound ();
 
-        stackTag.setBoolean ("SoulboundBool", soulbound);
+        if (soulbound)
+            stackTag.setBoolean ("SoulboundBool", soulbound);
+        else stackTag.removeTag ("SoulboundBool");
 
         String currentTooltip = stackTag.hasKey ("SoulboundTooltip") ? stackTag.getString ("SoulboundTooltip")
             : config.getSoulboundItemTooltip ();
@@ -220,11 +226,31 @@ public class SoulboundCommand extends AbstractPvPCommand
                     lore.removeTag (i);
                 }
             }
+            stackTag.removeTag ("SoulboundTooltip");
         }
 
-        stackTag.setTag ("display", displayTag);
+        if (lore.tagCount () != 0)
+        {
+            displayTag.setTag ("Lore", (NBTBase) lore);
+        }
+        else
+        {
+            displayTag.removeTag ("Lore");
+        }
 
-        displayTag.setTag ("Lore", (NBTBase) lore);
+        if (!displayTag.hasNoTags ())
+        {
+            stackTag.setTag ("display", displayTag);
+        }
+        else
+        {
+            stackTag.removeTag ("display");
+        }
+
+        if (stackTag.hasNoTags ())
+        {
+            stack.setTagCompound (null);
+        }
     }
 
     private ItemStack[] getStacksInInventory (EntityPlayer player, String inventory)// TODO: Outsource to utils
