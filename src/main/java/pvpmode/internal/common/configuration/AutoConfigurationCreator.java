@@ -17,7 +17,7 @@ import pvpmode.internal.common.utils.ClassDiscoverer;
 /**
  * An internal helper class used for retrieving the auto configuration data with
  * reflection, classpath scanning and so on. It also processes the classes
- * involved into the auto configuration redarding other features, to example the
+ * involved into the auto configuration regarding other features, for example the
  * injection of properties. Quiet hacky.
  * 
  * @author CraftedMods

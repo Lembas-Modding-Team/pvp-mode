@@ -19,7 +19,7 @@ public @interface Inject
     /**
      * Returns the name of the component to be injected. If an empty string is
      * specified, the providers can determine the component name by the environment,
-     * to example the field name.
+     * for example the field name.
      * 
      * @return The name of the component to be injected
      */

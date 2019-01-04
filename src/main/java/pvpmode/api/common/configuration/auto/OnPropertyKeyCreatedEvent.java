@@ -5,7 +5,7 @@ import pvpmode.api.common.configuration.ConfigurationPropertyKey;
 
 /**
  * An event that will be fired upon the creation of a property key. It can be
- * used to modify the automatically-generated keys dynamically, to example to
+ * used to modify the automatically-generated keys dynamically, for example to
  * take other data into account.
  * 
  * @author CraftedMods

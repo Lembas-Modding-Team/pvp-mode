@@ -69,7 +69,7 @@ public class ConfigurationPropertyKey<T>
     }
 
     /**
-     * Returns the value type of the property key, to example String for a string
+     * Returns the value type of the property key, for example String for a string
      * property key.
      * 
      * @return The value type
