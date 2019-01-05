@@ -1,6 +1,6 @@
 package pvpmode.modules.citizens.internal.server;
 
-import pvpmode.api.common.compatibility.BukkitPluginCompatibilityModuleLoader;
+import pvpmode.api.server.compatibility.BukkitPluginCompatibilityModuleLoader;
 
 public class CitizensCompatibilityModuleLoader extends BukkitPluginCompatibilityModuleLoader
 {

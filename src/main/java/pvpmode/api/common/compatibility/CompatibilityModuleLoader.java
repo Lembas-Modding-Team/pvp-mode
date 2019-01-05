@@ -31,8 +31,19 @@ public interface CompatibilityModuleLoader
     public String getCompatibilityModuleClassName ();
 
     /**
-     * Determines whether the referenced compatibility can/shall be loaded.
+     * Determines whether the referenced compatibility can/shall be loaded. This
+     * function won't be called before the referenced loading point
+     * ({@link CompatibilityModuleLoader#getLoadingPoint()}) has been reached.
      */
     public boolean canLoad ();
+
+    /**
+     * The phase when the framework will try to load the referenced compatibility
+     * module.
+     */
+    public default EnumCompatibilityModuleLoadingPoint getLoadingPoint ()
+    {
+        return EnumCompatibilityModuleLoadingPoint.INIT;
+    }
 
 }

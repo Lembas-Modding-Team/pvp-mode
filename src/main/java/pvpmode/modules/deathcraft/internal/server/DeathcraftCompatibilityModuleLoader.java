@@ -1,6 +1,6 @@
 package pvpmode.modules.deathcraft.internal.server;
 
-import pvpmode.api.common.compatibility.BukkitPluginCompatibilityModuleLoader;
+import pvpmode.api.server.compatibility.BukkitPluginCompatibilityModuleLoader;
 
 public class DeathcraftCompatibilityModuleLoader extends BukkitPluginCompatibilityModuleLoader
 {

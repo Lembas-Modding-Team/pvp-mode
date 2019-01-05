@@ -1,8 +1,9 @@
-package pvpmode.api.common.compatibility;
+package pvpmode.api.server.compatibility;
 
 import java.lang.reflect.*;
 
 import cpw.mods.fml.common.FMLLog;
+import pvpmode.api.common.compatibility.*;
 
 /**
  * A compatibility module loader which determines whether a compatibility module
@@ -85,6 +86,12 @@ public abstract class BukkitPluginCompatibilityModuleLoader extends IdentifierCo
             }
         }
         return false;
+    }
+
+    @Override
+    public EnumCompatibilityModuleLoadingPoint getLoadingPoint ()
+    {
+        return ServerCompatibilityConstants.SERVER_STARTING_LOADING_POINT;
     }
 
 }

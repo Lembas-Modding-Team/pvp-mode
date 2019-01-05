@@ -130,7 +130,7 @@ public class PvPCommonUtils
         }
         return direction;
     }
-    
+
     /**
      * Returns a map with the content of the source map, which is completely
      * unmodifiable, inclusive it's content and the content of the content and so
@@ -312,8 +312,7 @@ public class PvPCommonUtils
     /**
      * A helper function creating and returning instances of the supplied classes.
      * Additionally, one can control which classes should be instantiated and also a
-     * "post create event" can be fired after the creation of a class. If error
-     * occur while the creation of the class, they'll be logged.
+     * "post create event" can be fired after the creation of a class.
      * 
      * @param classes
      *            The collection of classes
@@ -336,24 +335,47 @@ public class PvPCommonUtils
             if (shouldCreateInstancePredicate != null ? shouldCreateInstancePredicate.test (classToProcess) : true)
             {
 
-                try
+                T newInstance = createInstance (classToProcess);
+                if (newInstance != null)
                 {
-                    T newInstance = classToProcess.newInstance ();
                     instances.add (newInstance);
                     if (postCreateConsumer != null)
                     {
                         postCreateConsumer.accept (classToProcess, newInstance);
                     }
                 }
-                catch (Exception e)
-                {
-                    PvPMode.proxy.getLogger ().errorThrowable ("Couldn't create a new instance of the class \"%s\"", e,
-                        classToProcess.getName ());
-                }
             }
         }
 
         return instances;
+    }
+
+    /**
+     * Creates a new instance of the supplied class or returns null of no instance
+     * could be created.
+     * 
+     * @param classToInstantiate
+     *            The class to instantiate
+     * @return The created instance
+     */
+    public static <T> T createInstance (Class<T> classToInstantiate)
+    {
+        try
+        {
+            return classToInstantiate.newInstance ();
+        }
+        catch (InstantiationException e)
+        {
+            PvPMode.proxy.getLogger ().errorThrowable ("Couldn't create an instance of the class \"%s\"", e,
+                classToInstantiate.getName ());
+        }
+        catch (IllegalAccessException e)
+        {
+            PvPMode.proxy.getLogger ().errorThrowable (
+                "Couldn't find or access the default constructor of the class \"%s\"", e,
+                classToInstantiate.getName ());
+        }
+        return null;
     }
 
     /**
@@ -392,8 +414,7 @@ public class PvPCommonUtils
     }
 
     /**
-     * Creates instances of the supplied classes and returns them. Errors occuring
-     * while the creation of the classes will be logged.
+     * Creates instances of the supplied classes and returns them.
      * 
      * @param classes
      *            The collection of classes

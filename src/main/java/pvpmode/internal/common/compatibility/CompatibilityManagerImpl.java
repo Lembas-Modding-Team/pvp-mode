@@ -14,11 +14,11 @@ public class CompatibilityManagerImpl implements CompatibilityManager
 
     private final SimpleLogger logger;
 
-    private Collection<Class<? extends CompatibilityModuleLoader>> registeredModuleLoaders = new HashSet<> ();
-
-    private boolean areModulesLoaded = false;
+    private Map<EnumCompatibilityModuleLoadingPoint, Set<CompatibilityModuleLoader>> registeredModuleLoaders = new HashMap<> ();
+    private Set<Class<? extends CompatibilityModuleLoader>> registeredModulesLoaderClasses = new HashSet<> ();
 
     private Map<CompatibilityModuleLoader, CompatibilityModule> loadedModules = new HashMap<> ();
+    private Set<Class<? extends CompatibilityModuleLoader>> loadedModulesLoaderClasses = new HashSet<> ();
 
     public CompatibilityManagerImpl (Path configurationFolder)
     {
@@ -29,25 +29,55 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     @Override
     public boolean registerModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader)
     {
-        checkState ();
-        return registeredModuleLoaders.add (moduleLoader);
+        if (!registeredModulesLoaderClasses.contains (moduleLoader))
+        {
+            CompatibilityModuleLoader loaderInstance = PvPCommonUtils.createInstance (moduleLoader);
+
+            if (loaderInstance != null)
+            {
+                EnumCompatibilityModuleLoadingPoint loadingPoint = loaderInstance.getLoadingPoint ();
+
+                if (!registeredModuleLoaders.containsKey (loadingPoint))
+                    registeredModuleLoaders.put (loadingPoint, new HashSet<> ());
+                registeredModuleLoaders.get (loadingPoint).add (loaderInstance);
+
+                return registeredModulesLoaderClasses.add (moduleLoader);
+            }
+        }
+        return false;
+
     }
 
     @Override
     public boolean unregisterModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader)
     {
-        checkState ();
-        return registeredModuleLoaders.remove (moduleLoader);
+        if (!loadedModulesLoaderClasses.contains (moduleLoader))
+        {
+            for (Set<CompatibilityModuleLoader> instances : registeredModuleLoaders.values ())
+            {
+                Iterator<CompatibilityModuleLoader> instanceIterator = instances.iterator ();
+                while (instanceIterator.hasNext ())
+                {
+                    CompatibilityModuleLoader instance = instanceIterator.next ();
+                    if (instance.getClass () == moduleLoader)
+                    {
+                        instanceIterator.remove ();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
-    public void loadRegisteredModules ()
+    public void loadRegisteredModules (EnumCompatibilityModuleLoadingPoint loadingPoint)
     {
-        checkState ();
         int loadedModulesCounter = 0;
-        for (Class<? extends CompatibilityModuleLoader> moduleLoaderClass : registeredModuleLoaders)
+        Set<CompatibilityModuleLoader> loaders = registeredModuleLoaders.get (loadingPoint);
+        
+        if (loaders != null)
         {
-            CompatibilityModuleLoader loader = instantiateClass (moduleLoaderClass, "compatibility module loader");
-            if (loader != null)
+            for (CompatibilityModuleLoader loader : loaders)
             {
                 if (loader.canLoad ())
                 {
@@ -60,8 +90,8 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                         Class<?> moduleClass = Class.forName (loader.getCompatibilityModuleClassName ());
                         if (CompatibilityModule.class.isAssignableFrom (moduleClass))
                         {
-                            CompatibilityModule module = (CompatibilityModule) instantiateClass (moduleClass,
-                                "compatibility module");
+                            CompatibilityModule module = (CompatibilityModule) PvPCommonUtils
+                                .createInstance (moduleClass);
                             if (module != null)
                             {
                                 try
@@ -70,6 +100,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                                         configurationFolder.resolve (loader.getInternalModuleName ()), PvPCommonUtils
                                             .getLogger (logger.getName () + "." + loader.getInternalModuleName ()));
                                     loadedModules.put (loader, module);
+                                    loadedModulesLoaderClasses.add (loader.getClass ());
                                     ++loadedModulesCounter;
                                     logger.info ("The compatibility module \"%s\" was loaded successfully",
                                         loader.getModuleName ());
@@ -87,7 +118,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                         {
                             logger.error (
                                 "The compatibility module class \"%s\" specified by the compatibility module loader \"%s\" is not assignable from \"%s\"",
-                                moduleClass.getName (), moduleLoaderClass.getName (),
+                                moduleClass.getName (), loader.getClass ().getName (),
                                 CompatibilityModule.class.getName ());
                         }
                     }
@@ -105,50 +136,15 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                         loader.getModuleName ());
                 }
             }
+            logger.info ("Loaded %d of %d registered compatibility modules on %s", loadedModulesCounter,
+                loaders.size (), loadingPoint.name ());
         }
-        logger.info ("Loaded %d of %d registered compatibility modules", loadedModulesCounter,
-            registeredModuleLoaders.size ());
-        areModulesLoaded = true;
-    }
-
-    private <T> T instantiateClass (Class<T> clazz, String instanceType)
-    {
-        try
-        {
-            T instance = clazz.newInstance ();
-            return instance;
-        }
-        catch (InstantiationException e)
-        {
-            logger.errorThrowable ("Couldn't instantiate the %s \"%s\"", e, instanceType,
-                clazz.getName ());
-        }
-        catch (IllegalAccessException e)
-        {
-            logger.errorThrowable (
-                "Couldn't instantiate the %s \"%s\" because there's no accessible default constructor", e,
-                instanceType,
-                clazz.getName ());
-        }
-        return null;
-    }
-
-    @Override
-    public boolean areModulesLoaded ()
-    {
-        return areModulesLoaded;
     }
 
     @Override
     public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ()
     {
         return loadedModules;
-    }
-
-    private void checkState ()
-    {
-        if (areModulesLoaded)
-            throw new IllegalArgumentException ("Invalid state. The compatibility modules were already loaded.");
     }
 
 }

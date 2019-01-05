@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.compatibility.CompatibilityManager;
+import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.version.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
@@ -33,7 +33,8 @@ public class CommonProxy implements Configurable
     protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.autoConfigurationMapperManager;
 
     protected VersionChecker versionChecker = new VersionCheckerImpl (
-        "https://raw.githubusercontent.com/Lembas-Modding-Team/pvp-mode/development/version.txt");// TODO Change with release
+        "https://raw.githubusercontent.com/Lembas-Modding-Team/pvp-mode/development/version.txt");// TODO Change with
+                                                                                                  // release
 
     private RemoteVersion remoteVersion;
     private EnumVersionComparison versionComparison;
@@ -60,6 +61,8 @@ public class CommonProxy implements Configurable
         autoConfigManager = new AutoConfigurationCreator ();
 
         autoConfigManager.processClasspath (discoverer, 30000);
+
+        compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.PRE_INIT);
     }
 
     protected void registerCompatibilityModules ()
@@ -68,8 +71,6 @@ public class CommonProxy implements Configurable
 
     public void onInit (FMLInitializationEvent event) throws Exception
     {
-        compatibilityManager.loadRegisteredModules ();
-
         if (configuration.isVersionCheckerEnabled ())
         {
             Pair<RemoteVersion, EnumVersionComparison> result = versionChecker.checkVersion (PvPMode.SEMANTIC_VERSION);
@@ -83,11 +84,18 @@ public class CommonProxy implements Configurable
                     versionComparison);
             }
         }
+
+        compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.INIT);
     }
 
     public void onPostInit (FMLPostInitializationEvent event) throws Exception
     {
+        compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.POST_INIT);
+    }
 
+    public void onLoadingComplete (FMLLoadCompleteEvent event)
+    {
+        compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.LOADING_COMPLETED);
     }
 
     public CommonConfiguration getConfiguration ()
