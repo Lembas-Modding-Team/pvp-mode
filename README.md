@@ -42,6 +42,7 @@ The mod contains specific compatibility for the mods/plugins listed below. Older
 #### Bukkit Plugins:
 Only NMS v1_7_R4 is supported.
 * deathcraft 1.12a
+* Citizens (currently version independent)
 
 ### Usage:
 
