@@ -51,7 +51,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void onLoadingCompleteStarting (FMLLoadCompleteEvent event)
+    public void onLoadingComplete (FMLLoadCompleteEvent event)
     {
         proxy.onLoadingComplete (event);
     }
