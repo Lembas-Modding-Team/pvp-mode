@@ -219,7 +219,13 @@ public class PvPServerUtils extends PvPCommonUtils
             return null;
 
         if (entity instanceof EntityPlayerMP)
-            return (EntityPlayerMP) entity;
+        {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+
+            // Check whether the supplied player is a real one
+            if (!MinecraftForge.EVENT_BUS.post (new PlayerIdentityCheckEvent (player)))
+                return player;
+        }
 
         List<Entity> entitiesChecked = new ArrayList<> ();
         Entity owner = entity;
@@ -293,7 +299,7 @@ public class PvPServerUtils extends PvPCommonUtils
     {
         provider.displayPvPStats (sender, displayedPlayer);
     }
-    
+
     public static boolean isSoulbound (ItemStack stack)
     {
         return stack.hasTagCompound () && stack.getTagCompound ().getBoolean ("SoulboundBool");

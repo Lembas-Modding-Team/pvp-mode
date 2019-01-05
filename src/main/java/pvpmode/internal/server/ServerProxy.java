@@ -99,6 +99,7 @@ public class ServerProxy extends CommonProxy
         // fix, this module won't be loaded
         compatibilityManager.registerModuleLoader (EnderIOCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (LootableBodiesCompatibilityModuleLoader.class);
+        //compatibilityManager.registerModuleLoader (CitizensCompatibilityModuleLoader.class);
     }
 
     private Map<String, ConfigurationPropertyKey<?>> getModifiedConfigurationPropertyKeys ()
