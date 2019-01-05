@@ -12,6 +12,7 @@ import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey.StringSet;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Process;
+import pvpmode.api.server.compatibility.ServerCompatibilityConstants;
 import pvpmode.api.server.compatibility.events.CombatLoggingHandlerRegistryEvent;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.log.LogHandlerConstants;
@@ -22,6 +23,8 @@ import pvpmode.internal.server.configuration.ServerConfigurationImpl;
 import pvpmode.internal.server.log.*;
 import pvpmode.internal.server.overrides.OverrideManagerImpl;
 import pvpmode.internal.server.utils.*;
+import pvpmode.modules.citizens.internal.server.CitizensCompatibilityModuleLoader;
+import pvpmode.modules.deathcraft.internal.server.DeathcraftCompatibilityModuleLoader;
 import pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModuleLoader;
 import pvpmode.modules.lootableBodies.internal.server.LootableBodiesCompatibilityModuleLoader;
 import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
@@ -93,13 +96,10 @@ public class ServerProxy extends CommonProxy
         super.registerCompatibilityModules ();
         compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SiegeModeCompatibilityModuleLoader.class);
-        // compatibilityManager.registerModuleLoader
-        // (DeathcraftCompatibilityModuleLoader.class); TODO Until the compatibility
-        // module
-        // fix, this module won't be loaded
+        compatibilityManager.registerModuleLoader (DeathcraftCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (EnderIOCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (LootableBodiesCompatibilityModuleLoader.class);
-        //compatibilityManager.registerModuleLoader (CitizensCompatibilityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (CitizensCompatibilityModuleLoader.class);
     }
 
     private Map<String, ConfigurationPropertyKey<?>> getModifiedConfigurationPropertyKeys ()
@@ -142,6 +142,8 @@ public class ServerProxy extends CommonProxy
     public void onServerStarting (FMLServerStartingEvent event)
     {
         serverConfigurationManager = MinecraftServer.getServer ().getConfigurationManager ();
+
+        compatibilityManager.loadRegisteredModules (ServerCompatibilityConstants.SERVER_STARTING_LOADING_POINT);
 
         pvpCommandInstance = new PvPCommand ();
         pvplistCommandInstance = new PvPCommandList ();

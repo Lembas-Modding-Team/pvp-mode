@@ -14,9 +14,7 @@ public interface CompatibilityManager
 {
 
     /**
-     * Registers the supplied compatibility module loader.<br/>
-     * Note that this function can only be called before the registered modules were
-     * loaded.
+     * Registers the supplied compatibility module loader.
      *
      * @param moduleLoader
      *            The loader to register
@@ -25,8 +23,9 @@ public interface CompatibilityManager
     public boolean registerModuleLoader (Class<? extends CompatibilityModuleLoader> moduleLoader);
 
     /**
-     * Unregisters a previously registered compatibility module loader. Note that
-     * this function can only be called before the registered modules were loaded.
+     * Unregisters a previously registered compatibility module loader. If the
+     * compatibility module of the supplied loader was already loaded, false will be
+     * returned.
      *
      * @param moduleLoader
      *            The loader to unregister
@@ -36,16 +35,11 @@ public interface CompatibilityManager
 
     /**
      * Returns a map containing the compatibility module loader as key and the
-     * compatibility module as value for all loaded compatibility modules. If the
-     * registered modules weren't loaded, an empty map will be returned.
+     * compatibility module as value for all currently loaded compatibility modules.
+     * If no registered modules were loaded, an empty map will be returned.
      * 
      * @return The loaded compatibility module with their loaders
      */
     public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ();
-
-    /**
-     * Returns whether the registered compatibility modules were loaded.
-     */
-    public boolean areModulesLoaded ();
 
 }

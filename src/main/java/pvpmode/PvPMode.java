@@ -51,6 +51,12 @@ public class PvPMode
     }
 
     @EventHandler
+    public void onLoadingComplete (FMLLoadCompleteEvent event)
+    {
+        proxy.onLoadingComplete (event);
+    }
+
+    @EventHandler
     public void onServerStopping (FMLServerStoppingEvent event)
     {
         if (proxy instanceof ServerProxy)
