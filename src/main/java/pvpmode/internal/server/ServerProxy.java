@@ -23,8 +23,7 @@ import pvpmode.internal.server.configuration.ServerConfigurationImpl;
 import pvpmode.internal.server.log.*;
 import pvpmode.internal.server.overrides.OverrideManagerImpl;
 import pvpmode.internal.server.utils.*;
-import pvpmode.modules.citizens.internal.server.CitizensCompatibilityModuleLoader;
-import pvpmode.modules.deathcraft.internal.server.DeathcraftCompatibilityModuleLoader;
+import pvpmode.modules.bukkit.internal.server.BukkitCompatibilityModuleLoader;
 import pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModuleLoader;
 import pvpmode.modules.lootableBodies.internal.server.LootableBodiesCompatibilityModuleLoader;
 import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
@@ -96,10 +95,9 @@ public class ServerProxy extends CommonProxy
         super.registerCompatibilityModules ();
         compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (SiegeModeCompatibilityModuleLoader.class);
-        compatibilityManager.registerModuleLoader (DeathcraftCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (EnderIOCompatibilityModuleLoader.class);
         compatibilityManager.registerModuleLoader (LootableBodiesCompatibilityModuleLoader.class);
-        compatibilityManager.registerModuleLoader (CitizensCompatibilityModuleLoader.class);
+        compatibilityManager.registerModuleLoader (BukkitCompatibilityModuleLoader.class);
     }
 
     private Map<String, ConfigurationPropertyKey<?>> getModifiedConfigurationPropertyKeys ()
