@@ -32,7 +32,7 @@
 * Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)
 
 ### Citizens compatibility:
-* "Players" created with the Citizens plugin are no treated as a real player
+* "Players" created with the Citizens plugin are no longer treated as a real player
 
 ## 1.5.0-BETA
 ### General changes:
