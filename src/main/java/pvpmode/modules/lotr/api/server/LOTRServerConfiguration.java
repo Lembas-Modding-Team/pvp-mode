@@ -25,12 +25,6 @@ public interface LOTRServerConfiguration extends ConfigurationManager
     }
 
     @ConfigurationPropertyGetter(category = ServerConfiguration.SERVER_CATEGORY)
-    public default boolean arePlayerSkullsAlwaysDropped ()
-    {
-        return true;
-    }
-
-    @ConfigurationPropertyGetter(category = ServerConfiguration.SERVER_CATEGORY)
     public default boolean areSafeBiomeOverridesEnabled ()
     {
         return false;
