@@ -64,7 +64,7 @@ public abstract class IdentifierCompatibilityModuleLoader implements Compatibili
     protected boolean isVersionSupported (String identifier, String version)
     {
         return true;
-    };
+    }
 
     protected String getIdentifierVersion (String identifier)
     {
