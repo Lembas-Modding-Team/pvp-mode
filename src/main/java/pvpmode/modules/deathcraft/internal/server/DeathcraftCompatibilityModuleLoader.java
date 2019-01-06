@@ -22,4 +22,10 @@ public class DeathcraftCompatibilityModuleLoader extends BukkitPluginCompatibili
         return "pvpmode.modules.deathcraft.internal.server.DeathcraftCompatibilityModule";
     }
 
+    @Override
+    protected boolean isVersionSupported (String identifier, String version)
+    {
+        return version.equals ("1.12a");
+    }
+
 }

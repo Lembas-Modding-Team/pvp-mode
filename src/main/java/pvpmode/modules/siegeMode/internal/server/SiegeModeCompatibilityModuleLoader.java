@@ -27,5 +27,11 @@ public class SiegeModeCompatibilityModuleLoader extends ForgeModCompatibilityMod
     {
         return "pvpmode.modules.siegeMode.internal.server.SiegeModeCompatibilityModule";
     }
+    
+    @Override
+    protected boolean isVersionSupported (String modid, String version)
+    {
+        return version.equals ("1.0");
+    }
 
 }

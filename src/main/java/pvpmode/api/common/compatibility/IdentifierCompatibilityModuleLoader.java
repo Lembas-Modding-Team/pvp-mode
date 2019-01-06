@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 
+import pvpmode.PvPMode;
+
 /**
  * A compatibility module loader base class which determines whether a
  * compatibility module can be loaded by an identifier of it's dependencies.
@@ -57,6 +59,41 @@ public abstract class IdentifierCompatibilityModuleLoader implements Compatibili
     public String getInternalModuleName ()
     {
         return StringUtils.join (identifiers);
+    }
+
+    protected boolean isVersionSupported (String identifier, String version)
+    {
+        return true;
+    }
+
+    protected String getIdentifierVersion (String identifier)
+    {
+        return null;
+    }
+
+    @Override
+    public void onPreLoad ()
+    {
+        for (String identifier : this.getIdentifiers ())
+        {
+            String loadedVersion = getIdentifierVersion (identifier);
+
+            if (loadedVersion != null)
+            {
+                if (!isVersionSupported (identifier, loadedVersion))
+                {
+                    PvPMode.proxy.getLogger ().warning (
+                        "The compatibility module loader \"%s\" found an unsupported version (%s) of the dependency \"%s\". Trying to load the compatibiliy module anyway.",
+                        this.getInternalModuleName (), loadedVersion, identifier);
+                }
+                else
+                {
+                    PvPMode.proxy.getLogger ().debug (
+                        "The compatibility module loader \"%s\" found an explicitely supported version (%s) of the dependency \"%s\"",
+                        this.getInternalModuleName (), loadedVersion, identifier);
+                }
+            }
+        }
     }
 
 }

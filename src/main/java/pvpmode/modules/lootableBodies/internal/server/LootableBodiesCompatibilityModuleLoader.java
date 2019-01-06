@@ -22,4 +22,10 @@ public class LootableBodiesCompatibilityModuleLoader extends ForgeModCompatibili
         return "pvpmode.modules.lootableBodies.internal.server.LootableBodiesCompatibilityModule";
     }
 
+    @Override
+    protected boolean isVersionSupported (String modid, String version)
+    {
+        return version.equals ("1.3.6");
+    }
+
 }
