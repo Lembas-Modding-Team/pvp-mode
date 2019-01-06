@@ -12,7 +12,7 @@ import pvpmode.internal.server.ServerProxy;
 public class PvPMode
 {
 
-    public static final String VERSION = "2.0.0-BETA.1";
+    public static final String VERSION = "2.0.0-BETA.2";
     public static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.of (VERSION);
 
     @Instance
