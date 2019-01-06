@@ -80,7 +80,7 @@ The configuration file has many useful options for all the mods features and mis
 This mod was developed especially for use on servers running the Lord of the Rings mod by Mevans. Users will note that hired units cannot fight each other unless both their commanding players have PvP enabled. Also, tamed wolves will not attack players or each other unless both masters have PvP enabled.
 
 Besides the abovementioned basic features the mod provides quite a few more advanced features. These can be for general support of managing pvp combat on servers and/or for very specific aspects of the gameplay with the Lord of the Rings mod or other mods.
-For more information on those features, please check out the wiki pages of our GitHub portal at https://github.com/VulcanForge/pvp-mode/wiki
+For more information on those features, please check out the wiki pages of our GitHub portal at https://github.com/Lembas-Modding-Team/pvp-mode/wiki
 
 If you notice a bug in-game, fire us an issue at our GitHub portal.
 
