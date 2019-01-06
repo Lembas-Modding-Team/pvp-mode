@@ -85,6 +85,8 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                         "The compatibility module \"%s\" can be loaded",
                         loader.getModuleName ());
 
+                    loader.onPreLoad ();
+
                     try
                     {
                         Class<?> moduleClass = Class.forName (loader.getCompatibilityModuleClassName ());

@@ -34,4 +34,10 @@ public class EnderIOCompatibilityModuleLoader extends ForgeModCompatibilityModul
         return "enderio";
     }
 
+    @Override
+    protected boolean isVersionSupported (String modid, String version)
+    {
+        return version.equals ("1.7.10-2.3.0.429_beta");
+    }
+
 }

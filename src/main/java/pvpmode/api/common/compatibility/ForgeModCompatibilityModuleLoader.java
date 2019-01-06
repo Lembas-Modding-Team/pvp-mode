@@ -18,8 +18,20 @@ public abstract class ForgeModCompatibilityModuleLoader extends IdentifierCompat
     }
 
     @Override
+    public boolean canLoad ()
+    {
+        return super.canLoad ();
+    }
+
+    @Override
     protected boolean isDependencyLoaded (String identifier)
     {
         return Loader.isModLoaded (identifier);
+    }
+
+    @Override
+    protected String getIdentifierVersion (String identifier)
+    {
+        return Loader.instance ().getIndexedModList ().get (identifier).getVersion ();
     }
 }

@@ -47,4 +47,9 @@ public class BukkitCompatibilityModuleLoader implements CompatibilityModuleLoade
         return EnumCompatibilityModuleLoadingPoint.PRE_INIT;
     }
 
+    @Override
+    public void onPreLoad ()
+    {
+    }
+
 }

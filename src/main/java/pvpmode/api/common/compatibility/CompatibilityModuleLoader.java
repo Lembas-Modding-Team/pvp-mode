@@ -46,4 +46,11 @@ public interface CompatibilityModuleLoader
         return EnumCompatibilityModuleLoadingPoint.INIT;
     }
 
+    /**
+     * This function will be invoked when the referenced compatibility module should
+     * be loaded - before it will be instantiated and loaded, but after
+     * {@link CompatibilityModuleLoader#canLoad()} has been invoked.
+     */
+    public void onPreLoad ();
+
 }

@@ -28,4 +28,10 @@ public class LOTRModCompatibilityModuleLoader extends ForgeModCompatibilityModul
         return "pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModule";
     }
 
+    @Override
+    protected boolean isVersionSupported (String modid, String version)
+    {
+        return version.equals ("Beta v34.2 for Minecraft 1.7.10");
+    }
+
 }

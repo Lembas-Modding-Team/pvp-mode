@@ -31,4 +31,10 @@ public abstract class BukkitPluginCompatibilityModuleLoader extends IdentifierCo
         return ServerCompatibilityConstants.SERVER_STARTING_LOADING_POINT;
     }
 
+    @Override
+    protected String getIdentifierVersion (String identifier)
+    {
+        return Bukkit.getPluginManager ().getPlugin (identifier).getDescription ().getVersion ();
+    }
+
 }
