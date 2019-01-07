@@ -19,7 +19,7 @@
 
 #### Bug fixes:
 * Fixed that previously soulbound items couldn't be stacked with unbound ones after they were unbound
-* Fixed a crash when a player died if `keeyInventory` was disabled and if the soulbound feature was enabled
+* Fixed a crash when a player died if `keepInventory` was disabled and if the soulbound feature was enabled
 
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands
