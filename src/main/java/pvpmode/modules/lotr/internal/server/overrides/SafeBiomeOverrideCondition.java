@@ -1,4 +1,4 @@
-package pvpmode.modules.lotr.internal.server;
+package pvpmode.modules.lotr.internal.server.overrides;
 
 import java.util.*;
 
@@ -6,11 +6,12 @@ import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
+import pvpmode.modules.lotr.internal.server.FactionEntry;
 
 public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondition
 {
 
-    public SafeBiomeOverrideCondition (Map<Integer, Collection<BiomeFactionEntry>> configurationData)
+    public SafeBiomeOverrideCondition (Map<Integer, Collection<FactionEntry>> configurationData)
     {
         super (configurationData);
     }
@@ -22,7 +23,7 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
     }
 
     @Override
-    protected EnumForcedPvPMode handleCondition (BiomeFactionEntry entry, EntityPlayer player)
+    protected EnumForcedPvPMode handleCondition (FactionEntry entry, EntityPlayer player)
     {
         String factionName = entry.getFactionName ();
         if (factionName.equals ("ALL"))

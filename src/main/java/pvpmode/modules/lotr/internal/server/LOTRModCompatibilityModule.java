@@ -21,6 +21,7 @@ import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
 import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.modules.lotr.internal.server.overrides.*;
 
 /**
  * The compatibility module for the LOTR Mod.
@@ -102,7 +103,7 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     private void initBiomeOverrides (Path configurationFolder, String configFileName, String configName,
         String defaultConfigFileName,
-        Function<Map<Integer, Collection<BiomeFactionEntry>>, PvPOverrideCondition> conditionCreator,
+        Function<Map<Integer, Collection<FactionEntry>>, PvPOverrideCondition> conditionCreator,
         Supplier<PvPOverrideCondition> currentConditionGetter, Consumer<PvPOverrideCondition> currentConditionSetter)
     {
         this.recreateFile (configurationFolder, defaultConfigFileName, configFileName,
@@ -114,7 +115,9 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         try
         {
 
-            PvPOverrideCondition condition = conditionCreator.apply (parser.parse ());
+            parser.parse ();
+
+            PvPOverrideCondition condition = conditionCreator.apply (parser.getParsedData ());
 
             if (currentConditionGetter.get () != null)
             {
