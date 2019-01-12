@@ -105,7 +105,8 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         Function<Map<Integer, Collection<BiomeFactionEntry>>, PvPOverrideCondition> conditionCreator,
         Supplier<PvPOverrideCondition> currentConditionGetter, Consumer<PvPOverrideCondition> currentConditionSetter)
     {
-        this.recreateFile (configurationFolder, defaultConfigFileName, configFileName, configName);
+        this.recreateFile (configurationFolder, defaultConfigFileName, configFileName,
+            configName + " configuration file", true);
 
         BiomeOverrideConfigParser parser = new BiomeOverrideConfigParser (configName,
             configurationFolder.resolve (configFileName), logger);
@@ -141,24 +142,32 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     private void recreateFile (Path targetFolder, String filename, String shortName)
     {
-        this.recreateFile (targetFolder, filename, filename, shortName);
+        this.recreateFile (targetFolder, filename, filename, shortName, false);
     }
 
-    private void recreateFile (Path targetFolder, String filename, String targetFilename, String shortName)
+    private void recreateFile (Path targetFolder, String filename, String targetFilename, String shortName,
+        boolean recreateIfNotExists)
     {
         try
         {
             Path file = targetFolder.resolve (targetFilename);
+
+            boolean existed = true;
+
             if (!Files.exists (file))
             {
                 logger.info ("The %s doesn't exist - it'll be created", shortName);
                 Files.createFile (file);
+                existed = false;
             }
 
-            PvPCommonUtils.writeFromStreamToFile (
-                () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
-                file);
-            logger.info ("Recreated the %s", shortName);
+            if (recreateIfNotExists && !existed || !recreateIfNotExists)
+            {
+                PvPCommonUtils.writeFromStreamToFile (
+                    () -> this.getClass ().getResourceAsStream ("/assets/pvpmode/modules/lotr/" + filename),
+                    file);
+                logger.info ("Recreated the %s", shortName);
+            }
         }
         catch (IOException e)
         {
