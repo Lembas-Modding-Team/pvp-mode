@@ -38,7 +38,7 @@ archivesBaseName = config.archivesBaseName
 
 println "Current mod version: " + project.version + "!"
 
-// Need this here so eclipse task generates correctly.
+// Need this here so eclipse task generates correctly
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 compileJava {
