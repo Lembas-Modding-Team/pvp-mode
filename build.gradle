@@ -119,7 +119,7 @@ reobf {
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-	// this will ensure that this task is redone when the versions change.
+	// this will ensure that this task is redone when the versions change
 	inputs.property "version", project.version
 	inputs.property "mcversion", project.minecraft.version
 
