@@ -617,7 +617,8 @@ public class PvPCommandConfig extends AbstractPvPCommand
 
         if (!castKey.isValidValue (newValue))
             throw new CommandException (
-                String.format ("\"%s§r\" is not a valid value for \"%s\"", newValue,
+                String.format ("\"%s\" is not a valid value for \"%s\"",
+                    new ChatComponentText (newValue.toString ()).getUnformattedText (),
                     getDisplayName (manager, castKey)));
 
         manager.setProperty (castKey, newValue);
