@@ -1,18 +1,26 @@
 package pvpmode;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.Mod.*;
-import cpw.mods.fml.common.event.*;
 import pvpmode.api.common.version.SemanticVersion;
 import pvpmode.internal.client.ClientProxy;
 import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.ServerProxy;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+
+@Mod(modid = PvPMode.MODID, name = "@name@", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
 public class PvPMode
 {
-
-    public static final String VERSION = "2.0.0-BETA.2";
+    public static final String MODID = "@modid@";
+    public static final String VERSION = "@version@";
     public static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.of (VERSION);
 
     @Instance
