@@ -547,10 +547,7 @@ public class ConfigurationPropertyKey<T>
         {
             boolean isValid = super.isValidValue (value);
             if (isValid && validValues != null)
-            {
-                if (validValues.containsAll (value))
-                    return true;
-            }
+                return validValues.containsAll (value);
             return isValid;
         }
 
