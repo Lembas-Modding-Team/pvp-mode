@@ -70,8 +70,6 @@ configurations {
 }
 
 dependencies {
-	testCompile 'junit:junit:4.12'
-
 	provided fileTree(dir: "libs", include: ["*.jar"])
 
 	shadow "io.github.lukehutch:fast-classpath-scanner:2.21"
