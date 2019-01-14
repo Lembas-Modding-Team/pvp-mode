@@ -36,9 +36,7 @@ version = config.version
 group = config.group
 archivesBaseName = config.archivesBaseName
 
-println "Current mod version: " + project.version + "!"
-
-// Need this here so eclipse task generates correctly
+// Need this here so Eclipse tasks generates correctly
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 compileJava {
@@ -46,7 +44,7 @@ compileJava {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-// This makes IntelliJ recognize the assets folder
+// This makes IDEA recognize the assets folder
 idea {
 	module {
 		inheritOutputDirs = true
@@ -91,7 +89,6 @@ minecraft {
 }
 
 jar {
-	classifier = "thin"
 	manifest {
 		attributes "FMLCorePlugin": "pvpmode.internal.common.core.PvPModeCore"
 		attributes "FMLCorePluginContainsFMLMod": "true"
@@ -102,6 +99,7 @@ jar {
 }
 
 shadowJar {
+	// Overwrite the default file
 	classifier = ""
 	configurations = [project.configurations.shadow]
 	from(sourceSets.main.allJava) {
@@ -113,23 +111,24 @@ shadowJar {
 }
 
 reobf {
-	shadowJar {} // Reobfuscate the shadowed JAR
+	// Reobfuscate the shadowed JAR
+	shadowJar {}
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-	// this will ensure that this task is redone when the versions change
+	// This will ensure that this task is redone when the versions change
 	inputs.property "version", project.version
 	inputs.property "mcversion", project.minecraft.version
 
-	// replace stuff in mcmod.info, nothing else
+	// Replace stuff in mcmod.info, nothing else
 	from(sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"
 		filter ReplaceTokens, tokens: [version: config.version, mcversion: project.minecraft.version, modid: config.modid, name: config.name]
 	}
 
-	// copy everything else, that's not the mcmod.info
+	// Copy everything else
 	from(sourceSets.main.resources.srcDirs) {
 		exclude "mcmod.info"
 	}
