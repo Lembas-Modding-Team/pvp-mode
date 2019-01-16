@@ -29,6 +29,7 @@
 ### LOTR compatibility:
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
 * Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
+* One can now specify multiple entries with the same faction for the biome overrides
 
 ### SuffixForge compatibility:
 * Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)

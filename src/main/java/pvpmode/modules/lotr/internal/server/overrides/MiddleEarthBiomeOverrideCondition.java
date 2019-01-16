@@ -1,4 +1,4 @@
-package pvpmode.modules.lotr.internal.server;
+package pvpmode.modules.lotr.internal.server.overrides;
 
 import java.util.*;
 
@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
+import pvpmode.modules.lotr.internal.server.FactionEntry;
 
 /**
  * The basic override condition for the LOTR biomes.
@@ -17,9 +18,9 @@ import pvpmode.api.server.overrides.PvPOverrideCondition;
 public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCondition
 {
 
-    private Map<Integer, Collection<BiomeFactionEntry>> configurationData = new HashMap<> ();
+    private Map<Integer, Collection<FactionEntry>> configurationData = new HashMap<> ();
 
-    public MiddleEarthBiomeOverrideCondition (Map<Integer, Collection<BiomeFactionEntry>> configurationData)
+    public MiddleEarthBiomeOverrideCondition (Map<Integer, Collection<FactionEntry>> configurationData)
     {
         this.configurationData = configurationData;
     }
@@ -33,7 +34,7 @@ public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCo
         // Check if we are in a relevant LOTR biome
         if (currentBiome instanceof LOTRBiome && configurationData.containsKey (currentBiome.biomeID))
         {
-            for (BiomeFactionEntry entry : configurationData.get (currentBiome.biomeID))
+            for (FactionEntry entry : configurationData.get (currentBiome.biomeID))
             {
                 EnumForcedPvPMode enabled = handleCondition (entry, player);
                 if (enabled != EnumForcedPvPMode.UNDEFINED)
@@ -46,6 +47,6 @@ public abstract class MiddleEarthBiomeOverrideCondition implements PvPOverrideCo
         return forcedPvPMode;
     }
 
-    protected abstract EnumForcedPvPMode handleCondition (BiomeFactionEntry entry, EntityPlayer player);
+    protected abstract EnumForcedPvPMode handleCondition (FactionEntry entry, EntityPlayer player);
 
 }

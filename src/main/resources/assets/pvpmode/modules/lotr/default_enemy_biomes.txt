@@ -4,6 +4,9 @@
 # Basically this file allows you to specify in which biome a player which is hostile to a faction you assign to this biome is forced to have PvP enabled.
 # Also, you can define what "hostile" means (in terms of alignment): If the alignment of the player is less than the specified one, the player is seen as hostile.
 #
+# One can include multiple lines starting with the same faction, but with different alignment values. That way you can specify different alignment conditions for different biomes, but for the same faction
+# Note that if you specify two entries with the same faction, but different alignment values, for the same biome, the condition with the highest alignment value applies.
+#
 # A configuration entry consists of one line, which contains three columns separated by a semicolon (;).
 #
 # The first part is the faction name, which is the name which is internally used by the game (see the command /alignment). Also you can use the specifier ALL,
