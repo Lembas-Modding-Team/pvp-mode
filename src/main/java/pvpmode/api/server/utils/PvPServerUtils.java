@@ -218,14 +218,9 @@ public class PvPServerUtils extends PvPCommonUtils
         if (entity == null)
             return null;
 
-        if (entity instanceof EntityPlayerMP)
-        {
-            EntityPlayerMP player = (EntityPlayerMP) entity;
-
-            // Check whether the supplied player is a real one
-            if (!MinecraftForge.EVENT_BUS.post (new PlayerIdentityCheckEvent (player)))
-                return player;
-        }
+        EntityPlayerMP player = getPlayer (entity);
+        if (player != null)
+            return player;
 
         List<Entity> entitiesChecked = new ArrayList<> ();
         Entity owner = entity;
@@ -244,6 +239,26 @@ public class PvPServerUtils extends PvPCommonUtils
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPServerUtils.postEventAndGetResult (event, event::getMaster);
+    }
+
+    /**
+     * Returns the supplied entity as a player if it is one, otherwise null.
+     * 
+     * @param entity
+     *            The entity to check
+     * @return The player or null
+     */
+    public static EntityPlayerMP getPlayer (Entity entity)
+    {
+        if (entity instanceof EntityPlayerMP)
+        {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+
+            // Check whether the supplied player is a real one
+            if (!MinecraftForge.EVENT_BUS.post (new PlayerIdentityCheckEvent (player)))
+                return player;
+        }
+        return null;
     }
 
     /**
