@@ -1,16 +1,29 @@
 package pvpmode.api.common.utils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.IOUtils;
-
-import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
+
+import net.minecraft.entity.player.EntityPlayer;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class PvPCommonUtils
 {
@@ -50,17 +63,15 @@ public class PvPCommonUtils
     }
 
     /**
-     * Writes the contents of the supplied stream to the specified file.<br/>
-     * The file must exist on the filesystem.
+     * Writes the contents of the supplied stream to the specified file.<br> The file must exist on
+     * the filesystem.
      *
-     * @param stream
-     *            A supplier which creates the input stream
-     * @param file
-     *            The file where the data should be stored
-     * @throws IOException
-     *             If IO errors occur
+     * @param stream A supplier which creates the input stream
+     * @param file The file where the data should be stored
+     * @throws IOException If IO errors occur
      */
-    public static void writeFromStreamToFile (Supplier<InputStream> stream, Path file) throws IOException
+    public static void writeFromStreamToFile (Supplier<InputStream> stream, Path file)
+        throws IOException
     {
         try (InputStream in = stream.get ();
             OutputStream out = Files.newOutputStream (file))
@@ -78,8 +89,7 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns the direction of the supplied player relative to the other supplied
-     * player.
+     * Returns the direction of the supplied player relative to the other supplied player.
      */
     public static String getPlayerDirection (EntityPlayer origin, EntityPlayer player)
     {
@@ -132,19 +142,18 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns a map with the content of the source map, which is completely
-     * unmodifiable, inclusive it's content and the content of the content and so
-     * on. Changes made to the source map WON'T be backed by the returned map.
+     * Returns a map with the content of the source map, which is completely unmodifiable, inclusive
+     * it's content and the content of the content and so on. Changes made to the source map WON'T
+     * be backed by the returned map.
      *
-     * @param source
-     *            The original map
+     * @param source The original map
      * @return The deep unmodifiable map
      */
     public static <K, J> Map<K, J> deepUnmodifiableMap (Map<K, J> source)
     {
         Map<K, J> tmpMap = new HashMap<> (source.size ());
 
-        source.forEach ( (key, value) ->
+        source.forEach ((key, value) ->
         {
             tmpMap.put (getUnmodifiableObject (key), getUnmodifiableObject (value));
         });
@@ -152,50 +161,49 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns a list with the content of the source list, which is completely
-     * unmodifiable, inclusive it's content and the content of the content and so
-     * on. Changes made to the source list WON'T be backed by the returned list.
+     * Returns a list with the content of the source list, which is completely unmodifiable,
+     * inclusive it's content and the content of the content and so on. Changes made to the source
+     * list WON'T be backed by the returned list.
      *
-     * @param source
-     *            The original list
+     * @param source The original list
      * @return The deep unmodifiable list
      */
     public static <K> List<K> deepUnmodifiableList (List<K> source)
     {
-        return deepUnmodifiableCollection (source, new ArrayList<K> (source.size ()), Collections::unmodifiableList);
+        return deepUnmodifiableCollection (source, new ArrayList<> (source.size ()),
+            Collections::unmodifiableList);
     }
 
     /**
-     * Returns a set with the content of the source set, which is completely
-     * unmodifiable, inclusive it's content and the content of the content and so
-     * on. Changes made to the source set WON'T be backed by the returned set.
+     * Returns a set with the content of the source set, which is completely unmodifiable, inclusive
+     * it's content and the content of the content and so on. Changes made to the source set WON'T
+     * be backed by the returned set.
      *
-     * @param source
-     *            The original list
+     * @param source The original list
      * @return The deep unmodifiable list
      */
     public static <K> Set<K> deepUnmodifiableSet (Set<K> source)
     {
-        return deepUnmodifiableCollection (source, new HashSet<K> (source.size ()), Collections::unmodifiableSet);
+        return deepUnmodifiableCollection (source, new HashSet<> (source.size ()),
+            Collections::unmodifiableSet);
     }
 
     /**
-     * Returns a collection with the content of the source collection, which is
-     * completely unmodifiable, inclusive it's content and the content of the
-     * content and so on. Changes made to the source collection WON'T be backed by
-     * the returned collection.
+     * Returns a collection with the content of the source collection, which is completely
+     * unmodifiable, inclusive it's content and the content of the content and so on. Changes made
+     * to the source collection WON'T be backed by the returned collection.
      *
-     * @param source
-     *            The original collection
+     * @param source The original collection
      * @return The deep unmodifiable collection
      */
     public static <K> Collection<K> deepUnmodifiableCollection (Collection<K> source)
     {
-        return deepUnmodifiableCollection (source, new ArrayList<K> (source.size ()),
+        return deepUnmodifiableCollection (source, new ArrayList<> (source.size ()),
             Collections::unmodifiableCollection);
     }
 
-    private static <K extends Collection<J>, J> K deepUnmodifiableCollection (K source, K tmpCollection,
+    private static <K extends Collection<J>, J> K deepUnmodifiableCollection (K source,
+        K tmpCollection,
         Function<K, K> unmodifiableCollectionCreator)
     {
         source.forEach (element ->
@@ -220,11 +228,10 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns the wrapper class of the specified primitive class. If the supplied
-     * class is not a primitive one, the supplied class is returned.
-     * 
-     * @param primitive
-     *            The primitive class
+     * Returns the wrapper class of the specified primitive class. If the supplied class is not a
+     * primitive one, the supplied class is returned.
+     *
+     * @param primitive The primitive class
      * @return The wrapper class
      */
     public static Class<?> toWrapper (Class<?> primitive)
@@ -233,11 +240,10 @@ public class PvPCommonUtils
     }
 
     /**
-     * Returns the primitive class of the specified wrapper class. If the supplied
-     * class is not a wrapper, the supplied class is returned.
-     * 
-     * @param wrapper
-     *            The wrapper class
+     * Returns the primitive class of the specified wrapper class. If the supplied class is not a
+     * wrapper, the supplied class is returned.
+     *
+     * @param wrapper The wrapper class
      * @return The primitive class
      */
     public static Class<?> toPrimitive (Class<?> wrapper)
@@ -246,11 +252,10 @@ public class PvPCommonUtils
     }
 
     /**
-     * Extracts properties of the format "key=value" from the specified array, where
-     * each entry contains a property of the specified format.
-     * 
-     * @param properties
-     *            The properties array
+     * Extracts properties of the format "key=value" from the specified array, where each entry
+     * contains a property of the specified format.
+     *
+     * @param properties The properties array
      * @return A map containing the properties
      */
     public static Map<String, String> getPropertiesFromArray (String... properties)
@@ -270,37 +275,34 @@ public class PvPCommonUtils
     }
 
     /**
-     * Extracts the properties from the {@link Process} annotation of a class
-     * annotated with it.
-     * 
-     * @param clazz
-     *            The annotated class
+     * Extracts the properties from the {@link Process} annotation of a class annotated with it.
+     *
+     * @param clazz The annotated class
      * @return The properties map
      */
     public static Map<String, String> getPropertiesFromProcessedClass (Class<?> clazz)
     {
-        return PvPCommonUtils.getPropertiesFromArray (clazz.getAnnotation (Process.class).properties ());
+        return PvPCommonUtils
+            .getPropertiesFromArray (clazz.getAnnotation (Process.class).properties ());
     }
 
     /**
-     * Extracts the properties from the {@link Register} annotation of a class
-     * annotated with it.
-     * 
-     * @param clazz
-     *            The annotated class
+     * Extracts the properties from the {@link Register} annotation of a class annotated with it.
+     *
+     * @param clazz The annotated class
      * @return The properties map
      */
     public static Map<String, String> getPropertiesFromRegisteredClass (Class<?> clazz)
     {
-        return PvPCommonUtils.getPropertiesFromArray (clazz.getAnnotation (Register.class).properties ());
+        return PvPCommonUtils
+            .getPropertiesFromArray (clazz.getAnnotation (Register.class).properties ());
     }
 
     /**
-     * Returns true of a class has the {@link Register} annotation and
-     * {@link Register#enabled()} is true.
-     * 
-     * @param clazz
-     *            The class to check
+     * Returns true of a class has the {@link Register} annotation and {@link Register#enabled()} is
+     * true.
+     *
+     * @param clazz The class to check
      * @return Whether it is registerable
      */
     public static <T> boolean isClassRegisterable (Class<? extends T> clazz)
@@ -310,29 +312,28 @@ public class PvPCommonUtils
     }
 
     /**
-     * A helper function creating and returning instances of the supplied classes.
-     * Additionally, one can control which classes should be instantiated and also a
-     * "post create event" can be fired after the creation of a class.
-     * 
-     * @param classes
-     *            The collection of classes
-     * @param shouldCreateInstancePredicate
-     *            A predicate returning whether a class should be instantiated. If
-     *            null, every class will be instantiated.
-     * @param postCreateConsumer
-     *            If not null, it'll be called for every class and class instance
-     *            after the creation of it.
+     * A helper function creating and returning instances of the supplied classes. Additionally, one
+     * can control which classes should be instantiated and also a "post create event" can be fired
+     * after the creation of a class.
+     *
+     * @param classes The collection of classes
+     * @param shouldCreateInstancePredicate A predicate returning whether a class should be
+     * instantiated. If null, every class will be instantiated.
+     * @param postCreateConsumer If not null, it'll be called for every class and class instance
+     * after the creation of it.
      * @return A collection of all class instances.
      */
     public static <T> Collection<T> createInstances (
-        Collection<Class<? extends T>> classes, Predicate<Class<? extends T>> shouldCreateInstancePredicate,
+        Collection<Class<? extends T>> classes,
+        Predicate<Class<? extends T>> shouldCreateInstancePredicate,
         BiConsumer<Class<? extends T>, T> postCreateConsumer)
     {
         Collection<T> instances = new ArrayList<> ();
 
         for (Class<? extends T> classToProcess : classes)
         {
-            if (shouldCreateInstancePredicate != null ? shouldCreateInstancePredicate.test (classToProcess) : true)
+            if (shouldCreateInstancePredicate != null ? shouldCreateInstancePredicate
+                .test (classToProcess) : true)
             {
 
                 T newInstance = createInstance (classToProcess);
@@ -351,11 +352,10 @@ public class PvPCommonUtils
     }
 
     /**
-     * Creates a new instance of the supplied class or returns null of no instance
-     * could be created.
-     * 
-     * @param classToInstantiate
-     *            The class to instantiate
+     * Creates a new instance of the supplied class or returns null of no instance could be
+     * created.
+     *
+     * @param classToInstantiate The class to instantiate
      * @return The created instance
      */
     public static <T> T createInstance (Class<T> classToInstantiate)
@@ -366,8 +366,9 @@ public class PvPCommonUtils
         }
         catch (InstantiationException e)
         {
-            PvPMode.proxy.getLogger ().errorThrowable ("Couldn't create an instance of the class \"%s\"", e,
-                classToInstantiate.getName ());
+            PvPMode.proxy.getLogger ()
+                .errorThrowable ("Couldn't create an instance of the class \"%s\"", e,
+                    classToInstantiate.getName ());
         }
         catch (IllegalAccessException e)
         {
@@ -379,35 +380,32 @@ public class PvPCommonUtils
     }
 
     /**
-     * Creates instances of the supplied classes as in
-     * {@link PvPCommonUtils#createInstances(Collection, Predicate, BiConsumer)},
-     * but only if {@link PvPCommonUtils#isClassRegisterable(Class)} returns true
-     * for that class.
-     * 
-     * @param classes
-     *            The collection of classes
+     * Creates instances of the supplied classes as in {@link PvPCommonUtils#createInstances(Collection,
+     * Predicate, BiConsumer)}, but only if {@link PvPCommonUtils#isClassRegisterable(Class)}
+     * returns true for that class.
+     *
+     * @param classes The collection of classes
      * @return A collection of instances of the supplied classes
      */
-    public static <T> Collection<T> createRegisteredInstances (Collection<Class<? extends T>> classes)
+    public static <T> Collection<T> createRegisteredInstances (
+        Collection<Class<? extends T>> classes)
     {
         return createInstances (classes, PvPCommonUtils::isClassRegisterable, null);
     }
 
     /**
-     * Creates instances of the supplied classes as in
-     * {@link PvPCommonUtils#createInstances(Collection, Predicate, BiConsumer)},
-     * but only if {@link PvPCommonUtils#isClassRegisterable(Class)} returns true
-     * for that class. Also, one can specify a "postCreateConsumer" (or null, then
+     * Creates instances of the supplied classes as in {@link PvPCommonUtils#createInstances(Collection,
+     * Predicate, BiConsumer)}, but only if {@link PvPCommonUtils#isClassRegisterable(Class)}
+     * returns true for that class. Also, one can specify a "postCreateConsumer" (or null, then
      * nothing special happens).
-     * 
-     * @param classes
-     *            The collection of classes
-     * @param postCreateConsumer
-     *            If not null, it'll be called after the class instance has been
-     *            created
+     *
+     * @param classes The collection of classes
+     * @param postCreateConsumer If not null, it'll be called after the class instance has been
+     * created
      * @return A collection of instances of the supplied classes
      */
-    public static <T> Collection<T> createRegisteredInstances (Collection<Class<? extends T>> classes,
+    public static <T> Collection<T> createRegisteredInstances (
+        Collection<Class<? extends T>> classes,
         BiConsumer<Class<? extends T>, T> postCreateConsumer)
     {
         return createInstances (classes, PvPCommonUtils::isClassRegisterable, postCreateConsumer);
@@ -415,9 +413,8 @@ public class PvPCommonUtils
 
     /**
      * Creates instances of the supplied classes and returns them.
-     * 
-     * @param classes
-     *            The collection of classes
+     *
+     * @param classes The collection of classes
      * @return The created instances
      */
     public static <T> Collection<T> createInstances (
@@ -428,9 +425,8 @@ public class PvPCommonUtils
 
     /**
      * Returns a {@link SimpleLogger} instance assigned to the specified name.
-     * 
-     * @param name
-     *            The name of the logger
+     *
+     * @param name The name of the logger
      * @return The logger instance
      */
     public static SimpleLogger getLogger (String name)
@@ -440,9 +436,8 @@ public class PvPCommonUtils
 
     /**
      * Returns a {@link SimpleLogger} instance assigned to the specified class.
-     * 
-     * @param clazz
-     *            The class the logger is assigned to
+     *
+     * @param clazz The class the logger is assigned to
      * @return The logger instance
      */
     public static SimpleLogger getLogger (Class<?> clazz)

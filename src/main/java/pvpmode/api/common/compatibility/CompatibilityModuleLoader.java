@@ -1,17 +1,14 @@
 package pvpmode.api.common.compatibility;
 
 /**
- * The compatibility module loader is the bridge between PvPMode and the
- * compatibility module. PvPMode cannot load the module directly because it can
- * contain references to code which is not present on runtime. Because of this
- * there are compatibility module loaders, which first determine whether the
- * referenced module can be loaded - and only if yes, PvPMode will try to load
- * it.<br/>
- * There must not be any compile time dependencies to the referenced module or
- * other mods or libaries.
+ * The compatibility module loader is the bridge between PvPMode and the compatibility module.
+ * PvPMode cannot load the module directly because it can contain references to code which is not
+ * present on runtime. Because of this there are compatibility module loaders, which first determine
+ * whether the referenced module can be loaded - and only if yes, PvPMode will try to load it.<br>
+ * There must not be any compile time dependencies to the referenced module or other mods or
+ * libaries.
  *
  * @author CraftedMods
- *
  */
 public interface CompatibilityModuleLoader
 {
@@ -31,15 +28,14 @@ public interface CompatibilityModuleLoader
     public String getCompatibilityModuleClassName ();
 
     /**
-     * Determines whether the referenced compatibility can/shall be loaded. This
-     * function won't be called before the referenced loading point
-     * ({@link CompatibilityModuleLoader#getLoadingPoint()}) has been reached.
+     * Determines whether the referenced compatibility can/shall be loaded. This function won't be
+     * called before the referenced loading point ({@link CompatibilityModuleLoader#getLoadingPoint()})
+     * has been reached.
      */
     public boolean canLoad ();
 
     /**
-     * The phase when the framework will try to load the referenced compatibility
-     * module.
+     * The phase when the framework will try to load the referenced compatibility module.
      */
     public default EnumCompatibilityModuleLoadingPoint getLoadingPoint ()
     {
@@ -47,9 +43,9 @@ public interface CompatibilityModuleLoader
     }
 
     /**
-     * This function will be invoked when the referenced compatibility module should
-     * be loaded - before it will be instantiated and loaded, but after
-     * {@link CompatibilityModuleLoader#canLoad()} has been invoked.
+     * This function will be invoked when the referenced compatibility module should be loaded -
+     * before it will be instantiated and loaded, but after {@link CompatibilityModuleLoader#canLoad()}
+     * has been invoked.
      */
     public void onPreLoad ();
 
