@@ -8,11 +8,12 @@ import pvpmode.internal.client.ClientProxy;
 import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.ServerProxy;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = PvPMode.MODID, name = "@name@", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
 public class PvPMode
 {
 
-    public static final String VERSION = "2.0.0-BETA.2";
+    public static final String MODID = "@modid@";
+    public static final String VERSION = "@version@";
     public static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.of (VERSION);
 
     @Instance
