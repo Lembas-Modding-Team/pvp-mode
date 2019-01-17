@@ -5,12 +5,13 @@ import java.util.regex.Pattern;
 
 /**
  * A class representing a semantic version. It is specified as the following:
- * major.minor.patch-STATE.pre (1) OR major.minor.patch-PRE.pre (2). STATE is ALPHA or BETA, major
- * is the (API) version, minor is the feature version, and patch is the bugfix version. pre is the
- * pre-release version. If the version state is FULL, then the second (2) version template will be
- * used.
- *
+ * major.minor.patch-STATE.pre (1) OR major.minor.patch-PRE.pre (2). STATE is
+ * ALPHA or BETA, major is the (API) version, minor is the feature version, and
+ * patch is the bugfix version. pre is the pre-release version. If the version
+ * state is FULL, then the second (2) version template will be used.
+ * 
  * @author CraftedMods
+ *
  */
 public class SemanticVersion implements Comparable<SemanticVersion>
 {
@@ -22,10 +23,9 @@ public class SemanticVersion implements Comparable<SemanticVersion>
     private final int preReleaseVersion;
 
     private final String versionString;// Since this object is immutable, the version string doesn't
-    // have to be computed every call of toString
+                                       // have to be computed every call of toString
 
-    public SemanticVersion (EnumVersionState versionState, int majorVersion, int minorVersion,
-        int patchVersion,
+    public SemanticVersion (EnumVersionState versionState, int majorVersion, int minorVersion, int patchVersion,
         int preReleaseVersion)
     {
         Objects.requireNonNull (versionState);
@@ -44,74 +44,71 @@ public class SemanticVersion implements Comparable<SemanticVersion>
         this.minorVersion = minorVersion;
         this.patchVersion = patchVersion;
         this.preReleaseVersion = preReleaseVersion;
-        versionString = buildVersionString ();
+        this.versionString = this.buildVersionString ();
     }
 
-    public SemanticVersion (EnumVersionState versionState, int majorVersion, int minorVersion,
-        int patchVersion)
+    public SemanticVersion (EnumVersionState versionState, int majorVersion, int minorVersion, int patchVersion)
     {
         this (versionState, majorVersion, minorVersion, patchVersion, -1);
     }
 
     public EnumVersionState getVersionState ()
     {
-        return versionState;
+        return this.versionState;
     }
 
     public int getMajorVersion ()
     {
-        return majorVersion;
+        return this.majorVersion;
     }
 
     public int getMinorVersion ()
     {
-        return minorVersion;
+        return this.minorVersion;
     }
 
     public int getPatchVersion ()
     {
-        return patchVersion;
+        return this.patchVersion;
     }
 
     public int getPreReleaseVersion ()
     {
-        return preReleaseVersion;
+        return this.preReleaseVersion;
     }
 
     public boolean isPreRelease ()
     {
-        return preReleaseVersion >= 0;
+        return this.preReleaseVersion >= 0;
     }
 
     @Override
     public int compareTo (SemanticVersion comparable)
     {
-        int stateComp = versionState.compareTo (comparable.versionState);
-        int majorComp = Integer.compare (majorVersion, comparable.majorVersion);
-        int minorComp = Integer.compare (minorVersion, comparable.minorVersion);
-        int patchComp = Integer.compare (patchVersion, comparable.patchVersion);
-        int preReleaseComp = Integer.compare (preReleaseVersion, comparable.preReleaseVersion);
-        if (preReleaseVersion < 0 || comparable.preReleaseVersion < 0)
+        int stateComp = this.versionState.compareTo (comparable.versionState);
+        int majorComp = Integer.compare (this.majorVersion, comparable.majorVersion);
+        int minorComp = Integer.compare (this.minorVersion, comparable.minorVersion);
+        int patchComp = Integer.compare (this.patchVersion, comparable.patchVersion);
+        int preReleaseComp = Integer.compare (this.preReleaseVersion, comparable.preReleaseVersion);
+        if (this.preReleaseVersion < 0 || comparable.preReleaseVersion < 0)
         {
             preReleaseComp = -preReleaseComp;
         }
         return stateComp == 0
-            ? majorComp == 0 ? minorComp == 0
-            ? patchComp == 0 ? preReleaseComp : patchComp
-            : minorComp : majorComp
+            ? majorComp == 0 ? minorComp == 0 ? patchComp == 0 ? preReleaseComp : patchComp : minorComp : majorComp
             : stateComp;
     }
 
     @Override
     public int hashCode ()
     {
-        int prime = 31;
+        final int prime = 31;
         int result = 1;
-        result = prime * result + majorVersion;
-        result = prime * result + minorVersion;
-        result = prime * result + patchVersion;
-        result = prime * result + preReleaseVersion;
-        result = prime * result + (versionState == null ? 0 : versionState.hashCode ());
+        result = prime * result + this.majorVersion;
+        result = prime * result + this.minorVersion;
+        result = prime * result + this.patchVersion;
+        result = prime * result + this.preReleaseVersion;
+        result = prime * result + (this.versionState == null ? 0 : this.versionState.hashCode ());
         return result;
     }
 
@@ -122,56 +119,53 @@ public class SemanticVersion implements Comparable<SemanticVersion>
             return true;
         if (obj == null)
             return false;
-        if (getClass () != obj.getClass ())
+        if (this.getClass () != obj.getClass ())
             return false;
         SemanticVersion other = (SemanticVersion) obj;
-        if (majorVersion != other.majorVersion)
+        if (this.majorVersion != other.majorVersion)
             return false;
-        if (minorVersion != other.minorVersion)
+        if (this.minorVersion != other.minorVersion)
             return false;
-        if (patchVersion != other.patchVersion)
+        if (this.patchVersion != other.patchVersion)
             return false;
-        if (preReleaseVersion != other.preReleaseVersion)
+        if (this.preReleaseVersion != other.preReleaseVersion)
             return false;
-        if (versionState != other.versionState)
+        if (this.versionState != other.versionState)
             return false;
         return true;
     }
 
     private String buildVersionString ()
     {
-        return String.format ("%d.%d.%d%s%s", majorVersion, minorVersion, patchVersion,
-            versionState == EnumVersionState.FULL ? "" : String.format ("-%s", versionState
-                .toString ()),
-            preReleaseVersion >= 0
-                ? String.format ("%s.%d", versionState == EnumVersionState.FULL ? "-PRE" : "",
-                preReleaseVersion)
+        return String.format ("%d.%d.%d%s%s", this.majorVersion, this.minorVersion, this.patchVersion,
+            this.versionState == EnumVersionState.FULL ? "" : String.format ("-%s", this.versionState.toString ()),
+            this.preReleaseVersion >= 0
+                ? String.format ("%s.%d", this.versionState == EnumVersionState.FULL ? "-PRE" : "",
+                    this.preReleaseVersion)
                 : "");
     }
 
     @Override
     public String toString ()
     {
-        return versionString;
+        return this.versionString;
     }
 
     /**
-     * Parses the specified version string and returns a semantic version. Throws an {@link
-     * IllegalArgumentException} if the version string is invalid.
-     *
-     * @param versionString The version string
+     * Parses the specified version string and returns a semantic version. Throws an
+     * {@link IllegalArgumentException} if the version string is invalid.
+     * 
+     * @param versionString
+     *            The version string
      * @return The semantic version
      */
     public static SemanticVersion of (String versionString)
     {
         Objects.requireNonNull (versionString);
         String trimmedVersion = versionString.trim ();
-        if (!Pattern
-            .matches ("^[0-9]+\\.[0-9]+\\.[0-9]+($|(-pre)|(-alpha)|(-beta))($|(\\.[0-9]+))$",
-                trimmedVersion))
+        if (!Pattern.matches ("^[0-9]+\\.[0-9]+\\.[0-9]+($|(-PRE)|(-ALPHA)|(-BETA))($|(\\.[0-9]+))$", trimmedVersion))
             throw new IllegalArgumentException (
-                String.format ("The version string \"%s\" doesn't match the specification",
-                    trimmedVersion));
+                String.format ("The version string \"%s\" doesn't match the specification", trimmedVersion));
         String[] parts = trimmedVersion.split ("-");
         String[] mainVersion = parts[0].split ("\\.");
         Integer majorVersion = Integer.parseInt (mainVersion[0]);
@@ -183,7 +177,7 @@ public class SemanticVersion implements Comparable<SemanticVersion>
         {
             String[] parts2 = parts[1].split ("\\.");
             String state = parts2[0].replaceAll ("-", "");
-            if (!state.equals ("pre"))
+            if (!state.equals ("PRE"))
             {
                 versionState = EnumVersionState.valueOf (state);
             }
@@ -192,8 +186,7 @@ public class SemanticVersion implements Comparable<SemanticVersion>
                 preReleaseVersion = Integer.parseInt (parts2[1]);
             }
         }
-        return new SemanticVersion (versionState, majorVersion, minorVersion, patchVersion,
-            preReleaseVersion);
+        return new SemanticVersion (versionState, majorVersion, minorVersion, patchVersion, preReleaseVersion);
     }
 
 }

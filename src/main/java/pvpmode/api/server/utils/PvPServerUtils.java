@@ -1,31 +1,20 @@
 package pvpmode.api.server.utils;
 
+import java.util.*;
+import java.util.function.*;
+
+import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraft.command.*;
+import net.minecraft.entity.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.item.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
-import pvpmode.api.server.compatibility.events.EntityMasterExtractionEvent;
-import pvpmode.api.server.compatibility.events.PartialItemLossEvent;
-import pvpmode.api.server.compatibility.events.PlayerIdentityCheckEvent;
-
-import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import pvpmode.api.server.compatibility.events.*;
 
 public class PvPServerUtils extends PvPCommonUtils
 {
@@ -43,7 +32,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * A filter asking the compatibility modules whether the item stack *could* be dropped.
+     * A filter asking the compatibility modules whether the item stack *could* be
+     * dropped.
      */
     public static final Predicate<ItemStack> PARTIAL_INVENTORY_LOSS_COMP_FILTER = stack ->
     {
@@ -83,8 +73,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns a wrapper from which all player-specific PvP properties can be accessed. The returned
-     * instance can be returned from a cache.
+     * Returns a wrapper from which all player-specific PvP properties can be
+     * accessed. The returned instance can be returned from a cache.
      */
     public static PvPData getPvPData (EntityPlayer player)
     {
@@ -92,7 +82,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the PvPMode of the supplied player. If ON, the player can do PvP, otherwise not.
+     * Returns the PvPMode of the supplied player. If ON, the player can do PvP,
+     * otherwise not.
      */
     public static EnumPvPMode getPvPMode (EntityPlayer player)
     {
@@ -133,8 +124,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the distance between the two supplied players rounded with the distance rounding
-     * factor specified in the configuration file.
+     * Returns the distance between the two supplied players rounded with the
+     * distance rounding factor specified in the configuration file.
      */
     public static int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player)
     {
@@ -142,8 +133,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Posts the supplied event in the Forge event bus and returns a result gotten from the supplied
-     * getter function.
+     * Posts the supplied event in the Forge event bus and returns a result gotten
+     * from the supplied getter function.
      */
     public static <T> T postEventAndGetResult (Event event, Supplier<T> resultGetter)
     {
@@ -154,22 +145,20 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the indices of all filled slots of the supplied "inventory".<br> A filled slot is a
-     * slot with an item stack in it.
+     * Returns the indices of all filled slots of the supplied "inventory".<br/>
+     * A filled slot is a slot with an item stack in it.
      */
-    public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex,
-        int endIndex)
+    public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex)
     {
         return getFilledInventorySlots (inventory, startIndex, endIndex, null);
     }
 
     /**
-     * Returns the indices of all filled slots of the supplied "inventory".<br> A filled slot is a
-     * slot with an item stack in it. Optionally, they can be filtered with the supplied filter
-     * (whitelist).
+     * Returns the indices of all filled slots of the supplied "inventory".<br/>
+     * A filled slot is a slot with an item stack in it. Optionally, they can be
+     * filtered with the supplied filter (whitelist).
      */
-    public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex,
-        int endIndex,
+    public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex,
         Predicate<ItemStack> filter)
     {
         Set<Integer> filledSlots = new HashSet<> ();
@@ -196,14 +185,13 @@ public class PvPServerUtils extends PvPCommonUtils
      */
     public static boolean isPvPModeOverriddenForPlayer (EntityPlayer player)
     {
-        return arePvPModeOverridesEnabled ()
-            && getPvPData (player).getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
+        return arePvPModeOverridesEnabled () && getPvPData (player).getForcedPvPMode () != EnumForcedPvPMode.UNDEFINED;
     }
 
     /**
-     * Returns whether the supplied player is currently in PvP.<br> If a PvP event occurred with
-     * this player involved, a timer starts. While this timer is running, the player is considered
-     * to be involved into PvP.
+     * Returns whether the supplied player is currently in PvP.<br/>
+     * If a PvP event occurred with this player involved, a timer starts. While this
+     * timer is running, the player is considered to be involved into PvP.
      */
     public static boolean isInPvP (EntityPlayer player)
     {
@@ -219,8 +207,7 @@ public class PvPServerUtils extends PvPCommonUtils
             return true;
         else if (command.getCommandAliases () != null)
             return command.getCommandAliases ().contains (name);
-        else
-            return false;
+        else return false;
     }
 
     /**
@@ -297,8 +284,8 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns whether the supplied player cannot transfer items in his inventory via
-     * shift-clicking.
+     * Returns whether the supplied player cannot transfer items in his inventory
+     * via shift-clicking.
      */
     public static boolean isShiftClickingBlocked (EntityPlayer player)
     {
