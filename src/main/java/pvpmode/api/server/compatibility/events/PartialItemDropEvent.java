@@ -100,10 +100,10 @@ public abstract class PartialItemDropEvent extends Event
 
         /**
          * DROP means that the stack will be dropped, but not removed from the
-         * inventory.<br/>
+         * inventory.<br>
          * DELETE_AND_DROP means that the stack will be removed from the inventory and
-         * dropped. <br/>
-         * DELETE means that the stack just will be removed.<br/>
+         * dropped. <br>
+         * DELETE means that the stack just will be removed.<br>
          * NOTHING means that the stack will remain in the player's inventory.
          *
          * @author CraftedMods

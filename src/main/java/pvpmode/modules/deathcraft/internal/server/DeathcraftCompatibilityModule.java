@@ -20,7 +20,7 @@ import pvpmode.api.server.compatibility.events.PartialItemDropEvent;
 import pvpmode.api.server.compatibility.events.PartialItemDropEvent.Drop.Action;
 
 /**
- * The compatibility module for deathcraft.<br/>
+ * The compatibility module for deathcraft.<br>
  * Because of the dynamic nature of Bukkit and the way deathcraft was coded, I
  * had to use ugly hacks, including reflection and ASM, to get this to actually
  * work.

@@ -11,7 +11,7 @@ public interface OverrideManager
 {
 
     /**
-     * Registers a new PvP override condition.<br/>
+     * Registers a new PvP override condition.<br>
      * Override conditions can be registered everytime.
      *
      * @param condition
@@ -21,7 +21,7 @@ public interface OverrideManager
     public boolean registerOverrideCondition (PvPOverrideCondition condition);
 
     /**
-     * Unregisters a new PvP override condition.<br/>
+     * Unregisters a new PvP override condition.<br>
      * Override conditions can be unregistered everytime.
      *
      * @param condition
