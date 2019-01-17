@@ -145,7 +145,7 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the indices of all filled slots of the supplied "inventory".<br/>
+     * Returns the indices of all filled slots of the supplied "inventory".<br>
      * A filled slot is a slot with an item stack in it.
      */
     public static Set<Integer> getFilledInventorySlots (ItemStack[] inventory, int startIndex, int endIndex)
@@ -154,7 +154,7 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the indices of all filled slots of the supplied "inventory".<br/>
+     * Returns the indices of all filled slots of the supplied "inventory".<br>
      * A filled slot is a slot with an item stack in it. Optionally, they can be
      * filtered with the supplied filter (whitelist).
      */
@@ -189,7 +189,7 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns whether the supplied player is currently in PvP.<br/>
+     * Returns whether the supplied player is currently in PvP.<br>
      * If a PvP event occurred with this player involved, a timer starts. While this
      * timer is running, the player is considered to be involved into PvP.
      */

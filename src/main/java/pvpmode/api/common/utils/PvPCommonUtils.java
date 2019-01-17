@@ -50,7 +50,7 @@ public class PvPCommonUtils
     }
 
     /**
-     * Writes the contents of the supplied stream to the specified file.<br/>
+     * Writes the contents of the supplied stream to the specified file.<br>
      * The file must exist on the filesystem.
      *
      * @param stream
