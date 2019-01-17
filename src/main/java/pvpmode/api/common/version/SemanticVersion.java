@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 /**
  * A class representing a semantic version. It is specified as the following:
- * major.minor.patch-STATE.pre (1) OR major.minor.patch-PRE.pre (2). STATE is alpha or beta, major
+ * major.minor.patch-STATE.pre (1) OR major.minor.patch-PRE.pre (2). STATE is ALPHA or BETA, major
  * is the (API) version, minor is the feature version, and patch is the bugfix version. pre is the
- * pre-release version. If the version state is full, then the second (2) version template will be
+ * pre-release version. If the version state is FULL, then the second (2) version template will be
  * used.
  *
  * @author CraftedMods
@@ -141,10 +141,10 @@ public class SemanticVersion implements Comparable<SemanticVersion>
     private String buildVersionString ()
     {
         return String.format ("%d.%d.%d%s%s", majorVersion, minorVersion, patchVersion,
-            versionState == EnumVersionState.full ? "" : String.format ("-%s", versionState
+            versionState == EnumVersionState.FULL ? "" : String.format ("-%s", versionState
                 .toString ()),
             preReleaseVersion >= 0
-                ? String.format ("%s.%d", versionState == EnumVersionState.full ? "-PRE" : "",
+                ? String.format ("%s.%d", versionState == EnumVersionState.FULL ? "-PRE" : "",
                 preReleaseVersion)
                 : "");
     }
@@ -177,7 +177,7 @@ public class SemanticVersion implements Comparable<SemanticVersion>
         Integer majorVersion = Integer.parseInt (mainVersion[0]);
         Integer minorVersion = Integer.parseInt (mainVersion[1]);
         Integer patchVersion = Integer.parseInt (mainVersion[2]);
-        EnumVersionState versionState = EnumVersionState.full;
+        EnumVersionState versionState = EnumVersionState.FULL;
         Integer preReleaseVersion = -1;
         if (parts.length > 1)
         {

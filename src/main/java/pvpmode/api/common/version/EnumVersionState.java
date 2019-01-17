@@ -2,10 +2,11 @@ package pvpmode.api.common.version;
 
 /**
  * An enum for the state of a semantic version.
- *
+ * 
  * @author CraftedMods
+ *
  */
 public enum EnumVersionState
 {
-    alpha, beta, full
+    ALPHA, BETA, FULL;
 }
