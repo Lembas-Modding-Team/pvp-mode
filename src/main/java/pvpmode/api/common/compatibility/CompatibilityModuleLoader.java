@@ -6,7 +6,7 @@ package pvpmode.api.common.compatibility;
  * contain references to code which is not present on runtime. Because of this
  * there are compatibility module loaders, which first determine whether the
  * referenced module can be loaded - and only if yes, PvPMode will try to load
- * it.<br/>
+ * it.<br>
  * There must not be any compile time dependencies to the referenced module or
  * other mods or libaries.
  *

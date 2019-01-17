@@ -15,7 +15,7 @@ public interface PvPOverrideCondition
 {
 
     /**
-     * Returns the priority of this condition.<br/>
+     * Returns the priority of this condition.<br>
      * The higher the returned value, the higher the priority. A high priority means
      * that this condition will be preferred over conditions with conflicting
      * results that have a lower priority.
@@ -24,7 +24,7 @@ public interface PvPOverrideCondition
 
     /**
      * Returns the overridden PvPMode (only OFF or ON) for the supplied player.
-     * <br/>
+     * <br>
      * It also can return null, which means, that this condition doesn't apply.
      */
     public EnumForcedPvPMode getForcedPvPMode (EntityPlayer player);
