@@ -237,8 +237,10 @@ publishing {
 	publications {
 		shadowPublication(MavenPublication) {
 			project.shadow.component(it)
-			artifact sourcesJar
-			artifact javadocJar
+			afterEvaluate {
+				artifact sourcesJar
+				artifact javadocJar
+			}
 		}
 	}
 	repositories {
@@ -253,6 +255,6 @@ publishing {
 }
 
 task release(dependsOn: ["cleanBuild", "publish"]) {
-	group "build"
+	group "publishing"
 	tasks.publish.mustRunAfter cleanBuild
 }
