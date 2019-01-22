@@ -1,83 +1,260 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "http://files.minecraftforge.net/maven/"
         }
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            name = "amuzil"
+            url = "http://repo.amuzil.com/repository/public/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.3"
     }
 }
 
-apply plugin: 'forge'
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "forge"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "maven-publish"
 
-version = "2.0.0-BETA.2"
-group= "vulcanforge.pvp-mode-mod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "pvp-mode"
+ext.config = parseConfig(file("build.properties"))
+ext.dependenciesConfig = parseConfig(file("dependencies.properties"))
+ext.secrets = parseConfig(file("secrets.properties"))
 
-srcCompat = JavaVersion.VERSION_1_8
-targetCompat = JavaVersion.VERSION_1_8
+version = config.version
+group = config.group
+archivesBaseName = config.archivesBaseName
 
-minecraft {
-    version = "1.7.10-10.13.4.1614-1.7.10"
-    runDir = "eclipse"
+// Need this here so Eclipse tasks generates correctly
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// This makes IDEA recognize the assets folder
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+repositories {
+    maven {
+        name = "amuzil"
+        url = "http://repo.amuzil.com/repository/public/"
+    }
 }
 
 configurations {
-    exports
+    shadow
+    compile.extendsFrom provided
+    provided.extendsFrom shadow
 }
 
+task useDeobfDependencies {
+    dependenciesConfig.obfuscated = false
+}
+
+tasks.runClient.dependsOn tasks.useDeobfDependencies
+tasks.runServer.dependsOn tasks.useDeobfDependencies
+
 dependencies {
-    exports 'io.github.lukehutch:fast-classpath-scanner:2.21'
-    configurations.compile.extendsFrom(configurations.exports)
+    provided fileTree(dir: dependenciesConfig.libraries + (dependenciesConfig.obfuscated ? "" : "Deobf"), include: ["*.jar"])
+
+    // Forge Mods
+    if (dependenciesConfig.obfuscated) {
+        provided "com.enderio.core:endercore:0.2.0-beta.39"
+        provided "com.timgodreuil.suffixforge:suffixforge:2.4.0"
+        provided "crazypants.enderio:enderio:2.3.0-beta.429"
+        provided "cyano.lootable:lootable-bodies:1.3.7"
+        provided "lotr:lotr:1.34.3"
+        provided "siege:siegemode:1.1.0"
+    } else {
+        provided "com.enderio.core:endercore:0.2.0-beta.39-deobf"
+        provided "com.timgodreuil.suffixforge:suffixforge:2.4.0-deobf"
+        provided "crazypants.enderio:enderio:2.3.0-beta.429-deobf"
+        provided "cyano.lootable:lootable-bodies:1.3.7-deobf"
+        provided "lotr:lotr:1.34.3-deobf"
+        provided "siege:siegemode:1.1.0-deobf"
+    }
+
+    // Bukkit Stuff
+    provided "me.raum.deathcraft:deathcraft:1.1.12-alpha"
+    provided "net.citizensnpcs:citizens:2.0.13-alpha.1"
+    provided "org.bukkit:craftbukkit-remapped:1.7.10"
+
+
+    shadow "io.github.lukehutch:fast-classpath-scanner:2.21"
+}
+
+minecraft {
+    version = config.forge
+    runDir = "run"
+
+    replaceIn "src/main/java/pvpmode/PvPMode.java"
+    replace "@version@", config.version
+    replace "@modid@", config.modid
+    replace "@mcversion@", project.minecraft.version
+    replace "@name@", config.name
 }
 
 jar {
-   from('./') {
-      include 'CHANGELOG.md'
-      include 'UPDATE_INSTRUCTIONS.md'
-   }
-   
-   from('src/main/java') {
-      include 'pvpmode/**/*.properties'
-   }
-   
-    from {
-            configurations.exports.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest {
+        attributes "FMLCorePlugin": "pvpmode.internal.common.core.PvPModeCore"
+        attributes "FMLCorePluginContainsFMLMod": "true"
     }
-    {
-        exclude "META-INF/**"
-        exclude "META-INF/*"
-    }
-   
-   manifest {
-        attributes 'FMLCorePlugin': 'pvpmode.internal.common.core.PvPModeCore'
-        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    from("./") {
+        include "*.md"
     }
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
+shadowJar {
+    // Overwrite the default file
+    classifier = ""
+    configurations = [project.configurations.shadow]
+    from(sourceSets.main.allJava) {
+        include "*"
+    }
+    from("./") {
+        include "*.md"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+reobf {
+    // Reobfuscate the shadowed JAR
+    shadowJar {}
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    // This will ensure that this task is redone when the versions change
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
+    // Replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        include "mcmod.info"
+        filter ReplaceTokens, tokens: [version: config.version, mcversion: project.minecraft.version, modid: config.modid, name: config.name]
     }
-        
-    // copy everything else, thats not the mcmod.info
+
+    // Copy everything else
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude "mcmod.info"
     }
+}
+
+static def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
+def startBuildMessage = "Starting build...\n\nName: ${project.name}\nVersion: ${project.version}"
+def finishBuildMessage = "Successfully finished building ${project.name} version ${project.version}\n\nYour build is located in:\nbuild/libs"
+def fancyBorder = ""
+
+task buildInformation {
+    doFirst {
+        def lines = startBuildMessage.readLines();
+        lines.addAll(finishBuildMessage.readLines())
+        def maxLength = 0
+        for (String line : lines)
+            maxLength = Math.max(line.length(), maxLength)
+        if (maxLength % 2 != 0) maxLength++
+        for (def i = 0; i < maxLength; i++) {
+            fancyBorder += i % 2 == 0 ? "=" : "--"
+        }
+    }
+}
+
+task startBuild {
+    doFirst {
+        println """
+${fancyBorder}
+
+${startBuildMessage}
+
+${fancyBorder}
+"""
+    }
+}
+
+task finishBuild {
+    doLast {
+        println """
+${fancyBorder}
+
+${finishBuildMessage}
+
+${fancyBorder}
+"""
+    }
+}
+
+task cleanBuild(dependsOn: ["buildInformation", "startBuild", "clean", "build", "shadowJar", "finishBuild"]) {
+    group "build"
+    tasks.startBuild.mustRunAfter tasks.buildInformation
+    tasks.clean.mustRunAfter tasks.startBuild
+    tasks.build.mustRunAfter tasks.clean
+    tasks.shadowJar.mustRunAfter tasks.build
+    tasks.finishBuild.mustRunAfter tasks.shadowJar
+}
+
+publishing {
+    publications {
+        shadowPublication(MavenPublication) {
+            project.shadow.component(it)
+            afterEvaluate {
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = "http://repo.amuzil.com/repository/public/"
+            credentials {
+                username = secrets.repo.username
+                password = secrets.repo.password
+            }
+        }
+    }
+}
+
+task release(dependsOn: ["cleanBuild", "publish"]) {
+    group "publishing"
+    tasks.publish.mustRunAfter cleanBuild
 }
