@@ -163,7 +163,7 @@ public class SemanticVersion implements Comparable<SemanticVersion>
     {
         Objects.requireNonNull (versionString);
         String trimmedVersion = versionString.trim ();
-        if (!Pattern.matches ("^[0-9]+\\.[0-9]+\\.[0-9]+($|(-PRE)|(-ALPHA)|(-BETA))($|(\\.[0-9]+))$", trimmedVersion))
+        if (!Pattern.matches ("^(?i)[0-9]+\\.[0-9]+\\.[0-9]+($|(-PRE)|(-ALPHA)|(-BETA))($|(\\.[0-9]+))$", trimmedVersion))
             throw new IllegalArgumentException (
                 String.format ("The version string \"%s\" doesn't match the specification", trimmedVersion));
         String[] parts = trimmedVersion.split ("-");
@@ -176,7 +176,7 @@ public class SemanticVersion implements Comparable<SemanticVersion>
         if (parts.length > 1)
         {
             String[] parts2 = parts[1].split ("\\.");
-            String state = parts2[0].replaceAll ("-", "");
+            String state = parts2[0].replaceAll ("-", "").toUpperCase ();
             if (!state.equals ("PRE"))
             {
                 versionState = EnumVersionState.valueOf (state);
