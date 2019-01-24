@@ -134,6 +134,7 @@ shadowJar {
         include "*.md"
     }
 }
+tasks.build.finalizedBy shadowJar
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
