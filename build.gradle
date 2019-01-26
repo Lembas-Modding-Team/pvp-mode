@@ -98,7 +98,7 @@ dependencies {
     provided "net.citizensnpcs:citizens:2.0.13-alpha.1"
     provided "org.bukkit:craftbukkit-remapped:1.7.10"
 
-
+// Dependencies that will be included ("shadowed") into the built JAR
     shadow "io.github.lukehutch:fast-classpath-scanner:2.21"
 }
 
