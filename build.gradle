@@ -126,7 +126,7 @@ shadowJar {
 	exclude "META-INF/**"
 	exclude "META-INF/*"
 }
-tasks.build.finalizedBy shadowJar
+tasks.jar.finalizedBy shadowJar
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
