@@ -56,7 +56,11 @@ idea {
 repositories {
 	maven {
 		name = "amuzil"
-		url = "http://repo.amuzil.com/repository/public/"
+		url = "http://repo.amuzil.com/repository/all/"
+		credentials {
+			username = secrets.repo.username
+			password = secrets.repo.password
+		}
 	}
 }
 
