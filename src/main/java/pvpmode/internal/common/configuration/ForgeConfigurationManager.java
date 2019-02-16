@@ -2,7 +2,11 @@ package pvpmode.internal.common.configuration;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.collect.Multimap;
 
 import net.minecraftforge.common.config.*;
 import pvpmode.api.common.SimpleLogger;
@@ -124,6 +128,17 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
                         Set<String> stringSet = (Set<String>) newValue;
                         property.set (stringSet.toArray (new String[stringSet.size ()]));
                     }
+                    else if (key instanceof StringMap)
+                    {
+                        Map<String, String> stringMap = (Map<String, String>) newValue;
+                        property.set (StringMap.toStringList (stringMap).toArray (new String[stringMap.size ()]));
+                    }
+                    else if (key instanceof StringMultimap)
+                    {
+                        Multimap<String, String> stringMultimap = (Multimap<String, String>) newValue;
+                        property.set (StringMap.toStringList (StringMultimap.toStringMap (stringMultimap))
+                            .toArray (new String[stringMultimap.keySet ().size ()]));
+                    }
                     else
                     {
                         logger.warning (
@@ -192,6 +207,18 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
                     getStringSet ((ConfigurationPropertyKey<Set<String>>) key,
                         (Set<String>) key.getDefaultValue (),
                         (Set<String>) ((StringSet) key).getValidValues (), getComment (key)));
+            }
+            else if (key instanceof StringMap)
+            {
+                ret.put (key, getStringMap ((StringMap) key, (Map<String, String>) key.getDefaultValue (),
+                    (Collection<Map.Entry<String, String>>) ((StringMap) key).getValidValues (), getComment (key)));
+            }
+            else if (key instanceof StringMultimap)
+            {
+                ret.put (key,
+                    getStringMultimap ((StringMultimap) key, (Multimap<String, String>) key.getDefaultValue (),
+                        (Collection<Map.Entry<String, Collection<String>>>) ((StringMultimap) key).getValidValues (),
+                        getComment (key)));
             }
             else
             {
@@ -334,7 +361,7 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
      *            The comment of the property
      * @return The string list property value
      */
-    protected List<String> getFixedSizeStringList (ConfigurationPropertyKey<? extends Collection<String>> key,
+    protected List<String> getFixedSizeStringList (ConfigurationPropertyKey<?> key,
         List<String> defaultValues,
         List<String> validValues,
         String comment)
@@ -389,6 +416,66 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
         return new HashSet<> (
             getFixedSizeStringList (key, new ArrayList<> (defaultValues),
                 validValues == null ? null : new ArrayList<> (validValues), comment));
+    }
+
+    /**
+     * Gets or creates the string map property assigned to the specified property
+     * key, with the specified default values, valid values and comment. The valid
+     * values can be null.
+     * 
+     * @param key
+     *            The configuration property key
+     * @param defaultValues
+     *            The default content of the map
+     * @param validValues
+     *            The valid values of the map
+     * @param comment
+     *            The comment of the property
+     * @return The string map property value
+     */
+    protected Map<String, String> getStringMap (ConfigurationPropertyKey<?> key,
+        Map<String, String> defaultValues,
+        Collection<Map.Entry<String, String>> validValues,
+        String comment)
+    {
+        List<String> parsedDefaultEntries = defaultValues.entrySet ().stream ()
+            .map (entry -> entry.getKey () + "=" + entry.getValue ()).collect (Collectors.toList ());
+        List<String> parsedValidEntries = validValues != null ? validValues.stream ()
+            .map (entry -> entry.getKey () + "=" + entry.getValue ()).collect (Collectors.toList ()) : null;
+
+        List<String> unparsedEntries = getFixedSizeStringList (key, parsedDefaultEntries, parsedValidEntries,
+            comment);
+
+        return StringMap.fromStringList (unparsedEntries);
+    }
+
+    /**
+     * Gets or creates the string multimap property assigned to the specified
+     * property key, with the specified default values, valid values and comment.
+     * The valid values can be null.
+     * 
+     * @param key
+     *            The configuration property key
+     * @param defaultValues
+     *            The default content of the multimap
+     * @param validValues
+     *            The valid values of the multimap
+     * @param comment
+     *            The comment of the property
+     * @return The string map property value
+     */
+    protected Map<String, String> getStringMultimap (ConfigurationPropertyKey<Multimap<String, String>> key,
+        Multimap<String, String> defaultValues,
+        Collection<Map.Entry<String, Collection<String>>> validValues,
+        String comment)
+    {
+        return this.getStringMap (key, StringMultimap.toStringMap (defaultValues),
+            validValues != null
+                ? validValues.stream ()
+                    .map (entry -> Pair.of (entry.getKey (), StringList.asString (entry.getValue ())))
+                    .collect (Collectors.toList ())
+                : null,
+            comment);
     }
 
     /**

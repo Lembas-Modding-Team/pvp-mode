@@ -17,8 +17,8 @@ import pvpmode.internal.common.utils.ClassDiscoverer;
 /**
  * An internal helper class used for retrieving the auto configuration data with
  * reflection, classpath scanning and so on. It also processes the classes
- * involved into the auto configuration regarding other features, for example the
- * injection of properties. Quiet hacky.
+ * involved into the auto configuration regarding other features, for example
+ * the injection of properties. Quiet hacky.
  * 
  * @author CraftedMods
  *
@@ -135,6 +135,13 @@ public class AutoConfigurationCreator
                             }
                             generatedKeys.get (pid).put (key.getInternalName (), key);
                         }
+                        else
+                        {
+                            this.logger.warning (
+                                "No matching property key creator was found for the key \"%s\" with the type \"%s\" registered under \"%s\"",
+                                internalName, returnType.getName (), pid);
+                        }
+
                     }
                 }
             }
