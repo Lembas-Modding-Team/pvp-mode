@@ -2,6 +2,8 @@ package pvpmode.internal.server.configuration;
 
 import java.util.*;
 
+import com.google.common.collect.Sets;
+
 import cpw.mods.fml.common.Loader;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey;
@@ -9,6 +11,7 @@ import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Inject;
 import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.configuration.ServerConfiguration;
+import pvpmode.api.server.log.CombatLogManager;
 import pvpmode.internal.common.configuration.CommonConfigurationImpl;
 import pvpmode.internal.server.ServerProxy;
 
@@ -94,6 +97,8 @@ public class ServerConfigurationImpl extends CommonConfigurationImpl implements 
         }// Compare by internal name because the key was replaced
         else if (key.getInternalName ().equals (ACTIVE_COMBAT_LOGGING_HANDLERS.getInternalName ()))
         {
+            CombatLogManager combatLogManager = server.getCombatLogManager ();
+
             Set<String> activeCombatLoggingHandlers = this.getActiveCombatLoggingHandlers ();
             if (activeCombatLoggingHandlers.size () > 0)
             {
@@ -101,17 +106,34 @@ public class ServerConfigurationImpl extends CommonConfigurationImpl implements 
                 while (activatedHandlersIterator.hasNext ())
                 {
                     String handlerName = activatedHandlersIterator.next ();
-                    if (!server.getCombatLogManager ().isValidHandlerName (handlerName))
+                    if (!combatLogManager.isValidHandlerName (handlerName))
                     {
                         logger.warning ("The combat logging handler \"%s\" is not valid.",
                             handlerName);
                         activatedHandlersIterator.remove ();
                     }
+                    else
+                    {
+                        if (!combatLogManager.getActivatedHandlerNames ().contains (handlerName))
+                        {
+                            combatLogManager.activateHandler (handlerName);
+                        }
+                    }
                 }
                 if (activeCombatLoggingHandlers.isEmpty ())
                 {
                     logger.warning ("No valid combat logging handlers were specified. A default one will be used");
-                    activeCombatLoggingHandlers.add (server.getCombatLogManager ().getDefaultHandlerName ());
+                    activeCombatLoggingHandlers.add (combatLogManager.getDefaultHandlerName ());
+                }
+                else
+                {
+                    Set<String> handlersToDeactivate = Sets.difference (
+                        new HashSet<> (combatLogManager.getActivatedHandlerNames ()),
+                        activeCombatLoggingHandlers);
+                    for (String toDeactivate : handlersToDeactivate)
+                    {
+                        combatLogManager.deactivateHandler (toDeactivate);
+                    }
                 }
             }
             else
