@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 
 import net.minecraftforge.common.config.*;
 import pvpmode.api.common.SimpleLogger;
@@ -464,7 +464,7 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
      *            The comment of the property
      * @return The string map property value
      */
-    protected Map<String, String> getStringMultimap (ConfigurationPropertyKey<Multimap<String, String>> key,
+    protected Multimap<String, String> getStringMultimap (ConfigurationPropertyKey<Multimap<String, String>> key,
         Multimap<String, String> defaultValues,
         Collection<Map.Entry<String, Collection<String>>> validValues,
         String comment)
@@ -475,7 +475,11 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
                     .map (entry -> Pair.of (entry.getKey (), StringList.asString (entry.getValue ())))
                     .collect (Collectors.toList ())
                 : null,
-            comment);
+            comment).entrySet ().stream ()
+            .collect (Collectors.toMap (entry -> (String) entry.getKey (),
+                entry -> StringList.fromString (entry.getValue ())))
+            .entrySet ().stream ().collect (HashMultimap::create,
+                (map, entry) -> map.putAll (entry.getKey (), entry.getValue ()), Multimap::putAll);
     }
 
     /**
