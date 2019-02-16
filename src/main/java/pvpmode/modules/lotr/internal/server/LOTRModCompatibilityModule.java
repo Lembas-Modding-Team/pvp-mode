@@ -59,12 +59,12 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     }
 
-    void initEnemyBiomeOverrides ()
+    void initEnemyBiomeOverrides (LOTRServerConfiguration config)
     {
         initBiomeOverrides (configurationFolder, ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
             "default_enemy_biomes.txt", (data) -> new HostileBiomeOverrideCondition (data),
             () -> hostileBiomeOverrideCondition,
-            (condition) -> hostileBiomeOverrideCondition = (HostileBiomeOverrideCondition) condition);
+            (condition) -> hostileBiomeOverrideCondition = (HostileBiomeOverrideCondition) condition, config);
 
         // (Re)Create the extended enemy biome config file
         recreateFile (PvPMode.proxy.getGeneratedFilesFolder (),
@@ -93,24 +93,25 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         }
     }
 
-    void initSafeBiomeOverrides ()
+    void initSafeBiomeOverrides (LOTRServerConfiguration config)
     {
         initBiomeOverrides (configurationFolder, SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
             "default_safe_biomes.txt", (data) -> new SafeBiomeOverrideCondition (data),
             () -> safeBiomeOverrideCondition,
-            (condition) -> safeBiomeOverrideCondition = (SafeBiomeOverrideCondition) condition);
+            (condition) -> safeBiomeOverrideCondition = (SafeBiomeOverrideCondition) condition, config);
     }
 
     private void initBiomeOverrides (Path configurationFolder, String configFileName, String configName,
         String defaultConfigFileName,
         Function<Map<Integer, Collection<FactionEntry>>, PvPOverrideCondition> conditionCreator,
-        Supplier<PvPOverrideCondition> currentConditionGetter, Consumer<PvPOverrideCondition> currentConditionSetter)
+        Supplier<PvPOverrideCondition> currentConditionGetter, Consumer<PvPOverrideCondition> currentConditionSetter,
+        LOTRServerConfiguration config)
     {
         this.recreateFile (configurationFolder, defaultConfigFileName, configFileName,
             configName + " configuration file", true);
 
         BiomeOverrideConfigParser parser = new BiomeOverrideConfigParser (configName,
-            configurationFolder.resolve (configFileName), logger);
+            configurationFolder.resolve (configFileName), logger, config);
 
         try
         {
