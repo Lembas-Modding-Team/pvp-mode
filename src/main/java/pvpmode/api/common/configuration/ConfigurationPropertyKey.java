@@ -25,7 +25,45 @@ public class ConfigurationPropertyKey<T>
      */
     public static enum Unit
     {
-    NONE, BLOCKS, ITEM_STACKS, SECONDS, TICKS;
+    NONE, BLOCKS, ITEM_STACKS("stacks"), SECONDS("s", false), TICKS;
+
+        private final String longDisplayName;
+        private final String shortDisplayName;
+        private final boolean requiresSpace;
+
+        private Unit ()
+        {
+            this (null, true);
+        }
+
+        private Unit (String shortDisplayName)
+        {
+            this (shortDisplayName, true);
+        }
+
+        private Unit (String shortDisplayName, boolean requiresSpace)
+        {
+            this.longDisplayName = this.name ().equals ("NONE") ? ""
+                : this.name ().toLowerCase ().replaceAll ("_", " ");
+            this.shortDisplayName = (requiresSpace ? " " : "") + (shortDisplayName == null ? longDisplayName
+                : shortDisplayName);
+            this.requiresSpace = requiresSpace;
+        }
+
+        public String getShortDisplayName ()
+        {
+            return shortDisplayName;
+        }
+
+        public String getLongDisplayName ()
+        {
+            return longDisplayName;
+        }
+
+        public boolean isRequiringSpace ()
+        {
+            return requiresSpace;
+        }
     }
 
     public static final String CATEGORY_SEPARATOR = ".";

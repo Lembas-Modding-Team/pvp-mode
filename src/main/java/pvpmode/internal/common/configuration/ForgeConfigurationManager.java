@@ -417,8 +417,7 @@ public abstract class ForgeConfigurationManager extends AbstractConfigurationMan
         Unit unit = key.getUnit ();
         String name = getDisplayName (key);
         return unit != null && unit != Unit.NONE
-            ? String.format ("%s (in %s)", name,
-                unit.name ().toLowerCase ().replaceAll ("_", " "))
+            ? String.format ("%s (in %s)", name, unit.getLongDisplayName ())
             : name;
     }
 
