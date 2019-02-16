@@ -1,6 +1,11 @@
 package pvpmode.api.common.configuration;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.*;
 
 import net.minecraftforge.common.util.EnumHelper;
 
@@ -578,6 +583,16 @@ public class ConfigurationPropertyKey<T>
             this (name, category, Arrays.asList (), null);
         }
 
+        public static final String asString (Collection<String> stringCollection)
+        {
+            return stringCollection.stream ().collect (Collectors.joining (","));
+        }
+
+        public static final Collection<String> fromString (String string)
+        {
+            return Arrays.asList (string.split (","));
+        }
+
     }
 
     /**
@@ -646,6 +661,105 @@ public class ConfigurationPropertyKey<T>
             return isValid;
         }
 
+    }
+
+    /**
+     * 
+     * An extension of the configuration property key class specifically for string
+     * maps.
+     * 
+     * @author CraftedMods
+     *
+     */
+    public static class StringMap
+        extends ValidValuesHolder<Map.Entry<String, String>, Map<String, String>>
+    {
+
+        public StringMap (String name, Class<Map<String, String>> mapClass, String category,
+            Map<String, String> defaultValue,
+            Map<String, String> validValues)
+        {
+            super (name, mapClass, category, defaultValue, validValues != null ? validValues.entrySet () : null);
+        }
+
+        @Override
+        public boolean isValidValue (Map<String, String> value)
+        {
+            boolean isValid = super.isValidValue (value);
+            if (isValid && validValues != null)
+                return validValues.containsAll (value.entrySet ());
+            return isValid;
+        }
+
+        public static final List<String> toStringList (Map<String, String> stringMap)
+        {
+            return stringMap.entrySet ().stream ().map (entry -> entry.getKey () + "=" + entry.getValue ())
+                .collect (Collectors.toList ());
+        }
+
+        public static final Map<String, String> fromStringList (List<String> stringList)
+        {
+            return stringList.stream ()
+                .collect (Collectors.toMap (entry -> entry.toString ().split ("=")[0], entry ->
+                {
+                    String[] parts = entry.toString ().split ("=");
+                    if (parts.length == 1)
+                        return parts[0];
+                    return StringUtils.join (Arrays.copyOfRange (parts, 1, parts.length));
+                }, (val1, val2) ->
+                {
+                    return val2;
+                }));
+        }
+    }
+
+    /**
+     * 
+     * An extension of the configuration property key class specifically for string
+     * multimaps.
+     * 
+     * @author CraftedMods
+     *
+     */
+    public static class StringMultimap
+        extends ValidValuesHolder<Map.Entry<String, Collection<String>>, Multimap<String, String>>
+    {
+
+        public StringMultimap (String name, Class<Multimap<String, String>> mapClass, String category,
+            Multimap<String, String> defaultValue,
+            Multimap<String, String> validValues)
+        {
+            super (name, mapClass, category, defaultValue,
+                validValues != null ? validValues.asMap ().entrySet () : null);
+        }
+
+        @Override
+        public boolean isValidValue (Multimap<String, String> value)
+        {
+            boolean isValid = super.isValidValue (value);
+            if (isValid && validValues != null)
+                return validValues.containsAll (value.asMap ().entrySet ());
+            return isValid;
+        }
+
+        public static final Map<String, String> toStringMap (Multimap<String, String> multimap)
+        {
+            return multimap.asMap ().entrySet ().stream ()
+                .collect (
+                    Collectors.toMap (entry -> entry.getKey (), entry -> StringList.asString (entry.getValue ())));
+        }
+
+        public static final Multimap<String, String> fromStringMap (Map<String, String> stringMap)
+        {
+            Multimap<String, String> map = ArrayListMultimap.create ();
+
+            stringMap.entrySet ().forEach (entry ->
+            {
+                map.putAll (entry.getKey (), StringList.fromString (entry.getValue ()));
+            });
+
+            return map;
+        }
     }
 
 }

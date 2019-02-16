@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.*;
 
+import com.google.common.collect.*;
+
 import net.minecraft.command.*;
 import net.minecraft.event.*;
 import net.minecraft.event.ClickEvent.Action;
@@ -588,6 +590,15 @@ public class PvPCommandConfig extends AbstractPvPCommand
         {
             this.setPropertyValue (sender, manager, key, new HashSet<String> (this.parseStringCollection (args, 4)));
         }
+        else if (key instanceof StringMap)
+        {
+            this.setPropertyValue (sender, manager, key, new HashMap<String, String> (this.parseStringMap (args, 4)));
+        }
+        else if (key instanceof StringMultimap)
+        {
+            this.setPropertyValue (sender, manager, key, this.parseStringMultimap (args, 4));
+        }
+
         else
         {
             throw new CommandException (
@@ -599,6 +610,23 @@ public class PvPCommandConfig extends AbstractPvPCommand
     {
         return args[startIndex].equals (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER) ? new ArrayList<> ()
             : Arrays.asList (Arrays.copyOfRange (args, startIndex, args.length));
+    }
+
+    private Map<String, String> parseStringMap (String[] args, int startIndex)
+    {
+        Collection<String> stringCollection = parseStringCollection (args, startIndex);
+        if (stringCollection.isEmpty ())
+            return new HashMap<> ();
+        return StringMap.fromStringList (Arrays.asList (Arrays.copyOfRange (args, startIndex, args.length)));
+    }
+
+    private Multimap<String, String> parseStringMultimap (String[] args, int startIndex)
+    {
+        Collection<String> stringCollection = parseStringCollection (args, startIndex);
+        if (stringCollection.isEmpty ())
+            return ArrayListMultimap.create ();
+        return StringMultimap.fromStringMap (
+            StringMap.fromStringList (Arrays.asList (Arrays.copyOfRange (args, startIndex, args.length))));
     }
 
     @SuppressWarnings("unchecked")
@@ -755,19 +783,35 @@ public class PvPCommandConfig extends AbstractPvPCommand
                             return getListOfStringsMatchingLastWord (args, "true", "false");
                         }
                         else if (key instanceof ValidValuesHolder<?, ?>
-                            && (args.length == 5 || args.length >= 5 && key instanceof AbstractStringCollectionKey
+                            && (args.length == 5 || args.length >= 5
+                                && (key instanceof AbstractStringCollectionKey || key instanceof StringMap
+                                    || key instanceof StringMultimap)
                                 && !args[4].equals (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER)))
                         {
                             ValidValuesHolder<?, ?> holder = (ValidValuesHolder<?, ?>) key;
 
                             Set<String> validValues = new HashSet<> ();
 
-                            if (key instanceof AbstractStringCollectionKey && args.length == 5)
+                            if ( (key instanceof AbstractStringCollectionKey || key instanceof StringMap
+                                || key instanceof StringMultimap)
+                                && args.length == 5)
                                 validValues.add (ServerCommandConstants.EMPTY_COLLECTION_PLACEHOLDER);
 
                             if (holder.getValidValues () != null)
-                                validValues.addAll (holder.getValidValues ().stream ()
-                                    .map (validValue -> validValue.toString ()).collect (Collectors.toSet ()));
+                            {
+                                if (key instanceof StringMultimap)
+                                {
+                                    validValues.addAll ( ((StringMultimap) holder).getValidValues ().stream ()
+                                        .map (validValue -> validValue.getKey () + "="
+                                            + StringList.asString (validValue.getValue ()))
+                                        .collect (Collectors.toSet ()));
+                                }
+                                else
+                                {
+                                    validValues.addAll (holder.getValidValues ().stream ()
+                                        .map (validValue -> validValue.toString ()).collect (Collectors.toSet ()));
+                                }
+                            }
 
                             return getListOfStringsMatchingLastWord (args, validValues
                                 .toArray (new String[validValues.size ()]));
