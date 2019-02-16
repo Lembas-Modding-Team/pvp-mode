@@ -11,7 +11,7 @@ import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.Register;
 
 /**
- * An abstract property key generator for string maps. It uses the
+ * An abstract property key generator for string multimaps. It uses the
  * {@link Matches} annotation to retrieve a collection of valid values.
  * 
  * @author CraftedMods
