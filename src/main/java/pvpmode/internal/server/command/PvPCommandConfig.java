@@ -251,7 +251,6 @@ public class PvPCommandConfig extends AbstractPvPCommand
         }
     }
 
-    @SuppressWarnings("incomplete-switch")
     private void displayConfigurationEntries (ICommandSender sender, String configurationName,
         Category currentCategory)
     {
@@ -274,26 +273,9 @@ public class PvPCommandConfig extends AbstractPvPCommand
                 keyText.getChatStyle ().setChatClickEvent (new ClickEvent (Action.RUN_COMMAND, "/pvpconfig display "
                     + configurationName + " " + currentCategory.getFullName () + " " + key.getInternalName ()));
 
-                String unit = "";
-
-                switch (key.getUnit ())
-                {
-                    case BLOCKS:
-                        unit = " blocks";
-                        break;
-                    case ITEM_STACKS:
-                        unit = " stacks";
-                        break;
-                    case SECONDS:
-                        unit = "s";
-                        break;
-                    case TICKS:
-                        unit = " ticks";
-                        break;
-                }
-
                 ChatComponentText valueText = new ChatComponentText (
-                    configurationManagers.get (configurationName).getProperty (key).toString () + unit);
+                    configurationManagers.get (configurationName).getProperty (key).toString ()
+                        + key.getUnit ().getShortDisplayName ());
 
                 valueText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
                 if (Boolean.class.isAssignableFrom (key.getValueType ()) && config.isOneClickTogglingEnabled ())
