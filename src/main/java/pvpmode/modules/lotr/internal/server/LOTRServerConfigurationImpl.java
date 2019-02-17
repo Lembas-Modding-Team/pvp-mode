@@ -154,7 +154,7 @@ public class LOTRServerConfigurationImpl extends AutoForgeConfigurationManager i
                 if (scanPlaceholders (placeholders.asMap (), entryKey, new HashSet<> ()))
                 {
                     this.logger.warning (
-                        "The faction placeholder \"%s\" contained a reference which lead to a circle - the whole placeholder will be removed",
+                        "The faction placeholder \"%s\" contained a circular reference - the whole placeholder will be removed",
                         entryKey);
                     keysIterator.remove ();
                 }
