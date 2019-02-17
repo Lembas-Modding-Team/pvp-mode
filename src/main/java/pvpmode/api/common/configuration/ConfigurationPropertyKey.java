@@ -30,7 +30,7 @@ public class ConfigurationPropertyKey<T>
      */
     public static enum Unit
     {
-    NONE, BLOCKS, ITEM_STACKS("stacks"), SECONDS("s", false), TICKS;
+    NONE, BLOCKS, ITEM_STACKS("stacks"), SECONDS("s", false), TICKS, CHARACTERS("chars");
 
         private final String longDisplayName;
         private final String shortDisplayName;

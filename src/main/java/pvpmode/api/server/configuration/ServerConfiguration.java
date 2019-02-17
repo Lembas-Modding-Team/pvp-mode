@@ -48,6 +48,7 @@ public interface ServerConfiguration extends CommonConfiguration
         + ".soulbound";
 
     public static final String ADMINISTRATION_CATEGORY = SERVER_CATEGORY + ".administration";
+    public static final String CHAT_CONFIGURATION_CATEGORY = ADMINISTRATION_CATEGORY + ".chat_config";
 
     @ConfigurationPropertyGetter(category = SERVER_CATEGORY)
     public default EnumPvPMode getDefaultPvPMode ()
@@ -265,10 +266,17 @@ public interface ServerConfiguration extends CommonConfiguration
         return "\u00A7r\u00A78[\u00A75Soulbound\u00A7r\u00A78]";
     }
 
-    @ConfigurationPropertyGetter(category = ADMINISTRATION_CATEGORY)
+    @ConfigurationPropertyGetter(category = CHAT_CONFIGURATION_CATEGORY)
     public default boolean isOneClickTogglingEnabled ()
     {
         return true;
+    }
+
+    @ConfigurationPropertyGetter(category = CHAT_CONFIGURATION_CATEGORY, unit = Unit.CHARACTERS)
+    @Bounded(min = "0")
+    public default int getMaximumPropertyValueSize ()
+    {
+        return 30;
     }
 
 }

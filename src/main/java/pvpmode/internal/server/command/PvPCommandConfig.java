@@ -271,15 +271,34 @@ public class PvPCommandConfig extends AbstractPvPCommand
 
                 keyText.getChatStyle ()
                     .setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
-                        new ChatComponentText ("Click to show more informations about this entry")));
+                        new ChatComponentText (
+                            "Click to show more informations (the full value, valid values, ...) about this entry")));
                 keyText.getChatStyle ().setChatClickEvent (new ClickEvent (Action.RUN_COMMAND, "/pvpconfig display "
                     + configurationName + " " + currentCategory.getFullName () + " " + key.getInternalName ()));
 
-                ChatComponentText valueText = new ChatComponentText (
-                    configurationManagers.get (configurationName).getProperty (key).toString ()
-                        + key.getUnit ().getShortDisplayName ());
+                String valueString = configurationManagers.get (configurationName).getProperty (key).toString ()
+                    + key.getUnit ().getShortDisplayName ();
+                int truncatedLength = Math.min (valueString.length (),
+                    Math.max (config.getMaximumPropertyValueSize () - 6, 0));
 
-                valueText.getChatStyle ().setColor (EnumChatFormatting.GRAY);
+                ChatComponentText valueText = new ChatComponentText (
+                    valueString.substring (0, truncatedLength));
+
+                if (truncatedLength < valueString.length ())
+                {
+                    ChatComponentText valueTruncatedText = new ChatComponentText (" [...]");
+
+                    valueTruncatedText.getChatStyle ().setColor (EnumChatFormatting.GOLD);
+                    valueTruncatedText.getChatStyle ()
+                        .setChatClickEvent (new ClickEvent (Action.RUN_COMMAND, "/pvpconfig display "
+                            + configurationName + " " + currentCategory.getFullName () + " " + key.getInternalName ()));
+                    valueTruncatedText.getChatStyle ().setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
+                        new ChatComponentText (
+                            "The full property value is larger than the configured maximum length,\n so it's not completely displayed here. Click to view the full value.")));
+
+                    valueText.appendSibling (valueTruncatedText);
+                }
+
                 if (Boolean.class.isAssignableFrom (key.getValueType ()) && config.isOneClickTogglingEnabled ())
                 {
                     valueText.getChatStyle ().setColor (EnumChatFormatting.YELLOW);
