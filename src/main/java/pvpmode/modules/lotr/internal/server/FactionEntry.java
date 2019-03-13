@@ -1,26 +1,35 @@
 package pvpmode.modules.lotr.internal.server;
 
+import java.util.Set;
+
 /**
- * A simple helper class containing an alignment faction specifier and an
- * alignment value.
+ * A simple helper class containing an alignment faction specifier, the relevant
+ * factions and an alignment value.
  *
  * @author CraftedMods
  *
  */
 public class FactionEntry
 {
-    private String factionName;
+    private final String entryName;
+    private final Set<String> involvedFactions;
     private int alignment;
 
-    public FactionEntry (String factionName, int alignment)
+    public FactionEntry (String entryName, Set<String> involvedFactions, int alignment)
     {
-        this.factionName = factionName;
+        this.entryName = entryName;
+        this.involvedFactions = involvedFactions;
         this.alignment = alignment;
     }
 
-    public String getFactionName ()
+    public String getEntryName ()
     {
-        return factionName;
+        return entryName;
+    }
+
+    public Set<String> getInvolvedFactions ()
+    {
+        return involvedFactions;
     }
 
     public int getAlignment ()
@@ -34,7 +43,8 @@ public class FactionEntry
         final int prime = 31;
         int result = 1;
         result = prime * result + alignment;
-        result = prime * result + ( (factionName == null) ? 0 : factionName.hashCode ());
+        result = prime * result + ( (entryName == null) ? 0 : entryName.hashCode ());
+        result = prime * result + ( (involvedFactions == null) ? 0 : involvedFactions.hashCode ());
         return result;
     }
 
@@ -50,12 +60,19 @@ public class FactionEntry
         FactionEntry other = (FactionEntry) obj;
         if (alignment != other.alignment)
             return false;
-        if (factionName == null)
+        if (entryName == null)
         {
-            if (other.factionName != null)
+            if (other.entryName != null)
                 return false;
         }
-        else if (!factionName.equals (other.factionName))
+        else if (!entryName.equals (other.entryName))
+            return false;
+        if (involvedFactions == null)
+        {
+            if (other.involvedFactions != null)
+                return false;
+        }
+        else if (!involvedFactions.equals (other.involvedFactions))
             return false;
         return true;
     }

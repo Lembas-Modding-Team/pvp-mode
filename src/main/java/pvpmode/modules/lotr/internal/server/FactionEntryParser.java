@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 import lotr.common.LOTRFaction;
 import pvpmode.api.common.SimpleLogger;
+import pvpmode.modules.lotr.api.common.LOTRCommonUtils;
+import pvpmode.modules.lotr.api.server.*;
 
 public abstract class FactionEntryParser
 {
@@ -14,12 +16,14 @@ public abstract class FactionEntryParser
     protected final String configName;
     protected final Path file;
     protected final SimpleLogger logger;
+    protected final LOTRServerConfiguration config;
 
-    public FactionEntryParser (String configName, Path file, SimpleLogger logger)
+    public FactionEntryParser (String configName, Path file, SimpleLogger logger, LOTRServerConfiguration config)
     {
         this.configName = configName;
         this.file = file;
         this.logger = logger;
+        this.config = config;
     }
 
     public void parse () throws IOException
@@ -53,7 +57,9 @@ public abstract class FactionEntryParser
                     {
                         // Extract the faction identifier from the first column
                         String faction = parts[0].trim ();
-                        if (faction.equals ("ALL") || LOTRFaction.forName (faction) != null)
+                        if (faction.equals (LOTRServerConstants.FACTION_ENTRY_WILDCARD)
+                            || LOTRFaction.forName (faction) != null
+                            || config.getFactionPlaceholders ().containsKey (faction))
                         {
 
                             String alignmentString = parts[1].trim ();
@@ -63,7 +69,9 @@ public abstract class FactionEntryParser
                                 Integer alignmentInt = Integer.parseInt (alignmentString);
 
                                 // Add the data to our data structures
-                                FactionEntry entry = new FactionEntry (faction, alignmentInt);
+                                FactionEntry entry = new FactionEntry (faction, LOTRCommonUtils
+                                    .getAllFactionsOfPlaceholder (config.getFactionPlaceholders (), faction),
+                                    alignmentInt);
 
                                 if (parseLine (entry, i, Arrays.copyOfRange (parts, 2, parts.length)))
                                 {
@@ -72,6 +80,7 @@ public abstract class FactionEntryParser
                                 else
                                 {
                                     ++invalidEntryCounter;
+                                    break;
                                 }
                             }
                             catch (NumberFormatException e)

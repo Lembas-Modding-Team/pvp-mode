@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 import pvpmode.api.common.SimpleLogger;
+import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
 import pvpmode.modules.lotr.internal.server.*;
 
 public class BiomeOverrideConfigParser extends FactionEntryParser
@@ -12,9 +13,9 @@ public class BiomeOverrideConfigParser extends FactionEntryParser
 
     private final Map<Integer, Collection<FactionEntry>> parsedData = new HashMap<> ();
 
-    public BiomeOverrideConfigParser (String configName, Path file, SimpleLogger logger)
+    public BiomeOverrideConfigParser (String configName, Path file, SimpleLogger logger, LOTRServerConfiguration config)
     {
-        super (configName, file, logger);
+        super (configName, file, logger, config);
     }
 
     @Override

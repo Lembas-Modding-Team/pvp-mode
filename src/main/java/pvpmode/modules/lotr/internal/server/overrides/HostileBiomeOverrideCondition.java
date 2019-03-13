@@ -6,6 +6,7 @@ import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
+import pvpmode.modules.lotr.api.server.LOTRServerConstants;
 import pvpmode.modules.lotr.internal.server.FactionEntry;
 
 /**
@@ -33,13 +34,14 @@ public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondi
     @Override
     protected EnumForcedPvPMode handleCondition (FactionEntry entry, EntityPlayer player)
     {
-        String factionName = entry.getFactionName ();
-        if (factionName.equals ("ALL"))
+        if (entry.getEntryName ().equals (LOTRServerConstants.FACTION_ENTRY_WILDCARD))
             return EnumForcedPvPMode.ON;
         else
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);
-            if (data.getAlignment (LOTRFaction.forName (factionName)) < entry.getAlignment ())
+            if (entry.getInvolvedFactions ().stream ().allMatch (
+                factionName -> data.getAlignment (LOTRFaction.forName (factionName)) < entry
+                    .getAlignment ()))
                 return EnumForcedPvPMode.ON;
         }
         return EnumForcedPvPMode.UNDEFINED;
