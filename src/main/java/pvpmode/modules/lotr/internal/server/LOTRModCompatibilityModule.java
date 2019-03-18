@@ -52,6 +52,10 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
         config = this.createConfiguration (configFile ->
         {
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (LOTRServerConfiguration.class,
+                LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID);
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (LOTRServerConfigurationImpl.class,
+                LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID);
             return new LOTRServerConfigurationImpl (configFile, PvPMode.instance.getServerProxy ()
                 .getAutoConfigManager ().getGeneratedKeys ().get (LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID),
                 logger, this);

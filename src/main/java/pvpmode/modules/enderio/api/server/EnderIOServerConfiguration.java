@@ -5,8 +5,10 @@ import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.configuration.ServerConfiguration;
 
-@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "="
-    + EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID)
+@Process(properties =
+{AutoConfigurationConstants.PID_PROPERTY_KEY + "="
+    + EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID,
+    AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY + "=true"})
 public interface EnderIOServerConfiguration extends ConfigurationManager
 {
 

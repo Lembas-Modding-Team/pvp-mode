@@ -11,8 +11,10 @@ import pvpmode.api.common.utils.Process;
 import pvpmode.internal.common.configuration.AutoForgeConfigurationManager;
 import pvpmode.modules.enderio.api.server.EnderIOServerConfiguration;
 
-@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "="
-    + EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID)
+@Process(properties =
+{AutoConfigurationConstants.PID_PROPERTY_KEY + "="
+    + EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID,
+    AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY + "=true"})
 public class EnderIOServerConfigurationImpl extends AutoForgeConfigurationManager
     implements EnderIOServerConfiguration
 {

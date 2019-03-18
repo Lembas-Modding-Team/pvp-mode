@@ -40,6 +40,10 @@ public class EnderIOCompatibilityModule extends AbstractCompatibilityModule impl
 
         config = this.createConfiguration (configFile ->
         {
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (EnderIOServerConfiguration.class,
+                EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID);
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (EnderIOServerConfigurationImpl.class,
+                EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID);
             return new EnderIOServerConfigurationImpl (configFile, PvPMode.proxy.getAutoConfigManager ()
                 .getGeneratedKeys ().get (EnderIOServerConfiguration.ENDER_IO_SERVER_CONFIG_PID), logger);
         });

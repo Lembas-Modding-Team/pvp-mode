@@ -6,7 +6,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.api.common.configuration.ConfigurationPropertyKey;
+import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey.Unit;
 import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.*;
@@ -30,6 +30,8 @@ public class AutoConfigurationCreator
 
     private Map<String, Map<String, ConfigurationPropertyKey<?>>> generatedKeys = new HashMap<> ();
 
+    private Map<Class<?>, ConfigurationPropertyKeyCreator<?>> keyCreators;
+
     /**
      * Processes the discovered classes and extracts the relevant data and processes
      * these.
@@ -45,9 +47,15 @@ public class AutoConfigurationCreator
         Map<Class<? extends Annotation>, Map<Class<?>, Set<Class<?>>>> foundClasses = discoverer
             .getDiscoveredClasses (timeout);
 
-        Map<Class<?>, ConfigurationPropertyKeyCreator<?>> keyCreators = createPropertyCreators (foundClasses);
+        keyCreators = createPropertyCreators (foundClasses);
 
-        processPlainProcessors (foundClasses.get (Process.class), keyCreators);
+        processPlainProcessors (foundClasses.get (Process.class));
+    }
+
+    public void processConfigurationManager (Class<? extends ConfigurationManager> classToProcess, String pid)
+    {
+        this.processPlainProcessorCreateKeys (classToProcess, pid);
+        this.processPlainProcessorInjectFields (classToProcess, pid);
     }
 
     /**
@@ -84,8 +92,7 @@ public class AutoConfigurationCreator
         return keyCreators;
     }
 
-    private void processPlainProcessors (Map<Class<?>, Set<Class<?>>> foundClasses,
-        Map<Class<?>, ConfigurationPropertyKeyCreator<?>> keyCreators)
+    private void processPlainProcessors (Map<Class<?>, Set<Class<?>>> foundClasses)
     {
         Collection<Class<?>> classesToProcess = new HashSet<> ();
 
@@ -97,53 +104,40 @@ public class AutoConfigurationCreator
         {
             Map<String, String> properties = PvPCommonUtils.getPropertiesFromProcessedClass (classToProcess);
 
-            if (properties.containsKey (AutoConfigurationConstants.PID_PROPERTY_KEY))
+            String manualProcessingValue = properties
+                .get (AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY);
+
+            if (manualProcessingValue != null && manualProcessingValue.equalsIgnoreCase ("true"))
             {
-                String pid = properties.get (AutoConfigurationConstants.PID_PROPERTY_KEY);
-                if (!classesToProcessByPid.containsKey (pid))
-                {
-                    classesToProcessByPid.put (pid, new HashSet<> ());
-                }
-                classesToProcessByPid.get (pid).add (classToProcess);
+                continue; // Don't process the class
             }
+            else
+            {
+                // No manual processing, proceed
+
+                if (properties.containsKey (AutoConfigurationConstants.PID_PROPERTY_KEY))
+                {
+                    String pid = properties.get (AutoConfigurationConstants.PID_PROPERTY_KEY);
+                    if (!classesToProcessByPid.containsKey (pid))
+                    {
+                        classesToProcessByPid.put (pid, new HashSet<> ());
+                    }
+                    classesToProcessByPid.get (pid).add (classToProcess);
+
+                    if (manualProcessingValue != null && !manualProcessingValue.equalsIgnoreCase ("false"))
+                        logger.error (
+                            "The value \"%s\" of the manual processing property of the configuration manager \"%s\" is not a boolean value. The property is assumed to be false.",
+                            manualProcessingValue, classToProcess.getName ());
+                }
+            }
+
         }
 
         for (String pid : classesToProcessByPid.keySet ())
         {
             for (Class<?> classToProcess : classesToProcessByPid.get (pid))
             {
-                for (Method method : classToProcess.getDeclaredMethods ())
-                {
-                    ConfigurationPropertyGetter configPropertyAnnotation = method
-                        .getAnnotation (ConfigurationPropertyGetter.class);
-
-                    if (configPropertyAnnotation != null)
-                    {
-                        String internalName = configPropertyAnnotation.internalName ();
-                        Class<?> returnType = PvPCommonUtils.toWrapper (method.getReturnType ());
-                        Object defaultValue = getDefaultValue (classToProcess, returnType, method);
-                        ConfigurationPropertyKeyCreator<?> creator = getMatchingKeyCreator (keyCreators, returnType);
-
-                        if (creator != null)
-                        {
-                            ConfigurationPropertyKey<?> key = createKey (internalName,
-                                returnType, configPropertyAnnotation.category (),
-                                configPropertyAnnotation.unit (), defaultValue, creator, method);
-                            if (!generatedKeys.containsKey (pid))
-                            {
-                                generatedKeys.put (pid, new HashMap<> ());
-                            }
-                            generatedKeys.get (pid).put (key.getInternalName (), key);
-                        }
-                        else
-                        {
-                            this.logger.warning (
-                                "No matching property key creator was found for the key \"%s\" with the type \"%s\" registered under \"%s\"",
-                                internalName, returnType.getName (), pid);
-                        }
-
-                    }
-                }
+                this.processPlainProcessorCreateKeys (classToProcess, pid);
             }
         }
 
@@ -155,56 +149,97 @@ public class AutoConfigurationCreator
         {
             for (Class<?> classToProcess : classesToProcessByPid.get (pid))
             {
-                for (Field field : classToProcess.getDeclaredFields ())
+                this.processPlainProcessorInjectFields (classToProcess, pid);
+            }
+        }
+
+    }
+
+    private void processPlainProcessorCreateKeys (Class<?> classToProcess, String pid)
+    {
+        for (Method method : classToProcess.getDeclaredMethods ())
+        {
+            ConfigurationPropertyGetter configPropertyAnnotation = method
+                .getAnnotation (ConfigurationPropertyGetter.class);
+
+            if (configPropertyAnnotation != null)
+            {
+                String internalName = configPropertyAnnotation.internalName ();
+                Class<?> returnType = PvPCommonUtils.toWrapper (method.getReturnType ());
+                Object defaultValue = getDefaultValue (classToProcess, returnType, method);
+                ConfigurationPropertyKeyCreator<?> creator = getMatchingKeyCreator (keyCreators, returnType);
+
+                if (creator != null)
                 {
-                    Class<?> fieldType = field.getType ();
-                    if (ConfigurationPropertyKey.class.isAssignableFrom (fieldType)
-                        && Modifier.isStatic (field.getModifiers ()))
+                    ConfigurationPropertyKey<?> key = createKey (internalName,
+                        returnType, configPropertyAnnotation.category (),
+                        configPropertyAnnotation.unit (), defaultValue, creator, method);
+                    if (!generatedKeys.containsKey (pid))
                     {
-                        Inject injectAnnotation = field.getAnnotation (Inject.class);
-                        if (injectAnnotation != null)
+                        generatedKeys.put (pid, new HashMap<> ());
+                    }
+                    generatedKeys.get (pid).put (key.getInternalName (), key);
+                }
+                else
+                {
+                    this.logger.warning (
+                        "No matching property key creator was found for the key \"%s\" with the type \"%s\" registered under \"%s\"",
+                        internalName, returnType.getName (), pid);
+                }
+
+            }
+        }
+    }
+
+    private void processPlainProcessorInjectFields (Class<?> classToProcess, String pid)
+    {
+        for (Field field : classToProcess.getDeclaredFields ())
+        {
+            Class<?> fieldType = field.getType ();
+            if (ConfigurationPropertyKey.class.isAssignableFrom (fieldType)
+                && Modifier.isStatic (field.getModifiers ()))
+            {
+                Inject injectAnnotation = field.getAnnotation (Inject.class);
+                if (injectAnnotation != null)
+                {
+                    String propertyName = injectAnnotation.name ().equals ("") ? field.getName ().toLowerCase ()
+                        : injectAnnotation.name ();
+
+                    ConfigurationPropertyKey<?> propertyInstance = generatedKeys.get (pid)
+                        .get (propertyName);
+
+                    if (propertyInstance != null)
+                    {
+                        if (fieldType.isAssignableFrom (propertyInstance.getClass ()))
                         {
-                            String propertyName = injectAnnotation.name ().equals ("") ? field.getName ().toLowerCase ()
-                                : injectAnnotation.name ();
-
-                            ConfigurationPropertyKey<?> propertyInstance = generatedKeys.get (pid)
-                                .get (propertyName);
-
-                            if (propertyInstance != null)
+                            try
                             {
-                                if (fieldType.isAssignableFrom (propertyInstance.getClass ()))
-                                {
-                                    try
-                                    {
-                                        field.setAccessible (true);
+                                field.setAccessible (true);
 
-                                        Field modifiersField = Field.class.getDeclaredField ("modifiers");
-                                        modifiersField.setAccessible (true);
-                                        modifiersField.setInt (field, field.getModifiers () & ~Modifier.FINAL);
+                                Field modifiersField = Field.class.getDeclaredField ("modifiers");
+                                modifiersField.setAccessible (true);
+                                modifiersField.setInt (field, field.getModifiers () & ~Modifier.FINAL);
 
-                                        field.set (null, propertyInstance);
+                                field.set (null, propertyInstance);
 
-                                        logger.debug (
-                                            "Injected the property key \"%s\" into the field \"%s\" in \"%s\", with the PID \"%s\"",
-                                            propertyInstance.getInternalName (), field.getName (),
-                                            classToProcess.getName (), pid);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        this.logger.errorThrowable (
-                                            "An unexpected error occurred while trying to inject the respective property key into the field \"%s\" in \"%s\" registered under the PID \"%s\"",
-                                            e,
-                                            field.getName (), classToProcess, pid);
-                                    }
-
-                                }
+                                logger.debug (
+                                    "Injected the property key \"%s\" into the field \"%s\" in \"%s\", with the PID \"%s\"",
+                                    propertyInstance.getInternalName (), field.getName (),
+                                    classToProcess.getName (), pid);
                             }
+                            catch (Exception e)
+                            {
+                                this.logger.errorThrowable (
+                                    "An unexpected error occurred while trying to inject the respective property key into the field \"%s\" in \"%s\" registered under the PID \"%s\"",
+                                    e,
+                                    field.getName (), classToProcess, pid);
+                            }
+
                         }
                     }
                 }
             }
         }
-
     }
 
     @SuppressWarnings("unchecked")
