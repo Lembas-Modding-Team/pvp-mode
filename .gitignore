@@ -1,9 +1,26 @@
-/bin/
-/eclipse/
-/libs/
-/build/
-/.settings/
-/.gradle/
-/.classpath
-/.project
-/tempLibs/
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+classes
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+ignore*
+libs*
+#secrets.properties

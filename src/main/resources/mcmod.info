@@ -1,16 +1,20 @@
 [
-{
-  "modid": "pvp-mode",
-  "name": "PvP Mode",
-  "description": "Allows management of PvP interaction between players and their hired units in many ways.",
-  "version": "${version}",
-  "mcversion": "1.7.10",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["AlteOgre", "Mahtaran", "CraftedMods"],
-  "credits": "VulcanForge (former developer and original creator)",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+	{
+		"modid": "@modid@",
+		"name": "@name@",
+		"description": "Allows management of PvP interaction between players and their hired units in many ways.",
+		"version": "@version@",
+		"mcversion": "@mcversion@",
+		"url": "",
+		"updateUrl": "",
+		"authorList": [
+			"AlteOgre",
+			"Mahtaran",
+			"CraftedMods"
+		],
+		"credits": "VulcanForge (former developer and original creator)",
+		"logoFile": "",
+		"screenshots": [],
+		"dependencies": []
+	}
 ]

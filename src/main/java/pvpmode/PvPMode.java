@@ -1,18 +1,20 @@
 package pvpmode;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.Mod.*;
-import cpw.mods.fml.common.event.*;
 import pvpmode.api.common.version.SemanticVersion;
 import pvpmode.internal.client.ClientProxy;
 import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.ServerProxy;
 
-@Mod(modid = "pvp-mode", name = "PvP Mode", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
+import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.Mod.*;
+import cpw.mods.fml.common.event.*;
+
+@Mod(modid = PvPMode.MODID, name = "@name@", version = PvPMode.VERSION, acceptableRemoteVersions = "*")
 public class PvPMode
 {
 
-    public static final String VERSION = "2.0.0-BETA.2";
+    public static final String MODID = "@modid@";
+    public static final String VERSION = "@version@";
     public static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.of (VERSION);
 
     @Instance
@@ -29,14 +31,12 @@ public class PvPMode
 
     @EventHandler
     public void onInit (FMLInitializationEvent event) throws Exception
-
     {
         proxy.onInit (event);
     }
 
     @EventHandler
     public void onPostInit (FMLPostInitializationEvent event) throws Exception
-
     {
         proxy.onPostInit (event);
     }
