@@ -19,8 +19,8 @@ import pvpmode.internal.common.core.PvPModeCore;
 public abstract class AbstractClassTransformer implements IClassTransformer
 {
 
-    protected final PvPModeCore coremodInstance = PvPModeCore.getInstance ();
-    protected final SimpleLogger logger = coremodInstance.getLogger ();
+    protected PvPModeCore coremodInstance = PvPModeCore.getInstance ();
+    protected SimpleLogger logger = coremodInstance.getLogger ();
 
     /**
      * Iterates through all methods of the specified class and allows patches for
