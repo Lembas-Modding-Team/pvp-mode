@@ -5,11 +5,16 @@ import java.nio.file.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.*;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
+import pvpmode.api.common.network.ClientsideFeatureSupportRequest;
+import pvpmode.api.common.network.ClientsideFeatureSupportRequest.*;
 import pvpmode.api.common.version.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
 import pvpmode.internal.common.configuration.*;
@@ -40,6 +45,11 @@ public class CommonProxy implements Configurable
     private RemoteVersion remoteVersion;
     private EnumVersionComparison versionComparison;
 
+    protected final SimpleNetworkWrapper packetDispatcher = NetworkRegistry.INSTANCE
+        .newSimpleChannel (PvPMode.MODID);
+
+    private static int packetIdCounter = 0;
+
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
     {
         logger = new SimpleLoggerImpl (event.getModLog ());
@@ -64,10 +74,22 @@ public class CommonProxy implements Configurable
         autoConfigManager.processClasspath (discoverer, 30000);
 
         compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.PRE_INIT);
+
+        registerPackets ();
     }
 
     protected void registerCompatibilityModules ()
     {
+    }
+
+    protected void registerPackets ()
+    {
+        packetDispatcher.registerMessage (ClientsideFeatureSupportRequestHandler.class,
+            ClientsideFeatureSupportRequest.class,
+            getNextPacketId (), Side.SERVER);
+        packetDispatcher.registerMessage (ClientsideFeatureSupportRequestAnswerHandler.class,
+            ClientsideFeatureSupportRequestAnswer.class,
+            getNextPacketId (), Side.CLIENT);
     }
 
     public void onInit (FMLInitializationEvent event) throws Exception
@@ -99,6 +121,7 @@ public class CommonProxy implements Configurable
         compatibilityManager.loadRegisteredModules (EnumCompatibilityModuleLoadingPoint.LOADING_COMPLETED);
     }
 
+    @Override
     public CommonConfiguration getConfiguration ()
     {
         return configuration;
@@ -137,6 +160,16 @@ public class CommonProxy implements Configurable
     public EnumVersionComparison getVersionComparison ()
     {
         return versionComparison;
+    }
+
+    public SimpleNetworkWrapper getPacketDispatcher ()
+    {
+        return packetDispatcher;
+    }
+
+    protected static int getNextPacketId ()
+    {
+        return packetIdCounter++;
     }
 
 }
