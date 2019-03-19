@@ -123,7 +123,7 @@ public class AutoConfigurationCreator
                 {
                     // The value for the manual processing was specified, but neither true nor false
                     logger.error (
-                        "The value \"%s\" of the manual processing property of the configuration manager \"%s\" is not a boolean value. The property is assumed to be false.",
+                        "The value \"%s\" of the manual processing property of the configuration manager \"%s\" is not a boolean value. The configuration manager won't be processed.",
                         manualProcessingValue, classToProcess.getName ());
                 }
 
