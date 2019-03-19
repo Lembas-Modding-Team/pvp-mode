@@ -11,8 +11,10 @@ import pvpmode.api.common.utils.Process;
 import pvpmode.internal.common.configuration.AutoForgeConfigurationManager;
 import pvpmode.modules.siegeMode.api.server.SiegeModeServerConfiguration;
 
-@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "="
-    + SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID)
+@Process(properties =
+{AutoConfigurationConstants.PID_PROPERTY_KEY + "="
+    + SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID,
+    AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY + "=true"})
 public class SiegeModeServerConfigurationImpl extends AutoForgeConfigurationManager
     implements SiegeModeServerConfiguration
 {

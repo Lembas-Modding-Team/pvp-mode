@@ -12,8 +12,10 @@ import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.modules.lotr.api.common.LOTRCommonUtils;
 
-@Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "="
-    + LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID)
+@Process(properties =
+{AutoConfigurationConstants.PID_PROPERTY_KEY + "="
+    + LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID,
+    AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY + "=true"})
 public interface LOTRServerConfiguration extends ConfigurationManager
 {
 

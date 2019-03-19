@@ -17,5 +17,6 @@ public interface AutoConfigurationConstants
     public static final String INTERNAL_NAME_PROPERTY_KEY = "internal_name";
     public static final String COMMENT_FILE_PROPERTY_KEY = "comments";
     public static final String PROPERTY_GENERATOR_TYPE_PROPERTY_KEY = "type";
+    public static final String MANUAL_PROCESSING_PROPERTY_KEY = "manual_processing";
 
 }

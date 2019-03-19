@@ -6,7 +6,12 @@ import pvpmode.api.common.configuration.ConfigurationManager;
  * The interface for automatically managed configuration managers. That means,
  * that the configuration properties can be specified via annotated methods of
  * the interface, and the auto configuration environment will take care of the
- * correct handling of these properties.
+ * correct handling of these properties. The manager can be annotated with the
+ * {@link pvpmode.api.common.utils.Process} annotation, so it'll be processed
+ * automatically via the auto configuration system. If the property
+ * {@link AutoConfigurationConstants#MANUAL_PROCESSING_PROPERTY_KEY} is used
+ * with the value \"true\", the manager has to be submitted manually to the
+ * processing instance.
  * 
  * @author CraftedMods
  *

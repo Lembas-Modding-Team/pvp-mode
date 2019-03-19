@@ -33,6 +33,10 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule im
 
         config = this.createConfiguration (configFile ->
         {
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (SiegeModeServerConfiguration.class,
+                SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID);
+            PvPMode.proxy.getAutoConfigManager ().processConfigurationManager (SiegeModeServerConfigurationImpl.class,
+                SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID);
             return new SiegeModeServerConfigurationImpl (configFile, PvPMode.proxy.getAutoConfigManager ()
                 .getGeneratedKeys ().get (SiegeModeServerConfiguration.SIEGE_MODE_SERVER_CONFIG_PID), logger);
         });
