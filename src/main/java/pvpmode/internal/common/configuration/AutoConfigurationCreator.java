@@ -104,31 +104,29 @@ public class AutoConfigurationCreator
         {
             Map<String, String> properties = PvPCommonUtils.getPropertiesFromProcessedClass (classToProcess);
 
+            String pid = properties.get (AutoConfigurationConstants.PID_PROPERTY_KEY);
             String manualProcessingValue = properties
                 .get (AutoConfigurationConstants.MANUAL_PROCESSING_PROPERTY_KEY);
 
-            if (manualProcessingValue != null && manualProcessingValue.equalsIgnoreCase ("true"))
+            if (pid != null)
             {
-                continue; // Don't process the class
-            }
-            else
-            {
-                // No manual processing, proceed
-
-                if (properties.containsKey (AutoConfigurationConstants.PID_PROPERTY_KEY))
+                if (manualProcessingValue == null || manualProcessingValue.equalsIgnoreCase ("false"))
                 {
-                    String pid = properties.get (AutoConfigurationConstants.PID_PROPERTY_KEY);
+                    // No manual processing
                     if (!classesToProcessByPid.containsKey (pid))
                     {
                         classesToProcessByPid.put (pid, new HashSet<> ());
                     }
                     classesToProcessByPid.get (pid).add (classToProcess);
-
-                    if (manualProcessingValue != null && !manualProcessingValue.equalsIgnoreCase ("false"))
-                        logger.error (
-                            "The value \"%s\" of the manual processing property of the configuration manager \"%s\" is not a boolean value. The property is assumed to be false.",
-                            manualProcessingValue, classToProcess.getName ());
                 }
+                else if (!manualProcessingValue.equalsIgnoreCase ("true"))
+                {
+                    // The value for the manual processing was specified, but neither true nor false
+                    logger.error (
+                        "The value \"%s\" of the manual processing property of the configuration manager \"%s\" is not a boolean value. The property is assumed to be false.",
+                        manualProcessingValue, classToProcess.getName ());
+                }
+
             }
 
         }
