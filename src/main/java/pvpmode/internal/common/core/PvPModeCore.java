@@ -102,7 +102,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
 
         if (registeredClassTransformers != null)
         {
-            for (String classTransformerClassName : registerClasses.get (IClassTransformer.class.getName ()))
+            for (String classTransformerClassName : registeredClassTransformers)
             {
                 try
                 {
