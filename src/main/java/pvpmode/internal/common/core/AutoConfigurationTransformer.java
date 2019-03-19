@@ -6,10 +6,9 @@ import java.util.function.Supplier;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
-import pvpmode.api.common.utils.PvPCommonUtils;
+import pvpmode.api.common.core.AbstractClassTransformer;
+import pvpmode.api.common.utils.*;
 
 /**
  * The class transformer for the auto configuration system. Hacks into the
@@ -18,10 +17,9 @@ import pvpmode.api.common.utils.PvPCommonUtils;
  * @author CraftedMods
  *
  */
-public class AutoConfigurationTransformer implements IClassTransformer
+@Register
+public class AutoConfigurationTransformer extends AbstractClassTransformer
 {
-
-    private SimpleLogger logger = PvPCommonUtils.getLogger (AutoConfigurationTransformer.class);
 
     private Map<String, Map<String, Set<MethodNode>>> processInterfaces = new HashMap<> ();
 
@@ -31,8 +29,8 @@ public class AutoConfigurationTransformer implements IClassTransformer
     {
         if (!mappersLoaded)
         {
-            PvPModeCore.autoConfigurationMapperManager
-                .processClasspath (PvPModeCore.classDiscoverer, 30000);
+            coremodInstance.getAutoConfigurationMapperManager ()
+                .processClasspath (coremodInstance.getClassDiscoverer (), 30000);
             mappersLoaded = true;
         }
     }
@@ -73,8 +71,9 @@ public class AutoConfigurationTransformer implements IClassTransformer
                                     String internalName = this.getInternalName (methodNode);
                                     if (internalName == null || internalName.trim ().equals (""))
                                     {
-                                        internalName = PvPModeCore.autoConfigurationMapperManager.getInternalName (
-                                            methodNode.name);
+                                        internalName = coremodInstance.getAutoConfigurationMapperManager ()
+                                            .getInternalName (
+                                                methodNode.name);
                                     }
                                     internalName = internalName.toLowerCase ().replaceAll (" ", "_");
                                     this.setInternalName (methodNode, internalName);
@@ -128,7 +127,7 @@ public class AutoConfigurationTransformer implements IClassTransformer
                 ClassWriter.COMPUTE_FRAMES);
             classNode.accept (writer);
 
-            logger.debug ("Patched the class \"%s\"", className);
+            logger.debug ("Patched the class \"%s\" for the autoconfiguration system", className);
 
             return writer.toByteArray ();
         }
