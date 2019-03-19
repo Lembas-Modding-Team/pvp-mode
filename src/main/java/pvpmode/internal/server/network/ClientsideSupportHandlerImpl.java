@@ -29,6 +29,7 @@ public class ClientsideSupportHandlerImpl implements ClientsideSupportHandler
         }
         catch (IllegalArgumentException e)
         {
+            // No semantic version
             return false;
         }
     }
@@ -56,7 +57,7 @@ public class ClientsideSupportHandlerImpl implements ClientsideSupportHandler
     @Override
     public void sendInitialSupportPackages (EntityPlayerMP player)
     {
-        // TODO Auto-generated method stub
+        // TODO Currently not used
     }
 
 }

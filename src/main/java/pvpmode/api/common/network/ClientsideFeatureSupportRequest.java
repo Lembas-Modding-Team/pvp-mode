@@ -10,7 +10,7 @@ import pvpmode.PvPMode;
 import pvpmode.api.server.network.ClientsideSupportHandler;
 
 /**
- * A package that is sent, if the client requests clientside support from the
+ * A package that is sent when the client requests clientside support from the
  * server. That means, that the server will send relevant data and game events
  * to the client, so that it can process them. To example the client can be
  * notified about PvP Mode changes, running timers, and so on.

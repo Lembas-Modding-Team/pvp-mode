@@ -9,11 +9,6 @@ import pvpmode.api.common.network.ClientsideFeatureSupportRequest;
 public class PvPClientEventHandler
 {
 
-    public PvPClientEventHandler ()
-    {
-
-    }
-
     @SubscribeEvent
     public void onPlayerLoggedIn (EntityJoinWorldEvent event)
     {
