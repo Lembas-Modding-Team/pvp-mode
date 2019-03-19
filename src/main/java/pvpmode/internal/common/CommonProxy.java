@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.config.Configuration;
-import pvpmode.PvPMode;
+import pvpmode.*;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
@@ -25,12 +25,13 @@ public class CommonProxy implements Configurable
     protected Path generatedFilesFolder;
     protected CommonConfiguration configuration;
     protected CompatibilityManagerImpl compatibilityManager;
-    protected final ClassDiscoverer discoverer = PvPModeCore.classDiscoverer;
+    protected final ClassDiscoverer discoverer = PvPModeCore.getInstance ().getClassDiscoverer ();
 
     protected SimpleLogger logger;
 
     protected AutoConfigurationCreator autoConfigManager;
-    protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.autoConfigurationMapperManager;
+    protected final AutoConfigurationMapperManager autoConfigMapperManager = PvPModeCore.getInstance ()
+        .getAutoConfigurationMapperManager ();
 
     protected VersionChecker versionChecker = new VersionCheckerImpl (
         "https://raw.githubusercontent.com/Lembas-Modding-Team/pvp-mode/development/version.txt");// TODO Change with
