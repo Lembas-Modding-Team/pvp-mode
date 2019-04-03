@@ -626,4 +626,10 @@ public class PvPServerEventHandler
         }
     }
 
+    @SubscribeEvent
+    public void onPlayerLoggedOut (PlayerLoggedOutEvent event)
+    {
+        server.getClientsideSupportHandler ().removeClientsideSupport (event.player.getUniqueID ());
+    }
+
 }

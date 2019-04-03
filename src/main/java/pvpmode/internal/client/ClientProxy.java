@@ -2,7 +2,9 @@ package pvpmode.internal.client;
 
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
+import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.client.configuration.ClientConfiguration;
 import pvpmode.api.common.configuration.*;
 import pvpmode.internal.client.configuration.ClientConfigurationImpl;
@@ -10,6 +12,8 @@ import pvpmode.internal.common.CommonProxy;
 
 public class ClientProxy extends CommonProxy
 {
+
+    private PvPClientEventHandler eventHandler;
 
     @Override
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
@@ -27,6 +31,11 @@ public class ClientProxy extends CommonProxy
         configuration = new ClientConfigurationImpl (this, forgeConfiguration,
             properties);
         configuration.load ();
+
+        eventHandler = new PvPClientEventHandler ();
+
+        MinecraftForge.EVENT_BUS.register (eventHandler);
+        FMLCommonHandler.instance ().bus ().register (eventHandler);
     }
 
     @Override

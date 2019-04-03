@@ -16,11 +16,13 @@ import pvpmode.api.server.compatibility.ServerCompatibilityConstants;
 import pvpmode.api.server.compatibility.events.CombatLoggingHandlerRegistryEvent;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.log.LogHandlerConstants;
+import pvpmode.api.server.network.ClientsideSupportHandler;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.command.*;
 import pvpmode.internal.server.configuration.ServerConfigurationImpl;
 import pvpmode.internal.server.log.*;
+import pvpmode.internal.server.network.ClientsideSupportHandlerImpl;
 import pvpmode.internal.server.overrides.OverrideManagerImpl;
 import pvpmode.internal.server.utils.*;
 import pvpmode.modules.bukkit.internal.server.BukkitCompatibilityModuleLoader;
@@ -50,6 +52,8 @@ public class ServerProxy extends CommonProxy
 
     private ServerChatUtilsProvider chatUtilsProvider;
     private PvPServerUtilsProvider serverUtilsProvider;
+
+    protected final ClientsideSupportHandler clientsideSupportHandler = new ClientsideSupportHandlerImpl ();
 
     public ServerProxy ()
     {
@@ -195,6 +199,11 @@ public class ServerProxy extends CommonProxy
     {
         return Arrays.asList (pvpCommandInstance, pvpadminCommandInstance, pvpconfigCommandInstance,
             pvphelpCommandInstance, pvplistCommandInstance, soulboundCommandInstance);
+    }
+
+    public ClientsideSupportHandler getClientsideSupportHandler ()
+    {
+        return clientsideSupportHandler;
     }
 
 }
