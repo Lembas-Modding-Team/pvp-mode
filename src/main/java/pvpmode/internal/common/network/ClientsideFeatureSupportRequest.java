@@ -98,7 +98,7 @@ public class ClientsideFeatureSupportRequest implements IMessage
             UUID playerUUID = player.getUniqueID ();
             ClientsideSupportHandler supportHandler = PvPMode.instance.getServerProxy ().getClientsideSupportHandler ();
 
-            if (!supportHandler.isClientsideSupported (playerUUID))
+            if (!supportHandler.isClientsideSupported (playerUUID)) // If the client hasn't clientside support yet
             {
                 if (supportHandler.isRemoteVersionSupported (message.pvpModeVersion))
                 {
@@ -108,6 +108,7 @@ public class ClientsideFeatureSupportRequest implements IMessage
                     supportHandler.addClientsideSupport (playerUUID);
                     return new ClientsideFeatureSupportRequestAnswer (true);
                 }
+                else
                 {
                     PvPMode.proxy.getLogger ().info (
                         "The client of %s requested client-side support, but the client's PvP Mode Version (%s) is not supported",
