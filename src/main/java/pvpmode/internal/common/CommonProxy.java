@@ -13,12 +13,12 @@ import pvpmode.*;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
-import pvpmode.api.common.network.ClientsideFeatureSupportRequest;
-import pvpmode.api.common.network.ClientsideFeatureSupportRequest.*;
 import pvpmode.api.common.version.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
 import pvpmode.internal.common.configuration.*;
 import pvpmode.internal.common.core.PvPModeCore;
+import pvpmode.internal.common.network.ClientsideFeatureSupportRequest;
+import pvpmode.internal.common.network.ClientsideFeatureSupportRequest.*;
 import pvpmode.internal.common.utils.ClassDiscoverer;
 import pvpmode.internal.common.version.VersionCheckerImpl;
 

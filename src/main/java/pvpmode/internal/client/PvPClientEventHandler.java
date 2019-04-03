@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import pvpmode.PvPMode;
-import pvpmode.api.common.network.ClientsideFeatureSupportRequest;
+import pvpmode.internal.common.network.ClientsideFeatureSupportRequest;
 
 public class PvPClientEventHandler
 {

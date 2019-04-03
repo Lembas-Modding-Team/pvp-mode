@@ -1,4 +1,4 @@
-package pvpmode.api.common.network;
+package pvpmode.internal.common.network;
 
 import java.util.UUID;
 
