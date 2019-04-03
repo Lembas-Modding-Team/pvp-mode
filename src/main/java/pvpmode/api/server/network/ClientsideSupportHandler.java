@@ -19,7 +19,7 @@ public interface ClientsideSupportHandler
      * 
      * @param version
      *            The remote version
-     * @return Whether it's supported
+     * @return Whether the remote version is supported
      */
     public boolean isRemoteVersionSupported (String version);
 
