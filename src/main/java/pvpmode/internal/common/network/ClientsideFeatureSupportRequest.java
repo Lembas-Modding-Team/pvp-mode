@@ -1,13 +1,14 @@
 package pvpmode.internal.common.network;
 
-import java.util.UUID;
+import java.util.*;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import pvpmode.PvPMode;
-import pvpmode.api.server.network.ClientsideSupportHandler;
+import pvpmode.api.server.network.*;
+import pvpmode.internal.server.network.ClientDataImpl;
 
 /**
  * A package that is sent when the client requests clientside support from the
@@ -26,26 +27,38 @@ public class ClientsideFeatureSupportRequest implements IMessage
      * string.
      */
     private String pvpModeVersion;
+    private String[] loadedCompatibilityModules;
 
     public ClientsideFeatureSupportRequest ()
     {
     }
 
-    public ClientsideFeatureSupportRequest (String pvpModeVersion)
+    public ClientsideFeatureSupportRequest (String pvpModeVersion, String[] loadedComptibilityModules)
     {
         this.pvpModeVersion = pvpModeVersion;
+        this.loadedCompatibilityModules = loadedComptibilityModules;
     }
 
     @Override
     public void fromBytes (ByteBuf buf)
     {
         pvpModeVersion = ByteBufUtils.readUTF8String (buf);
+        loadedCompatibilityModules = new String[buf.readInt ()];
+        for (int i = 0; i < loadedCompatibilityModules.length; i++)
+        {
+            loadedCompatibilityModules[i] = ByteBufUtils.readUTF8String (buf);
+        }
     }
 
     @Override
     public void toBytes (ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String (buf, pvpModeVersion);
+        buf.writeInt (loadedCompatibilityModules.length);
+        for (String loadedCompatibilityModule : loadedCompatibilityModules)
+        {
+            ByteBufUtils.writeUTF8String (buf, loadedCompatibilityModule);
+        }
     }
 
     /**
@@ -95,24 +108,26 @@ public class ClientsideFeatureSupportRequest implements IMessage
             MessageContext ctx)
         {
             EntityPlayerMP player = ctx.getServerHandler ().playerEntity;
-            UUID playerUUID = player.getUniqueID ();
+
+            ClientData clientData = new ClientDataImpl (player, message.pvpModeVersion,
+                Arrays.asList (message.loadedCompatibilityModules));
+
             ClientsideSupportHandler supportHandler = PvPMode.instance.getServerProxy ().getClientsideSupportHandler ();
 
-            if (!supportHandler.isClientsideSupported (playerUUID)) // If the client hasn't clientside support yet
+            if (!supportHandler.isClientSupported (player)) // If the client hasn't client-side support yet
             {
-                if (supportHandler.isRemoteVersionSupported (message.pvpModeVersion))
+                if (supportHandler.addSupportedClient (clientData))
                 {
-                    PvPMode.proxy.getLogger ().info (
-                        "The client of %s requested client-side support and got it - the client's PvP Mode Version (%s) is supported",
-                        player.getDisplayName (), message.pvpModeVersion);
-                    supportHandler.addClientsideSupport (playerUUID);
+                    PvPMode.proxy.getLogger ().debug (
+                        "The client %s requested client-side support and got it", clientData);
+                    supportHandler.sendInitialSupportPackages (player);
+
                     return new ClientsideFeatureSupportRequestAnswer (true);
                 }
                 else
                 {
-                    PvPMode.proxy.getLogger ().info (
-                        "The client of %s requested client-side support, but the client's PvP Mode Version (%s) is not supported",
-                        player.getDisplayName (), message.pvpModeVersion);
+                    PvPMode.proxy.getLogger ().debug (
+                        "The client %s requested client-side support, but the client is not supported", clientData);
                     return new ClientsideFeatureSupportRequestAnswer (false);
                 }
             }
@@ -132,12 +147,12 @@ public class ClientsideFeatureSupportRequest implements IMessage
             if (message.supported)
             {
                 PvPMode.proxy.getLogger ().info (
-                    "The server supports the local PvP Mode version - clientside support will be enabled");
+                    "The server supports the client - client-side support will be enabled");
             }
             else
             {
                 PvPMode.proxy.getLogger ().warning (
-                    "The server doesn't support the local PvP Mode version - clientside support is disabled");
+                    "The server doesn't support the client - client-side support is disabled");
             }
             return null;
         }

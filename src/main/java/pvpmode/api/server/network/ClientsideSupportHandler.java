@@ -1,8 +1,9 @@
 package pvpmode.api.server.network;
 
-import java.util.UUID;
+import java.util.Collection;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import pvpmode.api.server.compatibility.events.OnInitialSupportPackageSentEvent;
 
 /**
  * Monitors the clients, that are supported currently. This handler will also
@@ -14,43 +15,55 @@ import net.minecraft.entity.player.EntityPlayerMP;
 public interface ClientsideSupportHandler
 {
     /**
-     * Returns whether the remote version (the client's version) of the PvP Mode Mod
-     * is supported.
+     * Registers the specified client as supported, if it can be supported. This
+     * method can execute checks to determine if the support is possible. Returns
+     * false if the client can't be supported, otherwise true.
      * 
-     * @param version
-     *            The remote version
-     * @return Whether the remote version is supported
+     * @param client
+     *            The client to register
+     * @return Whether the client will be supported
+     * 
      */
-    public boolean isRemoteVersionSupported (String version);
+    public boolean addSupportedClient (ClientData client);
 
     /**
-     * Registers the specified client as supported.
+     * Unregisters the client represented the specified player.
      * 
      * @param player
-     *            The UUID of the player
+     *            The player representing the client
      */
-    public void addClientsideSupport (UUID player);
+    public void removeSupportedClient (EntityPlayerMP player);
 
     /**
-     * Unregisters the specified client as supported.
+     * Returns whether the client represented by the specified player is supported.
      * 
      * @param player
-     *            The UUID of the player
-     */
-    public void removeClientsideSupport (UUID player);
-
-    /**
-     * Returns whether the specified client is supported.
-     * 
-     * @param player
-     *            The player's UUID
+     *            The player representing the client
      * @return Whether the client is supported
      */
-    public boolean isClientsideSupported (UUID player);
+    public boolean isClientSupported (EntityPlayerMP player);
+
+    /**
+     * Returns the client data assigned to the specified player, or null, if there
+     * aren't any data about that player.
+     * 
+     * @param player
+     *            The player representing the client
+     * @return The client data or null
+     */
+    public ClientData getClientData (EntityPlayerMP player);
+
+    /**
+     * Returns a collection containing all currently supported clients.
+     * 
+     * @return A collection with the supported clients
+     */
+    public Collection<ClientData> getSupportedClients ();
 
     /**
      * Called one time when a supported client connects. Used to broadcast the
-     * packets containing the initial, relevant data to the client.
+     * packets containing the initial, relevant data to the client. Also sends the
+     * {@link OnInitialSupportPackageSentEvent} event.
      * 
      * @param player
      *            The player

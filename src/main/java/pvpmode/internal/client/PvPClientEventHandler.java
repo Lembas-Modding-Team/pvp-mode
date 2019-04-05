@@ -14,8 +14,17 @@ public class PvPClientEventHandler
     {
         if (event.entity instanceof EntityPlayer)
         {
-            PvPMode.proxy.getPacketDispatcher ().sendToServer (new ClientsideFeatureSupportRequest (PvPMode.VERSION));
+            PvPMode.proxy.getPacketDispatcher ()
+                .sendToServer (new ClientsideFeatureSupportRequest (PvPMode.VERSION,
+                    getLoadedCompatibilitylModuleInternalNames ()));
         }
+    }
+
+    private String[] getLoadedCompatibilitylModuleInternalNames ()
+    {
+        return PvPMode.proxy.getCompatibilityManager ().getLoadedModules ().keySet ().stream ()
+            .map (loader -> loader.getInternalModuleName ())
+            .toArray (size -> new String[size]);
     }
 
 }
