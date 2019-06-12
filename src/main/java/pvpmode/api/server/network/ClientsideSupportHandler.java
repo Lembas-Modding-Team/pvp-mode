@@ -27,7 +27,7 @@ public interface ClientsideSupportHandler
     public boolean addSupportedClient (ClientData client);
 
     /**
-     * Unregisters the client represented the specified player.
+     * Unregisters the client representing the specified player.
      * 
      * @param player
      *            The player representing the client
