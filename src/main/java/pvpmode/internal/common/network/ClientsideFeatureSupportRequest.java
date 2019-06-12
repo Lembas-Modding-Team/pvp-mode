@@ -127,7 +127,7 @@ public class ClientsideFeatureSupportRequest implements IMessage
                 else
                 {
                     PvPMode.proxy.getLogger ().debug (
-                        "The client %s requested client-side support, but the client is not supported", clientData);
+                        "The client %s requested client-side support, but could not be supported", clientData);
                     return new ClientsideFeatureSupportRequestAnswer (false);
                 }
             }
