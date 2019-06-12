@@ -45,7 +45,7 @@ public interface ClientsideSupportHandler
 
     /**
      * Returns the client data assigned to the specified player, or null, if there
-     * aren't any data about that player.
+     * is no data about that player.
      * 
      * @param player
      *            The player representing the client
