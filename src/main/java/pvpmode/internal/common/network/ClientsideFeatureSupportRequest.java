@@ -114,7 +114,7 @@ public class ClientsideFeatureSupportRequest implements IMessage
 
             ClientsideSupportHandler supportHandler = PvPMode.instance.getServerProxy ().getClientsideSupportHandler ();
 
-            if (!supportHandler.isClientSupported (player)) // If the client hasn't client-side support yet
+            if (!supportHandler.isClientSupported (player)) // If the client does not have client-side support yet
             {
                 if (supportHandler.addSupportedClient (clientData))
                 {
