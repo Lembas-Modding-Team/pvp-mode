@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import com.google.common.collect.*;
 
-import lotr.common.LOTRFaction;
-import lotr.common.LOTRFaction.FactionType;
+import lotr.common.fac.LOTRFaction;
+import lotr.common.fac.LOTRFaction.FactionType;
 import pvpmode.api.common.configuration.ConfigurationManager;
 import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.Process;

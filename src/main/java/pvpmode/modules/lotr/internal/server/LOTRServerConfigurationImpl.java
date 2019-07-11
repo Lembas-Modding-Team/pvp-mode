@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Multimap;
 
-import lotr.common.LOTRFaction;
+import lotr.common.fac.LOTRFaction;
 import net.minecraftforge.common.config.Configuration;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey;

@@ -5,7 +5,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Function;
 
-import lotr.common.LOTRFaction;
+import lotr.common.fac.LOTRFaction;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.modules.lotr.api.common.LOTRCommonUtils;
 import pvpmode.modules.lotr.api.server.*;

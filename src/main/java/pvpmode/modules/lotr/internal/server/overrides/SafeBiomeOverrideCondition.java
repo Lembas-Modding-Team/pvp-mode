@@ -3,6 +3,7 @@ package pvpmode.modules.lotr.internal.server.overrides;
 import java.util.*;
 
 import lotr.common.*;
+import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;

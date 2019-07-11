@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Multimap;
 
-import lotr.common.LOTRFaction;
-import lotr.common.LOTRFaction.FactionType;
+import lotr.common.fac.LOTRFaction;
+import lotr.common.fac.LOTRFaction.FactionType;
 import pvpmode.modules.lotr.api.server.LOTRServerConstants;
 
 /**
