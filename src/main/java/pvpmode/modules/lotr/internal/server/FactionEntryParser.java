@@ -62,35 +62,106 @@ public abstract class FactionEntryParser
                             || config.getFactionPlaceholders ().containsKey (faction))
                         {
 
+                            // Extract the alignment values
                             String alignmentString = parts[1].trim ();
-                            try
+
+                            if (!alignmentString.isEmpty ())
                             {
-                                // Extract the minimum alignment from the second column
-                                Integer alignmentInt = Integer.parseInt (alignmentString);
+                                String[] alignmentStringParts = alignmentString
+                                    .split (LOTRServerConstants.FACTION_ALIGNMENT_SEPARATOR, -1);
 
-                                // Add the data to our data structures
-                                FactionEntry entry = new FactionEntry (faction, LOTRCommonUtils
-                                    .getAllFactionsOfPlaceholder (config.getFactionPlaceholders (), faction),
-                                    alignmentInt);
+                                String firstPart = alignmentStringParts[0].trim ();
+                                String secondPart = null;
 
-                                if (parseLine (entry, i, Arrays.copyOfRange (parts, 2, parts.length)))
+                                if (alignmentStringParts.length > 1)
                                 {
-                                    ++validEntryCounter;
+                                    secondPart = alignmentStringParts[1].trim ();
+                                }
+
+                                if (alignmentStringParts.length <= 2) // More than two parts are not allowed
+                                {
+
+                                    try
+                                    {
+                                        Integer alignmentWithoutPledging = firstPart.isEmpty () ? null
+                                            : Integer.parseInt (firstPart);
+                                        Integer alignmentWithPledging = (secondPart == null || secondPart.isEmpty ())
+                                            ? null
+                                            : Integer.parseInt (secondPart);
+
+                                        if (alignmentWithoutPledging != null || alignmentWithPledging != null)
+                                        {
+
+                                            // Gather the remaining data and delegate the parsing to the subclass
+
+                                            boolean success = true; // The subclass needs to accept both entries, if
+                                                                    // present
+
+                                            Set<String> placeholders = LOTRCommonUtils
+                                                .getAllFactionsOfPlaceholder (config.getFactionPlaceholders (),
+                                                    faction);
+
+                                            if (alignmentWithoutPledging != null)
+                                            {
+                                                success = parseLine (new FactionEntry (faction, placeholders,
+                                                    alignmentWithoutPledging, false), i,
+                                                    Arrays.copyOfRange (parts, 2, parts.length));
+                                            }
+
+                                            if (alignmentWithPledging != null)
+                                            {
+                                                success = success && parseLine (new FactionEntry (faction, placeholders,
+                                                    alignmentWithPledging, true), i,
+                                                    Arrays.copyOfRange (parts, 2, parts.length));
+                                            }
+
+                                            if (success)
+                                            {
+                                                ++validEntryCounter;
+                                            }
+                                            else
+                                            {
+                                                ++invalidEntryCounter;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // The case where only the separator is specified in the alignment column
+                                            ++invalidEntryCounter;
+                                            logger.warning (
+                                                "The %s config entry at line %d contains no alignment values, only the separator (\"%s\")",
+                                                configName,
+                                                i, LOTRServerConstants.FACTION_ALIGNMENT_SEPARATOR);
+                                        }
+
+                                    }
+                                    catch (NumberFormatException e)
+                                    {
+                                        ++invalidEntryCounter;
+                                        logger.warning (
+                                            "The %s config entry at line %d contains invalid alignment values (\"%s\") which aren't numbers",
+                                            configName,
+                                            i, alignmentString);
+                                    }
                                 }
                                 else
                                 {
                                     ++invalidEntryCounter;
-                                    break;
+                                    logger.warning (
+                                        "The %s config entry at line %d contains an invalid alignment string (\"%s\") with too many alignment separators",
+                                        configName,
+                                        i, alignmentString);
                                 }
                             }
-                            catch (NumberFormatException e)
+                            else
                             {
                                 ++invalidEntryCounter;
                                 logger.warning (
-                                    "The %s config entry at line %d contains an invalid minimum alignment value (\"%s\")",
+                                    "The %s config entry at line %d contains no alignment value",
                                     configName,
-                                    i, alignmentString);
+                                    i);
                             }
+
                         }
                         else
                         {
@@ -107,6 +178,7 @@ public abstract class FactionEntryParser
 
         logger.info ("Loaded %d of %d specified %s config entries. %d config entries are invalid", validEntryCounter,
             invalidEntryCounter + validEntryCounter, configName, invalidEntryCounter);
+
     }
 
     /**

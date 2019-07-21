@@ -32,6 +32,7 @@
 * Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
 * One can now specify multiple entries with the same faction for the biome overrides
 * Added configurable faction placeholders which can be used with the biome overrides 
+* In the biome overrides, one can now specify different alignment thresholds for when the player is pledged
 
 ### SuffixForge compatibility:
 * Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)

@@ -14,12 +14,19 @@ public class FactionEntry
     private final String entryName;
     private final Set<String> involvedFactions;
     private int alignment;
+    private boolean pledgingRequired;
 
     public FactionEntry (String entryName, Set<String> involvedFactions, int alignment)
+    {
+        this (entryName, involvedFactions, alignment, false);
+    }
+
+    public FactionEntry (String entryName, Set<String> involvedFactions, int alignment, boolean pledgingRequired)
     {
         this.entryName = entryName;
         this.involvedFactions = involvedFactions;
         this.alignment = alignment;
+        this.pledgingRequired = pledgingRequired;
     }
 
     public String getEntryName ()
@@ -37,6 +44,11 @@ public class FactionEntry
         return alignment;
     }
 
+    public boolean isPledgingRequired ()
+    {
+        return pledgingRequired;
+    }
+
     @Override
     public int hashCode ()
     {
@@ -45,6 +57,7 @@ public class FactionEntry
         result = prime * result + alignment;
         result = prime * result + ( (entryName == null) ? 0 : entryName.hashCode ());
         result = prime * result + ( (involvedFactions == null) ? 0 : involvedFactions.hashCode ());
+        result = prime * result + (pledgingRequired ? 1231 : 1237);
         return result;
     }
 
@@ -73,6 +86,8 @@ public class FactionEntry
                 return false;
         }
         else if (!involvedFactions.equals (other.involvedFactions))
+            return false;
+        if (pledgingRequired != other.pledgingRequired)
             return false;
         return true;
     }
