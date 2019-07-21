@@ -5,6 +5,8 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lotr.common.fac.LOTRFaction;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.modules.lotr.api.common.LOTRCommonUtils;
@@ -17,13 +19,21 @@ public abstract class FactionEntryParser
     protected final Path file;
     protected final SimpleLogger logger;
     protected final LOTRServerConfiguration config;
+    protected final boolean pledgingSupported;
 
-    public FactionEntryParser (String configName, Path file, SimpleLogger logger, LOTRServerConfiguration config)
+    public FactionEntryParser (String configName, Path file, SimpleLogger logger, LOTRServerConfiguration config,
+        boolean pledgingSupported)
     {
         this.configName = configName;
         this.file = file;
         this.logger = logger;
         this.config = config;
+        this.pledgingSupported = pledgingSupported;
+    }
+
+    public FactionEntryParser (String configName, Path file, SimpleLogger logger, LOTRServerConfiguration config)
+    {
+        this (configName, file, logger, config, false);
     }
 
     public void parse () throws IOException
@@ -65,13 +75,42 @@ public abstract class FactionEntryParser
                             String alignmentString = parts[1].trim ();
                             try
                             {
+                                String[] alignmentStringParts = alignmentString.split (":");
+
                                 // Extract the minimum alignment from the second column
-                                Integer alignmentInt = Integer.parseInt (alignmentString);
+                                Integer alignmentInt = Integer.parseInt (alignmentStringParts[0].trim ());
+
+                                Boolean isPledgingRequired = Boolean.FALSE;
+
+                                if (alignmentStringParts.length > 1 && pledgingSupported)
+                                {
+                                    String pledgePart = alignmentStringParts[1].trim ();
+
+                                    if (pledgePart.equalsIgnoreCase (LOTRServerConstants.FACTION_PLEDGE_SPECIFIER))
+                                    {
+                                        isPledgingRequired = Boolean.TRUE;
+                                    }
+                                    else
+                                    {
+                                        logger.warning (
+                                            "The %s config entry at line %d contains an invalid pledge specifier (\"%s\"). Pledging is now assumed to not be required.",
+                                            configName,
+                                            i, pledgePart);
+                                    }
+                                }
+                                else if (alignmentStringParts.length > 1 && !pledgingSupported)
+                                {
+                                    logger.warning (
+                                        "The %s config entry at line %d contains invalid entries in the alignment specifier (\"%s\"). Note that the pledging condition doesn't work here.",
+                                        configName,
+                                        i, StringUtils.join (alignmentStringParts, ":", 1,
+                                            alignmentStringParts.length));
+                                }
 
                                 // Add the data to our data structures
                                 FactionEntry entry = new FactionEntry (faction, LOTRCommonUtils
                                     .getAllFactionsOfPlaceholder (config.getFactionPlaceholders (), faction),
-                                    alignmentInt);
+                                    alignmentInt, isPledgingRequired);
 
                                 if (parseLine (entry, i, Arrays.copyOfRange (parts, 2, parts.length)))
                                 {
