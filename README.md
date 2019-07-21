@@ -33,7 +33,7 @@ The PvP Mode Mod contains a version checker, which connects to our Github reposi
 The mod contains specific compatibility for the mods/plugins listed below. Older and/or newer versions may work too, but it's not guaranteed. See the wiki page for more info on this.
 
 #### Forge Mods:
-* The Lord of the Rings Mod v35.1
+* The Lord of the Rings Mod v35.2
 * Siege Mode Mod 1.0
 * SuffixForge 2.4
 * Dr. Cyanos Lootable Bodies Mod 1.7.10-backport_1.3.6
