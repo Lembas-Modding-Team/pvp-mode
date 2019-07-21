@@ -33,8 +33,12 @@ public class SafeBiomeOverrideCondition extends MiddleEarthBiomeOverrideConditio
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);
             if (entry.getInvolvedFactions ().stream ().anyMatch (
-                factionName -> data.getAlignment (LOTRFaction.forName (factionName)) > entry
-                    .getAlignment ()))
+                factionName ->
+                {
+                    LOTRFaction faction = LOTRFaction.forName (factionName);
+                    return data.getAlignment (faction) > entry
+                        .getAlignment () && (!entry.isPledgingRequired () || data.isPledgedTo (faction));
+                }))
                 return EnumForcedPvPMode.OFF;
         }
         return EnumForcedPvPMode.UNDEFINED;

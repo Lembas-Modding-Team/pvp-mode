@@ -41,8 +41,12 @@ public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondi
         {
             LOTRPlayerData data = LOTRLevelData.getData (player);
             if (entry.getInvolvedFactions ().stream ().allMatch (
-                factionName -> data.getAlignment (LOTRFaction.forName (factionName)) < entry
-                    .getAlignment ()))
+                factionName ->
+                {
+                    LOTRFaction faction = LOTRFaction.forName (factionName);
+                    return data.getAlignment (faction) < entry
+                        .getAlignment () && (!entry.isPledgingRequired () || data.isPledgedTo (faction));
+                }))
                 return EnumForcedPvPMode.ON;
         }
         return EnumForcedPvPMode.UNDEFINED;
