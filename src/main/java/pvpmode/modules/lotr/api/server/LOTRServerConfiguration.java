@@ -51,9 +51,9 @@ public interface LOTRServerConfiguration extends ConfigurationManager
         placeholders.putAll ("TREES", LOTRCommonUtils.getFactionsOfType (FactionType.TYPE_TREE));
         placeholders.putAll ("TROLLS", LOTRCommonUtils.getFactionsOfType (FactionType.TYPE_TROLL));
         placeholders.putAll ("FREE_PEOPLE", LOTRCommonUtils.getFactionsOfType (FactionType.TYPE_FREE));
-        placeholders.putAll ("HARAD",
+        placeholders.putAll ("HARADRIM",
             LOTRCommonUtils.getFactionsAsStringCollection (LOTRFaction.getAllHarad ()));
-        placeholders.putAll ("RHUN",
+        placeholders.putAll ("RHUDHRIM",
             LOTRCommonUtils.getFactionsAsStringCollection (LOTRFaction.getAllRhun ()));
 
         placeholders.putAll ("GOOD",
