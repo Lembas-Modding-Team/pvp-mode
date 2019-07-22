@@ -1,11 +1,12 @@
 package pvpmode.internal.common.network;
 
-import java.util.*;
+import java.util.Arrays;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import pvpmode.PvPMode;
 import pvpmode.api.server.network.*;
 import pvpmode.internal.server.network.ClientDataImpl;
@@ -107,29 +108,34 @@ public class ClientsideFeatureSupportRequest implements IMessage
         public ClientsideFeatureSupportRequestAnswer onMessage (ClientsideFeatureSupportRequest message,
             MessageContext ctx)
         {
-            EntityPlayerMP player = ctx.getServerHandler ().playerEntity;
-
-            ClientData clientData = new ClientDataImpl (player, message.pvpModeVersion,
-                Arrays.asList (message.loadedCompatibilityModules));
-
-            ClientsideSupportHandler supportHandler = PvPMode.instance.getServerProxy ().getClientsideSupportHandler ();
-
-            if (!supportHandler.isClientSupported (player)) // If the client does not have client-side support yet
+            if (!MinecraftServer.getServer ().isSinglePlayer ())
             {
-                if (supportHandler.addSupportedClient (clientData))
-                {
-                    PvPMode.proxy.getLogger ().debug (
-                        "The client %s requested client-side support and got it", clientData);
-                    supportHandler.sendInitialSupportPackages (player);
+                EntityPlayerMP player = ctx.getServerHandler ().playerEntity;
 
-                    return new ClientsideFeatureSupportRequestAnswer (true);
-                }
-                else
+                ClientData clientData = new ClientDataImpl (player, message.pvpModeVersion,
+                    Arrays.asList (message.loadedCompatibilityModules));
+
+                ClientsideSupportHandler supportHandler = PvPMode.instance.getServerProxy ()
+                    .getClientsideSupportHandler ();
+
+                if (!supportHandler.isClientSupported (player)) // If the client does not have client-side support yet
                 {
-                    PvPMode.proxy.getLogger ().debug (
-                        "The client %s requested client-side support, but could not be supported", clientData);
-                    return new ClientsideFeatureSupportRequestAnswer (false);
+                    if (supportHandler.addSupportedClient (clientData))
+                    {
+                        PvPMode.proxy.getLogger ().debug (
+                            "The client %s requested client-side support and got it", clientData);
+                        supportHandler.sendInitialSupportPackages (player);
+
+                        return new ClientsideFeatureSupportRequestAnswer (true);
+                    }
+                    else
+                    {
+                        PvPMode.proxy.getLogger ().debug (
+                            "The client %s requested client-side support, but could not be supported", clientData);
+                        return new ClientsideFeatureSupportRequestAnswer (false);
+                    }
                 }
+
             }
             return null;
         }
