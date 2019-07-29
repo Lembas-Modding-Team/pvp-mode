@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.common.version.*;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
@@ -58,6 +59,17 @@ public class PvPServerEventHandler
         EnumPvPMode victimMode = PvPServerUtils.getPvPMode (victim);
 
         boolean cancel = false;
+
+        if (MinecraftForge.EVENT_BUS.post (new OnPvPEvent (attacker, attackerMode, victim, victimMode, event.ammount, event.source)))
+        {
+            cancel = true;
+        }
+
+        if (cancel)
+        {
+            event.setCanceled (true);
+            return;
+        }
 
         if (attackerMode != EnumPvPMode.ON)
         {
