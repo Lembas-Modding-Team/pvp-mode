@@ -43,12 +43,18 @@ public class PvPServerEventHandler
     }
 
     /**
-     * Cancels combat events associated with PvP-disabled players. Note that this
-     * function will be invoked twice per attack - this is because of a Forge bug.
+     * Cancels combat events associated with PvP-disabled players. Note that
+     * this function will be invoked twice per attack - this is because of a
+     * Forge bug, but the {@link PvPCommonUtils isCurrentAttackDuplicate} call
+     * checks and returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
+        // This should alleviate duplicate entries.
+        if (PvPCommonUtils.isCurrentAttackDuplicate (event))
+            return;
+
         EntityPlayerMP attacker = PvPServerUtils.getMaster (event.source.getEntity ());
         EntityPlayerMP victim = PvPServerUtils.getMaster (event.entity);
 
