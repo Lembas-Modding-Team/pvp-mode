@@ -449,7 +449,7 @@ public class PvPCommonUtils
     {
         if (! (event.entityLiving instanceof EntityPlayer))
             return false;
-        for (StackTraceElement element : new Exception ().getStackTrace ())
+        for (StackTraceElement element : Thread.currentThread ().getStackTrace ())
         {
             if (Reflection.getCallerClass (7) == EntityLivingBase.class)
                 return true;

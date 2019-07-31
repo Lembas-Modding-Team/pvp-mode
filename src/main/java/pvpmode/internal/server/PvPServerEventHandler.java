@@ -45,13 +45,13 @@ public class PvPServerEventHandler
     /**
      * Cancels combat events associated with PvP-disabled players. Note that
      * this function will be invoked twice per attack - this is because of a
-     * Forge bug, but the {@link PvPCommonUtils isCurrentAttackDuplicate} call
+     * Forge bug, but the {@link PvPCommonUtils#isCurrentAttackDuplicate()} call
      * checks and returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        // This should alleviate duplicate entries.
+        // This alleviates duplicate entries.
         if (PvPCommonUtils.isCurrentAttackDuplicate (event))
             return;
 
@@ -67,11 +67,6 @@ public class PvPServerEventHandler
         boolean cancel = false;
 
         if (MinecraftForge.EVENT_BUS.post (new OnPvPEvent (attacker, attackerMode, victim, victimMode, event.ammount, event.source)))
-        {
-            cancel = true;
-        }
-
-        if (cancel)
         {
             event.setCanceled (true);
             return;
