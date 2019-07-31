@@ -51,7 +51,7 @@ public class PvPServerEventHandler
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
-        // This should alleviate duplicate entries.
+        // This alleviates duplicate entries.
         if (PvPCommonUtils.isCurrentAttackDuplicate (event))
             return;
 
