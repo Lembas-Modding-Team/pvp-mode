@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.common.version.*;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
@@ -42,12 +43,18 @@ public class PvPServerEventHandler
     }
 
     /**
-     * Cancels combat events associated with PvP-disabled players. Note that this
-     * function will be invoked twice per attack - this is because of a Forge bug.
+     * Cancels combat events associated with PvP-disabled players. Note that
+     * this function will be invoked twice per attack - this is because of a
+     * Forge bug, but the {@link PvPCommonUtils#isCurrentAttackDuplicate()} call
+     * checks and returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
+        // This alleviates duplicate entries.
+        if (PvPCommonUtils.isCurrentAttackDuplicate (event))
+            return;
+
         EntityPlayerMP attacker = PvPServerUtils.getMaster (event.source.getEntity ());
         EntityPlayerMP victim = PvPServerUtils.getMaster (event.entity);
 
@@ -58,6 +65,12 @@ public class PvPServerEventHandler
         EnumPvPMode victimMode = PvPServerUtils.getPvPMode (victim);
 
         boolean cancel = false;
+
+        if (MinecraftForge.EVENT_BUS.post (new OnPvPEvent (attacker, attackerMode, victim, victimMode, event.ammount, event.source)))
+        {
+            event.setCanceled (true);
+            return;
+        }
 
         if (attackerMode != EnumPvPMode.ON)
         {
