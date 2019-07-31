@@ -8,9 +8,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
+import sun.reflect.CallerSensitive;
+import sun.reflect.Reflection;
 
 public class PvPCommonUtils
 {
@@ -424,6 +428,33 @@ public class PvPCommonUtils
         Collection<Class<? extends T>> classes)
     {
         return createInstances (classes, null, null);
+    }
+
+    /**
+     * Returns whether this is a bugged duplicate post of the LivingAttackEvent.
+     * Forge posts this event twice, once in EntityPlayer, and once in
+     * EntityLivingBase, so this will tell if an EntityPlayer got hurt but the
+     * event was posted as an EntityLivingBase. This should only be called from
+     * an {@link SubscribeEvent @SubscribeEvent} method with the event type of
+     * {@link LivingAttackEvent}.
+     * 
+     * @param event
+     *            The event to be checked
+     * @return If an EntityPlayer got hurt but the event was posted as an
+     *         EntityLivingBase
+     */
+    @SuppressWarnings("deprecation")
+    @CallerSensitive
+    public static boolean isCurrentAttackDuplicate (LivingAttackEvent event)
+    {
+        if (! (event.entityLiving instanceof EntityPlayer))
+            return false;
+        for (StackTraceElement element : Thread.currentThread ().getStackTrace ())
+        {
+            if (Reflection.getCallerClass (7) == EntityLivingBase.class)
+                return true;
+        }
+        return false;
     }
 
     /**

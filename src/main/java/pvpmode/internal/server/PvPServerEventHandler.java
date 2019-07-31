@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.common.version.*;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
@@ -43,11 +44,17 @@ public class PvPServerEventHandler
 
     /**
      * Cancels combat events associated with PvP-disabled players. Note that this
-     * function will be invoked twice per attack - this is because of a Forge bug.
+     * function will be invoked twice per attack - this is because of a Forge bug,
+     * but the {@link PvPCommonUtils#isCurrentAttackDuplicate()} call checks and
+     * returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
     {
+        // This alleviates duplicate entries.
+        if (PvPCommonUtils.isCurrentAttackDuplicate (event))
+            return;
+
         EntityPlayerMP attacker = PvPServerUtils.getMaster (event.source.getEntity ());
         EntityPlayerMP victim = PvPServerUtils.getMaster (event.entity);
 
@@ -57,7 +64,12 @@ public class PvPServerEventHandler
         EnumPvPMode attackerMode = PvPServerUtils.getPvPMode (attacker);
         EnumPvPMode victimMode = PvPServerUtils.getPvPMode (victim);
 
-        boolean cancel = false;
+        if (MinecraftForge.EVENT_BUS
+            .post (new OnPvPEvent (attacker, attackerMode, victim, victimMode, event.ammount, event.source)))
+        {
+            event.setCanceled (true);
+            return;
+        }
 
         if (attackerMode != EnumPvPMode.ON)
         {
@@ -76,11 +88,6 @@ public class PvPServerEventHandler
                     ServerChatUtils.red (attacker, "You have PvP disabled");
                 }
             }
-            cancel = true;
-        }
-
-        if (cancel)
-        {// For performance reasons
             event.setCanceled (true);
             return;
         }
@@ -91,56 +98,50 @@ public class PvPServerEventHandler
             {
                 ServerChatUtils.red (attacker, "This player/unit has PvP disabled");
             }
-            cancel = true;
-        }
-
-        if (cancel)
-        {
             event.setCanceled (true);
+            return;
         }
-        else
+
+        if (attacker == event.source.getEntity () && victim == event.entity)
         {
-            if (attacker == event.source.getEntity () && victim == event.entity)
+            // Both involved entities are players which can attack each other
+
+            long time = PvPServerUtils.getTime ();
+
+            PvPData attackerData = PvPServerUtils.getPvPData (attacker);
+            PvPData victimData = PvPServerUtils.getPvPData (victim);
+
+            if (attackerData.getPvPTimer () == 0)
             {
-                // Both involved entities are players which can attack each other
+                ServerChatUtils.yellow (attacker, "You're now in PvP combat");
+            }
 
-                long time = PvPServerUtils.getTime ();
+            if (victimData.getPvPTimer () == 0)
+            {
+                ServerChatUtils.yellow (victim, "You're now in PvP combat");
+            }
 
-                PvPData attackerData = PvPServerUtils.getPvPData (attacker);
-                PvPData victimData = PvPServerUtils.getPvPData (victim);
+            attackerData.setPvPTimer (time + config.getPvPTimer ());
+            victimData.setPvPTimer (time + config.getPvPTimer ());
 
-                if (attackerData.getPvPTimer () == 0)
-                {
-                    ServerChatUtils.yellow (attacker, "You're now in PvP combat");
-                }
+            if (attackerData.getPvPWarmup () != 0)
+            {
+                attackerData.setPvPWarmup (0);
+                ServerChatUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
+            }
 
-                if (victimData.getPvPTimer () == 0)
-                {
-                    ServerChatUtils.yellow (victim, "You're now in PvP combat");
-                }
-
-                attackerData.setPvPTimer (time + config.getPvPTimer ());
-                victimData.setPvPTimer (time + config.getPvPTimer ());
-
-                if (attackerData.getPvPWarmup () != 0)
-                {
-                    attackerData.setPvPWarmup (0);
-                    ServerChatUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
-                }
-
-                if (victimData.getPvPWarmup () != 0)
-                {
-                    victimData.setPvPWarmup (0);
-                    ServerChatUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
-                }
+            if (victimData.getPvPWarmup () != 0)
+            {
+                victimData.setPvPWarmup (0);
+                ServerChatUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
             }
         }
 
     }
 
     /*
-     * We need to log here because the LivingAttackEvent will be fired twice per
-     * attack.
+     * We need to log here because the damage in the LivingAttackEvent can change
+     * from the attack to the actual application of the damage.
      */
     @SubscribeEvent
     public void onLivingHurt (LivingHurtEvent event)
