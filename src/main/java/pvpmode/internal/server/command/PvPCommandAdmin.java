@@ -193,7 +193,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
     private void toggleSpyMode (ICommandSender sender, EntityPlayer player, PvPData data, Boolean mode)
     {
-        if (mode == null ? true : mode.booleanValue () != data.isSpyingEnabled ())
+        if (mode == null || mode.booleanValue () != data.isSpyingEnabled ())
         {
             // Prior comment below in togglePvPMode.
             ServerChatUtils.red (player, "Your spying setting is being toggled by an admin");
