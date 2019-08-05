@@ -20,7 +20,7 @@ import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
-import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.modules.lotr.api.server.*;
 import pvpmode.modules.lotr.internal.server.overrides.*;
 
 /**
@@ -60,6 +60,8 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
                 .getAutoConfigManager ().getGeneratedKeys ().get (LOTRServerConfiguration.LOTR_SERVER_CONFIG_PID),
                 logger, this);
         });
+
+        LOTRServerUtils.setProvider (new LOTRServerUtilsProvider (this, config));
 
     }
 

@@ -33,6 +33,18 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
     }
 
     @Override
+    public EntityPlayerMP getPlayer (UUID uuid)
+    {
+        for (Object playerObject : server.getServerConfigurationManager ().playerEntityList)
+        {
+            EntityPlayerMP player = (EntityPlayerMP) playerObject;
+            if (Objects.equals (player.getUniqueID (), uuid))
+                return player;
+        }
+        return null;
+    }
+
+    @Override
     public EntityPlayerMP getPlayer (String name)
     {
         return server.getServerConfigurationManager ().func_152612_a (name);
