@@ -57,14 +57,6 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the EntityPlayerMP with the specified uuid.
-     */
-    public static EntityPlayerMP getPlayer (UUID uuid)
-    {
-        return provider.getPlayer (uuid);
-    }
-
-    /**
      * Returns the EntityPlayerMP with the specified name.
      */
     public static EntityPlayerMP getPlayer (String name)
@@ -330,8 +322,6 @@ public class PvPServerUtils extends PvPCommonUtils
 
     public static interface Provider
     {
-        public EntityPlayerMP getPlayer (UUID uuid);
-
         public EntityPlayerMP getPlayer (String name);
 
         public boolean isOpped (ICommandSender sender);

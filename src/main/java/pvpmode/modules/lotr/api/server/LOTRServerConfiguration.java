@@ -71,17 +71,4 @@ public interface LOTRServerConfiguration extends ConfigurationManager
         return placeholders;
     }
 
-    @ConfigurationPropertyGetter(category = ServerConfiguration.PVP_COMBAT_CATEGORY)
-    @Bounded(min = "0", max = "2")
-    public default int isPoisonedDrinksMode ()
-    {
-        return 1;
-    }
-
-    @ConfigurationPropertyGetter(category = ServerConfiguration.PVP_COMBAT_CATEGORY)
-    public default boolean isPoisonedDrinksCanPoisonOwner ()
-    {
-        return false;
-    }
-
 }
