@@ -37,7 +37,7 @@ public class LOTRModClientCompatibilityModule extends LOTRModCommonCompatibility
          * This is important, so the gear blocking settings are reset upon leaving the
          * server, so they don't apply in singleplayer or on other servers.
          */
-        ((ClientBlockedGearManager) blockedGearManager).setAreGearItemsBlockedServerside (false);
+        getBlockedGearManager().setAreGearItemsBlockedServerside (false);
     }
 
     @Override
