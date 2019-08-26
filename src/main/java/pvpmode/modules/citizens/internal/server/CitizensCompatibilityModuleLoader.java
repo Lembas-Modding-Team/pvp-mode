@@ -1,5 +1,6 @@
 package pvpmode.modules.citizens.internal.server;
 
+import cpw.mods.fml.relauncher.Side;
 import pvpmode.modules.bukkit.api.server.BukkitPluginCompatibilityModuleLoader;
 
 public class CitizensCompatibilityModuleLoader extends BukkitPluginCompatibilityModuleLoader
@@ -17,7 +18,7 @@ public class CitizensCompatibilityModuleLoader extends BukkitPluginCompatibility
     }
 
     @Override
-    public String getCompatibilityModuleClassName ()
+    public String getCompatibilityModuleClassName (Side side)
     {
         return "pvpmode.modules.citizens.internal.server.CitizensCompatibilityModule";
     }

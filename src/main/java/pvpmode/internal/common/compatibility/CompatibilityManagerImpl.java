@@ -3,6 +3,7 @@ package pvpmode.internal.common.compatibility;
 import java.nio.file.Path;
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
@@ -87,9 +88,12 @@ public class CompatibilityManagerImpl implements CompatibilityManager
 
                     loader.onPreLoad ();
 
+                    String compatibilityModuleClassName = loader
+                        .getCompatibilityModuleClassName (FMLCommonHandler.instance ().getSide ());
+
                     try
                     {
-                        Class<?> moduleClass = Class.forName (loader.getCompatibilityModuleClassName ());
+                        Class<?> moduleClass = Class.forName (compatibilityModuleClassName);
                         if (CompatibilityModule.class.isAssignableFrom (moduleClass))
                         {
                             CompatibilityModule module = (CompatibilityModule) PvPCommonCoreUtils
@@ -129,7 +133,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                     {
                         logger
                             .error ("The specified compatibility module class \"%s\" couldn't be found",
-                                loader.getCompatibilityModuleClassName ());
+                                compatibilityModuleClassName);
                     }
                 }
                 else

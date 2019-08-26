@@ -1,6 +1,5 @@
 package pvpmode.modules.lotr.internal.common;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import pvpmode.api.common.compatibility.ForgeModCompatibilityModuleLoader;
 import pvpmode.modules.lotr.api.common.LOTRCommonConstants;
@@ -26,9 +25,9 @@ public class LOTRModCompatibilityModuleLoader extends ForgeModCompatibilityModul
     }
 
     @Override
-    public String getCompatibilityModuleClassName ()
+    public String getCompatibilityModuleClassName (Side side)
     {
-        return FMLCommonHandler.instance ().getSide () == Side.SERVER
+        return side == Side.SERVER
             ? "pvpmode.modules.lotr.internal.server.LOTRModServerCompatibilityModule"
             : "pvpmode.modules.lotr.internal.client.LOTRModClientCompatibilityModule";
     }

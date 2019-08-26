@@ -1,6 +1,7 @@
 package pvpmode.modules.bukkit.internal.server;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.relauncher.Side;
 import pvpmode.api.common.compatibility.*;
 
 public class BukkitCompatibilityModuleLoader implements CompatibilityModuleLoader
@@ -19,7 +20,7 @@ public class BukkitCompatibilityModuleLoader implements CompatibilityModuleLoade
     }
 
     @Override
-    public String getCompatibilityModuleClassName ()
+    public String getCompatibilityModuleClassName (Side side)
     {
         return "pvpmode.modules.bukkit.internal.server.BukkitCompatibilityModule";
     }

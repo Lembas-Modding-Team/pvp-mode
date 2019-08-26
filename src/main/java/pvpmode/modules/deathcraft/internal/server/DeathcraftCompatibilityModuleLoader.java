@@ -1,5 +1,6 @@
 package pvpmode.modules.deathcraft.internal.server;
 
+import cpw.mods.fml.relauncher.Side;
 import pvpmode.modules.bukkit.api.server.BukkitPluginCompatibilityModuleLoader;
 
 public class DeathcraftCompatibilityModuleLoader extends BukkitPluginCompatibilityModuleLoader
@@ -17,7 +18,7 @@ public class DeathcraftCompatibilityModuleLoader extends BukkitPluginCompatibili
     }
 
     @Override
-    public String getCompatibilityModuleClassName ()
+    public String getCompatibilityModuleClassName (Side side)
     {
         return "pvpmode.modules.deathcraft.internal.server.DeathcraftCompatibilityModule";
     }
