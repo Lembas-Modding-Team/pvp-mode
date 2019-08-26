@@ -313,12 +313,6 @@ public class ServerBlockedGearManager extends CommonBlockedGearManager
 
             if ( (PvPServerUtils.getTime () - lastWarningDisplay.get (playerUUID)) > cooldown)
             {
-                // List<String> messages = module.getConfiguration
-                // ().getItemUsageBlockedMessages ();
-                //
-                // ServerChatUtils.red (player,
-                // messages.get (MathHelper.getRandomIntegerInRange (random, 0, messages.size ()
-                // - 1)));
                 ServerChatUtils.red (player, "The usage of this item is blocked for you.");
                 lastWarningDisplay.put (playerUUID, PvPServerUtils.getTime ());
             }

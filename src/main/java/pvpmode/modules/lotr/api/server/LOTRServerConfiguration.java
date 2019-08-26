@@ -81,33 +81,6 @@ public interface LOTRServerConfiguration extends ConfigurationManager
         return false;
     }
 
-    // @ConfigurationPropertyGetter(category = GEAR_BLOCKING_CATEGORY)
-    // public default List<String> getItemUsageBlockedMessages ()
-    // {
-    // return Arrays.asList ("You fool, you cannot use a foes weapon in combat!",
-    // "You? With that? No, that won't work.",
-    // "Your kind cannot handle this!", "Ye. Don't think so.", "If you're able to
-    // use that, I'm Mevans!",
-    // "If you could see how ridiculous you look with that...", "None of your kind
-    // can handle that!",
-    // "Nuuu! Dat no worky u eediut!", "Hold it right there buds. Try another
-    // contraption.",
-    // "I need to use something that fits better to me.", "Can I give you a piece of
-    // advice? Don't use it.",
-    // "Oh goodness gracious me. This will be of no avail my dear chap.", "O drop
-    // it. Dis gon be so dumb.",
-    // "You don't know how to use that.", "U doing urself a heckin bamboozle now.",
-    // "Ye.",
-    // "Don't you have something else?", "This feels just wrong.", "Try something
-    // else!",
-    // "How about using something you can handle?", "This wouldn't make sence, would
-    // it?",
-    // "Something tells you, that this isn't the solution.", "If you don't use that,
-    // it won't wear down!",
-    // "A wise man once said: You're an idiot.", "This won't help you.", "Don't even
-    // try it. It won't work.");
-    // }
-
     @ConfigurationPropertyGetter(category = GEAR_BLOCKING_CATEGORY, unit = Unit.SECONDS)
     @Bounded(min = "-1", max = "10")
     public default int getItemUsageBlockedMessageCooldown ()
