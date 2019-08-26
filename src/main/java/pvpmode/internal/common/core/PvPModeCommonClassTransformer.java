@@ -38,8 +38,6 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
             case "abb":
             case "net.minecraft.item.ItemArmor":
                 return patchItemArmor (basicClass);
-            // case "net.minecraft.entity.player.InventoryPlayer":
-            // return patchInventoryPlayer (basicClass);
         }
         return basicClass;
     }
@@ -279,80 +277,5 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
             return true;
         });
     }
-    //
-    // private byte[] patchInventoryPlayer (byte[] basicClass)
-    // {
-    // return patchMethod (basicClass, methodNode ->
-    // {
-    // if (methodNode.name.equals ("getTotalArmorValue"))
-    // {
-    //
-    // AbstractInsnNode insertBeforeNode = null;
-    // LabelNode insertLabelAfter = null;
-    //
-    // for (int i = 0; i < methodNode.instructions.size (); i++)
-    // {
-    // AbstractInsnNode node = methodNode.instructions.get (i);
-    //
-    // if (node.getOpcode () == Opcodes.IADD)
-    // {// IADD
-    // AbstractInsnNode next = node.getNext ();
-    // if (next != null && next instanceof VarInsnNode)
-    // {
-    // VarInsnNode varNode = (VarInsnNode) next;
-    // if (varNode.var == 1 && varNode.getOpcode () == Opcodes.ISTORE) // ISTORE 1
-    // {
-    // insertBeforeNode = node.getPrevious ().getPrevious ();
-    // insertLabelAfter = (LabelNode) varNode.getNext ();
-    // break;
-    // }
-    // }
-    // }
-    // }
-    //
-    // if (insertBeforeNode != null)
-    // {
-    //
-    // InsnList list = new InsnList ();
-    // list.add (new VarInsnNode (Opcodes.ALOAD, 0));
-    // list.add (new FieldInsnNode (Opcodes.GETFIELD,
-    // "net/minecraft/entity/player/InventoryPlayer",
-    // "player", "Lnet/minecraft/entity/player/EntityPlayer;"));
-    // list.add (new VarInsnNode (Opcodes.ALOAD, 0));
-    // list.add (new FieldInsnNode (Opcodes.GETFIELD,
-    // "net/minecraft/entity/player/InventoryPlayer",
-    // "armorInventory", "[Lnet/minecraft/item/ItemStack;"));
-    // list.add (new VarInsnNode (Opcodes.ILOAD, 2));
-    // list.add (new InsnNode (Opcodes.AALOAD));
-    // list.add (new FieldInsnNode (Opcodes.GETSTATIC,
-    // "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType",
-    // "PROTECT",
-    // "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
-    // list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
-    // "pvpmode/api/common/utils/PvPCommonUtils",
-    // "isValidArmorItemForEntity",
-    // "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
-    // false));
-    // // LabelNode label1 = new LabelNode ();
-    // // methodNode.instructions.insert (insertLabelAfter, label1);
-    // list.add (new JumpInsnNode (Opcodes.IFNE, insertLabelAfter));
-    // // list.add (new InsnNode (Opcodes.F_SAME));
-    // // list.add (new VarInsnNode (Opcodes.ALOAD, 1));
-    // // list.add (new InsnNode (Opcodes.ARETURN));
-    // // list.add (label1);
-    //
-    // methodNode.instructions.insertBefore (insertBeforeNode, list);
-    // logger.info ("Patched \"getTotalArmorValue\" in
-    // \"net.minecraft.entity.player.InventoryPlayer\"");
-    // }
-    // else
-    // {
-    // System.out.println ("No insn point found");
-    // }
-    // return false;
-    // }
-    // return true;
-    // });
-    // }
 
 }
