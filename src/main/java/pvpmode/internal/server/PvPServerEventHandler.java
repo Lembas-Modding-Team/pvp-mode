@@ -43,10 +43,10 @@ public class PvPServerEventHandler
     }
 
     /**
-     * Cancels combat events associated with PvP-disabled players. Note that this
-     * function will be invoked twice per attack - this is because of a Forge bug,
-     * but the {@link PvPCommonUtils#isCurrentAttackDuplicate()} call checks and
-     * returns if this call is a duplicate
+     * Cancels combat events associated with PvP-disabled players. Note that
+     * this function will be invoked twice per attack - this is because of a
+     * Forge bug, but the {@link PvPCommonUtils#isCurrentAttackDuplicate} call
+     * checks and returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
