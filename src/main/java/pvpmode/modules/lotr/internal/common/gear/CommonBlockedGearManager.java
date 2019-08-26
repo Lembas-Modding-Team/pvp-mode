@@ -36,7 +36,7 @@ public abstract class CommonBlockedGearManager
 
     public Map<Item, Map<FactionEntry, EnumGearBlockingCondition>> getBlockedItems ()
     {
-        return blockedItems;
+        return PvPCommonUtils.deepUnmodifiableMap (blockedItems);
     }
 
     @SubscribeEvent
