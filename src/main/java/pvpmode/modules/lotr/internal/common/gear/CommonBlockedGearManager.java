@@ -123,10 +123,11 @@ public abstract class CommonBlockedGearManager
              * fulfilled.
              * 
              */
-            for (FactionEntry entry : factionData.keySet ())
+            for (Map.Entry<FactionEntry, EnumGearBlockingCondition> dataEntries : factionData.entrySet ())
             {
-                EnumGearBlockingCondition entryCondition = factionData.get (entry);
-                switch (entryCondition)
+                FactionEntry entry = dataEntries.getKey ();
+
+                switch (dataEntries.getValue ())
                 {
                     case ALWAYS:
                         isUseableInPvE = false;
@@ -152,7 +153,7 @@ public abstract class CommonBlockedGearManager
                         if (data.getAlignment (faction) >= entry
                             .getAlignment () && (entry.isPledgingRequired () ? data.isPledgedTo (faction) : true))
                         {
-                            switch (entryCondition)
+                            switch (dataEntries.getValue ())
                             {
                                 case ALWAYS:
                                     isUseableInPvE = true;
