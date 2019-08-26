@@ -135,7 +135,6 @@ public class ClientsideFeatureSupportRequest implements IMessage
                         return new ClientsideFeatureSupportRequestAnswer (false);
                     }
                 }
-
             }
             return null;
         }

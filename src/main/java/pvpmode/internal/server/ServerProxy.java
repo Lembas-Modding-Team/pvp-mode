@@ -12,13 +12,14 @@ import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey.StringSet;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Process;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.ServerCompatibilityConstants;
 import pvpmode.api.server.compatibility.events.CombatLoggingHandlerRegistryEvent;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.log.LogHandlerConstants;
 import pvpmode.api.server.network.ClientsideSupportHandler;
 import pvpmode.api.server.utils.*;
-import pvpmode.internal.common.CommonProxy;
+import pvpmode.internal.common.*;
 import pvpmode.internal.server.command.*;
 import pvpmode.internal.server.configuration.ServerConfigurationImpl;
 import pvpmode.internal.server.log.*;
@@ -28,7 +29,7 @@ import pvpmode.internal.server.utils.*;
 import pvpmode.modules.bukkit.internal.server.BukkitCompatibilityModuleLoader;
 import pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModuleLoader;
 import pvpmode.modules.lootableBodies.internal.server.LootableBodiesCompatibilityModuleLoader;
-import pvpmode.modules.lotr.internal.server.LOTRModCompatibilityModuleLoader;
+import pvpmode.modules.lotr.internal.common.LOTRModCompatibilityModuleLoader;
 import pvpmode.modules.siegeMode.internal.server.SiegeModeCompatibilityModuleLoader;
 
 @Process(properties = AutoConfigurationConstants.PID_PROPERTY_KEY + "=" + ServerConfiguration.SERVER_CONFIG_PID)
@@ -47,6 +48,7 @@ public class ServerProxy extends CommonProxy
     private PvPCommandHelp pvphelpCommandInstance;
     private PvPCommandList pvplistCommandInstance;
     private SoulboundCommand soulboundCommandInstance;
+    private PvPCommandVault vaultCommandInstance;
 
     private PvPServerEventHandler eventHandler;
 
@@ -60,6 +62,7 @@ public class ServerProxy extends CommonProxy
         super ();
         ServerChatUtils.setProvider (chatUtilsProvider = new ServerChatUtilsProvider (this));
         PvPServerUtils.setProvider (serverUtilsProvider = new PvPServerUtilsProvider (this));
+        PvPCommonUtils.setProvider (serverUtilsProvider);
     }
 
     @Override
@@ -153,12 +156,14 @@ public class ServerProxy extends CommonProxy
         pvphelpCommandInstance = new PvPCommandHelp ();
         pvpconfigCommandInstance = new PvPCommandConfig ();
         soulboundCommandInstance = new SoulboundCommand ();
+        vaultCommandInstance = new PvPCommandVault ();
 
         event.registerServerCommand (pvpCommandInstance);
         event.registerServerCommand (pvplistCommandInstance);
         event.registerServerCommand (pvpadminCommandInstance);
         event.registerServerCommand (pvphelpCommandInstance);
         event.registerServerCommand (pvpconfigCommandInstance);
+        event.registerServerCommand (vaultCommandInstance);
 
         if (this.getConfiguration ().areSoulboundItemsEnabled ())
         {
@@ -198,7 +203,7 @@ public class ServerProxy extends CommonProxy
     public Collection<AbstractPvPCommand> getServerCommands ()
     {
         return Arrays.asList (pvpCommandInstance, pvpadminCommandInstance, pvpconfigCommandInstance,
-            pvphelpCommandInstance, pvplistCommandInstance, soulboundCommandInstance);
+            pvphelpCommandInstance, pvplistCommandInstance, soulboundCommandInstance, vaultCommandInstance);
     }
 
     public ClientsideSupportHandler getClientsideSupportHandler ()

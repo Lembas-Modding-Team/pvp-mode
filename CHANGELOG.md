@@ -5,8 +5,12 @@
 * Changed the level of the log indicating that a compatibility module wasn't loaded because of missing dependencies to debug
 * Unified the appearance of the chat GUIs
 * Tab-completions now only work for players which are permitted to use a certain command
-* Added a serverside, configurable version checker, which notifies operators about new versions
+* Added a server-side, configurable version checker, which notifies operators about new versions
 * A warning will be logged if unsupported compatibility module dependencies were detected
+* Added a per-player vault used to deliver items asynchronously to players (access with `pvpvault <claim|info>`)
+
+#### Client-side support:
+* The mod can now be **optionally** installed client-side - this allows some features to work nicer and less glitchy
 
 #### Configuration:
 * Added `pvpconfig reload [configurationName]` which reloads a specific configuration or all configurations
@@ -26,13 +30,18 @@
 * Restructured the whole configuration system
 * The generated files (for example the LOTR biome ID file) are now in the folder `pvp-mode` in the MC main directory
 
-### LOTR compatibility:
+### LOTR compatibility - server-side:
 * Basic compatibility for v35.2 of the LOTR Mod
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
 * Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
 * One can now specify multiple entries with the same faction for the biome overrides
-* Added configurable faction placeholders which can be used with the biome overrides 
+* Added configurable faction placeholders which can be used with the biome overrides and the gear item blocking
 * In the biome overrides, one can now specify different alignment thresholds for when the player is pledged
+* Added completely configurable item blocking with many options and settings
+
+### LOTR compatibility - client-side:
+* Added tooltips for blocked items
+* Certain actions where the server tries to block items are now less glitchy when the mod is installed on the client-side too
 
 ### SuffixForge compatibility:
 * Removed the SuffixForge compatibility module (`soulbound` will still be disabled if SuffixForge is present)

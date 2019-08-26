@@ -21,7 +21,7 @@ import pvpmode.internal.common.utils.ClassDiscoverer;
 public class AutoConfigurationMapperManager
 {
 
-    private SimpleLogger logger = PvPCommonUtils.getLogger (AutoConfigurationMapperManager.class);
+    private SimpleLogger logger = PvPCommonCoreUtils.getLogger (AutoConfigurationMapperManager.class);
     private TreeMap<Integer, ConfigurationPropertyNameMapper> mappers = new TreeMap<> ();
 
     /**
@@ -54,7 +54,7 @@ public class AutoConfigurationMapperManager
     {
         TreeMap<Integer, ConfigurationPropertyNameMapper> mappers = new TreeMap<> ();
 
-        PvPCommonUtils
+        PvPCommonCoreUtils
             .createRegisteredInstances (mapperClassNames
                 .parallelStream ()
                 .map (mapperClassName ->
@@ -72,7 +72,7 @@ public class AutoConfigurationMapperManager
                 }).collect (Collectors.toSet ()),
                 (clazz, instance) ->
                 {
-                    Map<String, String> properties = PvPCommonUtils.getPropertiesFromRegisteredClass (clazz);
+                    Map<String, String> properties = PvPCommonCoreUtils.getPropertiesFromRegisteredClass (clazz);
                     int priority = 30000;
                     if (properties.containsKey (AutoConfigurationConstants.PRIORITY_PROPERTY_KEY))
                     {

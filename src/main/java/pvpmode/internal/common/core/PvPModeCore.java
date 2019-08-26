@@ -1,5 +1,6 @@
 package pvpmode.internal.common.core;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.*;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
-import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.*;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.core.CoremodEnvironmentConstants;
 import pvpmode.api.common.utils.*;
@@ -27,7 +28,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
 
     private final ClassDiscoverer classDiscoverer;
     private final AutoConfigurationMapperManager autoConfigurationMapperManager;
-    private final SimpleLogger logger = new SimpleLoggerImpl (LogManager.getLogger ("pvp-mode-core"));
+    static final SimpleLogger logger = new SimpleLoggerImpl (LogManager.getLogger ("pvp-mode-core"));
 
     private String[] classTransformerClassNames = null;
 
@@ -37,7 +38,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
     {
         instance = this;
 
-        PvPCommonUtils.setProvider (new PvPCommonUtilsProvider ());
+        PvPCommonCoreUtils.setProvider (new PvPCommonCoreUtilsProvider ());
 
         classDiscoverer = new ClassDiscoverer (
             new SimpleLoggerImpl (LogManager.getLogger (ClassDiscoverer.class)));
@@ -111,7 +112,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
                     Class<?> classTransformerClass = Loader.instance ().getModClassLoader ()
                         .loadClass (classTransformerClassName);
 
-                    Map<String, String> properties = PvPCommonUtils
+                    Map<String, String> properties = PvPCommonCoreUtils
                         .getPropertiesFromRegisteredClass (classTransformerClass);
 
                     // If no side is specified, COMMON is assumed
@@ -167,7 +168,7 @@ public class PvPModeCore implements IFMLLoadingPlugin
     @Override
     public String getSetupClass ()
     {
-        return null;
+        return PvPModeCoreSetup.class.getName ();
     }
 
     @Override
@@ -185,6 +186,45 @@ public class PvPModeCore implements IFMLLoadingPlugin
     public static PvPModeCore getInstance ()
     {
         return instance;
+    }
+
+    public static class PvPModeCoreSetup implements IFMLCallHook
+    {
+
+        // TODO: Move to compatibility module
+        @Override
+        @SuppressWarnings("unchecked")
+        public Void call () throws Exception
+        {
+            try
+            {
+                Field transformerExceptionField = LaunchClassLoader.class.getDeclaredField ("transformerExceptions");
+                transformerExceptionField.setAccessible (true);
+
+                Set<String> set = (Set<String>) transformerExceptionField.get (Launch.classLoader);
+                if (set.remove ("lotr"))
+                {
+                    set.add ("lotr.common.core");
+                    logger
+                        .debug (
+                            "Removed the transformation exclusion \"lotr\" and replaced it with \"lotr.common.core\"");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.errorThrowable ("Couldn't remove the transformation exclusion \"lotr\"", e);
+            }
+
+            return null;
+
+        }
+
+        @Override
+        public void injectData (Map<String, Object> data)
+        {
+
+        }
+
     }
 
 }

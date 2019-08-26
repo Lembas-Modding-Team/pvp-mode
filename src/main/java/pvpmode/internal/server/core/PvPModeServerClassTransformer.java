@@ -30,26 +30,29 @@ public class PvPModeServerClassTransformer extends AbstractClassTransformer
 
     private byte[] patchContainerPlayer (byte[] basicClass)
     {
-        return patchMethod (basicClass, (node) ->
+        return patchClass (basicClass, "net.minecraft.inventory.ContainerPlayer", (node) ->
         {
             if (node.name.equals ("transferStackInSlot") || node.name.equals ("func_82846_b"))
             {
-                InsnList list = new InsnList ();
+                patchMethod ("transferStackInSlot", node, (methNode) -> true, (methNode, preCondition) ->
+                {
+                    InsnList list = new InsnList ();
 
-                list.add (new VarInsnNode (Opcodes.ALOAD, 1));
-                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/server/utils/PvPServerUtils",
-                    "isShiftClickingBlocked",
-                    String.format ("(L%s;)Z", "net/minecraft/entity/player/EntityPlayer"),
-                    false));
-                LabelNode label1 = new LabelNode ();
-                list.add (new JumpInsnNode (Opcodes.IFEQ, label1));
-                list.add (new InsnNode (Opcodes.F_SAME));
-                list.add (new InsnNode (Opcodes.ACONST_NULL));
-                list.add (new InsnNode (Opcodes.ARETURN));
-                list.add (label1);
+                    list.add (new VarInsnNode (Opcodes.ALOAD, 1));
+                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/server/utils/PvPServerUtils",
+                        "isShiftClickingBlocked",
+                        String.format ("(L%s;)Z", "net/minecraft/entity/player/EntityPlayer"),
+                        false));
+                    LabelNode label1 = new LabelNode ();
+                    list.add (new JumpInsnNode (Opcodes.IFEQ, label1));
+                    list.add (new InsnNode (Opcodes.F_SAME));
+                    list.add (new InsnNode (Opcodes.ACONST_NULL));
+                    list.add (new InsnNode (Opcodes.ARETURN));
+                    list.add (label1);
 
-                node.instructions.insertBefore (node.instructions.getFirst (), list);
-                logger.info ("Patched \"transferStackInSlot\" in \"net.minecraft.inventory.ContainerPlayer\"");
+                    node.instructions.insertBefore (node.instructions.getFirst (), list);
+                    return true;
+                });
                 return false;
             }
             return true;

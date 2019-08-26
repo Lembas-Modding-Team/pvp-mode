@@ -1,6 +1,6 @@
 package pvpmode.api.common.compatibility;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * The compatibility manager manages and loads the compatibility modules.
@@ -41,5 +41,17 @@ public interface CompatibilityManager
      * @return The loaded compatibility module with their loaders
      */
     public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ();
+
+    /**
+     * Returns an instance of the supplied compatibility module loader class, if the
+     * compatibility module managed by the loader is loaded. Otherwise null is
+     * returned.
+     * 
+     * @param moduleLoaderClass
+     *            The class of the compatibility module loader
+     * @return An instance of that class or null
+     */
+    public <T extends CompatibilityModuleLoader> T getCompatibilityModuleLoaderInstance (
+        Class<T> moduleLoaderClass);
 
 }

@@ -211,7 +211,7 @@ public class AutoConfigurationTransformer extends AbstractClassTransformer
             "pvpmode/api/common/utils/Process",
             "properties");
 
-        if (properties != null){ return PvPCommonUtils
+        if (properties != null){ return PvPCommonCoreUtils
             .getPropertiesFromArray (properties.toArray (new String[properties.size ()]))
             .get (AutoConfigurationConstants.PID_PROPERTY_KEY); }
         return null;

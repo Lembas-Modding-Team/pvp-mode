@@ -17,9 +17,12 @@ public interface ServerCommandConstants
 
     public static final String PVPLIST_COMMAND_NAME = "pvplist";
     public static final String PVPLIST_COMMAND_USAGE = "/pvplist [all] OR /pvplist <maxEntryCount>";
-    
+
     public static final String SOULBOUND_COMMAND_NAME = "soulbound";
     public static final String SOULBOUND_COMMAND_USAGE = "/soulbound <player> [toggle|bind|unbind] [held|armor|main|hotbar|all]";
+
+    public static final String PVP_VAULT_COMMAND_NAME = "pvpvault";
+    public static final String PVP_VAULT_COMMAND_USAGE = "/pvpvault <drop|info>";
 
     public static final String PARAGRAPH_PLACEHOLDER = "&";
     public static final String EMPTY_COLLECTION_PLACEHOLDER = "[]";

@@ -8,13 +8,18 @@ import com.google.common.collect.Multimap;
 
 import lotr.common.fac.LOTRFaction;
 import net.minecraftforge.common.config.Configuration;
+import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
 import pvpmode.api.common.utils.Inject;
 import pvpmode.api.common.utils.Process;
+import pvpmode.api.server.utils.PvPServerUtils;
 import pvpmode.internal.common.configuration.AutoForgeConfigurationManager;
+import pvpmode.internal.server.ServerProxy;
+import pvpmode.modules.lotr.api.common.LOTRCommonConstants;
 import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.modules.lotr.internal.common.network.*;
 
 @Process(properties =
 {AutoConfigurationConstants.PID_PROPERTY_KEY + "="
@@ -23,16 +28,26 @@ import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
 public class LOTRServerConfigurationImpl extends AutoForgeConfigurationManager implements LOTRServerConfiguration
 {
 
-    private final LOTRModCompatibilityModule module;
+    private final LOTRModServerCompatibilityModule module;
+
+    private final ServerProxy server;
 
     @Inject
     public static final ConfigurationPropertyKey<Multimap<String, String>> FACTION_PLACEHOLDERS = null;
 
+    @Inject
+    public static final ConfigurationPropertyKey<Boolean> GEAR_ITEMS_BLOCKED = null;
+
+    @Inject
+    public static final ConfigurationPropertyKey<Boolean> EQUIPPING_OF_BLOCKED_ARMOR_BLOCKED = null;
+
     protected LOTRServerConfigurationImpl (Configuration configuration,
-        Map<String, ConfigurationPropertyKey<?>> propertyKeys, SimpleLogger logger, LOTRModCompatibilityModule module)
+        Map<String, ConfigurationPropertyKey<?>> propertyKeys, SimpleLogger logger,
+        LOTRModServerCompatibilityModule module)
     {
         super (configuration, propertyKeys, logger);
         this.module = module;
+        this.server = PvPMode.instance.getServerProxy ();
     }
 
     @Override
@@ -58,6 +73,11 @@ public class LOTRServerConfigurationImpl extends AutoForgeConfigurationManager i
         else
         {
             module.removeSafeBiomeOverrideCondition ();
+        }
+
+        if (this.areGearItemsBlocked ())
+        {
+            module.blockedGearManager.init (module, this);
         }
 
         logger.info ("PvP mode overrides for LOTR biomes are %s",
@@ -163,6 +183,27 @@ public class LOTRServerConfigurationImpl extends AutoForgeConfigurationManager i
             }
 
             logger.info ("Loaded %s faction placeholders", placeholders.keySet ().size ());
+
+        }
+        else if (key == GEAR_ITEMS_BLOCKED)
+        {
+            PvPServerUtils.getClientsWithCompatibilityModule (LOTRCommonConstants.LOTR_MOD_MODID).forEach (clientData ->
+            {
+                server.getPacketDispatcher ().sendTo (
+                    new GearItemsBlockedConfigurationChange (this.areGearItemsBlocked ()),
+                    clientData.getPlayer ());
+            });
+
+        }
+        else if (key == EQUIPPING_OF_BLOCKED_ARMOR_BLOCKED)
+        {
+            PvPServerUtils.getClientsWithCompatibilityModule (LOTRCommonConstants.LOTR_MOD_MODID).forEach (clientData ->
+            {
+                server.getPacketDispatcher ().sendTo (
+                    new EquippingOfBlockedArmorBlockedConfigurationChangeMessage (
+                        this.isEquippingOfBlockedArmorBlocked ()),
+                    clientData.getPlayer ());
+            });
 
         }
     }

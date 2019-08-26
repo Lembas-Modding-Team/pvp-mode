@@ -1,13 +1,19 @@
 package pvpmode.internal.server;
 
+import java.util.*;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
 import pvpmode.PvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.PvPData;
+import pvpmode.internal.common.network.PvPStateChangedMessage;
 
 public class PvPDataImpl implements PvPData
 {
+
+    private UUID playerUUID;
     private NBTTagCompound pvpDataTag;
 
     private static final String PVP_DATA_NBT_KEY = "PvPData";
@@ -19,9 +25,12 @@ public class PvPDataImpl implements PvPData
     private static final String PVP_TIMER_NBT_KEY = "PvPTimer";
     private static final String SPYING_ENABLED_NBT_KEY = "Spying";
     private static final String DEFAULT_MODE_FORCED_NBT_KEY = "DefaultModeForced";
+    private static final String VAULT_NBT_KEY = "Vault";
 
     public PvPDataImpl (EntityPlayer player)
     {
+        playerUUID = player.getUniqueID ();
+
         NBTTagCompound data = player.getEntityData ();
         NBTTagCompound persistent;
 
@@ -101,6 +110,10 @@ public class PvPDataImpl implements PvPData
     public void setPvPTimer (long pvpTimer)
     {
         pvpDataTag.setLong (PVP_TIMER_NBT_KEY, pvpTimer);
+        PvPMode.instance.getServerProxy ().getPacketDispatcher ()
+            .sendToAll (new PvPStateChangedMessage (playerUUID, this.getPvPTimer () != 0));// TODO improve with future
+                                                                                           // version
+
     }
 
     @Override
@@ -126,6 +139,29 @@ public class PvPDataImpl implements PvPData
     public void setDefaultModeForced (boolean defaultModeForced)
     {
         pvpDataTag.setBoolean (DEFAULT_MODE_FORCED_NBT_KEY, defaultModeForced);
+    }
+
+    @Override
+    public List<ItemStack> getVault ()
+    {
+        List<ItemStack> ret = new ArrayList<> ();
+        NBTTagList vaultList = pvpDataTag.getTagList (VAULT_NBT_KEY, 10);
+        for (int i = 0; i < vaultList.tagCount (); i++)
+        {
+            ret.add (ItemStack.loadItemStackFromNBT (vaultList.getCompoundTagAt (i)));
+        }
+        return ret;
+    }
+
+    @Override
+    public void setVault (List<ItemStack> vault)
+    {
+        NBTTagList vaultList = new NBTTagList ();
+        for (ItemStack stack : vault)
+        {
+            vaultList.appendTag (stack.writeToNBT (new NBTTagCompound ()));
+        }
+        pvpDataTag.setTag (VAULT_NBT_KEY, vaultList);
     }
 
 }

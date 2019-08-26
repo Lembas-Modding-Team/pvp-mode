@@ -7,6 +7,7 @@ import com.google.common.collect.*;
 import lotr.common.fac.LOTRFaction;
 import lotr.common.fac.LOTRFaction.FactionType;
 import pvpmode.api.common.configuration.ConfigurationManager;
+import pvpmode.api.common.configuration.ConfigurationPropertyKey.Unit;
 import pvpmode.api.common.configuration.auto.*;
 import pvpmode.api.common.utils.Process;
 import pvpmode.api.server.configuration.ServerConfiguration;
@@ -20,6 +21,9 @@ public interface LOTRServerConfiguration extends ConfigurationManager
 {
 
     public static final String LOTR_SERVER_CONFIG_PID = "lotr-compatibility-server";
+
+    public static final String GEAR_BLOCKING_CATEGORY = ServerConfiguration.SERVER_CATEGORY + ".gear_blocking";
+    public static final String ARMOR_BLOCKING_CATEGORY = LOTRServerConfiguration.GEAR_BLOCKING_CATEGORY + ".armor";
 
     @ConfigurationPropertyGetter(category = ServerConfiguration.SERVER_CATEGORY)
     public default boolean areEnemyBiomeOverridesEnabled ()
@@ -69,6 +73,73 @@ public interface LOTRServerConfiguration extends ConfigurationManager
                     LOTRFaction.RHUN, LOTRFaction.URUK_HAI)));
 
         return placeholders;
+    }
+
+    @ConfigurationPropertyGetter(category = GEAR_BLOCKING_CATEGORY)
+    public default boolean areGearItemsBlocked ()
+    {
+        return false;
+    }
+
+    // @ConfigurationPropertyGetter(category = GEAR_BLOCKING_CATEGORY)
+    // public default List<String> getItemUsageBlockedMessages ()
+    // {
+    // return Arrays.asList ("You fool, you cannot use a foes weapon in combat!",
+    // "You? With that? No, that won't work.",
+    // "Your kind cannot handle this!", "Ye. Don't think so.", "If you're able to
+    // use that, I'm Mevans!",
+    // "If you could see how ridiculous you look with that...", "None of your kind
+    // can handle that!",
+    // "Nuuu! Dat no worky u eediut!", "Hold it right there buds. Try another
+    // contraption.",
+    // "I need to use something that fits better to me.", "Can I give you a piece of
+    // advice? Don't use it.",
+    // "Oh goodness gracious me. This will be of no avail my dear chap.", "O drop
+    // it. Dis gon be so dumb.",
+    // "You don't know how to use that.", "U doing urself a heckin bamboozle now.",
+    // "Ye.",
+    // "Don't you have something else?", "This feels just wrong.", "Try something
+    // else!",
+    // "How about using something you can handle?", "This wouldn't make sence, would
+    // it?",
+    // "Something tells you, that this isn't the solution.", "If you don't use that,
+    // it won't wear down!",
+    // "A wise man once said: You're an idiot.", "This won't help you.", "Don't even
+    // try it. It won't work.");
+    // }
+
+    @ConfigurationPropertyGetter(category = GEAR_BLOCKING_CATEGORY, unit = Unit.SECONDS)
+    @Bounded(min = "-1", max = "10")
+    public default int getItemUsageBlockedMessageCooldown ()
+    {
+        return 2;
+    }
+
+    @ConfigurationPropertyGetter(category = ARMOR_BLOCKING_CATEGORY, unit = Unit.SECONDS)
+    @Bounded(min = "-1", max = "60")
+    public default int getArmorInventoryCheckInterval ()
+    {
+        return 10;
+    }
+
+    @ConfigurationPropertyGetter(category = ARMOR_BLOCKING_CATEGORY, unit = Unit.SECONDS)
+    @Bounded(min = "-1", max = "60")
+    public default int getBlockedArmorRemoveTimer ()
+    {
+        return 10;
+    }
+
+    @ConfigurationPropertyGetter(category = ARMOR_BLOCKING_CATEGORY)
+    @Bounded(min = "0", max = "1")
+    public default int getArmorRemoveAction ()
+    {
+        return 1;
+    }
+
+    @ConfigurationPropertyGetter(category = ARMOR_BLOCKING_CATEGORY)
+    public default boolean isEquippingOfBlockedArmorBlocked ()
+    {
+        return true;
     }
 
 }

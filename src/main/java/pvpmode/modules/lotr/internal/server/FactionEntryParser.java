@@ -7,8 +7,9 @@ import java.util.function.Function;
 
 import lotr.common.fac.LOTRFaction;
 import pvpmode.api.common.SimpleLogger;
-import pvpmode.modules.lotr.api.common.LOTRCommonUtils;
+import pvpmode.modules.lotr.api.common.*;
 import pvpmode.modules.lotr.api.server.*;
+import pvpmode.modules.lotr.internal.common.FactionEntry;
 
 public abstract class FactionEntryParser
 {
@@ -57,7 +58,7 @@ public abstract class FactionEntryParser
                     {
                         // Extract the faction identifier from the first column
                         String faction = parts[0].trim ();
-                        if (faction.equals (LOTRServerConstants.FACTION_ENTRY_WILDCARD)
+                        if (faction.equals (LOTRCommonConstants.FACTION_ENTRY_WILDCARD)
                             || LOTRFaction.forName (faction) != null
                             || config.getFactionPlaceholders ().containsKey (faction))
                         {

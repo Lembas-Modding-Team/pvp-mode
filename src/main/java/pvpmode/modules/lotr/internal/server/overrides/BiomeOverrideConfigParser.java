@@ -6,6 +6,7 @@ import java.util.*;
 
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.modules.lotr.internal.common.FactionEntry;
 import pvpmode.modules.lotr.internal.server.*;
 
 public class BiomeOverrideConfigParser extends FactionEntryParser

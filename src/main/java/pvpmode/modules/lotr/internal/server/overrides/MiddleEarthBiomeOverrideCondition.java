@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
-import pvpmode.modules.lotr.internal.server.FactionEntry;
+import pvpmode.modules.lotr.internal.common.FactionEntry;
 
 /**
  * The basic override condition for the LOTR biomes.

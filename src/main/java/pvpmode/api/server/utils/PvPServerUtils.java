@@ -2,6 +2,7 @@ package pvpmode.api.server.utils;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.command.*;
@@ -10,11 +11,13 @@ import net.minecraft.entity.player.*;
 import net.minecraft.item.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import pvpmode.PvPMode;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.compatibility.events.*;
+import pvpmode.api.server.network.ClientData;
 
 public class PvPServerUtils extends PvPCommonUtils
 {
@@ -108,14 +111,6 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns whether the supplied player is in creative mode.
-     */
-    public static boolean isCreativeMode (EntityPlayer player)
-    {
-        return player.capabilities.isCreativeMode;
-    }
-
-    /**
      * Returns whether the supplied player can fly.
      */
     public static boolean canFly (EntityPlayer player)
@@ -189,16 +184,6 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns whether the supplied player is currently in PvP.<br>
-     * If a PvP event occurred with this player involved, a timer starts. While this
-     * timer is running, the player is considered to be involved into PvP.
-     */
-    public static boolean isInPvP (EntityPlayer player)
-    {
-        return getPvPData (player).getPvPTimer () != 0;
-    }
-
-    /**
      * Returns whether the supplied command can be assigned to the supplied name.
      */
     public static boolean matches (ICommand command, String name)
@@ -218,7 +203,7 @@ public class PvPServerUtils extends PvPCommonUtils
         if (entity == null)
             return null;
 
-        EntityPlayerMP player = getPlayer (entity);
+        EntityPlayerMP player = (EntityPlayerMP) PvPCommonUtils.getPlayer (entity);
         if (player != null)
             return player;
 
@@ -239,26 +224,6 @@ public class PvPServerUtils extends PvPCommonUtils
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
         return PvPServerUtils.postEventAndGetResult (event, event::getMaster);
-    }
-
-    /**
-     * Returns the supplied entity as a player if it is one, otherwise null.
-     * 
-     * @param entity
-     *            The entity to check
-     * @return The player or null
-     */
-    public static EntityPlayerMP getPlayer (Entity entity)
-    {
-        if (entity instanceof EntityPlayerMP)
-        {
-            EntityPlayerMP player = (EntityPlayerMP) entity;
-
-            // Check whether the supplied player is a real one
-            if (!MinecraftForge.EVENT_BUS.post (new PlayerIdentityCheckEvent (player)))
-                return player;
-        }
-        return null;
     }
 
     /**
@@ -320,7 +285,22 @@ public class PvPServerUtils extends PvPCommonUtils
         return stack.hasTagCompound () && stack.getTagCompound ().getBoolean ("SoulboundBool");
     }
 
-    public static interface Provider
+    /**
+     * Returns a collection of all clients which have the specified compatibility
+     * module loaded.
+     * 
+     * @param internalModuleName
+     *            The internal name of the required compatibility module
+     * @return A collection of all clients having it loaded
+     */
+    public static Collection<ClientData> getClientsWithCompatibilityModule (String internalModuleName)
+    {
+        return PvPMode.instance.getServerProxy ().getClientsideSupportHandler ().getSupportedClients ().stream ()
+            .filter (clientData -> clientData.getLoadedCompatibilityModules ().contains (internalModuleName))
+            .collect (Collectors.toSet ());
+    }
+
+    public static interface Provider extends PvPCommonUtils.Provider
     {
         public EntityPlayerMP getPlayer (String name);
 
@@ -335,6 +315,7 @@ public class PvPServerUtils extends PvPCommonUtils
         public boolean isShiftClickingBlocked (EntityPlayer player);
 
         public void displayPvPStats (ICommandSender sender, EntityPlayer displayedPlayer);
+
     }
 
 }

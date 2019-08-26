@@ -1,4 +1,4 @@
-package pvpmode.modules.lotr.internal.server;
+package pvpmode.modules.lotr.internal.common;
 
 import java.util.Set;
 
