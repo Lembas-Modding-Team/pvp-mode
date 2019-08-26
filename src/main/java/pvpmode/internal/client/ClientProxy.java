@@ -84,4 +84,13 @@ public class ClientProxy extends CommonProxy
         return playersInPvP.contains (player.getUniqueID ());
     }
 
+    /**
+     * Clears the cached data from the server used with the client-side support
+     * system.
+     */
+    public void clearCachedServerData ()
+    {
+        playersInPvP.clear ();
+    }
+
 }

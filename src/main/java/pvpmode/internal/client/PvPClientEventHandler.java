@@ -24,7 +24,7 @@ public class PvPClientEventHandler
     @SubscribeEvent
     public void onPlayerLoggedOut (ClientDisconnectionFromServerEvent event)
     {
-        PvPMode.instance.getClientProxy ().getPlayersInPvP ().clear ();
+        PvPMode.instance.getClientProxy ().clearCachedServerData ();
     }
 
     private String[] getLoadedCompatibilitylModuleInternalNames ()
