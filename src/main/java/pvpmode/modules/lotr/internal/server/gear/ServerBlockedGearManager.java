@@ -171,16 +171,27 @@ public class ServerBlockedGearManager extends CommonBlockedGearManager
                             if (removalTimer >= 0)
                             {
                                 ChatComponentText warningMessage4 = new ChatComponentText (
-                                    " They'll be unequipped in ");
-                                ChatComponentText warningMessage5 = new ChatComponentText (
-                                    Long.toString (removalTimer));
-                                ChatComponentText warningMessage6 = new ChatComponentText (
-                                    " seconds.");
+                                    " They'll be unequipped ");
 
-                                warningMessage5.getChatStyle ().setColor (EnumChatFormatting.DARK_RED);
+                                if (removalTimer != 0)
+                                {
+                                    ChatComponentText warningMessage5 = new ChatComponentText (
+                                        "in ");
+                                    ChatComponentText warningMessage6 = new ChatComponentText (
+                                        Long.toString (removalTimer));
+                                    ChatComponentText warningMessage7 = new ChatComponentText (
+                                        " seconds.");
 
-                                warningMessage3.appendSibling (warningMessage4).appendSibling (warningMessage5)
-                                    .appendSibling (warningMessage6);
+                                    warningMessage6.getChatStyle ().setColor (EnumChatFormatting.DARK_RED);
+                                    warningMessage3.appendSibling (warningMessage4).appendSibling (warningMessage5)
+                                        .appendSibling (warningMessage6).appendSibling (warningMessage7);
+                                }
+                                else
+                                {
+                                    ChatComponentText warningMessage5 = new ChatComponentText (
+                                        "now.");
+                                    warningMessage3.appendSibling (warningMessage4).appendSibling (warningMessage5);
+                                }
                             }
 
                             warningMessage1.getChatStyle ().setColor (EnumChatFormatting.RED);
