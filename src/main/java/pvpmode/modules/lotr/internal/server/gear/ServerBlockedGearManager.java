@@ -131,8 +131,7 @@ public class ServerBlockedGearManager extends CommonBlockedGearManager
                     UUID playerUUID = player.getUniqueID ();
 
                     if (!lastArmorInventoryCheck.containsKey (playerUUID))
-                        lastArmorInventoryCheck.put (playerUUID,
-                            PvPServerUtils.getTime () + armorInventoryCheckInterval);
+                        lastArmorInventoryCheck.put (playerUUID, PvPServerUtils.getTime ());
 
                     if ( (PvPServerUtils.getTime ()
                         - lastArmorInventoryCheck.get (playerUUID)) > armorInventoryCheckInterval)
@@ -152,14 +151,15 @@ public class ServerBlockedGearManager extends CommonBlockedGearManager
 
                         if (count > 0)
                         {
-                            // A check could be executed while the remove timer is already running, in that case,
+                            // A check could be executed while the remove timer is already running, in that
+                            // case,
                             // don't modify the remove timer
                             if (blockedArmorRemoveTimer != -1 && !futureArmorItemRemoveCheck.containsKey (playerUUID))
                             {
                                 futureArmorItemRemoveCheck.put (playerUUID,
                                     PvPServerUtils.getTime () + blockedArmorRemoveTimer);
                             }
-                            
+
                             long removalTimer = futureArmorItemRemoveCheck.getOrDefault (playerUUID, -1l)
                                 - PvPServerUtils.getTime ();
                             ChatComponentText warningMessage1 = new ChatComponentText ("You wear ");
