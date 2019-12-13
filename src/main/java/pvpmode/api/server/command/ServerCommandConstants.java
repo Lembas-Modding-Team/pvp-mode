@@ -26,5 +26,7 @@ public interface ServerCommandConstants
 
     public static final String PARAGRAPH_PLACEHOLDER = "&";
     public static final String EMPTY_COLLECTION_PLACEHOLDER = "[]";
+    public static final String HIGHLIGHT_TAG_START = "<!§"; // Text which should be highlighted is enclosed in those tags
+    public static final String HIGHLIGHT_TAG_END = "§!>";
 
 }

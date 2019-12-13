@@ -47,8 +47,7 @@ public class PvPCommandVault extends AbstractPvPCommand
 
         ret.add (Triple.of ("pvpvault info", "", "Displays the count if items stored in the vault."));
         ret.add (Triple.of ("pvpvault drop", "",
-            "Drops the content of the vault to the GROUND, at the position where the player is currently standing."));
-
+            "Drops the content of the vault to the <!§ground§!>, at the position where the player is currently standing."));
         return ret;
     }
 
