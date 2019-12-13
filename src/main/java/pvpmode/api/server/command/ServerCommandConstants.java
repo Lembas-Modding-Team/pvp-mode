@@ -7,7 +7,7 @@ public interface ServerCommandConstants
     public static final String PVP_COMMAND_USAGE = "/pvp [cancel|info] OR /pvp spy [on|off]";
 
     public static final String PVPADMIN_COMMAND_NAME = "pvpadmin";
-    public static final String PVPADMIN_COMMAND_USAGE = "/pvpadmin <player> [on|off|default] OR /pvpadmin info <player>";
+    public static final String PVPADMIN_COMMAND_USAGE = "/pvpadmin <player> [on|off|default] OR /pvpadmin <info|resetCooldown> <player> OR /pvpadmin spy <player> [on|off]";
 
     public static final String PVPCONFIG_COMMAND_NAME = "pvpconfig";
     public static final String PVPCONFIG_COMMAND_USAGE = "/pvpconfig display [configurationName] [categoryName] [propertyName] OR /pvpconfig reload [configurationName] OR /pvpconfig set <configurationName> <categoryName> <propertyName> <newValue>";
