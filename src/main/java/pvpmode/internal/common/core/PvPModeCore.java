@@ -1,6 +1,5 @@
 package pvpmode.internal.common.core;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.*;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
-import net.minecraft.launchwrapper.*;
+import net.minecraft.launchwrapper.IClassTransformer;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.core.CoremodEnvironmentConstants;
 import pvpmode.api.common.utils.*;
@@ -94,26 +93,50 @@ public class PvPModeCore implements IFMLLoadingPlugin
      */
     private void loadClassTransformers ()
     {
-        ArrayList<String> classes = new ArrayList<> ();
+        classTransformerClassNames = retrieveExtensions (instance, IClassTransformer.class, "class transformer")
+            .stream ().map (Class::getName)
+            .toArray (size -> new String[size]);
+    }
 
-        Map<String, Set<String>> registerClasses = classDiscoverer.getDiscoveredClassNames (30000l)
+    /**
+     * A helper function useful for loading classes with a specified interface
+     * annotated with {@link Register}. Thereby a parameter "side" will be taken
+     * into account, which specifies the side on which this extension should be
+     * loaded. By default common is assumed
+     * 
+     * @param core
+     *            The instance of the coremod
+     * @param extensionClassInterface
+     *            The interface of the extension class
+     * @param extensionConsoleName
+     *            A name that will be used in the logs for the extension
+     * @return A list of class names matching the specified criteria and side
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> Collection<Class<? extends T>> retrieveExtensions (PvPModeCore core,
+        Class<T> extensionClassInterface,
+        String extensionConsoleName)
+    {
+        ArrayList<Class<? extends T>> extensions = new ArrayList<> ();
+
+        Map<String, Set<String>> registerClasses = core.classDiscoverer.getDiscoveredClassNames (30000l)
             .get (Register.class);
 
-        Set<String> registeredClassTransformers = registerClasses.get (IClassTransformer.class.getName ());
+        Set<String> registeredExtensions = registerClasses.get (extensionClassInterface.getName ());
 
-        if (registeredClassTransformers != null)
+        if (registeredExtensions != null)
         {
-            for (String classTransformerClassName : registeredClassTransformers)
+            for (String extensionClassName : registeredExtensions)
             {
                 try
                 {
                     boolean load = true;
 
-                    Class<?> classTransformerClass = Loader.instance ().getModClassLoader ()
-                        .loadClass (classTransformerClassName);
+                    Class<?> extensionClass = Loader.instance ().getModClassLoader ()
+                        .loadClass (extensionClassName);
 
                     Map<String, String> properties = PvPCommonCoreUtils
-                        .getPropertiesFromRegisteredClass (classTransformerClass);
+                        .getPropertiesFromRegisteredClass (extensionClass);
 
                     // If no side is specified, COMMON is assumed
                     if (properties.containsKey (CoremodEnvironmentConstants.SIDE_KEY))
@@ -123,17 +146,18 @@ public class PvPModeCore implements IFMLLoadingPlugin
                         switch (specifiedSide)
                         {
                             case CoremodEnvironmentConstants.SIDE_CLIENT:
-                                load = isServerside () == false;
+                                load = core.isServerside () == false;
                                 break;
                             case CoremodEnvironmentConstants.SIDE_COMMON:
                                 break;
                             case CoremodEnvironmentConstants.SIDE_SERVER:
-                                load = isServerside () == true;
+                                load = core.isServerside () == true;
                                 break;
                             default:
                                 logger.error (
-                                    "The specified side \"%s\" of the class transformer \"%s\" is invalid (must be %s, %s or %s). The transformer won't be loaded.",
-                                    specifiedSide, classTransformerClassName, CoremodEnvironmentConstants.SIDE_CLIENT,
+                                    "The specified side \"%s\" of the %s \"%s\" is invalid (must be %s, %s or %s). The extension won't be loaded.",
+                                    specifiedSide, extensionConsoleName, extensionClassName,
+                                    CoremodEnvironmentConstants.SIDE_CLIENT,
                                     CoremodEnvironmentConstants.SIDE_COMMON,
                                     CoremodEnvironmentConstants.SIDE_SERVER);
                                 load = false;
@@ -143,20 +167,19 @@ public class PvPModeCore implements IFMLLoadingPlugin
 
                     if (load)
                     {
-                        classes.add (classTransformerClassName);
+                        extensions.add ((Class<? extends T>) extensionClass);
                     }
                 }
                 catch (ClassNotFoundException e)
                 {
-                    logger.errorThrowable ("Couldn't load the class transformer class \"%s\"", e,
-                        classTransformerClassName);
+                    logger.errorThrowable ("Couldn't load the %s class \"%s\"", e, extensionConsoleName,
+                        extensionClassName);
                 }
             }
-            logger.info ("Loaded %d of %d registered class transformers", classes.size (),
-                registeredClassTransformers == null ? 0 : registeredClassTransformers.size ());
-            classTransformerClassNames = classes.stream ()
-                .toArray (size -> new String[size]);
+            logger.info ("Loaded %d of %d registered %s", extensions.size (),
+                registeredExtensions == null ? 0 : registeredExtensions.size (), extensionConsoleName);
         }
+        return extensions;
     }
 
     @Override
@@ -188,31 +211,27 @@ public class PvPModeCore implements IFMLLoadingPlugin
         return instance;
     }
 
+    /*
+     * Allows for modules to specify call hooks which will be collected here.
+     */
     public static class PvPModeCoreSetup implements IFMLCallHook
     {
 
-        // TODO: Move to compatibility module
+        private final Collection<IFMLCallHook> hooks = new ArrayList<> ();
+
+        public PvPModeCoreSetup ()
+        {
+            Collection<Class<? extends IFMLCallHook>> setupClasses = retrieveExtensions (instance, IFMLCallHook.class,
+                "call hook");
+            hooks.addAll (PvPCommonCoreUtils.createInstances (setupClasses));
+        }
+
         @Override
-        @SuppressWarnings("unchecked")
         public Void call () throws Exception
         {
-            try
+            for (IFMLCallHook hook : hooks)
             {
-                Field transformerExceptionField = LaunchClassLoader.class.getDeclaredField ("transformerExceptions");
-                transformerExceptionField.setAccessible (true);
-
-                Set<String> set = (Set<String>) transformerExceptionField.get (Launch.classLoader);
-                if (set.remove ("lotr"))
-                {
-                    set.add ("lotr.common.core");
-                    logger
-                        .debug (
-                            "Removed the transformation exclusion \"lotr\" and replaced it with \"lotr.common.core\"");
-                }
-            }
-            catch (Exception e)
-            {
-                logger.errorThrowable ("Couldn't remove the transformation exclusion \"lotr\"", e);
+                hook.call ();
             }
 
             return null;
@@ -222,7 +241,10 @@ public class PvPModeCore implements IFMLLoadingPlugin
         @Override
         public void injectData (Map<String, Object> data)
         {
-
+            for (IFMLCallHook hook : hooks)
+            {
+                hook.injectData (data);
+            }
         }
 
     }
