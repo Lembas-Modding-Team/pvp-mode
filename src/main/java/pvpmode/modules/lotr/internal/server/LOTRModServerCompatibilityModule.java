@@ -22,7 +22,7 @@ import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
 import pvpmode.internal.server.ServerProxy;
 import pvpmode.modules.lotr.api.common.LOTRCommonConstants;
-import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.modules.lotr.api.server.*;
 import pvpmode.modules.lotr.internal.common.*;
 import pvpmode.modules.lotr.internal.common.network.*;
 import pvpmode.modules.lotr.internal.server.gear.ServerBlockedGearManager;
@@ -37,11 +37,9 @@ import pvpmode.modules.lotr.internal.server.overrides.*;
 public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibilityModule implements Configurable
 {
 
-    private static final String ENEMY_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_enemy_biomes.txt";
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
     private static final String EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME = "extended_enemy_biomes.txt";
     private static final String DEFAULT_ENEMY_BIOME_MAP_FILE_NAME = "default_enemy_biomes_map.png";
-    private static final String SAFE_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_safe_biomes.txt";
 
     private LOTRServerConfiguration config;
 
@@ -74,7 +72,7 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
 
     void initEnemyBiomeOverrides (LOTRServerConfiguration config)
     {
-        initBiomeOverrides (configurationFolder, ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
+        initBiomeOverrides (configurationFolder, LOTRServerConstants.ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
             "default_enemy_biomes.txt", (data) -> new HostileBiomeOverrideCondition (data),
             () -> hostileBiomeOverrideCondition,
             (condition) -> hostileBiomeOverrideCondition = (HostileBiomeOverrideCondition) condition, config);
@@ -108,7 +106,7 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
 
     void initSafeBiomeOverrides (LOTRServerConfiguration config)
     {
-        initBiomeOverrides (configurationFolder, SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
+        initBiomeOverrides (configurationFolder, LOTRServerConstants.SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
             "default_safe_biomes.txt", (data) -> new SafeBiomeOverrideCondition (data),
             () -> safeBiomeOverrideCondition,
             (condition) -> safeBiomeOverrideCondition = (SafeBiomeOverrideCondition) condition, config);
