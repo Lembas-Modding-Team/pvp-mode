@@ -46,19 +46,9 @@ public class BlockedGearItemsListChangedMessage implements IMessage
 
             for (int j = 0; j < factionEntriesList.tagCount (); j++)
             {
-                Set<String> involvedFactionsSet = new HashSet<> ();
                 NBTTagCompound factionEntryTag = factionEntriesList.getCompoundTagAt (j);
 
-                NBTTagList involvedFactionsList = factionEntryTag.getTagList ("Factions", 8);
-
-                for (int k = 0; k < involvedFactionsList.tagCount (); k++)
-                {
-                    involvedFactionsSet.add (involvedFactionsList.getStringTagAt (k));
-                }
-
-                blockedItems.get (item).put (new FactionEntry (factionEntryTag.getString ("Name"),
-                    involvedFactionsSet, factionEntryTag.getInteger ("Alignment"),
-                    factionEntryTag.getBoolean ("PledgingRequired")),
+                blockedItems.get (item).put (FactionEntry.readFromNBT (factionEntryTag),
                     EnumGearBlockingCondition.valueOf (factionEntryTag.getString ("Condition")));
             }
         }
@@ -81,16 +71,7 @@ public class BlockedGearItemsListChangedMessage implements IMessage
 
                 NBTTagCompound factionEntryTag = new NBTTagCompound ();
 
-                factionEntryTag.setString ("Name", factionEntry.getEntryName ());
-                factionEntryTag.setInteger ("Alignment", factionEntry.getAlignment ());
-                factionEntryTag.setBoolean ("PledgingRequired", factionEntry.isPledgingRequired ());
-
-                NBTTagList involvedFactionsList = new NBTTagList ();
-                factionEntry.getInvolvedFactions ().forEach (factionName ->
-                {
-                    involvedFactionsList.appendTag (new NBTTagString (factionName));
-                });
-                factionEntryTag.setTag ("Factions", involvedFactionsList);
+                factionEntry.writeToNBT (factionEntryTag);
                 factionEntryTag.setString ("Condition", factionDataEntry.getValue ().name ());
 
                 factionEntriesList.appendTag (factionEntryTag);

@@ -1,6 +1,8 @@
 package pvpmode.modules.lotr.internal.common;
 
-import java.util.Set;
+import java.util.*;
+
+import net.minecraft.nbt.*;
 
 /**
  * A simple helper class containing an alignment faction specifier, the relevant
@@ -47,6 +49,38 @@ public class FactionEntry
     public boolean isPledgingRequired ()
     {
         return pledgingRequired;
+    }
+
+    public static FactionEntry readFromNBT (NBTTagCompound factionEntryTag)
+    {
+        Set<String> involvedFactionsSet = new HashSet<> ();
+
+        NBTTagList involvedFactionsList = factionEntryTag.getTagList ("Factions", 8);
+
+        for (int k = 0; k < involvedFactionsList.tagCount (); k++)
+        {
+            involvedFactionsSet.add (involvedFactionsList.getStringTagAt (k));
+        }
+
+        return new FactionEntry (factionEntryTag.getString ("Name"),
+            involvedFactionsSet, factionEntryTag.getInteger ("Alignment"),
+            factionEntryTag.getBoolean ("PledgingRequired"));
+    }
+
+    public void writeToNBT (NBTTagCompound compound)
+    {
+        NBTTagCompound factionEntryTag = new NBTTagCompound ();
+
+        factionEntryTag.setString ("Name", this.getEntryName ());
+        factionEntryTag.setInteger ("Alignment", this.getAlignment ());
+        factionEntryTag.setBoolean ("PledgingRequired", this.isPledgingRequired ());
+
+        NBTTagList involvedFactionsList = new NBTTagList ();
+        this.getInvolvedFactions ().forEach (factionName ->
+        {
+            involvedFactionsList.appendTag (new NBTTagString (factionName));
+        });
+        factionEntryTag.setTag ("Factions", involvedFactionsList);
     }
 
     @Override
