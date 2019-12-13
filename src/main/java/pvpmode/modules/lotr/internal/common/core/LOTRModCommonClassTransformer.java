@@ -51,68 +51,63 @@ public class LOTRModCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "lotr.common.item.LOTRWeaponStats", methodNode ->
         {
-            if (methodNode.name.equals ("getTotalArmorValue"))
+            return !patchMethod ("getTotalArmorValue", methodNode, (methNode) ->
             {
-                patchMethod ("getTotalArmorValue", methodNode, (methNode) ->
+                AbstractInsnNode insertBeforeNode = null;
+                LabelNode jumpLabel = null;
+
+                for (int i = 0; i < methodNode.instructions.size (); i++)
                 {
-                    AbstractInsnNode insertBeforeNode = null;
-                    LabelNode jumpLabel = null;
+                    AbstractInsnNode node = methodNode.instructions.get (i);
 
-                    for (int i = 0; i < methodNode.instructions.size (); i++)
+                    if (node instanceof VarInsnNode && insertBeforeNode == null)
                     {
-                        AbstractInsnNode node = methodNode.instructions.get (i);
-
-                        if (node instanceof VarInsnNode && insertBeforeNode == null)
+                        VarInsnNode varNode1 = (VarInsnNode) node;
+                        if (varNode1.getOpcode () == Opcodes.ALOAD && varNode1.var == 3)// ALOAD 3
                         {
-                            VarInsnNode varNode1 = (VarInsnNode) node;
-                            if (varNode1.getOpcode () == Opcodes.ALOAD && varNode1.var == 3)// ALOAD 3
+                            AbstractInsnNode next = node.getNext ();
+                            if (next != null && next.getOpcode () == Opcodes.IFNULL)// IFNULL
                             {
-                                AbstractInsnNode next = node.getNext ();
-                                if (next != null && next.getOpcode () == Opcodes.IFNULL)// IFNULL
-                                {
-                                    insertBeforeNode = node;
-                                }
+                                insertBeforeNode = node;
                             }
                         }
-                        else if (insertBeforeNode != null && node.getOpcode () == Opcodes.IADD)
-                        {// IADD
-                            if (node.getNext () != null && node.getNext () instanceof VarInsnNode)
-                            {
-                                VarInsnNode nextNode = (VarInsnNode) node.getNext ();
-                                if (nextNode.getOpcode () == Opcodes.ISTORE && nextNode.var == 1)
-                                {// ISTORE 1
-                                    if (nextNode.getNext () != null && nextNode.getNext () instanceof LabelNode)
-                                    {
-                                        jumpLabel = (LabelNode) nextNode.getNext ();
-                                        break;
-                                    }
+                    }
+                    else if (insertBeforeNode != null && node.getOpcode () == Opcodes.IADD)
+                    {// IADD
+                        if (node.getNext () != null && node.getNext () instanceof VarInsnNode)
+                        {
+                            VarInsnNode nextNode = (VarInsnNode) node.getNext ();
+                            if (nextNode.getOpcode () == Opcodes.ISTORE && nextNode.var == 1)
+                            {// ISTORE 1
+                                if (nextNode.getNext () != null && nextNode.getNext () instanceof LabelNode)
+                                {
+                                    jumpLabel = (LabelNode) nextNode.getNext ();
+                                    break;
                                 }
                             }
                         }
                     }
+                }
 
-                    if (insertBeforeNode != null && jumpLabel != null)
-                        return Pair.of (insertBeforeNode, jumpLabel);
-                    return null;
-                }, (methNode, preCondition) ->
-                {
-                    InsnList list = new InsnList ();
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 0));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 3));
-                    list.add (new FieldInsnNode (Opcodes.GETSTATIC,
-                        "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType", "PROTECT",
-                        "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/common/utils/PvPCommonUtils",
-                        "isValidArmorItemForEntity",
-                        "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
-                        false));
-                    list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
-                    methodNode.instructions.insertBefore (preCondition.getLeft (), list);
-                    return true;
-                });
-                return false;
-            }
-            return true;
+                if (insertBeforeNode != null && jumpLabel != null)
+                    return Pair.of (insertBeforeNode, jumpLabel);
+                return null;
+            }, (methNode, preCondition) ->
+            {
+                InsnList list = new InsnList ();
+                list.add (new VarInsnNode (Opcodes.ALOAD, 0));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 3));
+                list.add (new FieldInsnNode (Opcodes.GETSTATIC,
+                    "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType", "PROTECT",
+                    "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/common/utils/PvPCommonUtils",
+                    "isValidArmorItemForEntity",
+                    "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
+                    false));
+                list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
+                methodNode.instructions.insertBefore (preCondition.getLeft (), list);
+                return true;
+            });
         });
     }
 
@@ -120,9 +115,8 @@ public class LOTRModCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, className, methodNode ->
         {
-            if (methodNode.name.equals ("onItemRightClick") || methodNode.name.equals ("func_77659_a"))
-            {
-                patchMethod ("onItemRightClick", methodNode, (methNode) -> true, (methNode, preCondition) ->
+            return !patchMethod ("onItemRightClick", "func_77659_a", methodNode, (methNode) -> true,
+                (methNode, preCondition) ->
                 {
                     InsnList list = new InsnList ();
 
@@ -143,9 +137,6 @@ public class LOTRModCommonClassTransformer extends AbstractClassTransformer
                     methodNode.instructions.insertBefore (methodNode.instructions.getFirst (), list);
                     return true;
                 });
-                return false;
-            }
-            return true;
         });
     }
 
@@ -158,95 +149,88 @@ public class LOTRModCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "lotr.common.block.LOTRBlockMug", methodNode ->
         {
-            if (methodNode.name.equals ("onBlockActivated") || methodNode.name
-                .equals ("func_149727_a"))
+            return !patchMethod ("onBlockActivated", "func_149727_a", methodNode, (methNode) ->
             {
+                AbstractInsnNode insertAfterNode = null;
+                LabelNode jumpLabel = null;
 
-                patchMethod ("onBlockActivated", methodNode, (methNode) ->
+                for (int i = 0; i < methodNode.instructions.size (); i++)
                 {
-                    AbstractInsnNode insertAfterNode = null;
-                    LabelNode jumpLabel = null;
+                    AbstractInsnNode node = methodNode.instructions.get (i);
 
-                    for (int i = 0; i < methodNode.instructions.size (); i++)
+                    if (node instanceof VarInsnNode)
                     {
-                        AbstractInsnNode node = methodNode.instructions.get (i);
-
-                        if (node instanceof VarInsnNode)
+                        VarInsnNode varNode = (VarInsnNode) node;
+                        if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 5) // ALOAD 5
                         {
-                            VarInsnNode varNode = (VarInsnNode) node;
-                            if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 5) // ALOAD 5
+                            if (varNode.getNext () != null)
                             {
-                                if (varNode.getNext () != null)
+                                node = varNode.getNext ();
+                                if (node instanceof MethodInsnNode)
                                 {
-                                    node = varNode.getNext ();
-                                    if (node instanceof MethodInsnNode)
+                                    MethodInsnNode functionNode = (MethodInsnNode) node;
+                                    if (functionNode.getOpcode () == Opcodes.INVOKEVIRTUAL
+                                        && functionNode.owner.equals ("lotr/common/item/LOTRItemMug")
+                                        && functionNode.desc
+                                            .equals ("(Lnet/minecraft/entity/player/EntityPlayer;)Z")
+                                        && functionNode.name.equals ("canPlayerDrink")) // INVOKEVIRTUAL
+                                                                                        // lotr/common/item/LOTRItemMug.canPlayerDrink(Lnet/minecraft/entity/player/EntityPlayer;)Z
                                     {
-                                        MethodInsnNode functionNode = (MethodInsnNode) node;
-                                        if (functionNode.getOpcode () == Opcodes.INVOKEVIRTUAL
-                                            && functionNode.owner.equals ("lotr/common/item/LOTRItemMug")
-                                            && functionNode.desc
-                                                .equals ("(Lnet/minecraft/entity/player/EntityPlayer;)Z")
-                                            && functionNode.name.equals ("canPlayerDrink")) // INVOKEVIRTUAL
-                                                                                            // lotr/common/item/LOTRItemMug.canPlayerDrink(Lnet/minecraft/entity/player/EntityPlayer;)Z
+                                        if (functionNode.getNext () != null)
                                         {
-                                            if (functionNode.getNext () != null)
+                                            node = functionNode.getNext ();
+                                            if (node instanceof VarInsnNode)
                                             {
-                                                node = functionNode.getNext ();
-                                                if (node instanceof VarInsnNode)
-                                                {
-                                                    varNode = (VarInsnNode) node;
-                                                    if (varNode.getOpcode () == Opcodes.ISTORE && varNode.var == 16)
-                                                    { // ISTORE 16
-                                                        insertAfterNode = varNode;
-                                                        if (varNode.getNext () != null)
+                                                varNode = (VarInsnNode) node;
+                                                if (varNode.getOpcode () == Opcodes.ISTORE && varNode.var == 16)
+                                                { // ISTORE 16
+                                                    insertAfterNode = varNode;
+                                                    if (varNode.getNext () != null)
+                                                    {
+                                                        node = varNode.getNext ();
+                                                        if (node instanceof LabelNode)
                                                         {
-                                                            node = varNode.getNext ();
-                                                            if (node instanceof LabelNode)
-                                                            {
-                                                                jumpLabel = (LabelNode) node;
-                                                                break;
-                                                            }
+                                                            jumpLabel = (LabelNode) node;
+                                                            break;
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                        {
+                                    }
+                                    {
 
-                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }
 
-                    if (insertAfterNode != null && jumpLabel != null)
-                        return Pair.of (insertAfterNode, jumpLabel);
-                    return null;
+                if (insertAfterNode != null && jumpLabel != null)
+                    return Pair.of (insertAfterNode, jumpLabel);
+                return null;
 
-                }, (methNode, preCondition) ->
-                {
-                    InsnList list = new InsnList ();
+            }, (methNode, preCondition) ->
+            {
+                InsnList list = new InsnList ();
 
-                    list.add (new VarInsnNode (Opcodes.ILOAD, 16));
-                    list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 14));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 5));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
-                        "pvpmode/modules/lotr/internal/common/core/LOTRModCommonClassTransformer",
-                        "onItemRightClickPatch",
-                        "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)Z",
-                        false));
-                    list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
-                    list.add (new InsnNode (Opcodes.ICONST_0));
-                    list.add (new VarInsnNode (Opcodes.ISTORE, 16));
+                list.add (new VarInsnNode (Opcodes.ILOAD, 16));
+                list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 14));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 5));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
+                    "pvpmode/modules/lotr/internal/common/core/LOTRModCommonClassTransformer",
+                    "onItemRightClickPatch",
+                    "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)Z",
+                    false));
+                list.add (new JumpInsnNode (Opcodes.IFEQ, preCondition.getRight ()));
+                list.add (new InsnNode (Opcodes.ICONST_0));
+                list.add (new VarInsnNode (Opcodes.ISTORE, 16));
 
-                    methNode.instructions.insert (preCondition.getLeft (), list);
-                    return true;
-                });
-                return false;
-            }
-            return true;
+                methNode.instructions.insert (preCondition.getLeft (), list);
+                return true;
+            });
         });
     }
 

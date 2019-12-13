@@ -32,9 +32,8 @@ public class PvPModeServerClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "net.minecraft.inventory.ContainerPlayer", (node) ->
         {
-            if (node.name.equals ("transferStackInSlot") || node.name.equals ("func_82846_b"))
-            {
-                patchMethod ("transferStackInSlot", node, (methNode) -> true, (methNode, preCondition) ->
+            return !patchMethod ("transferStackInSlot", "func_82846_b", node, (methNode) -> true,
+                (methNode, preCondition) ->
                 {
                     InsnList list = new InsnList ();
 
@@ -53,9 +52,6 @@ public class PvPModeServerClassTransformer extends AbstractClassTransformer
                     node.instructions.insertBefore (node.instructions.getFirst (), list);
                     return true;
                 });
-                return false;
-            }
-            return true;
         });
     }
 }

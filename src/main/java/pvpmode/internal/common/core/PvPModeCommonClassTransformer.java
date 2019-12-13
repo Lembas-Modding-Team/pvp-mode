@@ -46,58 +46,52 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "net.minecraft.inventory.ContainerPlayer", (methodNode) ->
         {
-            if (methodNode.name.equals ("transferStackInSlot") || methodNode.name
-                .equals ("func_82846_b"))
+            return !this.patchMethod ("transferStackInSlot", "func_82846_b", methodNode, (methNode) ->
             {
-                this.patchMethod ("transferStackInSlot", methodNode, (methNode) ->
+                AbstractInsnNode insertAfterNode = null;
+
+                for (int i = 0; i < methodNode.instructions.size (); i++)
                 {
-                    AbstractInsnNode insertAfterNode = null;
+                    AbstractInsnNode node = methodNode.instructions.get (i);
 
-                    for (int i = 0; i < methodNode.instructions.size (); i++)
-                    {
-                        AbstractInsnNode node = methodNode.instructions.get (i);
-
-                        if (node.getOpcode () == Opcodes.IADD)
-                        {// IADD
-                            AbstractInsnNode next = node.getNext ();
-                            if (next != null && next instanceof VarInsnNode)
+                    if (node.getOpcode () == Opcodes.IADD)
+                    {// IADD
+                        AbstractInsnNode next = node.getNext ();
+                        if (next != null && next instanceof VarInsnNode)
+                        {
+                            VarInsnNode varNode = (VarInsnNode) next;
+                            if (varNode.var == 6 && varNode.getOpcode () == Opcodes.ISTORE)
                             {
-                                VarInsnNode varNode = (VarInsnNode) next;
-                                if (varNode.var == 6 && varNode.getOpcode () == Opcodes.ISTORE)
-                                {
-                                    insertAfterNode = varNode;
-                                    break;
-                                }
+                                insertAfterNode = varNode;
+                                break;
                             }
                         }
                     }
-                    return insertAfterNode;
-                }, (methNode, insertAfterNode) ->
-                {
-                    InsnList list = new InsnList ();
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 1));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 5));
-                    list.add (new VarInsnNode (Opcodes.ILOAD, 2));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
-                        "pvpmode/internal/common/core/PvPModeCommonClassTransformer",
-                        "patchContainerPlayerCondition",
-                        "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)Z",
-                        false));
-                    LabelNode label1 = new LabelNode ();
-                    list.add (new JumpInsnNode (Opcodes.IFEQ, label1));
-                    list.add (new InsnNode (Opcodes.F_SAME));
-                    list.add (new InsnNode (Opcodes.ACONST_NULL));
-                    list.add (new InsnNode (Opcodes.ARETURN));
-                    list.add (label1);
+                }
+                return insertAfterNode;
+            }, (methNode, insertAfterNode) ->
+            {
+                InsnList list = new InsnList ();
+                list.add (new VarInsnNode (Opcodes.ALOAD, 1));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 5));
+                list.add (new VarInsnNode (Opcodes.ILOAD, 2));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
+                    "pvpmode/internal/common/core/PvPModeCommonClassTransformer",
+                    "patchContainerPlayerCondition",
+                    "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;I)Z",
+                    false));
+                LabelNode label1 = new LabelNode ();
+                list.add (new JumpInsnNode (Opcodes.IFEQ, label1));
+                list.add (new InsnNode (Opcodes.F_SAME));
+                list.add (new InsnNode (Opcodes.ACONST_NULL));
+                list.add (new InsnNode (Opcodes.ARETURN));
+                list.add (label1);
 
-                    methodNode.instructions.insert (insertAfterNode, list);
-                    return true;
-                });
-                return false;
-
-            }
-            return true;
+                methodNode.instructions.insert (insertAfterNode, list);
+                return true;
+            });
         });
+
     }
 
     public static boolean patchContainerPlayerCondition (EntityPlayer player, ItemStack stack, int slot)
@@ -109,42 +103,39 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "net.minecraftforge.common.ISpecialArmor$ArmorProperties", methodNode ->
         {
-            if (methodNode.name.equals ("ApplyArmor"))
+            return !patchMethod ("ApplyArmor", null, methodNode, (methNode) ->
             {
-                patchMethod ("ApplyArmor", methodNode, (methNode) ->
+                int insertIndex = -1;
+                Label label = null;
+                for (int i = 0; i < methodNode.instructions.size (); i++)
                 {
-                    int insertIndex = -1;
-                    Label label = null;
-                    for (int i = 0; i < methodNode.instructions.size (); i++)
-                    {
-                        AbstractInsnNode node = methodNode.instructions.get (i);
+                    AbstractInsnNode node = methodNode.instructions.get (i);
 
-                        if (node instanceof VarInsnNode)
+                    if (node instanceof VarInsnNode)
+                    {
+                        VarInsnNode varNode = (VarInsnNode) node;
+                        if (insertIndex == -1)
                         {
-                            VarInsnNode varNode = (VarInsnNode) node;
-                            if (insertIndex == -1)
-                            {
-                                if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 1)
-                                { // ALOAD 1
-                                    AbstractInsnNode nextNode = varNode.getNext ();
-                                    if (nextNode != null && nextNode instanceof VarInsnNode)
-                                    {
-                                        varNode = (VarInsnNode) nextNode;
-                                        if (varNode.getOpcode () == Opcodes.ILOAD && varNode.var == 6)
-                                        { // ILOAD 6
-                                            nextNode = varNode.getNext ();
-                                            if (nextNode != null && nextNode instanceof InsnNode)
-                                            {
-                                                if (nextNode.getOpcode () == Opcodes.AALOAD)
-                                                { // AALOAD
-                                                    nextNode = nextNode.getNext ();
-                                                    if (nextNode != null && nextNode instanceof VarInsnNode)
-                                                    {
-                                                        varNode = (VarInsnNode) nextNode;
-                                                        if (varNode.getOpcode () == Opcodes.ASTORE && varNode.var == 7)
-                                                        { // ASTORE 7
-                                                            insertIndex = i + 3;
-                                                        }
+                            if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 1)
+                            { // ALOAD 1
+                                AbstractInsnNode nextNode = varNode.getNext ();
+                                if (nextNode != null && nextNode instanceof VarInsnNode)
+                                {
+                                    varNode = (VarInsnNode) nextNode;
+                                    if (varNode.getOpcode () == Opcodes.ILOAD && varNode.var == 6)
+                                    { // ILOAD 6
+                                        nextNode = varNode.getNext ();
+                                        if (nextNode != null && nextNode instanceof InsnNode)
+                                        {
+                                            if (nextNode.getOpcode () == Opcodes.AALOAD)
+                                            { // AALOAD
+                                                nextNode = nextNode.getNext ();
+                                                if (nextNode != null && nextNode instanceof VarInsnNode)
+                                                {
+                                                    varNode = (VarInsnNode) nextNode;
+                                                    if (varNode.getOpcode () == Opcodes.ASTORE && varNode.var == 7)
+                                                    { // ASTORE 7
+                                                        insertIndex = i + 3;
                                                     }
                                                 }
                                             }
@@ -152,52 +143,49 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
                                     }
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 7)
                             {
-                                if (varNode.getOpcode () == Opcodes.ALOAD && varNode.var == 7)
+                                AbstractInsnNode nextNode = varNode.getNext ();
+                                if (nextNode != null && nextNode instanceof JumpInsnNode)
                                 {
-                                    AbstractInsnNode nextNode = varNode.getNext ();
-                                    if (nextNode != null && nextNode instanceof JumpInsnNode)
+                                    JumpInsnNode jumpNode = (JumpInsnNode) nextNode;
+                                    if (jumpNode.getOpcode () == Opcodes.IFNONNULL)
                                     {
-                                        JumpInsnNode jumpNode = (JumpInsnNode) nextNode;
-                                        if (jumpNode.getOpcode () == Opcodes.IFNONNULL)
+                                        nextNode = jumpNode.getNext ();
+                                        if (nextNode != null && nextNode instanceof LabelNode)
                                         {
-                                            nextNode = jumpNode.getNext ();
-                                            if (nextNode != null && nextNode instanceof LabelNode)
-                                            {
-                                                label = ((LabelNode) nextNode).getLabel ();
-                                                break;
-                                            }
+                                            label = ((LabelNode) nextNode).getLabel ();
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    if (insertIndex != -1 && label != null)
-                        return Pair.of (insertIndex, label);
-                    return null;
-                }, (methNode, preCondition) ->
-                {
-                    InsnList list = new InsnList ();
+                }
+                if (insertIndex != -1 && label != null)
+                    return Pair.of (insertIndex, label);
+                return null;
+            }, (methNode, preCondition) ->
+            {
+                InsnList list = new InsnList ();
 
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 0));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 7));
-                    list.add (new FieldInsnNode (Opcodes.GETSTATIC,
-                        "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType", "PROTECT",
-                        "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/common/utils/PvPCommonUtils",
-                        "isValidArmorItemForEntity",
-                        "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
-                        false));
-                    list.add (new JumpInsnNode (Opcodes.IFEQ, new LabelNode (preCondition.getRight ())));
-                    methodNode.instructions.insert (methodNode.instructions.get (preCondition.getLeft ()), list);
-                    return true;
-                });
-
-                return false;
-            }
-            return true;
+                list.add (new VarInsnNode (Opcodes.ALOAD, 0));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 7));
+                list.add (new FieldInsnNode (Opcodes.GETSTATIC,
+                    "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType", "PROTECT",
+                    "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "pvpmode/api/common/utils/PvPCommonUtils",
+                    "isValidArmorItemForEntity",
+                    "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
+                    false));
+                list.add (new JumpInsnNode (Opcodes.IFEQ, new LabelNode (preCondition.getRight ())));
+                methodNode.instructions.insert (methodNode.instructions.get (preCondition.getLeft ()), list);
+                return true;
+            });
         });
     }
 
@@ -205,41 +193,36 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "net.minecraft.inventory.ContainerPlayer$1", (node) ->
         {
-            if (node.name.equals ("isItemValid") || node.name.equals ("func_75214_a"))
+            return !patchMethod ("isItemValid", "func_75214_a", node, (methNode) -> true, (methNode, preCondition) ->
             {
-                patchMethod ("isItemValid", node, (methNode) -> true, (methNode, preCondition) ->
-                {
-                    InsnList list = new InsnList ();
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 0));
-                    list.add (
-                        new FieldInsnNode (Opcodes.GETFIELD, "net/minecraft/inventory/ContainerPlayer$1", "this$0",
-                            "Lnet/minecraft/inventory/ContainerPlayer;"));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "net/minecraft/inventory/ContainerPlayer",
-                        "access$000",
-                        "(Lnet/minecraft/inventory/ContainerPlayer;)Lnet/minecraft/entity/player/EntityPlayer;",
-                        false));
-                    list.add (new VarInsnNode (Opcodes.ALOAD, 1));
-                    list.add (new FieldInsnNode (Opcodes.GETSTATIC,
-                        "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType",
-                        "EQUIP",
-                        "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
-                    list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
-                        "pvpmode/api/common/utils/PvPCommonUtils",
-                        "isValidArmorItemForEntity",
-                        "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
-                        false));
-                    LabelNode label1 = new LabelNode ();
-                    list.add (new JumpInsnNode (Opcodes.IFNE, label1));
-                    list.add (new InsnNode (Opcodes.ICONST_0));
-                    list.add (new InsnNode (Opcodes.IRETURN));
-                    list.add (label1);
+                InsnList list = new InsnList ();
+                list.add (new VarInsnNode (Opcodes.ALOAD, 0));
+                list.add (
+                    new FieldInsnNode (Opcodes.GETFIELD, "net/minecraft/inventory/ContainerPlayer$1", "this$0",
+                        "Lnet/minecraft/inventory/ContainerPlayer;"));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC, "net/minecraft/inventory/ContainerPlayer",
+                    "access$000",
+                    "(Lnet/minecraft/inventory/ContainerPlayer;)Lnet/minecraft/entity/player/EntityPlayer;",
+                    false));
+                list.add (new VarInsnNode (Opcodes.ALOAD, 1));
+                list.add (new FieldInsnNode (Opcodes.GETSTATIC,
+                    "pvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType",
+                    "EQUIP",
+                    "Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;"));
+                list.add (new MethodInsnNode (Opcodes.INVOKESTATIC,
+                    "pvpmode/api/common/utils/PvPCommonUtils",
+                    "isValidArmorItemForEntity",
+                    "(Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;Lpvpmode/api/common/compatibility/events/ArmorItemCheckEvent$CheckType;)Z",
+                    false));
+                LabelNode label1 = new LabelNode ();
+                list.add (new JumpInsnNode (Opcodes.IFNE, label1));
+                list.add (new InsnNode (Opcodes.ICONST_0));
+                list.add (new InsnNode (Opcodes.IRETURN));
+                list.add (label1);
 
-                    node.instructions.insertBefore (node.instructions.getFirst (), list);
-                    return true;
-                });
-                return false;
-            }
-            return true;
+                node.instructions.insertBefore (node.instructions.getFirst (), list);
+                return true;
+            });
         });
     }
 
@@ -247,9 +230,8 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
     {
         return patchClass (basicClass, "net.minecraft.item.ItemArmor", methodNode ->
         {
-            if (methodNode.name.equals ("onItemRightClick") || methodNode.name.equals ("func_77659_a"))
-            {
-                patchMethod ("onItemRightClick", methodNode, (methNode) -> true, (methNode, preCondition) ->
+            return !patchMethod ("onItemRightClick", "func_77659_a", methodNode, (methNode) -> true,
+                (methNode, preCondition) ->
                 {
                     InsnList list = new InsnList ();
                     list.add (new VarInsnNode (Opcodes.ALOAD, 3));
@@ -271,10 +253,6 @@ public class PvPModeCommonClassTransformer extends AbstractClassTransformer
                     methodNode.instructions.insertBefore (methodNode.instructions.getFirst (), list);
                     return true;
                 });
-
-                return false;
-            }
-            return true;
         });
     }
 

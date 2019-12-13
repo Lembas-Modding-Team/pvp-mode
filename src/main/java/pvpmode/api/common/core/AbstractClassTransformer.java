@@ -58,21 +58,31 @@ public abstract class AbstractClassTransformer implements IClassTransformer
     protected <T> boolean patchMethod (String methodName, MethodNode methodNode,
         Function<MethodNode, T> preCondition, BiPredicate<MethodNode, T> patcher)
     {
-        T conditionResult = preCondition.apply (methodNode);
+        return patchMethod (methodName, null, methodNode, preCondition, patcher);
+    }
 
-        boolean patchResult = conditionResult == null ? false : patcher.test (methodNode, conditionResult);
-
-        if (conditionResult == null || !patchResult)
+    protected <T> boolean patchMethod (String methodName, String obfMethodName, MethodNode methodNode,
+        Function<MethodNode, T> preCondition, BiPredicate<MethodNode, T> patcher)
+    {
+        if (methodNode.name.equals (methodName) || methodNode.name.equals (obfMethodName))
         {
-            logger.warning ("Could not patch the method \"%s\" %s", methodName,
-                conditionResult == null ? "because the pre-conditions were not satisfied" : "");
-        }
-        else
-        {
-            logger.debug ("Patched the method \"%s\"", methodName);
-        }
+            T conditionResult = preCondition.apply (methodNode);
 
-        return patchResult;
+            boolean patchResult = conditionResult == null ? false : patcher.test (methodNode, conditionResult);
+
+            if (conditionResult == null || !patchResult)
+            {
+                logger.warning ("Could not patch the method \"%s\" %s", methodName,
+                    conditionResult == null ? "because the pre-conditions were not satisfied" : "");
+            }
+            else
+            {
+                logger.debug ("Patched the method \"%s\"", methodName);
+            }
+
+            return patchResult;
+        }
+        return false;
     }
 
     protected final boolean isObfuscatedEnvironment ()
