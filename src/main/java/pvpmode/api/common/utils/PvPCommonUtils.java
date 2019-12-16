@@ -449,9 +449,10 @@ public class PvPCommonUtils
     {
         if (! (event.entityLiving instanceof EntityPlayer))
             return false;
+
         if (Reflection.getCallerClass (7) == EntityLivingBase.class)
             return true;
-
+        
         return false;
     }
 

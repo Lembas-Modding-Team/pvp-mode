@@ -77,7 +77,8 @@ public abstract class FactionEntryParser
 
                             if (!alignmentString.isEmpty ())
                             {
-                                String[] alignmentStringParts = alignmentString.split (":");
+                                String[] alignmentStringParts = alignmentString
+                                    .split (LOTRServerConstants.FACTION_ALIGNMENT_SEPARATOR, -1);
 
                                 Boolean isPledgingRequired = Boolean.FALSE;
 
@@ -102,12 +103,9 @@ public abstract class FactionEntryParser
                                     logger.warning (
                                         "The %s config entry at line %d contains invalid entries in the alignment specifier (\"%s\"). Note that the pledging condition doesn't work here.",
                                         configName,
-                                        i, StringUtils.join (alignmentStringParts, ":", 1,
+                                        i, StringUtils.join (alignmentStringParts, LOTRServerConstants.FACTION_ALIGNMENT_SEPARATOR, 1,
                                             alignmentStringParts.length));
                                 }
-
-                                String[] alignmentStringParts = alignmentString
-                                    .split (LOTRServerConstants.FACTION_ALIGNMENT_SEPARATOR, -1);
 
                                 String firstPart = alignmentStringParts[0].trim ();
                                 String secondPart = null;
