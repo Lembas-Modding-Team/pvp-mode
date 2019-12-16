@@ -65,7 +65,7 @@ public class OnPvPEvent extends Event
     }
 
     /**
-     * Returns the dealt damage amount
+     * Returns the amount of damage to be dealt
      */
     public float getDamageAmount ()
     {

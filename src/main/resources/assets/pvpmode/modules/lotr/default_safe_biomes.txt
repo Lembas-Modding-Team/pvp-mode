@@ -2,9 +2,9 @@
 # This file lists all biome and alignment dependent overrides, forcing PvP mode to OFF when conditions are met.
 #
 # Basically this file allows you to specify in which biome a player which is aligned to a faction you assign to this biome is forced to have PvP disabled.
-# Also, you can define what "aligned" means (in terms of alignment): If the alignment of the player is greater than the specified one, the player is seen as aligned.
+# Also, you can define what "aligned" means (in terms of alignment and pledging): if the alignment of the player is greater than the one specified for the pledging state of the player, the player is seen as aligned.
 #
-# One can include multiple lines starting with the same faction, but with different alignment values. That way you can specify different alignment conditions for different biomes, but for the same faction
+# One can include multiple lines starting with the same faction, but with different alignment specifiers. That way you can specify different alignment conditions for different biomes, but for the same faction
 # Note that if you specify two entries with the same faction, but different alignment values, for the same biome, the condition with the lowest alignment value applies.
 #
 # If a placeholder is specified, the alignment condition has to apply to at least one faction assigned to the placeholder. Look at the general configuration file for a list of placeholders.
@@ -14,7 +14,11 @@
 # The first part is the faction name, which is the name which is internally used by the game (see the command /alignment). Also you can use the specifier ALL,
 # which means that every player, regardless of his alignment, is forced to have PvP disabled on the specified biomes.
 #
-# The second part is the minimum required alignment (see above). If the specified faction is ALL, the alignment value will be ignored (but has to be a valid number).
+# The second part is the alignment specifier. It's defined with minAlignmentNoPledge/minAlignmentWithPledge. 
+# "minAlignmentNoPledge" is the minimum required alignment if the player is not pledged to the specified faction, "minAlignmentWithPledge" is the minimum required alignment if the player is pledged to the specified faction.
+# If you only want to specify the alignment value without pledging, just write the number, without anything else. In this case, it is not taken into account whether the player is pledged to the specified faction or not.
+# Write "/minAlignmentWithPledge" to only specify the alignment value with pledging. This means that the player has to be pledged to the specified faction.
+# If the specified faction is ALL, the alignment specifier will be ignored. (But it still has to be valid!)
 #
 # The third part is a comma-separated list of biome ids where the specified condition applies.
 # A complete list of all Biome ID numbers is provided in LOTRmod_biomeids.txt in the main directory.
