@@ -1,7 +1,7 @@
 package pvpmode.api.common.core;
 
 import java.util.Iterator;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -32,8 +32,9 @@ public abstract class AbstractClassTransformer implements IClassTransformer
      *            A processor called for every method
      * @return The patched class
      */
-    protected byte[] patchMethod (byte[] basicClass, Predicate<MethodNode> methodProcessor)
+    protected byte[] patchClass (byte[] basicClass, String classDisplayName, Predicate<MethodNode> methodProcessor)
     {
+        logger.debug ("Patching the class \"%s\"...", classDisplayName);
         ClassNode classNode = new ClassNode ();
         ClassReader classReader = new ClassReader (basicClass);
         classReader.accept (classNode, 0);
@@ -47,9 +48,41 @@ public abstract class AbstractClassTransformer implements IClassTransformer
             }
         }
 
+        logger.debug ("Finished patching the class \"%s\"", classDisplayName);
+
         ClassWriter writer = new ClassWriter (ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         classNode.accept (writer);
         return writer.toByteArray ();
+    }
+
+    protected <T> boolean patchMethod (String methodName, MethodNode methodNode,
+        Function<MethodNode, T> preCondition, BiPredicate<MethodNode, T> patcher)
+    {
+        return patchMethod (methodName, null, methodNode, preCondition, patcher);
+    }
+
+    protected <T> boolean patchMethod (String methodName, String obfMethodName, MethodNode methodNode,
+        Function<MethodNode, T> preCondition, BiPredicate<MethodNode, T> patcher)
+    {
+        if (methodNode.name.equals (methodName) || methodNode.name.equals (obfMethodName))
+        {
+            T conditionResult = preCondition.apply (methodNode);
+
+            boolean patchResult = conditionResult == null ? false : patcher.test (methodNode, conditionResult);
+
+            if (conditionResult == null || !patchResult)
+            {
+                logger.warning ("Could not patch the method \"%s\" %s", methodName,
+                    conditionResult == null ? "because the pre-conditions were not satisfied" : "");
+            }
+            else
+            {
+                logger.debug ("Patched the method \"%s\"", methodName);
+            }
+
+            return patchResult;
+        }
+        return false;
     }
 
     protected final boolean isObfuscatedEnvironment ()

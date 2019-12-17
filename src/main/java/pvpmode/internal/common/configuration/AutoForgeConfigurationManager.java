@@ -48,7 +48,7 @@ public abstract class AutoForgeConfigurationManager extends ForgeConfigurationMa
             Process processAnnotation = this.getClass ().getAnnotation (Process.class);
             if (processAnnotation != null)
             {
-                Map<String, String> properties = PvPCommonUtils.getPropertiesFromProcessedClass (this.getClass ());
+                Map<String, String> properties = PvPCommonCoreUtils.getPropertiesFromProcessedClass (this.getClass ());
                 if (properties.containsKey (AutoConfigurationConstants.PID_PROPERTY_KEY))
                     computedPID = properties
                         .get (AutoConfigurationConstants.PID_PROPERTY_KEY);

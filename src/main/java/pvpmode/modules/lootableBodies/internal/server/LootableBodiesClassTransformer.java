@@ -30,9 +30,9 @@ public class LootableBodiesClassTransformer extends AbstractClassTransformer
 
     private byte[] patchLootableBodiesEventHandler (byte[] basicClass)
     {
-        return patchMethod (basicClass, (node) ->
+        return patchClass (basicClass, "cyano.lootable.events.PlayerDeathEventHandler", (node) ->
         {
-            if (node.name.equals ("playerDeathEvent"))
+            return !patchMethod ("playerDeathEvent", node, (methNode) -> true, (methNode, preCondition) ->
             {
                 InsnList list = new InsnList ();
 
@@ -60,10 +60,8 @@ public class LootableBodiesClassTransformer extends AbstractClassTransformer
                 list.add (label1);
 
                 node.instructions.insertBefore (node.instructions.getFirst (), list);
-                logger.info ("Patched \"playerDeathEvent\" in \"cyano.lootable.events.PlayerDeathEventHandler\"");
-                return false;
-            }
-            return true;
+                return true;
+            });
         });
     }
 

@@ -20,7 +20,7 @@ public class PvPCommandHelp extends AbstractPvPCommand
 {
 
     private final ServerProxy server;
-    private final ServerConfiguration config; 
+    private final ServerConfiguration config;
 
     public PvPCommandHelp ()
     {
@@ -186,7 +186,9 @@ public class PvPCommandHelp extends AbstractPvPCommand
             .setChatHoverEvent (new HoverEvent (HoverEvent.Action.SHOW_TEXT,
                 new ChatComponentText ("Click to insert the command into the chat")));
 
-        ChatComponentText helpPart = new ChatComponentText (": " + help);
+        ChatComponentText helpPart = new ChatComponentText (
+            ": " + help.replaceAll (ServerCommandConstants.HIGHLIGHT_TAG_START, "§4")
+                .replaceAll (ServerCommandConstants.HIGHLIGHT_TAG_END, textColor.toString ()));
         helpPart.getChatStyle ().setColor (textColor);
         sender.addChatMessage (commandPart.appendSibling (helpPart));
     }

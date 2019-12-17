@@ -7,8 +7,8 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayer;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
-import pvpmode.modules.lotr.api.server.LOTRServerConstants;
-import pvpmode.modules.lotr.internal.server.FactionEntry;
+import pvpmode.modules.lotr.api.common.LOTRCommonConstants;
+import pvpmode.modules.lotr.internal.common.FactionEntry;
 
 /**
  * The override condition for the LOTR biomes. Players which enter a biome
@@ -35,7 +35,7 @@ public class HostileBiomeOverrideCondition extends MiddleEarthBiomeOverrideCondi
     @Override
     protected EnumForcedPvPMode handleCondition (FactionEntry entry, EntityPlayer player)
     {
-        if (entry.getEntryName ().equals (LOTRServerConstants.FACTION_ENTRY_WILDCARD))
+        if (entry.getEntryName ().equals (LOTRCommonConstants.FACTION_ENTRY_WILDCARD))
             return EnumForcedPvPMode.ON;
         else
         {

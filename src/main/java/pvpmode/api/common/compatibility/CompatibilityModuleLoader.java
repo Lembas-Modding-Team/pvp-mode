@@ -1,5 +1,7 @@
 package pvpmode.api.common.compatibility;
 
+import cpw.mods.fml.relauncher.Side;
+
 /**
  * The compatibility module loader is the bridge between PvPMode and the
  * compatibility module. PvPMode cannot load the module directly because it can
@@ -28,7 +30,7 @@ public interface CompatibilityModuleLoader
     /**
      * Returns the class name of the referenced compatibility module
      */
-    public String getCompatibilityModuleClassName ();
+    public String getCompatibilityModuleClassName (Side side);
 
     /**
      * Determines whether the referenced compatibility can/shall be loaded. This

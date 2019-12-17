@@ -4,16 +4,33 @@ import java.util.*;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.client.configuration.ClientConfiguration;
+import pvpmode.api.client.utils.PvPClientUtils;
 import pvpmode.api.common.configuration.*;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.internal.client.configuration.ClientConfigurationImpl;
+import pvpmode.internal.client.utils.PvPClientUtilsProvider;
 import pvpmode.internal.common.CommonProxy;
+import pvpmode.modules.lotr.internal.common.LOTRModCompatibilityModuleLoader;
 
 public class ClientProxy extends CommonProxy
 {
 
     private PvPClientEventHandler eventHandler;
+    private Set<UUID> playersInPvP = new HashSet<> ();
+
+    private PvPClientUtilsProvider clientUtilsProvider;
+
+    public ClientProxy ()
+    {
+        super ();
+
+        PvPClientUtils.setProvider (clientUtilsProvider = new PvPClientUtilsProvider ());
+        PvPCommonUtils.setProvider (clientUtilsProvider);
+
+    }
 
     @Override
     public void onPreInit (FMLPreInitializationEvent event) throws Exception
@@ -39,6 +56,13 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
+    protected void registerCompatibilityModules ()
+    {
+        super.registerCompatibilityModules ();
+        this.compatibilityManager.registerModuleLoader (LOTRModCompatibilityModuleLoader.class);
+    }
+
+    @Override
     public void onInit (FMLInitializationEvent event) throws Exception
     {
         super.onInit (event);
@@ -48,6 +72,25 @@ public class ClientProxy extends CommonProxy
     public void onPostInit (FMLPostInitializationEvent event) throws Exception
     {
         super.onPostInit (event);
+    }
+
+    public Set<UUID> getPlayersInPvP ()
+    {
+        return playersInPvP;
+    }
+
+    public boolean isInPvP (EntityPlayer player)
+    {
+        return playersInPvP.contains (player.getUniqueID ());
+    }
+
+    /**
+     * Clears the cached data from the server used with the client-side support
+     * system.
+     */
+    public void clearCachedServerData ()
+    {
+        playersInPvP.clear ();
     }
 
 }

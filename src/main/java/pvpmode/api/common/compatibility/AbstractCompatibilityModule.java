@@ -45,6 +45,11 @@ public abstract class AbstractCompatibilityModule implements CompatibilityModule
         return configurationManager;
     }
 
+    public Path getConfigurationFolder ()
+    {
+        return configurationFolder;
+    }
+
     public SimpleLogger getLogger ()
     {
         return logger;

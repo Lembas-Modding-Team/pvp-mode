@@ -3,10 +3,11 @@ package pvpmode.internal.common.compatibility;
 import java.nio.file.Path;
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
-import pvpmode.api.common.utils.PvPCommonUtils;
+import pvpmode.api.common.utils.*;
 
 public class CompatibilityManagerImpl implements CompatibilityManager
 {
@@ -31,7 +32,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     {
         if (!registeredModulesLoaderClasses.contains (moduleLoader))
         {
-            CompatibilityModuleLoader loaderInstance = PvPCommonUtils.createInstance (moduleLoader);
+            CompatibilityModuleLoader loaderInstance = PvPCommonCoreUtils.createInstance (moduleLoader);
 
             if (loaderInstance != null)
             {
@@ -74,7 +75,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     {
         int loadedModulesCounter = 0;
         Set<CompatibilityModuleLoader> loaders = registeredModuleLoaders.get (loadingPoint);
-        
+
         if (loaders != null)
         {
             for (CompatibilityModuleLoader loader : loaders)
@@ -87,19 +88,23 @@ public class CompatibilityManagerImpl implements CompatibilityManager
 
                     loader.onPreLoad ();
 
+                    String compatibilityModuleClassName = loader
+                        .getCompatibilityModuleClassName (FMLCommonHandler.instance ().getSide ());
+
                     try
                     {
-                        Class<?> moduleClass = Class.forName (loader.getCompatibilityModuleClassName ());
+                        Class<?> moduleClass = Class.forName (compatibilityModuleClassName);
                         if (CompatibilityModule.class.isAssignableFrom (moduleClass))
                         {
-                            CompatibilityModule module = (CompatibilityModule) PvPCommonUtils
+                            CompatibilityModule module = (CompatibilityModule) PvPCommonCoreUtils
                                 .createInstance (moduleClass);
                             if (module != null)
                             {
                                 try
                                 {
                                     module.load (loader,
-                                        configurationFolder.resolve (loader.getInternalModuleName ()), PvPCommonUtils
+                                        configurationFolder.resolve (loader.getInternalModuleName ()),
+                                        PvPCommonCoreUtils
                                             .getLogger (logger.getName () + "." + loader.getInternalModuleName ()));
                                     loadedModules.put (loader, module);
                                     loadedModulesLoaderClasses.add (loader.getClass ());
@@ -128,7 +133,7 @@ public class CompatibilityManagerImpl implements CompatibilityManager
                     {
                         logger
                             .error ("The specified compatibility module class \"%s\" couldn't be found",
-                                loader.getCompatibilityModuleClassName ());
+                                compatibilityModuleClassName);
                     }
                 }
                 else
@@ -147,6 +152,19 @@ public class CompatibilityManagerImpl implements CompatibilityManager
     public Map<CompatibilityModuleLoader, CompatibilityModule> getLoadedModules ()
     {
         return loadedModules;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends CompatibilityModuleLoader> T getCompatibilityModuleLoaderInstance (
+        Class<T> moduleLoaderClass)
+    {
+        for (CompatibilityModuleLoader loader : loadedModules.keySet ())
+        {
+            if (loader.getClass () == moduleLoaderClass)
+                return (T) loader;
+        }
+        return null;
     }
 
 }

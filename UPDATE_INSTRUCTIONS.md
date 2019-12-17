@@ -50,6 +50,9 @@ The configuration system changed a lot - the old configuration files are no long
 * `Enable enemy biome override condition` --> `Enemy Biome Overrides Enabled`
 * `Enable safe biome override condition` --> `Save Biome Overrides Enabled`
 * `Block fast traveling in PvP` --> `Fast Traveling While PvP Blocked`
+##### Renamed configuration files:
+* `pvpmode_lotr_enemy_biomes.txt` --> `enemy_biomes.txt``
+* `pvpmode_lotr_safe_biomes.txt` --> `safe_biomes.txt`
 
 #### Siege Mode compatibility configuration:
 * `Disable PvP Logging During Sieges` --> `PvP Logging During Sieges Disabled`

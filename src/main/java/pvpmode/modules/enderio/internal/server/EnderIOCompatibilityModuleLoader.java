@@ -1,5 +1,6 @@
 package pvpmode.modules.enderio.internal.server;
 
+import cpw.mods.fml.relauncher.Side;
 import pvpmode.api.common.compatibility.ForgeModCompatibilityModuleLoader;
 
 /**
@@ -23,7 +24,7 @@ public class EnderIOCompatibilityModuleLoader extends ForgeModCompatibilityModul
     }
 
     @Override
-    public String getCompatibilityModuleClassName ()
+    public String getCompatibilityModuleClassName (Side side)
     {
         return "pvpmode.modules.enderio.internal.server.EnderIOCompatibilityModule";
     }

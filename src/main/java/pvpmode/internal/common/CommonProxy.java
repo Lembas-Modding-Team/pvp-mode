@@ -9,7 +9,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.config.Configuration;
-import pvpmode.*;
+import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
@@ -17,8 +17,9 @@ import pvpmode.api.common.version.*;
 import pvpmode.internal.common.compatibility.CompatibilityManagerImpl;
 import pvpmode.internal.common.configuration.*;
 import pvpmode.internal.common.core.PvPModeCore;
-import pvpmode.internal.common.network.ClientsideFeatureSupportRequest;
+import pvpmode.internal.common.network.*;
 import pvpmode.internal.common.network.ClientsideFeatureSupportRequest.*;
+import pvpmode.internal.common.network.PvPStateChangedMessage.PvPStateChangedMessageHandler;
 import pvpmode.internal.common.utils.ClassDiscoverer;
 import pvpmode.internal.common.version.VersionCheckerImpl;
 
@@ -89,6 +90,9 @@ public class CommonProxy implements Configurable
             getNextPacketId (), Side.SERVER);
         packetDispatcher.registerMessage (ClientsideFeatureSupportRequestAnswerHandler.class,
             ClientsideFeatureSupportRequestAnswer.class,
+            getNextPacketId (), Side.CLIENT);
+        packetDispatcher.registerMessage (PvPStateChangedMessageHandler.class,
+            PvPStateChangedMessage.class,
             getNextPacketId (), Side.CLIENT);
     }
 
@@ -167,7 +171,7 @@ public class CommonProxy implements Configurable
         return packetDispatcher;
     }
 
-    protected static int getNextPacketId ()
+    public static int getNextPacketId ()
     {
         return packetIdCounter++;
     }

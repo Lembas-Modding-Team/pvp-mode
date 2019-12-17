@@ -1,0 +1,356 @@
+#
+# This file lists all gear items that are blocked under certain conditions (alignment, pledging, PvP, PvE, faction).
+#
+# You can assign a faction an alignment value and a list of items. Players can only use these items if they have at least the specified alignment with the specified faction.
+# It's also possible to specify - in addition to the alignment criterion - that the player needs to be pledged to the specified faction.
+#
+# You can include multiple lines starting with the same faction, but with different alignment values. This way you can specify different conditions for different items.
+# Note that if you specify two entries with the same faction, but different alignment values, for the same item, the condition with the lowest alignment value applies.
+#
+# If a placeholder is specified, the alignment condition has to apply to at least one faction assigned to the placeholder.
+#
+# A configuration entry consists of one line, which contains three or four columns separated by a semicolon (;).
+#
+# The first part is the faction name, which is the name which is internally used by the game (see the /alignment command, or use the list on the wiki: https://lotrminecraftmod.fandom.com/wiki/Alignment#List_of_all_Alignment_Factions). You can also use the specifier ALL,
+# which means that every player, regardless of his alignment, won't be able to use that item. Note that if you have blocked the usage of an item with ALL, you must make sure
+# that there is no other condition which would allow the usage of the item - otherwise the item is usable under that condition.
+#
+# The second part is the alignment specifier. It's defined with minAlignmentNoPledge/minAlignmentWithPledge. 
+# "minAlignmentNoPledge" is the minimum required alignment if the player is not pledged to the specified faction, "minAlignmentWithPledge" is the minimum required alignment if the player is pledged to the specified faction.
+# If you only want to specify the alignment value without pledging, just write the number, without anything else. In this case, it is not taken into account whether the player is pledged to the specified faction or not.
+# Write "/minAlignmentWithPledge" to only specify the alignment value with pledging. This means that the player has to be pledged to the specified faction.
+# If the specified faction is ALL, the alignment specifier will be ignored. (But it still has to be valid!)
+#
+# The third part is optional - it's the condition, under which the entry will be applied. Valid values are PVP, PVE and ALWAYS. If not specified, ALWAYS is assumed.
+# Under this condition the items will be blocked. For example, with PVP as condition the specified items will only be blocked for PvP if the alignment criterion is not fulfilled.
+#
+# The fourth (or third if no condition is specified) part is a comma-separated list of unlocalized item names (for example, lotr:item.coin), where the specified condition applies.
+#
+# If this file is deleted, it'll be recreated with default configuration data.
+# On startup you'll see in the logs if the PvP Mode Mod found errors in this file, so that you can fix them.
+#
+# Some words to the file format: 
+# Comments cover a whole line, which must start with a #. The PvP Mode Mod will ignore them.
+# Blank lines and spaces will be ignored too - you can put as much spaces between the configuration entries as you want.
+#
+
+# General
+
+  # Generally blocked in PvP
+  
+  	# Mithril Armor, Sword, Daggers, Battleaxe, Warhammer, Spear, Halberd, Crossbow
+  	#ALL;0;PVP;lotr:item.helmetMithril,lotr:item.bodyMithril,lotr:item.legsMithril,lotr:item.bootsMithril,lotr:item.swordMithril,lotr:item.daggerMithril,lotr:item.daggerMithrilPoisoned,lotr:item.battleaxeMithril,lotr:item.hammerMithril,lotr:item.spearMithril,lotr:item.halberdMithril,lotr:item.mithrilCrossbow
+  	
+  	# Exploding Termite
+  	#ALL;0;PVP;lotr:item.termite
+  
+  # Elves
+  
+  	# Miruvor
+	ELVES;10;lotr:item.mugMiruvor
+  
+  	# Galvorn Armor
+	ELVES;/250;lotr:item.helmetGalvorn,lotr:item.bodyGalvorn,lotr:item.legsGalvorn,lotr:item.bootsGalvorn
+	
+	# Gondolinian Armor, Sword
+	ELVES;/100;lotr:item.helmetGondolin,lotr:item.bodyGondolin,lotr:item.legsGondolin,lotr:item.bootsGondolin,lotr:item.swordGondolin
+	
+  # Dwarves
+  
+  	# Dwarven Tonic
+  	DWARVES;10;lotr:item.mugDwarvenTonic
+  
+  # Orcs
+  
+  	# Orc Draught
+	ORCS;10;lotr:item.mugOrcDraught
+  
+  	# Orc Bow
+	ORCS;50;lotr:item.orcBow
+
+	# Orc Skull Staff
+	ORCS;10;lotr:item.orcSkullStaff
+	
+	# Charred Mallorn Mace
+	ORCS;50;lotr:item.maceMallornCharred
+
+	# Utumno Armor, Sword, Daggers, Spear, Battleaxe, Warhammer, Bow
+	ORCS;100;lotr:item.helmetUtumno,lotr:item.bodyUtumno,lotr:item.legsUtumno,lotr:item.bootsUtumno,lotr:item.swordUtumno,lotr:item.daggerUtumno,lotr:item.daggerUtumnoPoisoned,lotr:item.spearUtumno,lotr:item.battleaxeUtumno,lotr:item.hammerUtumno,lotr:item.utumnoBow
+	
+	# Balrog Whip
+	ORCS;500;lotr:item.balrogWhip
+	
+	# Pickaxe of the Underworld (Utumno Pickaxe)
+	ORCS;20;lotr:item.utumnoPickaxe
+	
+	# Morgul Blade, Morgul Armor
+	ORCS;/250;lotr:item.morgulBlade,lotr:item.helmetMorgul,lotr:item.bodyMorgul,lotr:item.legsMorgul,lotr:item.bootsMorgul
+
+# Dunedain of the North
+	
+	# Ranger Armor, Bow  
+	RANGER_NORTH;50;lotr:item.helmetRanger,lotr:item.bodyRanger,lotr:item.legsRanger,lotr:item.bootsRanger,lotr:item.rangerBow
+
+	# Arnor Armor, Sword, Daggers, Spear
+	RANGER_NORTH;100;lotr:item.helmetArnor,lotr:item.bodyArnor,lotr:item.legsArnor,lotr:item.bootsArnor,lotr:item.swordArnor,lotr:item.daggerArnor,lotr:item.daggerArnorPoisoned,lotr:item.spearArnor
+	
+# Blue Mountains
+
+	# Blue Dwarven Pickaxe, Axe, Mattock, Shovel, Hoe
+	BLUE_MOUNTAINS;10;lotr:item.pickaxeBlueDwarven,lotr:item.axeBlueDwarven,lotr:item.mattockBlueDwarven,lotr:item.shovelBlueDwarven,lotr:item.hoeBlueDwarven
+
+	# Blue Dwarven Sword, Daggers, Battleaxe, Warhammer, Armor, Throwing Axe, Spear, Pike
+	BLUE_MOUNTAINS;50;lotr:item.swordBlueDwarven,lotr:item.daggerBlueDwarven,lotr:item.daggerBlueDwarvenPoisoned,lotr:item.battleaxeBlueDwarven,lotr:item.hammerBlueDwarven,lotr:item.helmetBlueDwarven,lotr:item.bodyBlueDwarven,lotr:item.legsBlueDwarven,lotr:item.bootsBlueDwarven,lotr:item.throwingAxeBlueDwarven,lotr:item.spearBlueDwarven,lotr:item.pikeBlueDwarven
+
+# High Elves
+
+  # Lindon
+
+	# Lindon Pickaxe, Axe, Shovel, Hoe
+	HIGH_ELF;10;lotr:item.pickaxeHighElven,lotr:item.axeHighElven,lotr:item.shovelHighElven,lotr:item.hoeHighElven
+
+	# Lindon Armor, Sword, Daggers, Spear, Bow, Battlestaff, Longspear
+	HIGH_ELF;50;lotr:item.helmetHighElven,lotr:item.bodyHighElven,lotr:item.legsHighElven,lotr:item.bootsHighElven,lotr:item.swordHighElven,lotr:item.daggerHighElven,lotr:item.daggerHighElvenPoisoned,lotr:item.spearHighElven,lotr:item.highElvenBow,lotr:item.polearmHighElven,lotr:item.longspearHighElven
+
+  # Rivendell
+	
+	# Rivendell Pickaxe, Axe, Shovel, Hoe
+	HIGH_ELF;10;lotr:item.pickaxeRivendell,lotr:item.axeRivendell,lotr:item.shovelRivendell,lotr:item.hoeRivendell
+
+	# Rivendell Armor, Sword, Daggers, Spear, Bow, Battlestaff, Longspear
+	HIGH_ELF;50;lotr:item.helmetRivendell,lotr:item.bodyRivendell,lotr:item.legsRivendell,lotr:item.bootsRivendell,lotr:item.swordRivendell,lotr:item.daggerRivendell,lotr:item.daggerRivendellPoisoned,lotr:item.spearRivendell,lotr:item.rivendellBow,lotr:item.polearmRivendell,lotr:item.longspearRivendell
+	
+# Gundabad
+
+	# Gundabad Uruk Armor, Cleaver, Battleaxe, Warhammer, Daggers, Pike, Bow, Spear
+	GUNDABAD;100;lotr:item.helmetGundabadUruk,lotr:item.bodyGundabadUruk,lotr:item.legsGundabadUruk,lotr:item.bootsGundabadUruk,lotr:item.swordGundabadUruk,lotr:item.battleaxeGundabadUruk,lotr:item.hammerGundabadUruk,lotr:item.daggerGundabadUruk,lotr:item.daggerGundabadUrukPoisoned,lotr:item.pikeGundabadUruk,lotr:item.gundabadUrukBow,lotr:item.spearGundabadUruk
+	
+# Angmar
+
+	# Angmar Pickaxe, Axe, Shovel, Hoe
+	ANGMAR;10;lotr:item.pickaxeAngmar,lotr:item.axeAngmar,lotr:item.shovelAngmar,lotr:item.hoeAngmar
+
+	# Angmar Sword, Daggers, Battleaxe, Warhammer, Spear, Armor, Polearm
+	ANGMAR;50;lotr:item.swordAngmar,lotr:item.daggerAngmar,lotr:item.daggerAngmarPoisoned,lotr:item.battleaxeAngmar,lotr:item.hammerAngmar,lotr:item.spearAngmar,lotr:item.helmetAngmar,lotr:item.bodyAngmar,lotr:item.legsAngmar,lotr:item.bootsAngmar,lotr:item.polearmAngmar
+	
+# Wood Elves
+
+	# Wood Elven Pickaxe, Axe, Shovel, Hoe
+	WOOD_ELF;10;lotr:item.pickaxeWoodElven,lotr:item.axeWoodElven,lotr:item.shovelWoodElven,lotr:item.hoeWoodElven
+
+	# Mirkwood Bow, Scout Armor
+	WOOD_ELF;25;lotr:item.helmetWoodElvenScout,lotr:item.bodyWoodElvenScout,lotr:item.legsWoodElvenScout,lotr:item.bootsWoodElvenScout
+	
+	# Wood Elven Sword, Daggers, Spear, Armor, Bow, Battlestaff, Longspear
+	WOOD_ELF;50;lotr:item.swordWoodElven,lotr:item.daggerWoodElven,lotr:item.daggerWoodElvenPoisoned,lotr:item.spearWoodElven,lotr:item.helmetWoodElven,lotr:item.bodyWoodElven,lotr:item.legsWoodElven,lotr:item.bootsWoodElven,lotr:item.mirkwoodBow,lotr:item.polearmWoodElven,lotr:item.longspearWoodElven
+	
+# Dol Guldur
+
+	# Dol Guldur Pickaxe, Axe, Shovel, Hoe
+	DOL_GULDUR;10;lotr:item.pickaxeDolGuldur,lotr:item.axeDolGuldur,lotr:item.shovelDolGuldur,lotr:item.hoeDolGuldur
+
+	# Dol Guldur Sword, Daggers, Spear, Battleaxe, Warhammer, Armor, Pike
+	DOL_GULDUR;50;lotr:item.swordDolGuldur,lotr:item.daggerDolGuldur,lotr:item.daggerDolGuldurPoisoned,lotr:item.spearDolGuldur,lotr:item.battleaxeDolGuldur,lotr:item.hammerDolGuldur,lotr:item.helmetDolGuldur,lotr:item.bodyDolGuldur,lotr:item.legsDolGuldur,lotr:item.bootsDolGuldur,lotr:item.pikeDolGuldur
+	
+# Dale
+
+	# Dalish Gambeson
+	DALE;25;lotr:item.bodyDaleGambeson
+
+	# Dalish Sword, Daggers, Spear, Battleaxe, Armor, Bow, Pike
+	DALE;50;lotr:item.swordDale,lotr:item.daggerDale,lotr:item.daggerDalePoisoned,lotr:item.spearDale,lotr:item.battleaxeDale,lotr:item.helmetDale,lotr:item.bodyDale,lotr:item.legsDale,lotr:item.bootsDale,lotr:item.daleBow,lotr:item.pikeDale
+	
+# Durin's Folk
+
+	# Dwarven Pickaxe, Axe, Mattock, Shovel, Hoe
+	DWARF;10;lotr:item.pickaxeDwarven,lotr:item.axeDwarven,lotr:item.mattockDwarven,lotr:item.shovelDwarven,lotr:item.hoeDwarven
+
+	# Dwarven Sword, Daggers, Battleaxe, Warhammer, Armor, Throwing Axe, Spear, Pike
+	DWARF;50;lotr:item.swordDwarven,lotr:item.daggerDwarven,lotr:item.daggerDwarvenPoisoned,lotr:item.battleaxeDwarven,lotr:item.hammerDwarven,lotr:item.helmetDwarven,lotr:item.bodyDwarven,lotr:item.legsDwarven,lotr:item.bootsDwarven,lotr:item.throwingAxeDwarven,lotr:item.spearDwarven,lotr:item.pikeDwarven
+
+	# Silver-trimmed Armor (Rank: Oathfriend)
+	DWARF;100;lotr:item.helmetDwarvenSilver,lotr:item.bodyDwarvenSilver,lotr:item.legsDwarvenSilver,lotr:item.bootsDwarvenSilver
+
+	# Gold-trimmed Armor (Rank: Axebearer)
+	DWARF;200;lotr:item.helmetDwarvenGold,lotr:item.bodyDwarvenGold,lotr:item.legsDwarvenGold,lotr:item.bootsDwarvenGold
+
+	# Mithril-trimmed Armor (Rank: Champion)
+	DWARF;500;lotr:item.helmetDwarvenMithril,lotr:item.bodyDwarvenMithril,lotr:item.legsDwarvenMithril,lotr:item.bootsDwarvenMithril
+	
+# Galadhrim
+
+	# Galadhrim Pickaxe, Axe, Shovel, Hoe
+	GALADHRIM;10;lotr:item.pickaxeElven,lotr:item.axeElven,lotr:item.shovelElven,lotr:item.hoeElven
+	
+	# Mallorn Pickaxe, Axe, Shovel, Hoe
+	GALADHRIM;10;lotr:item.pickaxeMallorn,lotr:item.axeMallorn,lotr:item.shovelMallorn,lotr:item.hoeMallorn
+	
+	# Mallorn Sword, Bow
+	GALADHRIM;25;lotr:item.swordMallorn,lotr:item.mallornBow
+
+	# Galadhrim Cloak
+	GALADHRIM;25;lotr:item.helmetHithlain,lotr:item.bodyHithlain,lotr:item.legsHithlain,lotr:item.bootsHithlain
+
+	# Galadhrim Sword, Spear, Armor, Bow, Daggers, Battlestaff, Longspear
+	GALADHRIM;50;lotr:item.swordElven,lotr:item.spearElven,lotr:item.helmetElven,lotr:item.bodyElven,lotr:item.legsElven,lotr:item.bootsElven,lotr:item.elvenBow,lotr:item.daggerElven,lotr:item.daggerElvenPoisoned,lotr:item.polearmElven,lotr:item.longspearElven
+	
+# Dunland
+
+	# Dunlending Armor, Club, Trident
+	DUNLAND;50;lotr:item.helmetDunlending,lotr:item.bodyDunlending,lotr:item.legsDunlending,lotr:item.bootsDunlending,lotr:item.dunlendingClub,lotr:item.dunlendingTrident
+	
+# Isengard
+
+	# Uruk Pickaxe, Axe, Shovel, Hoe
+	URUK_HAI;10;lotr:item.pickaxeUruk,lotr:item.axeUruk,lotr:item.shovelUruk,lotr:item.hoeUruk
+	
+	# Uruk Cleaver, Daggers, Battleaxe, Warhammer, Spear, Armor, Crossbow, Pike
+	URUK_HAI;50;lotr:item.scimitarUruk,lotr:item.daggerUruk,lotr:item.daggerUrukPoisoned,lotr:item.battleaxeUruk,lotr:item.hammerUruk,lotr:item.spearUruk,lotr:item.helmetUruk,lotr:item.bodyUruk,lotr:item.legsUruk,lotr:item.bootsUruk,lotr:item.urukCrossbow,lotr:item.pikeUruk
+
+	# Berserker Helmet, Scimitar
+	URUK_HAI;100;lotr:item.helmetUrukBerserker,lotr:item.scimitarUrukBerserker
+	
+# Fangorn
+	# Ent Draughts
+	FANGORN;200;lotr:item.entDraught
+	
+# Rohan
+
+	# Rohirric Sword, Daggers, Spear, Armor, Battleaxe, Bow, Lance
+	ROHAN;50;lotr:item.swordRohan,lotr:item.daggerRohan,lotr:item.daggerRohanPoisoned,lotr:item.spearRohan,lotr:item.helmetRohan,lotr:item.bodyRohan,lotr:item.legsRohan,lotr:item.bootsRohan,lotr:item.battleaxeRohan,lotr:item.rohanBow,lotr:item.lanceRohan
+
+	# Marshal Armor
+	ROHAN;100;lotr:item.helmetRohanMarshal,lotr:item.bodyRohanMarshal,lotr:item.legsRohanMarshal,lotr:item.bootsRohanMarshal
+	
+# Gondor
+
+	# Dol Amroth Gambeson
+	GONDOR;25;lotr:item.bodyDolAmrothGambeson,lotr:item.legsDolAmrothGambeson
+	
+	# Gondorian Gambeson
+	GONDOR;25;lotr:item.bodyGondorGambeson
+	
+	# Lebennin Gambeson
+	GONDOR;25;lotr:item.bodyLebenninGambeson
+	
+	# Lamedon Jacket
+	GONDOR;25;lotr:item.bodyLamedonJacket
+
+	# Gondor Armor, Sword, Spear, Daggers, Warhammer, Bow, Lance, Pike
+	GONDOR;50;lotr:item.helmetGondor,lotr:item.bodyGondor,lotr:item.legsGondor,lotr:item.bootsGondor,lotr:item.swordGondor,lotr:item.spearGondor,lotr:item.daggerGondor,lotr:item.daggerGondorPoisoned,lotr:item.hammerGondor,lotr:item.gondorBow,lotr:item.lanceGondor,lotr:item.pikeGondor
+
+	# Ithilien Ranger Armor
+	GONDOR;50;lotr:item.helmetRangerIthilien,lotr:item.bodyRangerIthilien,lotr:item.legsRangerIthilien,lotr:item.bootsRangerIthilien
+
+	# Dol Amroth Armor, Sword, Lance, Daggers, Longspear
+	GONDOR;50;lotr:item.helmetDolAmroth,lotr:item.bodyDolAmroth,lotr:item.legsDolAmroth,lotr:item.bootsDolAmroth,lotr:item.swordDolAmroth,lotr:item.lanceDolAmroth,lotr:item.daggerDolAmroth,lotr:item.daggerDolAmrothPoisoned,lotr:item.longspearDolAmroth
+
+	# Winged Gondorian Helmet
+	GONDOR;100;lotr:item.helmetGondorWinged
+
+	# Lossarnach Armor, Battleaxe, Throwing Axe
+	GONDOR;50;lotr:item.helmetLossarnach,lotr:item.bodyLossarnach,lotr:item.legsLossarnach,lotr:item.bootsLossarnach,lotr:item.battleaxeLossarnach,lotr:item.throwingAxeLossarnach
+
+	# Pelargir Armor, Eket, Trident
+	GONDOR;50;lotr:item.helmetPelargir,lotr:item.bodyPelargir,lotr:item.legsPelargir,lotr:item.bootsPelargir,lotr:item.swordPelargir,lotr:item.tridentPelargir
+
+	# Pinnath Gelin Armor
+	GONDOR;50;lotr:item.helmetPinnathGelin,lotr:item.bodyPinnathGelin,lotr:item.legsPinnathGelin,lotr:item.bootsPinnathGelin
+
+	# Blackroot Vale Armor, Bow
+	GONDOR;50;lotr:item.helmetBlackroot,lotr:item.bodyBlackroot,lotr:item.legsBlackroot,lotr:item.bootsBlackroot,lotr:item.blackrootBow
+	
+	# Lamedon Armor
+	GONDOR;50;lotr:item.helmetLamedon,lotr:item.bodyLamedon,lotr:item.legsLamedon,lotr:item.bootsLamedon
+	
+# Mordor
+
+	# Morgul Draught
+	MORDOR;10;lotr:item.mugMorgulDraught
+
+	# Mordor Pickaxe, Axe, Shovel, Hoe
+	MORDOR;10;lotr:item.pickaxeOrc,lotr:item.axeOrc,lotr:item.shovelOrc,lotr:item.hoeOrc
+
+	# Mordor Armor, Scimitar, Battleaxe, Daggers, Spear, Warhammer, Warscythe
+	MORDOR;50;lotr:item.helmetOrc,lotr:item.bodyOrc,lotr:item.legsOrc,lotr:item.bootsOrc,lotr:item.scimitarOrc,lotr:item.battleaxeOrc,lotr:item.daggerOrc,lotr:item.daggerOrcPoisoned,lotr:item.spearOrc,lotr:item.hammerOrc,lotr:item.polearmOrc
+
+	# Black Uruk Cleaver, Daggers, Spear, Battleaxe, Warhammer, Armor, Bow
+	MORDOR;100;lotr:item.scimitarBlackUruk,lotr:item.daggerBlackUruk,lotr:item.daggerBlackUrukPoisoned,lotr:item.spearBlackUruk,lotr:item.battleaxeBlackUruk,lotr:item.hammerBlackUruk,lotr:item.helmetBlackUruk,lotr:item.bodyBlackUruk,lotr:item.legsBlackUruk,lotr:item.bootsBlackUruk,lotr:item.blackUrukBow
+	
+# Dorwinion
+
+	# Manish Armor
+	DORWINION;50;lotr:item.helmetDorwinion,lotr:item.bodyDorwinion,lotr:item.legsDorwinion,lotr:item.bootsDorwinion
+
+	# Elven Armor, Spear of Bladorthin, Sword, Sword, Daggers, Bow
+	DORWINION;50;lotr:item.helmetDorwinionElf,lotr:item.bodyDorwinionElf,lotr:item.legsDorwinionElf,lotr:item.bootsDorwinionElf,lotr:item.spearBladorthin,lotr:item.swordDorwinionElf,lotr:item.daggerDorwinionElf,lotr:item.daggerDorwinionElfPoisoned,lotr:item.dorwinionElfBow
+	
+# Rhudel
+
+	# Rhunic Armor, Sword, Daggers, Spear, Bardiche, Pike, Battleaxe, Firepot, Bow
+	RHUN;50;lotr:item.helmetRhun,lotr:item.bodyRhun,lotr:item.legsRhun,lotr:item.bootsRhun,lotr:item.swordRhun,lotr:item.daggerRhun,lotr:item.daggerRhunPoisoned,lotr:item.spearRhun,lotr:item.polearmRhun,lotr:item.pikeRhun,lotr:item.rhunFirePot,lotr:item.rhunBow,lotr:item.battleaxeRhun
+	
+	# Golden Rhunic Armor
+	RHUN;100;lotr:item.helmetRhunGold,lotr:item.bodyRhunGold,lotr:item.legsRhunGold,lotr:item.bootsRhunGold
+	
+	# Rhunic Warlord Helmet
+	RHUN;200;lotr:item.helmetRhunWarlord
+	
+# Near Harad
+
+	# Haradic Bow, Sword, Daggers, Spear, Pike
+	NEAR_HARAD;50;lotr:item.nearHaradBow,lotr:item.swordHarad,lotr:item.daggerHarad,lotr:item.daggerHaradPoisoned,lotr:item.spearHarad,lotr:item.pikeHarad
+	
+	# Umbaric Armor, Scimitar, Daggers, Spear, Poleaxe, Mace, Pike, 
+	NEAR_HARAD;50;lotr:item.helmetUmbar,lotr:item.bodyUmbar,lotr:item.legsUmbar,lotr:item.bootsUmbar,lotr:item.scimitarNearHarad,lotr:item.poleaxeNearHarad,lotr:item.maceNearHarad,lotr:item.pikeNearHarad,lotr:item.daggerNearHarad,lotr:item.daggerNearHaradPoisoned,lotr:item.spearNearHarad
+
+	# Black Numenorean Armor, Sword, Daggers, Spear, Mace
+	NEAR_HARAD;100;lotr:item.helmetBlackNumenorean,lotr:item.bodyBlackNumenorean,lotr:item.legsBlackNumenorean,lotr:item.bootsBlackNumenorean,lotr:item.swordBlackNumenorean,lotr:item.daggerBlackNumenorean,lotr:item.daggerBlackNumenoreanPoisoned,lotr:item.spearBlackNumenorean,lotr:item.maceBlackNumenorean
+
+	# Gulfen Armor, Khopesh
+	NEAR_HARAD;50;lotr:item.helmetGulfHarad,lotr:item.bodyGulfHarad,lotr:item.legsGulfHarad,lotr:item.bootsGulfHarad,lotr:item.swordGulfHarad
+	
+	# Corsair Armor, Eket, Daggers, Harpoon, Battleaxe
+	NEAR_HARAD;50;lotr:item.helmetCorsair,lotr:item.bodyCorsair,lotr:item.legsCorsair,lotr:item.bootsCorsair,lotr:item.swordCorsair,lotr:item.daggerCorsair,lotr:item.daggerCorsairPoisoned,lotr:item.spearCorsair,lotr:item.battleaxeCorsair
+
+	# Harnedor Armor
+	NEAR_HARAD;50;lotr:item.helmetHarnedor,lotr:item.bodyHarnedor,lotr:item.legsHarnedor,lotr:item.bootsHarnedor
+	
+	# Coast Southron Armor
+	NEAR_HARAD;50;lotr:item.helmetNearHarad,lotr:item.bodyNearHarad,lotr:item.legsNearHarad,lotr:item.bootsNearHarad
+	
+	# Nomad Armor
+	NEAR_HARAD;50;lotr:item.helmetNomad,lotr:item.bodyNomad,lotr:item.legsNomad,lotr:item.bootsNomad	
+
+	# Southron Champion Helmet
+	NEAR_HARAD;100;lotr:item.helmetNearHaradWarlord
+	
+# Morwaith
+
+	# Sword, Daggers, Battleaxe, Spear, Armor, Club
+	MOREDAIN;50;lotr:item.swordMoredain,lotr:item.daggerMoredain,lotr:item.daggerMoredainPoisoned,lotr:item.battleaxeMoredain,lotr:item.spearMoredain,lotr:item.helmetMoredain,lotr:item.bodyMoredain,lotr:item.legsMoredain,lotr:item.bootsMoredain,lotr:item.clubMoredain
+
+	# Moredain Chieftain Armor
+	MOREDAIN;100;lotr:item.helmetMoredainLion,lotr:item.bodyMoredainLion,lotr:item.legsMoredainLion,lotr:item.bootsMoredainLion
+	
+# Taurethrim
+
+	# Taurethrim Cocoa
+	TAUREDAIN;10;lotr:item.mugTauredainCocoa
+	
+	# Mordor Pickaxe, Axe, Shovel, Hoe
+	TAUREDAIN;10;lotr:item.pickaxeTauredain,lotr:item.axeTauredain,lotr:item.shovelTauredain,lotr:item.hoeTauredain
+
+	# Daggers, Spear, Sword, Armor, Blowgun, Bludgeon, Battleaxe, Pike
+	TAUREDAIN;50;lotr:item.daggerTauredain,lotr:item.daggerTauredainPoisoned,lotr:item.spearTauredain,lotr:item.swordTauredain,lotr:item.helmetTauredain,lotr:item.bodyTauredain,lotr:item.legsTauredain,lotr:item.bootsTauredain,lotr:item.tauredainBlowgun,lotr:item.hammerTauredain,lotr:item.battleaxeTauredain,lotr:item.pikeTauredain
+
+	# Chieftain Helmet
+	TAUREDAIN;100;lotr:item.helmetTauredainChieftain
+
+	# Golden Armor
+	TAUREDAIN;100;lotr:item.helmetTauredainGold,lotr:item.bodyTauredainGold,lotr:item.legsTauredainGold,lotr:item.bootsTauredainGold
+
+# Half Trolls
+
+	# Armor, Battleaxe, Warhammer, Mace, Scimitar, Daggers, Pike
+	HALF_TROLL;50;lotr:item.helmetHalfTroll,lotr:item.bodyHalfTroll,lotr:item.legsHalfTroll,lotr:item.bootsHalfTroll,lotr:item.battleaxeHalfTroll,lotr:item.hammerHalfTroll,lotr:item.maceHalfTroll,lotr:item.scimitarHalfTroll,lotr:item.daggerHalfTroll,lotr:item.daggerHalfTrollPoisoned,lotr:item.pikeHalfTroll

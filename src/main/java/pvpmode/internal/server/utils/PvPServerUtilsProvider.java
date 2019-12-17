@@ -131,4 +131,10 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
         ServerChatUtils.green (sender, StringUtils.repeat ('-', isSenderDisplayed ? 26 : 21));
     }
 
+    @Override
+    public boolean isInPvP (EntityPlayer player)
+    {
+        return PvPServerUtils.getPvPData (player).getPvPTimer () != 0;
+    }
+
 }

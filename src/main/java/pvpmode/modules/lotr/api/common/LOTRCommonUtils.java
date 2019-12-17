@@ -7,7 +7,6 @@ import com.google.common.collect.Multimap;
 
 import lotr.common.fac.LOTRFaction;
 import lotr.common.fac.LOTRFaction.FactionType;
-import pvpmode.modules.lotr.api.server.LOTRServerConstants;
 
 /**
  * A utility class for the LOTR Mod.
@@ -60,7 +59,7 @@ public class LOTRCommonUtils
         Set<String> ret = new HashSet<> ();
 
         if (LOTRFaction.forName (placeholder) != null
-            || placeholder.equals (LOTRServerConstants.FACTION_ENTRY_WILDCARD))
+            || placeholder.equals (LOTRCommonConstants.FACTION_ENTRY_WILDCARD))
         {
             ret.add (placeholder);
             return ret;

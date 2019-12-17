@@ -1,5 +1,8 @@
 package pvpmode.api.server;
 
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
 
 /**
@@ -43,5 +46,15 @@ public interface PvPData
     public boolean isDefaultModeForced ();
 
     public void setDefaultModeForced (boolean defaultModeForced);
+
+    /**
+     * Returns the vault of the player. It's a list of items, which is saved within
+     * the playerdata. One can see it like an additional inventory.
+     * 
+     * @return The vault
+     */
+    public List<ItemStack> getVault ();
+
+    public void setVault (List<ItemStack> vault);
 
 }

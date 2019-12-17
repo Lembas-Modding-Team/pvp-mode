@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.api.common.SimpleLogger;
 import pvpmode.api.common.compatibility.*;
-import pvpmode.api.server.compatibility.events.PlayerIdentityCheckEvent;
+import pvpmode.api.common.compatibility.events.PlayerIdentityCheckEvent;
 
 public class CitizensCompatibilityModule extends AbstractCompatibilityModule
 {

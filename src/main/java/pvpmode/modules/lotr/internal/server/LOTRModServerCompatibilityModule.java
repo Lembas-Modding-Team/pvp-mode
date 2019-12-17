@@ -14,34 +14,39 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.PvPMode;
 import pvpmode.api.common.*;
-import pvpmode.api.common.compatibility.*;
-import pvpmode.api.common.configuration.*;
+import pvpmode.api.common.compatibility.CompatibilityModuleLoader;
+import pvpmode.api.common.configuration.Configurable;
 import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.overrides.PvPOverrideCondition;
 import pvpmode.api.server.utils.*;
-import pvpmode.modules.lotr.api.server.LOTRServerConfiguration;
+import pvpmode.internal.server.ServerProxy;
+import pvpmode.modules.lotr.api.common.LOTRCommonConstants;
+import pvpmode.modules.lotr.api.server.*;
+import pvpmode.modules.lotr.internal.common.*;
+import pvpmode.modules.lotr.internal.common.network.*;
+import pvpmode.modules.lotr.internal.server.gear.ServerBlockedGearManager;
 import pvpmode.modules.lotr.internal.server.overrides.*;
 
 /**
- * The compatibility module for the LOTR Mod.
+ * The server-side compatibility module for the LOTR Mod.
  *
  * @author CraftedMods
  *
  */
-public class LOTRModCompatibilityModule extends AbstractCompatibilityModule implements Configurable
+public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibilityModule implements Configurable
 {
 
-    private static final String ENEMY_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_enemy_biomes.txt";
     private static final String LOTR_BIOME_IDS_FILE_NAME = "lotr_mod_biome_ids.txt";
     private static final String EXTENDED_ENEMY_BIOME_CONFIG_FILE_NAME = "extended_enemy_biomes.txt";
     private static final String DEFAULT_ENEMY_BIOME_MAP_FILE_NAME = "default_enemy_biomes_map.png";
-    private static final String SAFE_BIOME_CONFIG_FILE_NAME = "pvpmode_lotr_safe_biomes.txt";
 
     private LOTRServerConfiguration config;
 
     private SafeBiomeOverrideCondition safeBiomeOverrideCondition;
     private HostileBiomeOverrideCondition hostileBiomeOverrideCondition;
+
+    ServerBlockedGearManager blockedGearManager;
 
     @Override
     public void load (CompatibilityModuleLoader loader, Path configurationFolder, SimpleLogger logger) throws Exception
@@ -49,6 +54,8 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         super.load (loader, configurationFolder, logger);
 
         MinecraftForge.EVENT_BUS.register (this);
+
+        blockedGearManager = new ServerBlockedGearManager ();
 
         config = this.createConfiguration (configFile ->
         {
@@ -65,7 +72,7 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     void initEnemyBiomeOverrides (LOTRServerConfiguration config)
     {
-        initBiomeOverrides (configurationFolder, ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
+        initBiomeOverrides (configurationFolder, LOTRServerConstants.ENEMY_BIOME_CONFIG_FILE_NAME, "lotr enemy biome",
             "default_enemy_biomes.txt", (data) -> new HostileBiomeOverrideCondition (data),
             () -> hostileBiomeOverrideCondition,
             (condition) -> hostileBiomeOverrideCondition = (HostileBiomeOverrideCondition) condition, config);
@@ -99,7 +106,7 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
 
     void initSafeBiomeOverrides (LOTRServerConfiguration config)
     {
-        initBiomeOverrides (configurationFolder, SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
+        initBiomeOverrides (configurationFolder, LOTRServerConstants.SAFE_BIOME_CONFIG_FILE_NAME, "lotr safe biome",
             "default_safe_biomes.txt", (data) -> new SafeBiomeOverrideCondition (data),
             () -> safeBiomeOverrideCondition,
             (condition) -> safeBiomeOverrideCondition = (SafeBiomeOverrideCondition) condition, config);
@@ -148,12 +155,12 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
             "LOTR biome id file");
     }
 
-    private void recreateFile (Path targetFolder, String filename, String shortName)
+    public void recreateFile (Path targetFolder, String filename, String shortName)
     {
         this.recreateFile (targetFolder, filename, filename, shortName, false);
     }
 
-    private void recreateFile (Path targetFolder, String filename, String targetFilename, String shortName,
+    public void recreateFile (Path targetFolder, String filename, String targetFilename, String shortName,
         boolean recreateIfNotExists)
     {
         try
@@ -247,10 +254,36 @@ public class LOTRModCompatibilityModule extends AbstractCompatibilityModule impl
         }
     }
 
+    @SubscribeEvent
+    public void onInitialSent (OnInitialSupportPackageSentEvent event)
+    {
+        if (event.getClientData ().getLoadedCompatibilityModules ().contains (LOTRCommonConstants.LOTR_MOD_MODID))
+        {
+            ServerProxy server = PvPMode.instance.getServerProxy ();
+
+            server.getPacketDispatcher ().sendTo (
+                new GearItemsBlockedConfigurationChange (this.config.areGearItemsBlocked ()),
+                event.getClientData ().getPlayer ());
+            server.getPacketDispatcher ().sendTo (
+                new BlockedGearItemsListChangedMessage (blockedGearManager.getBlockedItems ()),
+                event.getClientData ().getPlayer ());
+            server.getPacketDispatcher ().sendTo (
+                new EquippingOfBlockedArmorBlockedConfigurationChangeMessage (
+                    this.config.isEquippingOfBlockedArmorBlocked ()),
+                event.getClientData ().getPlayer ());
+        }
+    }
+
     @Override
-    public ConfigurationManager getConfiguration ()
+    public LOTRServerConfiguration getConfiguration ()
     {
         return config;
+    }
+
+    @Override
+    public ServerBlockedGearManager getBlockedGearManager ()
+    {
+        return blockedGearManager;
     }
 
 }

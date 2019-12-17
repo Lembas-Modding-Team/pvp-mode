@@ -26,7 +26,7 @@ import pvpmode.internal.common.utils.ClassDiscoverer;
 public class AutoConfigurationCreator
 {
 
-    private final SimpleLogger logger = PvPCommonUtils.getLogger (AutoConfigurationCreator.class);
+    private final SimpleLogger logger = PvPCommonCoreUtils.getLogger (AutoConfigurationCreator.class);
 
     private Map<String, Map<String, ConfigurationPropertyKey<?>>> generatedKeys = new HashMap<> ();
 
@@ -75,7 +75,7 @@ public class AutoConfigurationCreator
     {
         Map<Class<?>, ConfigurationPropertyKeyCreator<?>> keyCreators = new HashMap<> ();
 
-        Collection<ConfigurationPropertyKeyCreator<?>> keyCreatorsCollection = PvPCommonUtils
+        Collection<ConfigurationPropertyKeyCreator<?>> keyCreatorsCollection = PvPCommonCoreUtils
             .createRegisteredInstances ((Set<Class<? extends ConfigurationPropertyKeyCreator<?>>>) (Set<?>) foundClasses
                 .get (Register.class).get (ConfigurationPropertyKeyCreator.class));
 
@@ -102,7 +102,7 @@ public class AutoConfigurationCreator
 
         for (Class<?> classToProcess : classesToProcess)
         {
-            Map<String, String> properties = PvPCommonUtils.getPropertiesFromProcessedClass (classToProcess);
+            Map<String, String> properties = PvPCommonCoreUtils.getPropertiesFromProcessedClass (classToProcess);
 
             String pid = properties.get (AutoConfigurationConstants.PID_PROPERTY_KEY);
             String manualProcessingValue = properties
@@ -279,7 +279,7 @@ public class AutoConfigurationCreator
         Register register = clazz.getAnnotation (Register.class);
         if (register != null)
         {
-            Map<String, String> properties = PvPCommonUtils.getPropertiesFromRegisteredClass (clazz);
+            Map<String, String> properties = PvPCommonCoreUtils.getPropertiesFromRegisteredClass (clazz);
             if (properties.containsKey (AutoConfigurationConstants.PROPERTY_GENERATOR_TYPE_PROPERTY_KEY))
             {
                 String type = properties.get (AutoConfigurationConstants.PROPERTY_GENERATOR_TYPE_PROPERTY_KEY);
