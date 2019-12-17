@@ -59,7 +59,11 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         messages.add (Triple.of ("pvpadmin ", "<player> [on|off|default]", "Toggles PvP for another player."));
         messages.add (Triple.of ("pvpadmin info ", "<player>", "Displays another player's PvP stats."));
         messages.add (Triple.of ("pvpadmin resetCooldown ", "<player>", "Resets the player's cooldown."));
-        messages.add (Triple.of ("pvpadmin spy ", "<player> [on|off]", "Sets or toggles the player's spying setting."));
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
+        {
+            messages
+                .add (Triple.of ("pvpadmin spy ", "<player> [on|off]", "Sets or toggles the player's spying setting."));
+        }
         return messages;
     }
 
@@ -73,15 +77,18 @@ public class PvPCommandAdmin extends AbstractPvPCommand
             "Displays the PvP mode, the spying settings, the warmup, cooldown and the PvP timer, whether the PvP mode is overridden, and other PvP Mode Mod related stats about the specified player."));
         messages.add (Triple.of ("pvpadmin resetCooldown ", "<player>",
             "Resets the cooldown for the specified player. The player will be informed about that."));
-        messages.add (Triple.of ("pvpadmin spy ", "<player> [on|off]",
-            "Either toggle or set the spying setting of another player to a specified mode (ON or OFF). The player will be informed about that."));
+        if (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ())
+        {
+            messages.add (Triple.of ("pvpadmin spy ", "<player> [on|off]",
+                "Either toggle or set the spying setting of another player to a specified mode (ON or OFF). The player will be informed about that."));
+        }
         return messages;
     }
 
     @Override
     public String getGeneralHelpMessage (ICommandSender sender)
     {
-        return "For operators. Allows them, to manage and view the PvP mode (ON or OFF) and other stats of another player. That player mustn't be able to fly, not in creative mode, not in PvP combat, and the PvP mode of that player mustn't be overridden if you want to modify the PvP stats of that player.";
+        return "For operators. Allows them to manage and view the PvP mode (ON or OFF) and other stats of another player. That player mustn't be able to fly, not in creative mode, not in PvP combat, and the PvP mode of that player mustn't be overridden if you want to modify the PvP stats of that player.";
     }
 
     @Override
@@ -111,6 +118,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         }
         else if (args[0].equals ("spy"))
         {
+            requireSpying ();
             requireMinLength (admin, args, 2);
 
             EntityPlayerMP player = CommandBase.getPlayer (admin, args[1]);
@@ -217,6 +225,14 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         }
     }
 
+    private void requireSpying ()
+    {
+        if (! (config.arePerPlayerSpyingSettingsAllowed () && config.isIntelligenceEnabled ()))
+        {
+            featureDisabled ();
+        }
+    }
+
     private void toggleSpyMode (ICommandSender sender, EntityPlayer player, PvPData data, Boolean mode)
     {
         if (mode == null || mode.booleanValue () != data.isSpyingEnabled ())
@@ -227,7 +243,7 @@ public class PvPCommandAdmin extends AbstractPvPCommand
 
             ServerChatUtils.green (sender,
                 String.format ("Spying is now %s for %s",
-                    PvPCommonUtils.getEnabledString (!data.isSpyingEnabled ()),
+                    PvPCommonUtils.getEnabledString (data.isSpyingEnabled ()),
                     player.getDisplayName ()));
         }
         else
