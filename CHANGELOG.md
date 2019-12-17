@@ -40,6 +40,7 @@
 * Added configurable faction placeholders which can be used with the biome overrides and the gear item blocking
 * In the biome overrides, one can now specify different alignment thresholds for when the player is pledged
 * Added completely configurable item blocking with many options and settings
+* Added linking of player map location visibility with the PvP Mode Intelligence settings (configurable)
 
 ### LOTR compatibility - client-side:
 * Added tooltips for blocked items
