@@ -7,6 +7,8 @@
 * Tab-completions now only work for players which are permitted to use a certain command
 * Added a server-side, configurable version checker, which notifies operators about new versions
 * A warning will be logged if unsupported compatibility module dependencies were detected
+* Added `pvpadmin resetCooldown <player>` which resets the player's pvp cooldown.
+* Added `pvpadmin spy <player> [on|off]` which forcibly sets or toggles the player's spying setting.
 * Added a per-player vault used to deliver items asynchronously to players (access with `pvpvault <claim|info>`)
 
 #### Client-side support:

@@ -58,6 +58,8 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         ArrayList<Triple<String, String, String>> messages = new ArrayList<> ();
         messages.add (Triple.of ("pvpadmin ", "<player> [on|off|default]", "Toggles PvP for another player."));
         messages.add (Triple.of ("pvpadmin info ", "<player>", "Displays another player's PvP stats."));
+        messages.add (Triple.of ("pvpadmin resetCooldown ", "<player>", "Resets the player's cooldown."));
+        messages.add (Triple.of ("pvpadmin spy ", "<player> [on|off]", "Sets or toggles the player's spying setting."));
         return messages;
     }
 
@@ -69,6 +71,10 @@ public class PvPCommandAdmin extends AbstractPvPCommand
             "Either toggle or set the PvP mode of another player to a specified mode (ON or OFF or the default one set in the configs). The player will be informed about that."));
         messages.add (Triple.of ("pvpadmin info ", "<player>",
             "Displays the PvP mode, the spying settings, the warmup, cooldown and the PvP timer, whether the PvP mode is overridden, and other PvP Mode Mod related stats about the specified player."));
+        messages.add (Triple.of ("pvpadmin resetCooldown ", "<player>",
+            "Resets the cooldown for the specified player. The player will be informed about that."));
+        messages.add (Triple.of ("pvpadmin spy ", "<player> [on|off]",
+            "Either toggle or set the spying setting of another player to a specified mode (ON or OFF). The player will be informed about that."));
         return messages;
     }
 
@@ -89,6 +95,43 @@ public class PvPCommandAdmin extends AbstractPvPCommand
             requireMinLength (admin, args, 2);
             PvPServerUtils.displayPvPStats (admin,
                 CommandBase.getPlayer (admin, args[1]));
+        }
+        else if (args[0].equals ("resetCooldown"))
+        {
+            requireMinLength (admin, args, 2);
+
+            EntityPlayerMP player = CommandBase.getPlayer (admin, args[1]);
+
+            PvPData data = PvPServerUtils.getPvPData (CommandBase.getPlayer (admin, args[1]));
+
+            data.setPvPCooldown (PvPServerUtils.getTime ());
+
+            ServerChatUtils.green (admin, String.format ("Reset cooldown for %s", player.getDisplayName ()));
+            ServerChatUtils.green (player, String.format ("Your cooldown has been reset by an admin"));
+        }
+        else if (args[0].equals ("spy"))
+        {
+            requireMinLength (admin, args, 2);
+
+            EntityPlayerMP player = CommandBase.getPlayer (admin, args[1]);
+            PvPData data = PvPServerUtils.getPvPData (CommandBase.getPlayer (admin, args[1]));
+
+            if (args.length > 2)
+            {
+                switch (requireArguments (admin, args, 2, "on", "off"))
+                {
+                    case "off":
+                        toggleSpyMode (admin, player, data, Boolean.FALSE);
+                        break;
+                    case "on":
+                        toggleSpyMode (admin, player, data, Boolean.TRUE);
+                        break;
+                }
+            }
+            else
+            {
+                toggleSpyMode (admin, player, data, null);
+            }
         }
         else
         {
@@ -135,10 +178,13 @@ public class PvPCommandAdmin extends AbstractPvPCommand
     {
         if (args.length == 1)
             return getListOfStringsMatchingLastWord (args,
-                ArrayUtils.add (MinecraftServer.getServer ().getAllUsernames (), "info"));
-        if (args.length == 2 && args[0].equals ("info"))
+                ArrayUtils.addAll (MinecraftServer.getServer ().getAllUsernames (), "info", "resetCooldown", "spy"));
+        if (args.length == 2 && (args[0].equals ("info") || args[0].equals ("resetCooldown") || args[0].equals ("spy")))
             return CommandBase.getListOfStringsMatchingLastWord (args,
                 MinecraftServer.getServer ().getAllUsernames ());
+        if (args.length == 3 && args[0].equals ("spy"))
+            return CommandBase.getListOfStringsMatchingLastWord (args,
+                "on", "off");
         if (args.length == 2 && !args[0].equals ("info"))
             return CommandBase.getListOfStringsMatchingLastWord (args,
                 "on", "off", "default");
@@ -167,6 +213,27 @@ public class PvPCommandAdmin extends AbstractPvPCommand
         {
             ServerChatUtils.yellow (sender,
                 String.format ("PvP is already %s for %s", PvPCommonUtils.getEnabledString (mode.booleanValue ()),
+                    player.getDisplayName ()));
+        }
+    }
+
+    private void toggleSpyMode (ICommandSender sender, EntityPlayer player, PvPData data, Boolean mode)
+    {
+        if (mode == null || mode.booleanValue () != data.isSpyingEnabled ())
+        {
+            // Prior comment below in togglePvPMode.
+            ServerChatUtils.red (player, "Your spying setting is being toggled by an admin");
+            data.setSpyingEnabled (!data.isSpyingEnabled ());
+
+            ServerChatUtils.green (sender,
+                String.format ("Spying is now %s for %s",
+                    PvPCommonUtils.getEnabledString (!data.isSpyingEnabled ()),
+                    player.getDisplayName ()));
+        }
+        else
+        {
+            ServerChatUtils.yellow (sender,
+                String.format ("Spying is already %s for %s", PvPCommonUtils.getEnabledString (mode.booleanValue ()),
                     player.getDisplayName ()));
         }
     }
