@@ -11,7 +11,7 @@ import pvpmode.modules.lotr.internal.server.LOTRModServerCompatibilityModule;
 public class LOTRModServerSideHooks
 {
     /*
-     * The current one is always false, so returns that by default, of no conditions
+     * Defaults to false, unless conditions apply.
      * apply.
      */
     public static boolean getMapLocationVisibility (EntityPlayer seeingPlayer, EntityPlayer playerToBeSeen)
