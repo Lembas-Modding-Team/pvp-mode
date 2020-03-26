@@ -115,4 +115,10 @@ public interface LOTRServerConfiguration extends ConfigurationManager
         return true;
     }
 
+    @ConfigurationPropertyGetter(category = ServerConfiguration.SERVER_CATEGORY)
+    public default boolean isMapLocationSynchronizedWithIntelligence ()
+    {
+        return true;
+    }
+
 }
