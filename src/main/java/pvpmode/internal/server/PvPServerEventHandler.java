@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import cpw.mods.fml.common.eventhandler.*;
 import cpw.mods.fml.common.gameevent.PlayerEvent.*;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.*;
@@ -43,10 +43,10 @@ public class PvPServerEventHandler
     }
 
     /**
-     * Cancels combat events associated with PvP-disabled players. Note that
-     * this function will be invoked twice per attack - this is because of a
-     * Forge bug, but the {@link PvPCommonUtils#isCurrentAttackDuplicate} call
-     * checks and returns if this call is a duplicate
+     * Cancels combat events associated with PvP-disabled players. Note that this
+     * function will be invoked twice per attack - this is because of a Forge bug,
+     * but the {@link PvPCommonUtils#isCurrentAttackDuplicate} call checks and
+     * returns if this call is a duplicate
      */
     @SubscribeEvent
     public void interceptPvP (LivingAttackEvent event)
@@ -55,37 +55,39 @@ public class PvPServerEventHandler
         if (PvPCommonUtils.isCurrentAttackDuplicate (event))
             return;
 
-        EntityPlayerMP attacker = PvPServerUtils.getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = PvPServerUtils.getMaster (event.entity);
+        UUID attackerUUID = PvPServerUtils.getMaster (event.source.getEntity ());
+        UUID victimUUID = PvPServerUtils.getMaster (event.entity);
 
-        if (attacker == null || victim == null || attacker == victim)
+        if (attackerUUID == null || victimUUID == null || attackerUUID == victimUUID)
             return;
 
-        EnumPvPMode attackerMode = PvPServerUtils.getPvPMode (attacker);
-        EnumPvPMode victimMode = PvPServerUtils.getPvPMode (victim);
+        EnumPvPMode attackerMode = PvPServerUtils.getPvPMode (attackerUUID);
+        EnumPvPMode victimMode = PvPServerUtils.getPvPMode (victimUUID);
 
         if (MinecraftForge.EVENT_BUS
-            .post (new OnPvPEvent (attacker, attackerMode, victim, victimMode, event.ammount, event.source)))
+            .post (new OnPvPEvent (attackerUUID, attackerMode, victimUUID, victimMode, event.ammount, event.source)))
         {
             event.setCanceled (true);
             return;
         }
 
+        EntityPlayerMP attackerPlayer = PvPServerUtils.getPlayer (attackerUUID); // Null if player is offline
+
         if (attackerMode != EnumPvPMode.ON)
         {
-            if (attacker == event.source.getEntity ())
+            if (attackerPlayer != null && attackerPlayer == event.source.getEntity ())
             {
-                if (PvPServerUtils.isCreativeMode (attacker))
+                if (PvPServerUtils.isCreativeMode (attackerPlayer))
                 {
-                    ServerChatUtils.red (attacker, "You are in creative mode");
+                    ServerChatUtils.red (attackerPlayer, "You are in creative mode");
                 }
-                else if (PvPServerUtils.canFly (attacker))
+                else if (PvPServerUtils.canFly (attackerPlayer))
                 {
-                    ServerChatUtils.red (attacker, "You are in fly mode");
+                    ServerChatUtils.red (attackerPlayer, "You are in fly mode");
                 }
                 else
                 {
-                    ServerChatUtils.red (attacker, "You have PvP disabled");
+                    ServerChatUtils.red (attackerPlayer, "You have PvP disabled");
                 }
             }
             event.setCanceled (true);
@@ -94,46 +96,54 @@ public class PvPServerEventHandler
 
         if (victimMode != EnumPvPMode.ON)
         {
-            if (attacker == event.source.getEntity ())
+            if (attackerPlayer != null && attackerPlayer == event.source.getEntity ())
             {
-                ServerChatUtils.red (attacker, "This player/unit has PvP disabled");
+                ServerChatUtils.red (attackerPlayer, "This player/unit has PvP disabled");
             }
             event.setCanceled (true);
             return;
         }
 
-        if (attacker == event.source.getEntity () && victim == event.entity)
+        EntityPlayerMP victimPlayer = PvPServerUtils.getPlayer (victimUUID);
+
+        if (victimPlayer != null && attackerPlayer != null)
         {
-            // Both involved entities are players which can attack each other
+            // Attacker and victim player are online
 
-            long time = PvPServerUtils.getTime ();
-
-            PvPData attackerData = PvPServerUtils.getPvPData (attacker);
-            PvPData victimData = PvPServerUtils.getPvPData (victim);
-
-            if (attackerData.getPvPTimer () == 0)
+            if (attackerPlayer == event.source.getEntity () && victimPlayer == event.entity)
             {
-                ServerChatUtils.yellow (attacker, "You're now in PvP combat");
-            }
+                // Both involved entities are players which can attack each other
 
-            if (victimData.getPvPTimer () == 0)
-            {
-                ServerChatUtils.yellow (victim, "You're now in PvP combat");
-            }
+                long time = PvPServerUtils.getTime ();
 
-            attackerData.setPvPTimer (time + config.getPvPTimer ());
-            victimData.setPvPTimer (time + config.getPvPTimer ());
+                PvPData attackerData = PvPServerUtils.getPvPData (attackerPlayer);
+                PvPData victimData = PvPServerUtils.getPvPData (victimPlayer);
 
-            if (attackerData.getPvPWarmup () != 0)
-            {
-                attackerData.setPvPWarmup (0);
-                ServerChatUtils.yellow (attacker, "Your warmup timer was canceled because you started an attack");
-            }
+                if (attackerData.getPvPTimer () == 0)
+                {
+                    ServerChatUtils.yellow (attackerPlayer, "You're now in PvP combat");
+                }
 
-            if (victimData.getPvPWarmup () != 0)
-            {
-                victimData.setPvPWarmup (0);
-                ServerChatUtils.yellow (victim, "Your warmup timer was canceled because you were attacked");
+                if (victimData.getPvPTimer () == 0)
+                {
+                    ServerChatUtils.yellow (victimPlayer, "You're now in PvP combat");
+                }
+
+                attackerData.setPvPTimer (time + config.getPvPTimer ());
+                victimData.setPvPTimer (time + config.getPvPTimer ());
+
+                if (attackerData.getPvPWarmup () != 0)
+                {
+                    attackerData.setPvPWarmup (0);
+                    ServerChatUtils.yellow (attackerPlayer,
+                        "Your warmup timer was canceled because you started an attack");
+                }
+
+                if (victimData.getPvPWarmup () != 0)
+                {
+                    victimData.setPvPWarmup (0);
+                    ServerChatUtils.yellow (victimPlayer, "Your warmup timer was canceled because you were attacked");
+                }
             }
         }
 
@@ -146,16 +156,17 @@ public class PvPServerEventHandler
     @SubscribeEvent
     public void onLivingHurt (LivingHurtEvent event)
     {
-        EntityPlayerMP attacker = PvPServerUtils.getMaster (event.source.getEntity ());
-        EntityPlayerMP victim = PvPServerUtils.getMaster (event.entity);
+        UUID attackerUUID = PvPServerUtils.getMaster (event.source.getEntity ());
+        UUID victimUUID = PvPServerUtils.getMaster (event.entity);
 
-        if (attacker == null || victim == null)
+        if (attackerUUID == null || victimUUID == null)
             return;
 
         if (config.getActiveCombatLoggingHandlers ().size () > 0
-            && !MinecraftForge.EVENT_BUS.post (new OnPvPLogEvent (attacker, victim, event.ammount, event.source)))
+            && !MinecraftForge.EVENT_BUS.post (
+                new OnPvPLogEvent (attackerUUID, victimUUID, event.ammount, event.source)))
         {
-            server.getCombatLogManager ().log (attacker, victim, event.ammount,
+            server.getCombatLogManager ().log (attackerUUID, victimUUID, event.ammount,
                 event.source);
         }
     }
@@ -625,12 +636,27 @@ public class PvPServerEventHandler
                 messagePart0.appendSibling (messagePart1.appendSibling (messagePart2).appendSibling (messagePart3)
                     .appendSibling (messagePart4).appendSibling (messagePart5)));
         }
+
+        server.getPvPDataManager ().onLogin (event.player);
+
     }
 
     @SubscribeEvent
     public void onPlayerLoggedOut (PlayerLoggedOutEvent event)
     {
         server.getClientsideSupportHandler ().removeSupportedClient ((EntityPlayerMP) event.player);
+
+        server.getPvPDataManager ().onLogout (event.player);
+    }
+
+    @SubscribeEvent
+    public void onWorldTick (WorldTickEvent event)
+    {
+        if (event.phase == Phase.END && event.world.getWorldTime () % 1200 == 0) // TODO Currently hardcoded, make
+                                                                                 // configurable with Lembas
+        {
+            server.getPvPDataManager ().saveAndClearData ();
+        }
     }
 
 }

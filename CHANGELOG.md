@@ -26,6 +26,7 @@
 #### Bug fixes:
 * Fixed that previously soulbound items couldn't be stacked with unbound ones after they were unbound
 * Fixed a crash when a player died if `keepInventory` was disabled and if the soulbound feature was enabled
+* Fixed that hired units of players with PvP disabled could be attacked when the player was offline
 
 ### Breaking changes (see UPDATE_INSTRUCTIONS.md):
 * Changed the permission nodes of all commands

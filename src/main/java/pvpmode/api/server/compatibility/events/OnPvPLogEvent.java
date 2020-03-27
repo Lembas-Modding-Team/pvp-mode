@@ -1,7 +1,8 @@
 package pvpmode.api.server.compatibility.events;
 
+import java.util.UUID;
+
 import cpw.mods.fml.common.eventhandler.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
 /**
@@ -15,33 +16,33 @@ import net.minecraft.util.DamageSource;
 public class OnPvPLogEvent extends Event
 {
 
-    private final EntityPlayer attacker;
-    private final EntityPlayer victim;
+    private final UUID attackerUUID;
+    private final UUID victimUUID;
     private final float damageAmount;
     private final DamageSource source;
 
-    public OnPvPLogEvent (EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource source)
+    public OnPvPLogEvent (UUID attackerUUID, UUID victimUUID, float damageAmount, DamageSource source)
     {
-        this.attacker = attacker;
-        this.victim = victim;
+        this.attackerUUID = attackerUUID;
+        this.victimUUID = victimUUID;
         this.damageAmount = damageAmount;
         this.source = source;
     }
 
     /**
-     * Returns the attacker
+     * Returns the attacker player UUID
      */
-    public EntityPlayer getAttacker ()
+    public UUID getAttackerUUID ()
     {
-        return attacker;
+        return attackerUUID;
     }
 
     /**
-     * Returns the victim
+     * Returns the victim player UUID
      */
-    public EntityPlayer getVictim ()
+    public UUID getVictimUUID ()
     {
-        return victim;
+        return victimUUID;
     }
 
     /**

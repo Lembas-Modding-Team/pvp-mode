@@ -1,12 +1,13 @@
 package pvpmode.api.server.compatibility.events;
 
+import java.util.UUID;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 /**
  * This event will be fired if PvPMode has to determine the master of an
- * attacking entity.
+ * attacking entity - the master as to be a player.
  *
  * @author CraftedMods
  *
@@ -15,7 +16,7 @@ public class EntityMasterExtractionEvent extends Event
 {
 
     private final Entity entity;
-    private EntityPlayerMP master;
+    private UUID masterUUID;
 
     public EntityMasterExtractionEvent (Entity entity)
     {
@@ -31,19 +32,19 @@ public class EntityMasterExtractionEvent extends Event
     }
 
     /**
-     * Returns the currently determined master
+     * Returns the currently determined master player UUID
      */
-    public EntityPlayerMP getMaster ()
+    public UUID getMasterUUID ()
     {
-        return master;
+        return masterUUID;
     }
 
     /**
-     * Sets the determined master. This will replace the current value.
+     * Sets the determined master UUID. This will replace the current value.
      */
-    public void setMaster (EntityPlayerMP master)
+    public void setMasterUUID (UUID masterUUID)
     {
-        this.master = master;
+        this.masterUUID = masterUUID;
     }
 
 }

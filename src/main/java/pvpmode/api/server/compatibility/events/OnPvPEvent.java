@@ -1,7 +1,8 @@
 package pvpmode.api.server.compatibility.events;
 
+import java.util.UUID;
+
 import cpw.mods.fml.common.eventhandler.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.api.common.EnumPvPMode;
 
@@ -15,29 +16,31 @@ import pvpmode.api.common.EnumPvPMode;
 public class OnPvPEvent extends Event
 {
 
-    private final EntityPlayer attacker;
+    private final UUID attackerUUID;
     private final EnumPvPMode attackerMode;
-    private final EntityPlayer victim;
+    private final UUID victimUUID;
     private final EnumPvPMode victimMode;
     private final float damageAmount;
     private final DamageSource source;
 
-    public OnPvPEvent (EntityPlayer attacker, EnumPvPMode attackerMode, EntityPlayer victim, EnumPvPMode victimMode, float damageAmount, DamageSource source)
+    public OnPvPEvent (UUID attackerUUID, EnumPvPMode attackerMode, UUID victimUUID, EnumPvPMode victimMode,
+        float damageAmount, DamageSource source)
     {
-        this.attacker = attacker;
+        this.attackerUUID = attackerUUID;
         this.attackerMode = attackerMode;
-        this.victim = victim;
+        this.victimUUID = victimUUID;
         this.victimMode = victimMode;
         this.damageAmount = damageAmount;
         this.source = source;
     }
 
     /**
-     * Returns the attacker
+     * Returns the attacker player UUID. The UUID is used because the attacker player could be
+     * offline - for example hired units of offline players can still attack online players and their units.
      */
-    public EntityPlayer getAttacker ()
+    public UUID getAttackerUUID ()
     {
-        return attacker;
+        return attackerUUID;
     }
 
     /**
@@ -49,11 +52,12 @@ public class OnPvPEvent extends Event
     }
 
     /**
-     * Returns the victim
+     * Returns the victim player UUID. The UUID is used because the victim could be
+     * offline - for example hired units of offline players could be attacked.
      */
-    public EntityPlayer getVictim ()
+    public UUID getVictimUUID ()
     {
-        return victim;
+        return victimUUID;
     }
 
     /**

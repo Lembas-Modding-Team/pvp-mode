@@ -3,7 +3,6 @@ package pvpmode.internal.server.log;
 import java.nio.file.Path;
 import java.util.*;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.api.server.log.*;
 
@@ -103,30 +102,30 @@ public class CombatLogManagerImpl implements CombatLogManager
     }
 
     /**
-     * This function will be invoked if pvp events occur which should be logged. The
+     * This function will be invoked if PvP events occur which should be logged. The
      * manager will distribute the supplied data to all active handlers.
      *
-     * @param attacker
-     *            The attacking player
-     * @param victim
-     *            The attacked player
+     * @param attackerUUID
+     *            The attacking player UUID
+     * @param victimUUID
+     *            The attacked player UUID
      * @param damageAmount
      *            The amount of damage which was dealt
      * @param damageSource
      *            The damage source
      */
-    public void log (EntityPlayer attacker, EntityPlayer victim, float damageAmount, DamageSource damageSource)
+    public void log (UUID attackerUUID, UUID victimUUID, float damageAmount, DamageSource damageSource)
     {
         this.checkState (!canRegisterHandler);
 
-        Objects.requireNonNull (attacker);
-        Objects.requireNonNull (victim);
+        Objects.requireNonNull (attackerUUID);
+        Objects.requireNonNull (victimUUID);
         Objects.requireNonNull (damageSource);
 
         for (String handlerName : activatedHandlerNames)
         {
-            registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attacker,
-                victim, damageAmount, damageSource);
+            registeredCombatLogHandlers.get (handlerName).log (Calendar.getInstance ().getTime (), attackerUUID,
+                victimUUID, damageAmount, damageSource);
         }
     }
 

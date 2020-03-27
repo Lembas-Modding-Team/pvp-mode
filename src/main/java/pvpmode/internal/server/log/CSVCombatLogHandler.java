@@ -2,9 +2,8 @@ package pvpmode.internal.server.log;
 
 import java.nio.file.Path;
 import java.text.DateFormat;
-import java.util.Date;
+import java.util.*;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.PvPMode;
 import pvpmode.api.server.log.*;
@@ -33,13 +32,13 @@ public class CSVCombatLogHandler extends AbstractFileCombatLogHandler
     }
 
     @Override
-    public void log (Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
+    public void log (Date date, UUID attackerUUID, UUID victimUUID, float damageAmount,
         DamageSource damageSource)
     {
         writer.println (String.format ("%2$s%1$s%3$s%1$s%4$s%1$s%5$.2f%1$s%6$s",
             getCSVSeparator (),
-            DateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
-            victim.getDisplayName (), damageAmount, damageSource.damageType));
+            DateFormat.getDateTimeInstance ().format (date), getUsername (attackerUUID),
+            getUsername (victimUUID), damageAmount, damageSource.damageType));
 
     }
 

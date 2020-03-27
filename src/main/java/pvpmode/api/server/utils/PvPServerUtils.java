@@ -60,11 +60,29 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the EntityPlayerMP with the specified name.
+     * Returns the EntityPlayerMP with the specified name or null, if none is
+     * present on the server.
      */
     public static EntityPlayerMP getPlayer (String name)
     {
         return provider.getPlayer (name);
+    }
+
+    /**
+     * Returns the EntityPlayerMP with the specified UUID, or null, if none is
+     * present on the server.
+     */
+    public static EntityPlayerMP getPlayer (UUID uuid)
+    {
+        return provider.getPlayer (uuid);
+    }
+
+    /**
+     * Returns whether the supplied player is online
+     */
+    public boolean isOnline (UUID playerUUID)
+    {
+        return getPlayer (playerUUID) != null;
     }
 
     /**
@@ -77,11 +95,20 @@ public class PvPServerUtils extends PvPCommonUtils
 
     /**
      * Returns a wrapper from which all player-specific PvP properties can be
-     * accessed. The returned instance can be returned from a cache.
+     * accessed.
      */
     public static PvPData getPvPData (EntityPlayer player)
     {
-        return provider.getPvPData (player);
+        return provider.getPvPData (player.getUniqueID ());
+    }
+
+    /**
+     * Returns a wrapper from which all player-specific PvP properties can be
+     * accessed.
+     */
+    public static PvPData getPvPData (UUID uuid)
+    {
+        return provider.getPvPData (uuid);
     }
 
     /**
@@ -90,11 +117,21 @@ public class PvPServerUtils extends PvPCommonUtils
      */
     public static EnumPvPMode getPvPMode (EntityPlayer player)
     {
+        return getPvPMode (player.getUniqueID ());
+    }
+
+    /**
+     * Returns the PvP Mode of the player with the supplied UUID. If ON, the player
+     * can do PvP, otherwise not. If no data for the player can be found, the
+     * default PvP Mode will be returned.
+     */
+    public static EnumPvPMode getPvPMode (UUID playerUUID)
+    {
         // Creative and flying players cannot do PvP
-        if (isCreativeMode (player) || canFly (player))
+        if (isCreativeMode (playerUUID) || canFly (playerUUID))
             return EnumPvPMode.OFF;
 
-        PvPData data = PvPServerUtils.getPvPData (player);
+        PvPData data = PvPServerUtils.getPvPData (playerUUID);
 
         EnumForcedPvPMode forcedPvPMode = data.getForcedPvPMode ();
         if (!arePvPModeOverridesEnabled () || forcedPvPMode == EnumForcedPvPMode.UNDEFINED)
@@ -111,11 +148,30 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
+     * Returns whether the player with the supplied UUID is in creative mode. If the
+     * player is offline and no data about the creative mode are accessible, false
+     * is returned.
+     */
+    public static boolean isCreativeMode (UUID playerUUID)
+    {
+        return provider.isCreativeMode (playerUUID);
+    }
+
+    /**
      * Returns whether the supplied player can fly.
      */
     public static boolean canFly (EntityPlayer player)
     {
-        return player.capabilities.allowFlying;
+        return canFly (player.getUniqueID ());
+    }
+
+    /**
+     * Returns whether the player with the supplied UUID can fly. If the player is
+     * offline and no data about flying are accessible, false is returned.
+     */
+    public static boolean canFly (UUID playerUUID)
+    {
+        return provider.canFly (playerUUID);
     }
 
     /**
@@ -198,14 +254,14 @@ public class PvPServerUtils extends PvPCommonUtils
     /**
      * Returns the player that this entity is associated with, if possible.
      */
-    public static EntityPlayerMP getMaster (Entity entity)
+    public static UUID getMaster (Entity entity)
     {
         if (entity == null)
             return null;
 
         EntityPlayerMP player = (EntityPlayerMP) PvPCommonUtils.getPlayer (entity);
         if (player != null)
-            return player;
+            return player.getUniqueID ();
 
         List<Entity> entitiesChecked = new ArrayList<> ();
         Entity owner = entity;
@@ -218,12 +274,12 @@ public class PvPServerUtils extends PvPCommonUtils
             }
             entitiesChecked.add (owner);
             if (owner instanceof EntityPlayerMP)
-                return (EntityPlayerMP) owner;
+                return owner.getUniqueID ();
         }
 
         // Via this event the compatibility modules will be asked to extract the master
         EntityMasterExtractionEvent event = new EntityMasterExtractionEvent (entity);
-        return PvPServerUtils.postEventAndGetResult (event, event::getMaster);
+        return PvPServerUtils.postEventAndGetResult (event, event::getMasterUUID);
     }
 
     /**
@@ -304,9 +360,15 @@ public class PvPServerUtils extends PvPCommonUtils
     {
         public EntityPlayerMP getPlayer (String name);
 
+        public EntityPlayerMP getPlayer (UUID uuid);
+
         public boolean isOpped (ICommandSender sender);
 
-        public PvPData getPvPData (EntityPlayer player);
+        public boolean isCreativeMode (UUID playerUUID);
+
+        public boolean canFly (UUID playerUUID);
+
+        public PvPData getPvPData (UUID uuid);
 
         public int roundedDistanceBetween (EntityPlayerMP sender, EntityPlayerMP player);
 

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.util.EnumChatFormatting;
 import pvpmode.api.common.EnumPvPMode;
 import pvpmode.api.common.overrides.EnumForcedPvPMode;
+import pvpmode.api.common.utils.PvPCommonUtils;
 import pvpmode.api.server.PvPData;
 import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.utils.*;
@@ -19,8 +20,6 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
 
     private final ServerProxy server;
     private ServerConfiguration config;
-
-    private final Map<UUID, PvPData> playerData = new HashMap<> ();
 
     public PvPServerUtilsProvider (ServerProxy server)
     {
@@ -39,6 +38,18 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public EntityPlayerMP getPlayer (UUID uuid)
+    {
+        for (EntityPlayerMP player : (List<EntityPlayerMP>) server.getServerConfigurationManager ().playerEntityList)
+        {
+            if (player.getUniqueID ().equals (uuid))
+                return player;
+        }
+        return null;
+    }
+
+    @Override
     public boolean isOpped (ICommandSender sender)
     {
         if (sender instanceof EntityPlayerMP)
@@ -49,13 +60,27 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
     }
 
     @Override
-    public PvPData getPvPData (EntityPlayer player)
+    public boolean isCreativeMode (UUID playerUUID)
     {
-        if (!playerData.containsKey (player.getUniqueID ()))
-        {
-            playerData.put (player.getUniqueID (), new PvPDataImpl (player));
-        }
-        return playerData.get (player.getUniqueID ());
+        EntityPlayerMP player = getPlayer (playerUUID);
+        if (player != null)
+            return PvPCommonUtils.isCreativeMode (player);
+        return ((PvPDataImpl) server.getPvPDataManager ().getPlayerData (playerUUID)).isCreativeCache ();
+    }
+
+    @Override
+    public boolean canFly (UUID playerUUID)
+    {
+        EntityPlayerMP player = getPlayer (playerUUID);
+        if (player != null)
+            return player.capabilities.allowFlying;
+        return ((PvPDataImpl) server.getPvPDataManager ().getPlayerData (playerUUID)).canFlyCache ();
+    }
+
+    @Override
+    public PvPData getPvPData (UUID uuid)
+    {
+        return server.getPvPDataManager ().getPlayerData (uuid);
     }
 
     @Override

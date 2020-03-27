@@ -5,6 +5,13 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
+import pvpmode.api.server.utils.PvPServerUtils;
+
 /**
  * A basic pvp logging module which supports files which are rotated every time
  * the server starts. You can use this as superclass for logging modules which
@@ -74,6 +81,20 @@ public abstract class AbstractFileCombatLogHandler implements CombatLogHandler
         }
         while (Files.exists (result));
         return result;
+    }
+
+    protected String getUsername (UUID uuid)
+    {
+        PlayerProfileCache cache = MinecraftServer.getServer ().func_152358_ax ();
+
+        EntityPlayerMP player = PvPServerUtils.getPlayer (uuid);
+
+        if (player != null)
+            return player.getDisplayName ();
+
+        GameProfile profile = cache.func_152652_a (uuid);
+
+        return (profile != null ? profile.getName () : uuid.toString ()) + " (offline)";
     }
 
     @Override
