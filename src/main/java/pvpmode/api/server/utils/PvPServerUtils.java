@@ -69,7 +69,7 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns the EntityPlayerMP with the specified UUID, or null, if none is
+     * Returns the EntityPlayerMP with the specified UUID, or null if none is
      * present on the server.
      */
     public static EntityPlayerMP getPlayer (UUID uuid)
