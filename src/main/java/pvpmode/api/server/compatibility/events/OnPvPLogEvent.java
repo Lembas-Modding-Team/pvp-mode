@@ -38,7 +38,7 @@ public class OnPvPLogEvent extends Event
     }
 
     /**
-     * Returns the victim player UUID
+     * Returns the UUID of the victim
      */
     public UUID getVictimUUID ()
     {
