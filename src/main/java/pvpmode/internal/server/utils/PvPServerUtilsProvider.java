@@ -41,12 +41,8 @@ public class PvPServerUtilsProvider implements PvPServerUtils.Provider
     @SuppressWarnings("unchecked")
     public EntityPlayerMP getPlayer (UUID uuid)
     {
-        for (EntityPlayerMP player : (List<EntityPlayerMP>) server.getServerConfigurationManager ().playerEntityList)
-        {
-            if (player.getUniqueID ().equals (uuid))
-                return player;
-        }
-        return null;
+        return ((List<EntityPlayerMP>) server.getServerConfigurationManager ().playerEntityList)
+                .stream ().filter (player -> player.getUniqueID ().equals (uuid)).findFirst ().orElse (null);
     }
 
     @Override
