@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 
 /**
  * This event will be fired if PvPMode has to determine the master of an
- * attacking entity - the master as to be a player.
+ * attacking entity - the master has to be a player.
  *
  * @author CraftedMods
  *
