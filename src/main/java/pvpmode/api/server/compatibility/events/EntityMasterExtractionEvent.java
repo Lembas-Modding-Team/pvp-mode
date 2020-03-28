@@ -40,7 +40,7 @@ public class EntityMasterExtractionEvent extends Event
     }
 
     /**
-     * Sets the determined master UUID. This will replace the current value.
+     * Sets the determined UUID of the master. This will replace the current value.
      */
     public void setMasterUUID (UUID masterUUID)
     {
