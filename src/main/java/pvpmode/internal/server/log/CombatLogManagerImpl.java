@@ -108,7 +108,7 @@ public class CombatLogManagerImpl implements CombatLogManager
      * @param attackerUUID
      *            The UUID of the attacking player
      * @param victimUUID
-     *            The attacked player UUID
+     *            The UUID of the attacked player
      * @param damageAmount
      *            The amount of damage which was dealt
      * @param damageSource
