@@ -32,7 +32,7 @@ public class EntityMasterExtractionEvent extends Event
     }
 
     /**
-     * Returns the currently determined master player UUID
+     * Returns the currently determined UUID of the master
      */
     public UUID getMasterUUID ()
     {
