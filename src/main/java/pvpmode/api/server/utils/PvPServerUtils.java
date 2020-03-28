@@ -167,7 +167,7 @@ public class PvPServerUtils extends PvPCommonUtils
 
     /**
      * Returns whether the player with the supplied UUID can fly. If the player is
-     * offline and no data about flying are accessible, false is returned.
+     * offline and no data about flying is accessible, false is returned.
      */
     public static boolean canFly (UUID playerUUID)
     {
