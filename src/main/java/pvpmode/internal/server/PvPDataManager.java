@@ -67,9 +67,8 @@ public class PvPDataManager
     public void saveAndClearData ()
     {
         playerData.forEach (this::savePlayerData);
-        Collection<UUID> presentPlayers = new HashSet<> ();
-        ((Collection<EntityPlayerMP>) server.getServerConfigurationManager ().playerEntityList)
-            .forEach (player -> presentPlayers.add (player.getUniqueID ()));
+        Collection<UUID> presentPlayers = ((Collection<EntityPlayerMP>) server.getServerConfigurationManager ().playerEntityList)
+                .stream ().map (Entity::getUniqueID).collect (Collectors.toSet())
         playerData.keySet ().removeIf (uuid -> !presentPlayers.contains (uuid));
     }
 
