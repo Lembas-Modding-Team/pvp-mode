@@ -226,7 +226,7 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
     public void onAttackTargetSet (LivingSetAttackTargetEvent event)
     {
         /*
-         * Fixed that hired units eventually "attack" players with PvP Mode OFF - they
+         * Fixes that hired units eventually "attack" players with PvP Mode OFF - they
          * don't cause damage (the PvP Mode Mod prevents that), but still move to them,
          * which is canceled here.
          */
