@@ -31,7 +31,7 @@ public interface CombatLogHandler
      * @param date
      *            The current date and time
      * @param attackerUUID
-     *            The UUID of the player which initiated the attack (or owned the
+     *            The UUID of the player who initiated the attack (or owned the
      *            entity that initiated it)
      * @param victimUUID
      *            The UUID of the player who was attacked (or owned the entity that
