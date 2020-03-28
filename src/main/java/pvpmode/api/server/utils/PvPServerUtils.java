@@ -78,7 +78,7 @@ public class PvPServerUtils extends PvPCommonUtils
     }
 
     /**
-     * Returns whether the supplied player is online
+     * Returns whether a player with the supplied UUID is online
      */
     public boolean isOnline (UUID playerUUID)
     {
