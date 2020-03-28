@@ -106,7 +106,7 @@ public class CombatLogManagerImpl implements CombatLogManager
      * manager will distribute the supplied data to all active handlers.
      *
      * @param attackerUUID
-     *            The attacking player UUID
+     *            The UUID of the attacking player
      * @param victimUUID
      *            The attacked player UUID
      * @param damageAmount
