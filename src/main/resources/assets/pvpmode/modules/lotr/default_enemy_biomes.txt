@@ -24,6 +24,8 @@
 
 # HOBBIT: 3 Shire, 4 ShireWoodlands, 74 WhiteDowns, 131 ShireMoors, 132 ShireMarshes
 HOBBIT; 0; 3,4,74,131,132
+# BREE: 90 Breeland, 91 Chetwood
+BREE; 0; 90,91
 # RANGER_NORTH: 3 Shire, 4 ShireWoodlands, 25 Angle, 29 Eriador, 30 EriadorDowns, 74 WhiteDowns, 90 Breeland, 91 Chetwood, 131 ShireMoors, 132 ShireMarshes
 RANGER_NORTH; 0; 3,4,25,29,30,74,90,91,131,132
 # BLUE_MOUNTAINS: 47 BlueMountains, 87 BlueMountainsFoothills
@@ -40,14 +42,14 @@ WOOD_ELF; 0; 14,79,80
 DOL_GULDUR; 0; 15,46,48,119
 # DALE: 139 Dale
 DALE; 0; 139
-# DWARF: 11 IronHills, 78 Erebor
-DWARF; 0; 11,78
-# GALADHRIM: 9 Lothlorien, 39 LotholorienEdge
-GALADHRIM; 0; 9,39
+# DURINS_FOLK: 11 IronHills, 78 Erebor
+DURINS_FOLK; 0; 11,78
+# LOTHLORIEN: 9 Lothlorien, 39 LotholorienEdge
+LOTHLORIEN; 0; 9,39
 # DUNLAND: 23 Dunland, 54 Adornland
 DUNLAND; 0; 23,54
-# URUK_HAI: 16 UrukHighlands, 60 FangornWasteland, 72 NanCurunir
-URUK_HAI; 0; 16,60,72
+# ISENGARD: 16 UrukHighlands, 60 FangornWasteland, 72 NanCurunir
+ISENGARD; 0; 16,60,72
 # FANGORN: 24 Fangorn, 67 FangornClearing
 FANGORN; 0; 24,67
 # ROHAN: 1 Rohan, 61 RohanWoodlands, 130 TheWold

@@ -3,6 +3,7 @@ package pvpmode.compatibility.modules.lotr;
 import java.util.*;
 
 import lotr.common.*;
+import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**

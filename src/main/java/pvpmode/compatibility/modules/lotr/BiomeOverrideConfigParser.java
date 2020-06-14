@@ -5,7 +5,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import cpw.mods.fml.common.FMLLog;
-import lotr.common.LOTRFaction;
+import lotr.common.fac.LOTRFaction;
 
 public class BiomeOverrideConfigParser
 {
