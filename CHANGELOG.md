@@ -1,5 +1,9 @@
 # Changelog of PvPMode for Minecraft 1.7.10:
 
+## 1.5.1-BETA
+### LOTR compatibility:
+* Updated to Beta 36.1 of the LOTR Mod
+
 ## 1.5.0-BETA
 ### General changes:
 * Added a `soulbound` command which marks items as soulbound, preventing them from being dropped on death
