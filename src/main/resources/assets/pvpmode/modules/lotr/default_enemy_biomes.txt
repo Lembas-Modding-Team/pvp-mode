@@ -73,9 +73,9 @@ DORWINION; 0; 112,140
 RHUN; 0; 157,158,159
 # NEAR_HARAD: 99 Umbar, 101 UmbarHills, 102 NearHaradHills, 106 SouthronCoasts, 108 UmbarForest, 111 GulfofHarad, 120 NearHaradHalf-deserts, 128 SouthronForests, 142 GulfofHaradForest, 145 CorsairCoasts, 146 NearHaradRiverbank, 149 NearHaradOasis, 151 Harnedor
 NEAR_HARAD; 0; 99,101,102,106,108,111,120,128,142,145,146,149,151
-# MOREDAIN: 97 FarHaradGrasslands, 105 FarHaradForest, 121 FarHaradAridGrasslands, 122 FarHaradAridHills
-MOREDAIN; 0; 97,105,121,122
-# TAUREDAIN: 100 FarHaradJungle, 103 FarHaradJungleLake, 109 FarHaradJungleEdge, 110 TauredainClearing
-TAUREDAIN; 0; 100,103,109,110
+# MORWAITH: 97 FarHaradGrasslands, 105 FarHaradForest, 121 FarHaradAridGrasslands, 122 FarHaradAridHills
+MORWAITH; 0; 97,105,121,122
+# TAURETHRIM: 100 FarHaradJungle, 103 FarHaradJungleLake, 109 FarHaradJungleEdge, 110 TauredainClearing
+TAURETHRIM; 0; 100,103,109,110
 # HALF_TROLL: 107 Pertorogwaith, 134 FarHaradVolcano
 HALF_TROLL; 0; 107,134
