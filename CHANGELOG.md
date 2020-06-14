@@ -33,7 +33,7 @@
 * The generated files (for example the LOTR biome ID file) are now in the folder `pvp-mode` in the MC main directory
 
 ### LOTR compatibility - server-side:
-* Basic compatibility for v35.2 of the LOTR Mod
+* Basic compatibility for v36.1 of the LOTR Mod
 * Removed an invalid and unnecessary line from the default enemy biome override configuration file
 * Removed the biomes with the ID 21 and 22 from the default enemy biome configuration file for the Angmar faction
 * One can now specify multiple entries with the same faction for the biome overrides
