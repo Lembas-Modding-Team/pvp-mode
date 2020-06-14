@@ -163,36 +163,36 @@
 # Durin's Folk
 
 	# Dwarven Pickaxe, Axe, Mattock, Shovel, Hoe
-	DWARF;10;lotr:item.pickaxeDwarven,lotr:item.axeDwarven,lotr:item.mattockDwarven,lotr:item.shovelDwarven,lotr:item.hoeDwarven
+	DURINS_FOLK;10;lotr:item.pickaxeDwarven,lotr:item.axeDwarven,lotr:item.mattockDwarven,lotr:item.shovelDwarven,lotr:item.hoeDwarven
 
 	# Dwarven Sword, Daggers, Battleaxe, Warhammer, Armor, Throwing Axe, Spear, Pike
-	DWARF;50;lotr:item.swordDwarven,lotr:item.daggerDwarven,lotr:item.daggerDwarvenPoisoned,lotr:item.battleaxeDwarven,lotr:item.hammerDwarven,lotr:item.helmetDwarven,lotr:item.bodyDwarven,lotr:item.legsDwarven,lotr:item.bootsDwarven,lotr:item.throwingAxeDwarven,lotr:item.spearDwarven,lotr:item.pikeDwarven
+	DURINS_FOLK;50;lotr:item.swordDwarven,lotr:item.daggerDwarven,lotr:item.daggerDwarvenPoisoned,lotr:item.battleaxeDwarven,lotr:item.hammerDwarven,lotr:item.helmetDwarven,lotr:item.bodyDwarven,lotr:item.legsDwarven,lotr:item.bootsDwarven,lotr:item.throwingAxeDwarven,lotr:item.spearDwarven,lotr:item.pikeDwarven
 
 	# Silver-trimmed Armor (Rank: Oathfriend)
-	DWARF;100;lotr:item.helmetDwarvenSilver,lotr:item.bodyDwarvenSilver,lotr:item.legsDwarvenSilver,lotr:item.bootsDwarvenSilver
+	DURINS_FOLK;100;lotr:item.helmetDwarvenSilver,lotr:item.bodyDwarvenSilver,lotr:item.legsDwarvenSilver,lotr:item.bootsDwarvenSilver
 
 	# Gold-trimmed Armor (Rank: Axebearer)
-	DWARF;200;lotr:item.helmetDwarvenGold,lotr:item.bodyDwarvenGold,lotr:item.legsDwarvenGold,lotr:item.bootsDwarvenGold
+	DURINS_FOLK;200;lotr:item.helmetDwarvenGold,lotr:item.bodyDwarvenGold,lotr:item.legsDwarvenGold,lotr:item.bootsDwarvenGold
 
 	# Mithril-trimmed Armor (Rank: Champion)
-	DWARF;500;lotr:item.helmetDwarvenMithril,lotr:item.bodyDwarvenMithril,lotr:item.legsDwarvenMithril,lotr:item.bootsDwarvenMithril
+	DURINS_FOLK;500;lotr:item.helmetDwarvenMithril,lotr:item.bodyDwarvenMithril,lotr:item.legsDwarvenMithril,lotr:item.bootsDwarvenMithril
 	
 # Galadhrim
 
 	# Galadhrim Pickaxe, Axe, Shovel, Hoe
-	GALADHRIM;10;lotr:item.pickaxeElven,lotr:item.axeElven,lotr:item.shovelElven,lotr:item.hoeElven
+	LOTHLORIEN;10;lotr:item.pickaxeElven,lotr:item.axeElven,lotr:item.shovelElven,lotr:item.hoeElven
 	
 	# Mallorn Pickaxe, Axe, Shovel, Hoe
-	GALADHRIM;10;lotr:item.pickaxeMallorn,lotr:item.axeMallorn,lotr:item.shovelMallorn,lotr:item.hoeMallorn
+	LOTHLORIEN;10;lotr:item.pickaxeMallorn,lotr:item.axeMallorn,lotr:item.shovelMallorn,lotr:item.hoeMallorn
 	
 	# Mallorn Sword, Bow
-	GALADHRIM;25;lotr:item.swordMallorn,lotr:item.mallornBow
+	LOTHLORIEN;25;lotr:item.swordMallorn,lotr:item.mallornBow
 
 	# Galadhrim Cloak
-	GALADHRIM;25;lotr:item.helmetHithlain,lotr:item.bodyHithlain,lotr:item.legsHithlain,lotr:item.bootsHithlain
+	LOTHLORIEN;25;lotr:item.helmetHithlain,lotr:item.bodyHithlain,lotr:item.legsHithlain,lotr:item.bootsHithlain
 
 	# Galadhrim Sword, Spear, Armor, Bow, Daggers, Battlestaff, Longspear
-	GALADHRIM;50;lotr:item.swordElven,lotr:item.spearElven,lotr:item.helmetElven,lotr:item.bodyElven,lotr:item.legsElven,lotr:item.bootsElven,lotr:item.elvenBow,lotr:item.daggerElven,lotr:item.daggerElvenPoisoned,lotr:item.polearmElven,lotr:item.longspearElven
+	LOTHLORIEN;50;lotr:item.swordElven,lotr:item.spearElven,lotr:item.helmetElven,lotr:item.bodyElven,lotr:item.legsElven,lotr:item.bootsElven,lotr:item.elvenBow,lotr:item.daggerElven,lotr:item.daggerElvenPoisoned,lotr:item.polearmElven,lotr:item.longspearElven
 	
 # Dunland
 
@@ -202,13 +202,13 @@
 # Isengard
 
 	# Uruk Pickaxe, Axe, Shovel, Hoe
-	URUK_HAI;10;lotr:item.pickaxeUruk,lotr:item.axeUruk,lotr:item.shovelUruk,lotr:item.hoeUruk
+	ISENGARD;10;lotr:item.pickaxeUruk,lotr:item.axeUruk,lotr:item.shovelUruk,lotr:item.hoeUruk
 	
 	# Uruk Cleaver, Daggers, Battleaxe, Warhammer, Spear, Armor, Crossbow, Pike
-	URUK_HAI;50;lotr:item.scimitarUruk,lotr:item.daggerUruk,lotr:item.daggerUrukPoisoned,lotr:item.battleaxeUruk,lotr:item.hammerUruk,lotr:item.spearUruk,lotr:item.helmetUruk,lotr:item.bodyUruk,lotr:item.legsUruk,lotr:item.bootsUruk,lotr:item.urukCrossbow,lotr:item.pikeUruk
+	ISENGARD;50;lotr:item.scimitarUruk,lotr:item.daggerUruk,lotr:item.daggerUrukPoisoned,lotr:item.battleaxeUruk,lotr:item.hammerUruk,lotr:item.spearUruk,lotr:item.helmetUruk,lotr:item.bodyUruk,lotr:item.legsUruk,lotr:item.bootsUruk,lotr:item.urukCrossbow,lotr:item.pikeUruk
 
 	# Berserker Helmet, Scimitar
-	URUK_HAI;100;lotr:item.helmetUrukBerserker,lotr:item.scimitarUrukBerserker
+	ISENGARD;100;lotr:item.helmetUrukBerserker,lotr:item.scimitarUrukBerserker
 	
 # Fangorn
 	# Ent Draughts
