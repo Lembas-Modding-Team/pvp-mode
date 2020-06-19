@@ -2,7 +2,6 @@ package pvpmode.internal.server;
 
 import java.util.*;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import pvpmode.PvPMode;
@@ -16,8 +15,6 @@ public class PvPDataImpl implements PvPData
     private UUID playerUUID;
     private NBTTagCompound pvpDataTag;
 
-    private static final String PVP_DATA_NBT_KEY = "PvPData";
-
     private static final String PVP_ENABLED_NBT_KEY = "PvPEnabled";
     private static final String PVP_WARMUP_NBT_KEY = "PvPWarmup";
     private static final String PVP_COOLDOWN_NBT_KEY = "PvPCooldown";
@@ -26,29 +23,15 @@ public class PvPDataImpl implements PvPData
     private static final String SPYING_ENABLED_NBT_KEY = "Spying";
     private static final String DEFAULT_MODE_FORCED_NBT_KEY = "DefaultModeForced";
     private static final String VAULT_NBT_KEY = "Vault";
+    private static final String IS_CREATIVE_CACHE_NBT_KEY = "IsCreativeCache";
+    private static final String CAN_FLY_CACHE_NBT_KEY = "CanFlyCache";
 
-    public PvPDataImpl (EntityPlayer player)
+    private boolean hasChanged = false;
+
+    public PvPDataImpl (NBTTagCompound pvpDataTag, UUID playerUUID)
     {
-        playerUUID = player.getUniqueID ();
-
-        NBTTagCompound data = player.getEntityData ();
-        NBTTagCompound persistent;
-
-        if (!data.hasKey (EntityPlayer.PERSISTED_NBT_TAG))
-        {
-            persistent = new NBTTagCompound ();
-            data.setTag (EntityPlayer.PERSISTED_NBT_TAG, persistent);
-        }
-
-        persistent = data.getCompoundTag (EntityPlayer.PERSISTED_NBT_TAG);
-
-        if (!persistent.hasKey (PVP_DATA_NBT_KEY))
-        {
-            pvpDataTag = new NBTTagCompound ();
-            persistent.setTag (PVP_DATA_NBT_KEY, pvpDataTag);
-        }
-
-        pvpDataTag = persistent.getCompoundTag (PVP_DATA_NBT_KEY);
+        this.pvpDataTag = pvpDataTag;
+        this.playerUUID = playerUUID;
     }
 
     @Override
@@ -61,7 +44,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setPvPEnabled (boolean pvpEnabled)
     {
-        pvpDataTag.setBoolean (PVP_ENABLED_NBT_KEY, pvpEnabled);
+        if (pvpEnabled != isPvPEnabled ())
+        {
+            pvpDataTag.setBoolean (PVP_ENABLED_NBT_KEY, pvpEnabled);
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -73,7 +60,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setPvPWarmup (long pvpWarmup)
     {
-        pvpDataTag.setLong (PVP_WARMUP_NBT_KEY, pvpWarmup);
+        if (getPvPWarmup () != pvpWarmup)
+        {
+            pvpDataTag.setLong (PVP_WARMUP_NBT_KEY, pvpWarmup);
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -85,7 +76,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setPvPCooldown (long pvpCooldown)
     {
-        pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
+        if (getPvPCooldown () != pvpCooldown)
+        {
+            pvpDataTag.setLong (PVP_COOLDOWN_NBT_KEY, pvpCooldown);
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -97,7 +92,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setForcedPvPMode (EnumForcedPvPMode forcedPvPMode)
     {
-        pvpDataTag.setInteger (FORCED_PVP_MODE_NBT_KEY, forcedPvPMode.ordinal ());
+        if (getForcedPvPMode () != forcedPvPMode)
+        {
+            pvpDataTag.setInteger (FORCED_PVP_MODE_NBT_KEY, forcedPvPMode.ordinal ());
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -109,11 +108,14 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setPvPTimer (long pvpTimer)
     {
-        pvpDataTag.setLong (PVP_TIMER_NBT_KEY, pvpTimer);
-        PvPMode.instance.getServerProxy ().getPacketDispatcher ()
-            .sendToAll (new PvPStateChangedMessage (playerUUID, this.getPvPTimer () != 0));// TODO improve with future
-                                                                                           // version
+        if (getPvPTimer () != pvpTimer)
+        {
+            pvpDataTag.setLong (PVP_TIMER_NBT_KEY, pvpTimer);
+            hasChanged = true;
 
+            PvPMode.instance.getServerProxy ().getPacketDispatcher ()
+                .sendToAll (new PvPStateChangedMessage (playerUUID, this.getPvPTimer () != 0));
+        }
     }
 
     @Override
@@ -125,7 +127,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setSpyingEnabled (boolean spyingEnabled)
     {
-        pvpDataTag.setBoolean (SPYING_ENABLED_NBT_KEY, spyingEnabled);
+        if (isSpyingEnabled () != spyingEnabled)
+        {
+            pvpDataTag.setBoolean (SPYING_ENABLED_NBT_KEY, spyingEnabled);
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -138,7 +144,11 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setDefaultModeForced (boolean defaultModeForced)
     {
-        pvpDataTag.setBoolean (DEFAULT_MODE_FORCED_NBT_KEY, defaultModeForced);
+        if (isDefaultModeForced () != defaultModeForced)
+        {
+            pvpDataTag.setBoolean (DEFAULT_MODE_FORCED_NBT_KEY, defaultModeForced);
+            hasChanged = true;
+        }
     }
 
     @Override
@@ -156,12 +166,69 @@ public class PvPDataImpl implements PvPData
     @Override
     public void setVault (List<ItemStack> vault)
     {
-        NBTTagList vaultList = new NBTTagList ();
-        for (ItemStack stack : vault)
+        if (!getVault ().equals (vault))
         {
-            vaultList.appendTag (stack.writeToNBT (new NBTTagCompound ()));
+            NBTTagList vaultList = new NBTTagList ();
+            for (ItemStack stack : vault)
+            {
+                vaultList.appendTag (stack.writeToNBT (new NBTTagCompound ()));
+            }
+
+            pvpDataTag.setTag (VAULT_NBT_KEY, vaultList);
+            hasChanged = true;
         }
-        pvpDataTag.setTag (VAULT_NBT_KEY, vaultList);
+    }
+
+    /*
+     * Internal only - saves whether the player is in creative mode. This is
+     * necessary to get that information when the player is offline without loading
+     * the MC playerdata. The data will be updated when the player leaves/joins the
+     * server.
+     */
+    public boolean isCreativeCache ()
+    {
+        return pvpDataTag.getBoolean (IS_CREATIVE_CACHE_NBT_KEY);
+    }
+
+    public void setCreativeCache (boolean creativeCache)
+    {
+        if (isCreativeCache () != creativeCache)
+        {
+            pvpDataTag.setBoolean (IS_CREATIVE_CACHE_NBT_KEY, creativeCache);
+            hasChanged = true;
+        }
+    }
+
+    /*
+     * See isCreativeCache
+     */
+    public boolean canFlyCache ()
+    {
+        return pvpDataTag.getBoolean (CAN_FLY_CACHE_NBT_KEY);
+    }
+
+    public void setCanFlyCache (boolean canFlyCache)
+    {
+        if (canFlyCache () != canFlyCache)
+        {
+            pvpDataTag.setBoolean (CAN_FLY_CACHE_NBT_KEY, canFlyCache);
+            hasChanged = true;
+        }
+    }
+
+    public NBTTagCompound getStorageTag ()
+    {
+        return pvpDataTag;
+    }
+
+    public boolean hasChanged ()
+    {
+        return hasChanged;
+    }
+
+    public void setHasChanged (boolean hasChanged)
+    {
+        this.hasChanged = hasChanged;
     }
 
 }

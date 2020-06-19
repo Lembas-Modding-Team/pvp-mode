@@ -1,9 +1,8 @@
 package pvpmode.internal.server.log;
 
 import java.text.DateFormat;
-import java.util.Date;
+import java.util.*;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import pvpmode.api.server.log.*;
 
@@ -21,13 +20,13 @@ public class SimpleCombatLogHandler extends AbstractFileCombatLogHandler
     }
 
     @Override
-    public void log (Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
+    public void log (Date date, UUID attackerUUID, UUID victimUUID, float damageAmount,
         DamageSource damageSource)
     {
         writer.println (String.format (
-            "[%s] %s or a (hired) unit of this player initiated an attack against %s dealing %.2f HP damage of the type %s",
-            DateFormat.getDateTimeInstance ().format (date), attacker.getDisplayName (),
-            victim.getDisplayName (), damageAmount, damageSource.damageType));
+            "[%s] %s or a (hired) unit of them initiated an attack against %s (or a (hired) unit of them) dealing %.2f HP damage of the type %s",
+            DateFormat.getDateTimeInstance ().format (date), getUsername (attackerUUID),
+            getUsername (victimUUID), damageAmount, damageSource.damageType));
 
     }
 

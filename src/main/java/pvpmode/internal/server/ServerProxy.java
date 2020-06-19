@@ -1,5 +1,6 @@
 package pvpmode.internal.server;
 
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 
@@ -7,7 +8,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.*;
 import pvpmode.api.common.configuration.*;
 import pvpmode.api.common.configuration.ConfigurationPropertyKey.StringSet;
 import pvpmode.api.common.configuration.auto.AutoConfigurationConstants;
@@ -19,7 +20,7 @@ import pvpmode.api.server.configuration.ServerConfiguration;
 import pvpmode.api.server.log.LogHandlerConstants;
 import pvpmode.api.server.network.ClientsideSupportHandler;
 import pvpmode.api.server.utils.*;
-import pvpmode.internal.common.*;
+import pvpmode.internal.common.CommonProxy;
 import pvpmode.internal.server.command.*;
 import pvpmode.internal.server.configuration.ServerConfigurationImpl;
 import pvpmode.internal.server.log.*;
@@ -38,9 +39,12 @@ public class ServerProxy extends CommonProxy
 
     private CombatLogManagerImpl combatLogManager;
     private OverrideManagerImpl overrideManager;
+
     private ServerConfigurationManager serverConfigurationManager;
+    private PvPDataManager pvpDataManager;
 
     private Path combatLogDir;
+    private Path worldDataDir;
 
     private PvPCommand pvpCommandInstance;
     private PvPCommandAdmin pvpadminCommandInstance;
@@ -144,7 +148,7 @@ public class ServerProxy extends CommonProxy
         super.onPostInit (event);
     }
 
-    public void onServerStarting (FMLServerStartingEvent event)
+    public void onServerStarting (FMLServerStartingEvent event) throws IOException
     {
         serverConfigurationManager = MinecraftServer.getServer ().getConfigurationManager ();
 
@@ -169,6 +173,16 @@ public class ServerProxy extends CommonProxy
         {
             event.registerServerCommand (soulboundCommandInstance);// TODO: Can be done with the compatibility module
         }
+
+        worldDataDir = DimensionManager.getCurrentSaveRootDirectory ().toPath ().resolve ("pvp-mode");
+
+        if (!Files.exists (worldDataDir))
+        {
+            Files.createDirectories (worldDataDir);
+        }
+
+        pvpDataManager = new PvPDataManager (this);
+        pvpDataManager.onServerStarting ();
     }
 
     public void onServerStopping (FMLServerStoppingEvent event)
@@ -177,6 +191,8 @@ public class ServerProxy extends CommonProxy
         {
             combatLogManager.close ();
         }
+
+        pvpDataManager.saveAndClearData ();
     }
 
     @Override
@@ -209,6 +225,22 @@ public class ServerProxy extends CommonProxy
     public ClientsideSupportHandler getClientsideSupportHandler ()
     {
         return clientsideSupportHandler;
+    }
+
+    /**
+     * Returns the root directory for data the PvP Mode can put in - per world.
+     * It'll be null until the server starts.
+     * 
+     * @return The world data root directory for the mod
+     */
+    public Path getWorldDataFolder ()
+    {
+        return worldDataDir;
+    }
+
+    public PvPDataManager getPvPDataManager ()
+    {
+        return pvpDataManager;
     }
 
 }

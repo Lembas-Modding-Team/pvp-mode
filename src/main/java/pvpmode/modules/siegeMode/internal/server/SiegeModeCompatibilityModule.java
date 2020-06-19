@@ -3,6 +3,7 @@ package pvpmode.modules.siegeMode.internal.server;
 import java.nio.file.Path;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import pvpmode.PvPMode;
 import pvpmode.api.common.SimpleLogger;
@@ -10,6 +11,7 @@ import pvpmode.api.common.compatibility.*;
 import pvpmode.api.common.configuration.*;
 import pvpmode.api.server.compatibility.events.*;
 import pvpmode.api.server.compatibility.events.PvPListEvent.UnsafeClassification;
+import pvpmode.api.server.utils.PvPServerUtils;
 import pvpmode.modules.siegeMode.api.server.SiegeModeServerConfiguration;
 import siege.common.siege.SiegeDatabase;
 
@@ -57,9 +59,12 @@ public class SiegeModeCompatibilityModule extends AbstractCompatibilityModule im
     @SubscribeEvent
     public void onPvPLog (OnPvPLogEvent event)
     {
-        if (config.isPvPLoggingDuringSiegesDisabled ()
-            && (SiegeDatabase.getActiveSiegeForPlayer (event.getAttacker ()) != null
-                || SiegeDatabase.getActiveSiegeForPlayer (event.getVictim ()) != null))
+        EntityPlayerMP attackerPlayer = PvPServerUtils.getPlayer (event.getAttackerUUID ());
+        EntityPlayerMP victimPlayer = PvPServerUtils.getPlayer (event.getVictimUUID ());
+
+        if (config.isPvPLoggingDuringSiegesDisabled () && attackerPlayer != null && victimPlayer != null
+            && (SiegeDatabase.getActiveSiegeForPlayer (attackerPlayer) != null
+                || SiegeDatabase.getActiveSiegeForPlayer (victimPlayer) != null))
         {
             event.setCanceled (true);
         }

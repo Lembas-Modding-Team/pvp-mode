@@ -9,7 +9,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import lotr.common.*;
 import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import pvpmode.PvPMode;
@@ -199,10 +198,10 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
             LOTREntityNPC npc = (LOTREntityNPC) entity;
             if (npc.hiredNPCInfo.isActive)
             {
-                EntityPlayer master = npc.hiredNPCInfo.getHiringPlayer ();
-                if (master != null)
+                UUID masterUUID = npc.hiredNPCInfo.getHiringPlayerUUID ();
+                if (masterUUID != null)
                 {
-                    event.setMaster ((EntityPlayerMP) master);
+                    event.setMasterUUID (masterUUID);
                 }
             }
         }
@@ -226,8 +225,11 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
     @SubscribeEvent
     public void onAttackTargetSet (LivingSetAttackTargetEvent event)
     {
-        // Fixes that hired units attack players (they don't cause damage, but move to
-        // them)
+        /*
+         * Fixes that hired units eventually "attack" players with PvP Mode OFF - they
+         * don't cause damage (the PvP Mode Mod prevents that), but still move to them,
+         * which is canceled here.
+         */
         if (event.target != null)
         {
             // The entity needs a target
@@ -236,14 +238,14 @@ public class LOTRModServerCompatibilityModule extends LOTRModCommonCompatibility
                 // It needs to be an hired unit
                 LOTREntityNPC npc = (LOTREntityNPC) event.entityLiving;
 
-                EntityPlayer attackingMaster = PvPServerUtils.getMaster (npc);
-                EntityPlayer targetMaster = PvPServerUtils.getMaster (event.target);
+                UUID attackingMasterUUID = PvPServerUtils.getMaster (npc);
+                UUID targetMasterUUID = PvPServerUtils.getMaster (event.target);
 
-                if (attackingMaster != null && targetMaster != null)
+                if (attackingMasterUUID != null && targetMasterUUID != null)
                 {
                     // The attacking unit and the attacked entity have to be assignable to players
-                    if (PvPServerUtils.getPvPMode (attackingMaster) != EnumPvPMode.ON
-                        || PvPServerUtils.getPvPMode (targetMaster) != EnumPvPMode.ON)
+                    if (PvPServerUtils.getPvPMode (attackingMasterUUID) != EnumPvPMode.ON
+                        || PvPServerUtils.getPvPMode (targetMasterUUID) != EnumPvPMode.ON)
                     {
                         // Cancel the attack target assignment of the PvP mode prevents an attack
                         npc.setAttackTarget (null);

@@ -1,5 +1,7 @@
 package pvpmode;
 
+import java.io.IOException;
+
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.*;
 import cpw.mods.fml.common.event.*;
@@ -43,7 +45,7 @@ public class PvPMode
     }
 
     @EventHandler
-    public void onServerStarting (FMLServerStartingEvent event)
+    public void onServerStarting (FMLServerStartingEvent event) throws IOException
     {
         if (proxy instanceof ServerProxy)
         {

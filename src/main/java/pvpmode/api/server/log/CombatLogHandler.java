@@ -1,14 +1,13 @@
 package pvpmode.api.server.log;
 
 import java.nio.file.Path;
-import java.util.Date;
+import java.util.*;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
 /**
  * A handler for combat logging. If a player or an unit of this player attacks
- * another player, the mod can log this event. To support multiple logging
+ * another player (or unit of that player), the mod can log this event. To support multiple logging
  * targets (files, different file formats, SQL, E-Mail, ...) the combat logging
  * system uses modules which handle this logging - combat log handlers. Users
  * can activate or deactivate all registered modules via the configuration file.
@@ -31,16 +30,18 @@ public interface CombatLogHandler
      *
      * @param date
      *            The current date and time
-     * @param attacker
-     *            The player which initiated the attack
-     * @param victim
-     *            The player who was attacked
+     * @param attackerUUID
+     *            The UUID of the player who initiated the attack (or owned the
+     *            entity that initiated it)
+     * @param victimUUID
+     *            The UUID of the player who was attacked (or owned the entity that
+     *            was attacked)
      * @param damageAmount
      *            The amount of damage which was dealt
      * @param damageSource
      *            The damage source
      */
-    public void log (Date date, EntityPlayer attacker, EntityPlayer victim, float damageAmount,
+    public void log (Date date, UUID attackerUUID, UUID victimUUID, float damageAmount,
         DamageSource damageSource);
 
     /**
