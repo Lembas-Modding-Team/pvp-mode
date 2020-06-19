@@ -62,15 +62,15 @@ public interface LOTRServerConfiguration extends ConfigurationManager
 
         placeholders.putAll ("GOOD",
             LOTRCommonUtils.getFactionsAsStringCollection (
-                Arrays.asList (LOTRFaction.BLUE_MOUNTAINS, LOTRFaction.DALE, LOTRFaction.DORWINION, LOTRFaction.DWARF,
-                    LOTRFaction.GALADHRIM, LOTRFaction.FANGORN, LOTRFaction.GONDOR, LOTRFaction.HIGH_ELF,
-                    LOTRFaction.HOBBIT, LOTRFaction.RANGER_NORTH, LOTRFaction.ROHAN, LOTRFaction.TAUREDAIN,
+                Arrays.asList (LOTRFaction.BLUE_MOUNTAINS, LOTRFaction.BREE, LOTRFaction.DALE, LOTRFaction.DORWINION, LOTRFaction.DURINS_FOLK,
+                    LOTRFaction.LOTHLORIEN, LOTRFaction.FANGORN, LOTRFaction.GONDOR, LOTRFaction.HIGH_ELF,
+                    LOTRFaction.HOBBIT, LOTRFaction.RANGER_NORTH, LOTRFaction.ROHAN, LOTRFaction.TAURETHRIM,
                     LOTRFaction.WOOD_ELF)));
         placeholders.putAll ("EVIL",
             LOTRCommonUtils.getFactionsAsStringCollection (
                 Arrays.asList (LOTRFaction.ANGMAR, LOTRFaction.DOL_GULDUR, LOTRFaction.DUNLAND, LOTRFaction.GUNDABAD,
-                    LOTRFaction.HALF_TROLL, LOTRFaction.MORDOR, LOTRFaction.MOREDAIN, LOTRFaction.NEAR_HARAD,
-                    LOTRFaction.RHUN, LOTRFaction.URUK_HAI)));
+                    LOTRFaction.HALF_TROLL, LOTRFaction.MORDOR, LOTRFaction.MORWAITH, LOTRFaction.NEAR_HARAD,
+                    LOTRFaction.RHUDEL, LOTRFaction.ISENGARD)));
 
         return placeholders;
     }
