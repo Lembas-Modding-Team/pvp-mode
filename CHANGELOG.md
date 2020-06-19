@@ -2,7 +2,7 @@
 
 ## 1.5.1-BETA
 ### LOTR compatibility:
-* Updated to Beta 36.1 of the LOTR Mod
+* Updated to Beta 36.2 of the LOTR Mod
 
 ## 1.5.0-BETA
 ### General changes:
