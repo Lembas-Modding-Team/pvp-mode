@@ -35,7 +35,7 @@ public class LOTRModCompatibilityModuleLoader extends ForgeModCompatibilityModul
     @Override
     protected boolean isVersionSupported (String modid, String version)
     {
-        return version.equals ("Update v35.2 for Minecraft 1.7.10");
+        return version.equals ("Update v36.2 for Minecraft 1.7.10");
     }
 
 }

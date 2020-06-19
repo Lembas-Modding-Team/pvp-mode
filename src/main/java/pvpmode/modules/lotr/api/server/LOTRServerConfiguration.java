@@ -62,7 +62,7 @@ public interface LOTRServerConfiguration extends ConfigurationManager
 
         placeholders.putAll ("GOOD",
             LOTRCommonUtils.getFactionsAsStringCollection (
-                Arrays.asList (LOTRFaction.BLUE_MOUNTAINS, LOTRFaction.DALE, LOTRFaction.DORWINION, LOTRFaction.DURINS_FOLK,
+                Arrays.asList (LOTRFaction.BLUE_MOUNTAINS, LOTRFaction.BREE, LOTRFaction.DALE, LOTRFaction.DORWINION, LOTRFaction.DURINS_FOLK,
                     LOTRFaction.LOTHLORIEN, LOTRFaction.FANGORN, LOTRFaction.GONDOR, LOTRFaction.HIGH_ELF,
                     LOTRFaction.HOBBIT, LOTRFaction.RANGER_NORTH, LOTRFaction.ROHAN, LOTRFaction.TAURETHRIM,
                     LOTRFaction.WOOD_ELF)));
